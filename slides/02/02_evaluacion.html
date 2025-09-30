@@ -283,7 +283,7 @@
   }
 
   // Store cell data
-  globalThis.qpyodideCellDetails = [{"code":"\nimport pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LassoCV\n\n# Cargamos datos (almacenados en repositorio de datos del curso)\nurl = \"https://juandmontoro.github.io/tap/data/datos_ejemplo_2.csv.gz\"\ndf = pd.read_csv(url)\n# Datos simulados\n# y: respuesta a predecir\n# x0-x9: predictores\n\n# Elegimos estimador LassoCV e instanciamos\n# Elegimos hiperparámetro lambda (OJO: en sklearn lambda es alpha)\n#   En este caso se selecciona el óptimo por CV de entre \n#   una lista de 10 valores que se pasa como argumento alphas\nlassocv = LassoCV(\n            alphas=[0.1,0.5,0.75,1,1.5,2,2.5,5,10,100],\n            cv=5\n            )\n\n# Definimos los datos (X,y)\n# Generamos particion de entrenamiento (ajuste del modelo)\n# y prueba (para estimación del error de predicción)\nX = df.drop(columns='y')\ny = df['y']\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=1)\n\n# Estimamos sobre conjunto de entrenamiento (train)\nlassocv.fit(X_train,y_train)\n\n# Evaluamos sobre conjunto de entrenamiento y prueba\nlassocv.score(X_train,y_train),lassocv.score(X_test,y_test) \n","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\n# Utilizar este bloque para obtener información adicional del\n# proceso de estimación","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+  globalThis.qpyodideCellDetails = [{"code":"\nfrom sklearn.model_selection import train_test_split, LeaveOneOut, KFold\n\nX = list(range(15))\n\nprint(\"=== Muestra completa ===\")\nprint(f\"Muestra: {X}\")\nprint(\"=== Partición Train/Test ===\")\nX_train, X_test = train_test_split(X, test_size=0.3, random_state=1)\nprint(f\"Train: {X_train}\")\nprint(f\"Test:  {X_test}\")\n","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\nprint(\"\\n=== LOOCV ===\")\nloo = LeaveOneOut()\nfor i, (train_idx, test_idx) in enumerate(loo.split(X), start=1):\n    print(f\"Partición {i}: Train={train_idx.tolist()} | Test={test_idx.tolist()}\")\n","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\nprint(\"\\n=== K-Fold CV (5 folds) ===\")\nkf = KFold(n_splits=5, shuffle=True,random_state=1)\nfor i, (train_idx, test_idx) in enumerate(kf.split(X), start=1):\n    print(f\"Fold {i}: Train={train_idx.tolist()} | Test={test_idx.tolist()}\")\n","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\nimport pandas as pd\nfrom sklearn.linear_model import Lasso\nfrom sklearn.model_selection import cross_validate\n\n# Cargamos datos (almacenados en repositorio de datos del curso)\nurl = \"https://juandmontoro.github.io/tap/data/datos_ejemplo_2.csv.gz\"\ndf = pd.read_csv(url)\n# Datos simulados\n# y: respuesta a predecir\n# x0-x9: predictores\n\n# Elegimos estimador Lasso e instanciamos\n# Elegimos hiperparámetro lambda\nlasso = Lasso(alpha=0.1)\n\n# Definimos los datos (X,y)\nX = df.drop(columns='y')\ny = df['y']\n\n# Generamos un objeto cross_validation para evaluar el modelo Lasso sobre \n# toda la muestra\nvalidacion = cross_validate(lasso,X,y,cv=5,return_train_score=True)\n\n# Visualizamos resultados\npd.DataFrame(validacion)","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\nimport pandas as pd\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LassoCV\n\n# Cargamos datos (almacenados en repositorio de datos del curso)\nurl = \"https://juandmontoro.github.io/tap/data/datos_ejemplo_2.csv.gz\"\ndf = pd.read_csv(url)\n# Datos simulados\n# y: respuesta a predecir\n# x0-x9: predictores\n\n# Elegimos estimador LassoCV e instanciamos\n#   Selecciona el alpha/lambda óptimo por CV de entre \n#   una lista que se pasa como argumento alphas\nlambdas = np.linspace(0.1,1,10)\nlassocv = LassoCV(\n            alphas=lambdas,\n            cv=5)\n\n# Definimos los datos (X,y)\n# Generamos particion de entrenamiento (ajuste del modelo)\n# y prueba (para estimación del error de predicción)\nX = df.drop(columns='y')\ny = df['y']\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=1)\n\n# Estimamos sobre conjunto de entrenamiento (train)\nlassocv.fit(X_train,y_train)\n\n# Cual es el mejor alpha?\nlassocv.alpha_","id":5,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\nfrom sklearn.model_selection import GridSearchCV\n\n# Creamos una búsqueda exhaustiva del valor óptimo del hiperparámetro en una malla con \n# GridSearchCV. Este enfoque es valido para todos los estimadores\n\n# Librerias y datos ya cargados y particionados si hemos ejecutado código anterior \n\n# Elegimos estimador Lasso e instanciamos\nlasso = Lasso()\n\n# Generamos la malla de valores sobre los que buscar, un esquema de validación cruzada\n# y combinamos ambos en una búsqueda exhaustiva \nparam_grid = {'alpha': np.linspace(0.1,1,10)} \ngridsearch = GridSearchCV(estimator=lasso, param_grid=param_grid, cv=5,\n                          scoring='neg_mean_squared_error')\n\n# Búsqueda de hiperparámetros sobre conjunto de entrenamiento (train)\ngridsearch.fit(X_train,y_train)\n\n# Resultados detallados de la búsqueda (descomentar)\n# pd.DataFrame(gridsearch.cv_results_)\n\n# Otros outputs: Mejor parámetro\ngridsearch.best_params_\n\n# Podemos hacer una evaluación final sobre conjunto de prueba (descomentar)\n# gridsearch.score(X_test,y_test)","id":6,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 
   </script>
@@ -521,7 +521,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 <p>&nbsp;</p>
 <p>Elegir el modelo que minimice el error predictivo en los datos de prueba (no vistos o nuevos) supone:</p>
 <ul>
-<li><strong>Minimizar el error dentro de cada forma funcional</strong> del espacio de funciones <span class="math inline">\(f_i\)</span>: seleccionar el nivel de regularización óptimo:
+<li><strong>Minimizar el error de predicción dentro de cada forma funcional</strong> del espacio de funciones <span class="math inline">\(f_i\)</span>: seleccionar el nivel de regularización óptimo:
 <ul>
 <li>Seleccionamos el modelo <span class="math inline">\(\hat{f}_1\)</span> con la cantidad de regularización óptima (minimiza el error en muestra de prueba) de entre todos los modelos en <span class="math inline">\(f_1\)</span> con regularización.</li>
 <li>Seleccionamos el modelo <span class="math inline">\(\hat{f}_2\)</span> con la cantidad de regularización óptima (minimiza el error en muestra de prueba) de entre todos los modelos en <span class="math inline">\(f_2\)</span> con regularización.</li>
@@ -642,6 +642,12 @@ Prof.Juan D. Montoro-Pons | 2025/26
 </div>
 
 <img data-src="pics/validation_set.webp" class="r-stretch quarto-figure-center"><p class="caption">Fuente: documentación de scikit-learn</p></section>
+<section id="ejemplo-conjunto-de-validaciónprueba" class="slide level2" style="color:#447099">
+<h2>Ejemplo: conjunto de validación/prueba</h2>
+<p>&nbsp;</p>
+<div id="qpyodide-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
 <section id="validación-cruzada-dejando-uno-fuera-loocv" class="slide level2 scrollable" style="color:#447099">
 <h2>Validación cruzada dejando uno fuera (LOOCV)</h2>
 <div title="Procedimiento">
@@ -682,6 +688,12 @@ Prof.Juan D. Montoro-Pons | 2025/26
           display:block!important;
       }</style></aside>
 </section>
+<section id="ejemplo-loocv" class="slide level2" style="color:#447099">
+<h2>Ejemplo: LOOCV</h2>
+<p>&nbsp;</p>
+<div id="qpyodide-insertion-location-2"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
 <section id="validación-cruzada-con-k-particiones-k-fold" class="slide level2" style="color:#447099">
 <h2>Validación cruzada con <span class="math inline">\(k\)</span> particiones (<span class="math inline">\(k\)</span>-fold)</h2>
 <div title="Procedimiento">
@@ -706,6 +718,12 @@ Prof.Juan D. Montoro-Pons | 2025/26
 </div>
 
 <img data-src="pics/crossvalidation.webp" class="r-stretch quarto-figure-center"><p class="caption">Fuente: documentación de scikit-learn</p></section>
+<section id="ejemplo-validación-cruzada-con-k-particiones" class="slide level2" style="color:#447099">
+<h2>Ejemplo: validación cruzada con <span class="math inline">\(k\)</span> particiones</h2>
+<p>&nbsp;</p>
+<div id="qpyodide-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
 <section id="partición-entrenamientoprueba-validación-cruzada" class="slide level2" style="color:#447099">
 <h2>Partición entrenamiento/prueba + validación cruzada</h2>
 
@@ -721,27 +739,32 @@ Prof.Juan D. Montoro-Pons | 2025/26
 <p>&nbsp;</p>
 <p><code>scikit-learn</code> implementa <strong>técnicas de remuestreo</strong> para: seleccionar hiperparámetros y comparar la capacidad predictiva de distintos modelos.</p>
 <ul>
-<li>Para la evaluación final (<strong>comparación entre modelos</strong>):
+<li>Evaluación final (<strong>comparación entre modelos</strong>):
 <ul>
 <li>Crear <strong>particiones train/test</strong> mediante <code>train_test_split</code> (módulo <code>model_selection</code>).</li>
 <li>El conjunto de <strong>test</strong> se utiliza <strong>una sola vez al final</strong>.</li>
 </ul></li>
-<li>Para la selección de hiperparámetros (<strong>comparación dentro de un modelo</strong>):
+<li>Selección de hiperparámetros (<strong>comparación dentro de un modelo</strong>):
 <ul>
 <li><strong>Modelos lineales con regularización</strong>: el módulo <code>linear_model</code> incluye las clases <code>LassoCV</code> y <code>RidgeCV</code> que incorporan validación cruzada internamente para elegir el mejor <code>alpha</code>. (También <code>LogisticRegressionCV</code> para problemas de clasificación)</li>
 <li><strong>Casos más generales</strong>: utilizar <code>GridSearchCV</code> (módulo <code>model_selection</code>) para explorar combinaciones de hiperparámetros con validación cruzada.</li>
 </ul></li>
+<li><strong>Obtención de una distribución empírica del error</strong> de predicción de un estimador: <code>cross_validate</code> para evaluar un estimador múltiples veces sobre conjuntos de validación (<span class="math inline">\(K\)</span> pliegues). Permite obtener una distribución del error de predicción. Normalmente aplica sobre toda la muestra (sin particionar).</li>
 </ul>
 </section>
-<section id="ejemplo" class="slide level2" style="color:#447099">
-<h2>Ejemplo</h2>
-<div id="qpyodide-insertion-location-1"></div>
+<section id="ejemplo-estimación-de-la-distribución-del-error-de-predicción" class="slide level2" style="color:#447099">
+<h2>Ejemplo: estimación de la distribución del error de predicción</h2>
+<div id="qpyodide-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
-<section id="ejemplo-1" class="slide level2" style="color:#447099">
-<h2>Ejemplo</h2>
-<p>&nbsp;</p>
-<div id="qpyodide-insertion-location-2"></div>
+<section id="ejemplo-selección-de-hiperparámetro-por-validación-cruzada" class="slide level2" style="color:#447099">
+<h2>Ejemplo: selección de hiperparámetro por validación cruzada</h2>
+<div id="qpyodide-insertion-location-5"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="ejemplo-selección-de-hiperparámetro-por-validación-cruzada-caso-general" class="slide level2" style="color:#447099">
+<h2>Ejemplo: selección de hiperparámetro por validación cruzada (caso general)</h2>
+<div id="qpyodide-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 
 </section></section>
