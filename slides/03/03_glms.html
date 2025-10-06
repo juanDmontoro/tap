@@ -349,7 +349,7 @@
   }
 
   // Store cell data
-  globalThis.qpyodideCellDetails = [{"code":"import pandas as pd\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import confusion_matrix\nimport matplotlib.pyplot as plt\n\ndf = pd.read_csv('https://juandmontoro.github.io/tap/data/health_insurance.csv')\ndf.head()\n\n# Podemos predecir si un individuo es fumador?\ndf['smoker'] = df['smoker'].apply(lambda x: 1 if x==\"yes\" else 0)\ny = df['smoker']\nX = df.drop(columns=['smoker','sex','region'])\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)\n\nlm_bin = LinearRegression()\nlm_bin.fit(X_train, y_train)   # y_train ∈ {0,1}\n\n# lm_bin.coef_ # age, bmi, children, charges\n# lm_bin.intercept_\n\nypred = lm_bin.predict(X_test)\n\nypred","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\nimport pandas as pd\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import confusion_matrix\n\ndf = pd.read_csv('https://juandmontoro.github.io/tap/data/health_insurance.csv')\ndf.head()\n\ndf['smoker'].value_counts()\n# Podemos predecir si un individuo es fumador?\ny = df['smoker']\nX = df.drop(columns=['smoker','sex','region'])\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)\n\nlogit_bin = LogisticRegression(solver='lbfgs', max_iter=1000)\nlogit_bin.fit(X_train, y_train)   # y_train ∈ {0,1}\n\n# logit_bin.coef_ # age, bmi, children, charges\n# logit_bin.intercept_\n\nypred_prob = logit_bin.predict_proba(X_test)\nypred = logit_bin.predict(X_test)\n\nconfusion_matrix(y_test, ypred, labels=['no','yes'])","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\nimport pandas as pd\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import confusion_matrix\n\ndf = pd.read_csv('https://juandmontoro.github.io/tap/data/health_insurance.csv')\ndf\n\ndf['region'].value_counts()\n# ¿Podemos predecir procedencia de un individuo es fumador?\ny = df['region']\nX = df.drop(columns=['smoker','sex','region'])\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)\n\nmlogit_bin = LogisticRegression(solver='lbfgs', max_iter=20000)\nmlogit_bin.fit(X_train, y_train)   # y_train ∈ {0,1}\n\n# mlogit_bin.coef_ # age, bmi, children, charges\n# mlogit_bin.intercept_\n\n# Asignacion a la clase que maximiza la probabilidad\nypred_prob = mlogit_bin.predict_proba(X_test)\nypred = mlogit_bin.predict(X_test)\n\nconfusion_matrix(y_test, ypred, labels=['southeast','southwest','northwest','northeast'])","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import pandas as pd\nfrom sklearn.linear_model import PoissonRegressor\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures,StandardScaler\n\n# Conjunto de datos: 50000 pólizas de seguros de automóviles con información sobre siniestralidad y características del automovil y conductor\ndf = pd.read_csv('https://juandmontoro.github.io/tap/data/claims.csv',index_col=0)\ndf.head()\n\ndf['claims'].value_counts()\n# ¿Podemos predecir el número de siniestros declarados al seguro?\ny = df['claims']\nX = df.drop(columns=['claims'])\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)\n\npois = PoissonRegressor(max_iter=20000) \npipe = make_pipeline(PolynomialFeatures(5),StandardScaler(),pois)\n\npipe.fit(X_train, y_train)   \n\n\npipe.score(X_train,y_train) # deviance: mejor valor 1 y puede ser negativo","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+  globalThis.qpyodideCellDetails = [{"code":"import pandas as pd\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import confusion_matrix\nimport matplotlib.pyplot as plt\n\ndf = pd.read_csv('https://juandmontoro.github.io/tap/data/health_insurance.csv')\ndf.head()\n\n# Podemos predecir si un individuo es fumador?\ndf['smoker'] = df['smoker'].apply(lambda x: 1 if x==\"yes\" else 0)\ny = df['smoker']\nX = df.drop(columns=['smoker','sex','region'])\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)\n\nlm_bin = LinearRegression()\nlm_bin.fit(X_train, y_train)   # y_train ∈ {0,1}\n\n# lm_bin.coef_ # age, bmi, children, charges\n# lm_bin.intercept_\n\nypred = lm_bin.predict(X_test)\n\nypred","id":1,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\nimport pandas as pd\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import confusion_matrix\n\ndf = pd.read_csv('https://juandmontoro.github.io/tap/data/health_insurance.csv')\ndf.head()\n\ndf['smoker'].value_counts()\n# Podemos predecir si un individuo es fumador?\ny = df['smoker']\nX = df.drop(columns=['smoker','sex','region'])\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)\n\nlogit_bin = LogisticRegression(solver='lbfgs', max_iter=1000)\nlogit_bin.fit(X_train, y_train)   # y_train ∈ {0,1}\n\n# logit_bin.coef_ # age, bmi, children, charges\n# logit_bin.intercept_\n\nypred_prob = logit_bin.predict_proba(X_test)\nypred = logit_bin.predict(X_test)\n\nconfusion_matrix(y_test, ypred, labels=['no','yes'])","id":2,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"\nimport pandas as pd\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import confusion_matrix\n\ndf = pd.read_csv('https://juandmontoro.github.io/tap/data/health_insurance.csv')\ndf.head()\n\ndf['region'].value_counts()\ndf ['region']\n# ¿Podemos predecir procedencia de un individuo?\ny = df['region']\nX = df.drop(columns=['smoker','sex','region'])\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)\n\nmlogit = LogisticRegression(solver='lbfgs', max_iter=20000)\nmlogit.fit(X_train, y_train)   \n\n# mlogit.classes_ # ordenación de las categorias de la respuesta\n# mlogit.coef_ # age, bmi, children, charges\n# mlogit.intercept_\n\n# Asignacion a la clase que maximiza la probabilidad\nypred_prob = mlogit.predict_proba(X_test)\nypred = mlogit.predict(X_test)\n\nconfusion_matrix(y_test, ypred, labels=['northeast','northwest','southeast','southwest'])","id":3,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"import pandas as pd\nfrom sklearn.linear_model import PoissonRegressor\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import PolynomialFeatures,StandardScaler\n\n# Conjunto de datos: 50000 pólizas de seguros de automóviles con información sobre siniestralidad y características del automovil y conductor\ndf = pd.read_csv('https://juandmontoro.github.io/tap/data/claims.csv',index_col=0)\ndf.head()\n\ndf['claims'].value_counts()\n# ¿Podemos predecir el número de siniestros declarados al seguro?\ny = df['claims']\nX = df.drop(columns=['claims'])\nX_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)\n\npois = PoissonRegressor(max_iter=20000) \npipe = make_pipeline(PolynomialFeatures(5),StandardScaler(),pois)\n\npipe.fit(X_train, y_train)   \n\n\npipe.score(X_train,y_train) # deviance: mejor valor 1 y puede ser negativo","id":4,"options":{"autorun":"","classes":"","comment":"","context":"interactive","dpi":72,"fig-cap":"","fig-height":5,"fig-width":7,"label":"","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 
   </script>
@@ -585,7 +585,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 <li><p>¿Regresión lineal en problemas de clasificación?</p>
 <ul>
 <li>Si la respuesta es binaria <span class="math inline">\(X\hat{\beta}\)</span> es un estimador de <span class="math inline">\(P(Y=1|X)\)</span></li>
-<li>Pero el modelo lineal es incapaz de producir predicciones de <span class="math inline">\(P(Y|X)\)</span> que tengan sentido (las predicciones no necesariamente estarán dentro del intervalo <span class="math inline">\([0,1]\)</span>)</li>
+<li>Pero las predicciones <span class="math inline">\(P(Y|X)\)</span> del modelo lineal no necesariamente estarán dentro del intervalo <span class="math inline">\([0,1]\)</span></li>
 <li>Imposibilidad de acomodar respuestas cualitativas cuando tenemos más de dos clases (la respuesta debería tener un ordenamiento implícito, e incluso entonces la diferencia entre niveles de la respuesta sería arbitraria)</li>
 </ul></li>
 </ul>
@@ -597,10 +597,10 @@ Prof.Juan D. Montoro-Pons | 2025/26
 <li>La respuesta es continua: regresión lineal, Ridge, Lasso</li>
 <li>La respuesta es binaria: regresión logística (también probit)</li>
 <li>La respuesta es categórica (más de dos opciones): regresión multinomial</li>
-<li>La respuesta es un proceso de contteo (0,1,2…): regresión Poisson (o binomial negativa si sobredispersión)</li>
+<li>La respuesta es un proceso de conteo (0,1,2…): regresión Poisson (o binomial negativa si sobredispersión)</li>
 </ul>
 <blockquote>
-<p>Los modelos de regresión lineal, logístico, multinomial o Poisson (entre otros) se engloban dentro de los llamados <strong>modelos lineales generalizados</strong></p>
+<p>Los modelos de regresión lineal, logístico, multinomial o Poisson (entre otros) se engloban dentro del llamado <strong>modelo lineal generalizado</strong></p>
 </blockquote>
 </section>
 
@@ -660,7 +660,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 </section>
 <section id="ejemplo-predicciones-en-el-modelo-lineal-con-respuesta-binaria" class="slide level2" style="color:#447099">
 <h2>Ejemplo: predicciones en el modelo lineal con respuesta binaria</h2>
-<div id="b7a5d828" class="cell" data-execution_count="7">
+<div id="0c4e1974" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -714,7 +714,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 </section>
 <section id="ejemplo-predicciones-en-el-modelo-logístico" class="slide level2" style="color:#447099">
 <h2>Ejemplo: predicciones en el modelo logístico</h2>
-<div id="07a6625c" class="cell" data-execution_count="8">
+<div id="b5f6fa96" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -882,29 +882,33 @@ Prof.Juan D. Montoro-Pons | 2025/26
 <p>&nbsp;</p>
 <p>Si la respuesta <span class="math inline">\(y\)</span> tiene <span class="math inline">\(k &gt; 2\)</span> clases, usamos un modelo multinomial (también un GLM). Sus componentes:</p>
 <ol type="1">
-<li><p><strong>Componente estocástico</strong>: la respuesta sigue un modelo multinomial, es decir, puede tomar uno de <span class="math inline">\(k\)</span> valores. La probabilidad de que haya <span class="math inline">\(y_1, y_2, \ldots, y_k\)</span> resultados en cada categoría <span class="math inline">\(i = \ldots, k\)</span> de la respuesta <span class="math inline">\(y\)</span> en <span class="math inline">\(n\)</span> ensayos está dada por:<br>
+<li><p><strong>Componente estocástico</strong>: la respuesta sigue un modelo multinomial, es decir, puede tomar uno de <span class="math inline">\(k\)</span> valores. La probabilidad de que haya <span class="math inline">\(y_1, y_2, \ldots, y_K\)</span> resultados en cada categoría <span class="math inline">\(k =1 \ldots, K\)</span> de la respuesta <span class="math inline">\(y\)</span> en <span class="math inline">\(n\)</span> ensayos está dada por:<br>
 <span class="math display">\[
-P(y_1, y_2, \ldots, y_k) = \frac{n!}{y_1! y_2! \cdots y_k!} p_1^{y_1} p_2^{y_2} \cdots p_k^{y_k}
+P(y_1, y_2, \ldots, y_K) = \frac{n!}{y_1! y_2! \cdots y_K!} p_1^{y_1} p_2^{y_2} \cdots p_K^{y_K}
 \]</span></p></li>
-<li><p>Un <strong>predictor lineal</strong> para cada categoría <span class="math inline">\(j\)</span>-ésima (donde <span class="math inline">\(j = 1, 2, \ldots, k-1\)</span>):<br>
+<li><p>Un <strong>predictor lineal</strong> para cada categoría <span class="math inline">\(j\)</span>-ésima (donde <span class="math inline">\(j = 1, 2, \ldots, K\)</span>):<br>
 <span class="math display">\[
 \nu_j = \beta_{0j} + \beta_{1j} x_1 + \beta_{2j} x_2 + \cdots + \beta_{pj} x_p
 \]</span></p></li>
-<li><p>Una <strong>función de enlace logit</strong>. Para la categoría <span class="math inline">\(j\)</span>-ésima:<br>
+<li><p>Una <strong>función de enlace soft-max</strong> (en <code>sklearn</code>). Para la categoría <span class="math inline">\(j\)</span>-ésima:<br>
 <span class="math display">\[
-\log \left(\frac{P(Y = j)}{P(Y = k)}\right) = \nu_j
-\]</span> donde <span class="math inline">\(P(Y = j)\)</span> es la probabilidad de la categoría <span class="math inline">\(j\)</span>, y <span class="math inline">\(P(Y = k)\)</span> es la probabilidad de la categoría de referencia (que puede elegirse arbitrariamente).</p></li>
+\log \left(\frac{P(Y = j)}{\sum_k P(Y=k)}\right) = \nu_j
+\]</span> donde <span class="math inline">\(P(Y = j)\)</span> es la probabilidad de la categoría <span class="math inline">\(j\)</span> y <span class="math inline">\(\sum_k P(Y=k)\)</span> es la suma de las probabilidades para todas las categorias (funciona como normalización).</p></li>
 </ol>
 </section>
 <section id="regresión-logística-multinomial" class="slide level2" style="color:#447099">
 <h2>Regresión logística multinomial</h2>
 <p>&nbsp;</p>
 <p>La media condicional está dada por:</p>
-<p><span class="math display">\[P(y=m|X)=\frac{\exp{(X\beta_m)}}{\sum_j \exp{(X\beta_j)}}\]</span></p>
+<p><span class="math display">\[P(y=j|X)=\frac{\exp{(X\beta_j)}}{\sum_k \exp{(X\beta_k)}}\]</span></p>
 <ul>
-<li><p>Conceptualmente esto sería <em>como</em> estimar <span class="math inline">\(m-1\)</span> modelos logit binarios.</p></li>
-<li><p>Para garantizar la identificabilidad, los coeficientes de una categoría se fijan. Es decir, se establece <span class="math inline">\(\beta=0\)</span> para una categoría <em>base</em> o <em>de referencia</em>.</p></li>
-<li><p>La elección de la categoría base es arbitraria (aunque algunos pueden preferir la clase más frecuente o basar la elección en consideraciones teóricas).</p></li>
+<li>Conceptualmente esto supone estimar <span class="math inline">\(K\)</span> modelos logit binarios (habitual en aprendizaje automático).</li>
+</ul>
+<p>No obstante:</p>
+<ul>
+<li><p>Determinadas implementaciones elijen una categoría de referencia (o base) y estiman solo <span class="math inline">\(k-1\)</span> modelos logit (habitual en determinados paquetes econométricos/estadísticos). En este caso se establece <span class="math inline">\(\beta=0\)</span> para una categoría <em>base</em> o <em>de referencia</em>.</p></li>
+<li><p>En el caso anterior la elección de la categoría base es arbitraria (aunque algunos pueden preferir la clase más frecuente o basar la elección en consideraciones teóricas).</p></li>
+<li><p>La función de enlace al usar la categoría de referencia <span class="math inline">\(k\)</span> se convierte en: <span class="math display">\[   \log \left(\frac{P(Y = j)}{P(Y = k)}\right) = \nu_j\]</span></p></li>
 </ul>
 </section>
 <section id="ejemplo-modelo-multinomial" class="slide level2" style="color:#447099">
@@ -924,7 +928,7 @@ P(y_i|\lambda) = \frac{\exp({-\lambda})\, \lambda^{y_i}}{y_i!}
 <span class="math display">\[
 \nu_j = \beta_{0} + \beta_{1} x_1 + \beta_{2} x_2 + \cdots + \beta_{p} x_p
 \]</span></p></li>
-<li><p>Una <strong>función de enlace logarítmica</strong> que asegura que los conteos siempre sean no negativos:<br>
+<li><p>Una <strong>función de enlace logarítmica</strong> que asegura que los conteos sean siempre no negativos:<br>
 <span class="math display">\[
 \log (\lambda)  = X \beta
 \]</span></p></li>
