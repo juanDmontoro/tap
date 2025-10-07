@@ -614,7 +614,10 @@ Prof.Juan D. Montoro-Pons | 2025/26
 <h2>Componentes de un GLM</h2>
 <p>&nbsp;</p>
 <ol type="1">
-<li><p>Un <strong>componente estocástico</strong> que especifica la distribución de probabilidad de la variable respuesta (familia EDM, p.&nbsp;ej., normal, binomial, Poisson).</p></li>
+<li>Un <strong>componente estocástico</strong> que especifica la distribución de probabilidad de la variable respuesta (familia EDM, p.&nbsp;ej., normal, binomial, Poisson).</li>
+</ol>
+<p><span class="math display">\[y_i\sim EDM(\mu_i,\sigma^2)\]</span></p>
+<ol start="2" type="1">
 <li><p>Un <strong>componente sistemático</strong> o predictor lineal:<br>
 <span class="math display">\[\nu_i = \beta_1 + \beta_2 x_{2i} + \ldots + \beta_p x_{pi}\]</span></p></li>
 <li><p><strong>Función de enlace</strong>, es decir, una forma funcional que conecta la media de la respuesta con el componente sistemático (el predictor lineal):<br>
@@ -644,11 +647,11 @@ Prof.Juan D. Montoro-Pons | 2025/26
 <p>Sea un resultado binario <span class="math inline">\(y \in \{0,1\}\)</span> y <span class="math inline">\(x_1, x_2, \ldots, x_p\)</span> las variables explicativas. En este caso:</p>
 <ol type="1">
 <li><p>El <strong>componente estocástico</strong> (distribución Bernoulli):<br>
-<span class="math display">\[P(y_i;\mu_i) = \mu_i^{y_i}(1-\mu_i)^{(1-y_i)}\]</span></p></li>
+<span class="math display">\[P(Y=y_i;\mu_i) = \mu_i^{y_i}(1-\mu_i)^{(1-y_i)}\]</span></p></li>
 <li><p>El <strong>predictor lineal</strong>:<br>
 <span class="math display">\[\nu_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \ldots + \beta_p x_{pi}\]</span></p></li>
 <li><p>La <strong>función de enlace</strong>:<br>
-<span class="math display">\[\nu_i = g(\mu_i) = \log\left(\frac{\mu_i}{1-\mu_i}\right)\]</span></p></li>
+<span class="math display">\[\nu_i = g(\mu_i) = \log\left(\frac{\mu_i}{1-\mu_i}\right)= \log\left(\frac{P(y=1|X)}{P(y=0|X)}\right)\]</span></p></li>
 </ol>
 <p>Combinando estos elementos, el modelo logit predice la media condicional de la respuesta como:</p>
 <p><span class="math display">\[P(y_i=1 \mid X) = \mu_i = \frac{\exp(X\beta)}{1+\exp(X\beta)}\]</span></p>
@@ -660,7 +663,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 </section>
 <section id="ejemplo-predicciones-en-el-modelo-lineal-con-respuesta-binaria" class="slide level2" style="color:#447099">
 <h2>Ejemplo: predicciones en el modelo lineal con respuesta binaria</h2>
-<div id="cb556166" class="cell" data-execution_count="7">
+<div id="e220ca0b" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -714,7 +717,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 </section>
 <section id="ejemplo-predicciones-en-el-modelo-logístico" class="slide level2" style="color:#447099">
 <h2>Ejemplo: predicciones en el modelo logístico</h2>
-<div id="4609d88e" class="cell" data-execution_count="8">
+<div id="2ad46ed5" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -882,7 +885,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 <p>&nbsp;</p>
 <p>Si la respuesta <span class="math inline">\(y\)</span> tiene <span class="math inline">\(k &gt; 2\)</span> clases, usamos un modelo multinomial (también un GLM). Sus componentes:</p>
 <ol type="1">
-<li><p><strong>Componente estocástico</strong>: la respuesta sigue un modelo multinomial, es decir, puede tomar uno de <span class="math inline">\(k\)</span> valores. La probabilidad de que haya <span class="math inline">\(y_1, y_2, \ldots, y_K\)</span> resultados en cada categoría <span class="math inline">\(k =1 \ldots, K\)</span> de la respuesta <span class="math inline">\(y\)</span> en <span class="math inline">\(n\)</span> ensayos está dada por:<br>
+<li><p><strong>Componente estocástico</strong>: la respuesta sigue un modelo multinomial, es decir, puede tomar uno de <span class="math inline">\(K\)</span> valores. La probabilidad de que haya <span class="math inline">\(y_1, y_2, \ldots, y_K\)</span> resultados en cada categoría <span class="math inline">\(k =1 \ldots, K\)</span> de la respuesta <span class="math inline">\(y\)</span> en <span class="math inline">\(n\)</span> ensayos está dada por:<br>
 <span class="math display">\[
 P(y_1, y_2, \ldots, y_K) = \frac{n!}{y_1! y_2! \cdots y_K!} p_1^{y_1} p_2^{y_2} \cdots p_K^{y_K}
 \]</span></p></li>
@@ -946,10 +949,10 @@ P(y_i|\lambda) = \frac{\exp({-\lambda})\, \lambda^{y_i}}{y_i!}
 <p>&nbsp;</p>
 <table class="caption-top">
 <colgroup>
-<col style="width: 11%">
-<col style="width: 37%">
-<col style="width: 30%">
-<col style="width: 19%">
+<col style="width: 14%">
+<col style="width: 25%">
+<col style="width: 39%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -964,25 +967,25 @@ P(y_i|\lambda) = \frac{\exp({-\lambda})\, \lambda^{y_i}}{y_i!}
 <td><strong>Lineal</strong></td>
 <td><span class="math inline">\(y_i \sim N(\mu_i,\sigma^2)\)</span></td>
 <td><span class="math inline">\(\nu_i = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p\)</span></td>
-<td>Identidad: <span class="math inline">\(\nu_i = \mu_i\)</span></td>
+<td>Identidad: <span class="math inline">\(\, \nu_i = \mu_i\)</span></td>
 </tr>
 <tr class="even">
 <td><strong>Logístico (binario)</strong></td>
 <td><span class="math inline">\(y_i \sim \text{Bernoulli}(\mu_i)\)</span></td>
 <td><span class="math inline">\(\nu_i = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p\)</span></td>
-<td>Logit: <span class="math inline">\(\nu_i = \log\left(\dfrac{\mu_i}{1-\mu_i}\right)\)</span></td>
+<td>Logit: <span class="math inline">\(\, \nu_i = \log\left(\dfrac{\mu_i}{1-\mu_i}\right)\)</span></td>
 </tr>
 <tr class="odd">
 <td><strong>Logístico multinomial</strong></td>
 <td><span class="math inline">\(y_i \sim \text{Multinomial}(p_1,\dots,p_k)\)</span></td>
-<td><span class="math inline">\(\nu_j = \beta_{0j} + \beta_{1j} x_1 + \dots + \beta_{pj} x_p\)</span> (para <span class="math inline">\(j=1,\dots,k-1\)</span>)</td>
-<td>Logit: <span class="math inline">\(\log\left(\dfrac{P(Y=j)}{P(Y=k)}\right)=\nu_j\)</span></td>
+<td><span class="math inline">\(\nu_j = \beta_{0j} + \beta_{1j} x_1 + \dots + \beta_{pj} x_p\)</span> (para <span class="math inline">\(j=1,\dots,K\)</span>)</td>
+<td>Logit: <span class="math inline">\(\, \log\left(\dfrac{P(Y=j)}{P(Y=k)}\right)=\nu_j\)</span></td>
 </tr>
 <tr class="even">
 <td><strong>Poisson (conteos)</strong></td>
 <td><span class="math inline">\(y_i \sim \text{Poisson}(\lambda)\)</span></td>
 <td><span class="math inline">\(\nu_i = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p\)</span></td>
-<td>Log: <span class="math inline">\(\log(\lambda)=X\beta\)</span></td>
+<td>Log: <span class="math inline">\(\, \log(\lambda)=X\beta\)</span></td>
 </tr>
 </tbody>
 </table>
