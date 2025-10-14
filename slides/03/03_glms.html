@@ -654,7 +654,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 <span class="math display">\[\nu_i = g(\mu_i) = \log\left(\frac{\mu_i}{1-\mu_i}\right)= \log\left(\frac{P(y=1|X)}{P(y=0|X)}\right)\]</span></p></li>
 </ol>
 <p>Combinando estos elementos, el modelo logit predice la media condicional de la respuesta como:</p>
-<p><span class="math display">\[P(y_i=1 \mid X) = \mu_i = \frac{\exp(X\beta)}{1+\exp(X\beta)}\]</span></p>
+<p><span class="math display">\[P(y_i=1 \mid X) = \mu_i = \frac{\exp(\nu_i)}{1+\exp(\nu_i)}\]</span></p>
 </section>
 <section id="ejemplo-modelo-lineal-con-respuesta-binaria" class="slide level2" style="color:#447099">
 <h2>Ejemplo: modelo lineal con respuesta binaria</h2>
@@ -663,7 +663,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 </section>
 <section id="ejemplo-predicciones-en-el-modelo-lineal-con-respuesta-binaria" class="slide level2" style="color:#447099">
 <h2>Ejemplo: predicciones en el modelo lineal con respuesta binaria</h2>
-<div id="e220ca0b" class="cell" data-execution_count="7">
+<div id="ca9f4353" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -717,7 +717,7 @@ Prof.Juan D. Montoro-Pons | 2025/26
 </section>
 <section id="ejemplo-predicciones-en-el-modelo-logístico" class="slide level2" style="color:#447099">
 <h2>Ejemplo: predicciones en el modelo logístico</h2>
-<div id="2ad46ed5" class="cell" data-execution_count="8">
+<div id="c9f0b6ce" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href=""></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -903,7 +903,7 @@ P(y_1, y_2, \ldots, y_K) = \frac{n!}{y_1! y_2! \cdots y_K!} p_1^{y_1} p_2^{y_2} 
 <h2>Regresión logística multinomial</h2>
 <p>&nbsp;</p>
 <p>La media condicional está dada por:</p>
-<p><span class="math display">\[P(y=j|X)=\frac{\exp{(X\beta_j)}}{\sum_k \exp{(X\beta_k)}}\]</span></p>
+<p><span class="math display">\[P(y=j|X)=\frac{\exp{(\nu_j)}}{\sum_k \exp{(\nu_k)}}\]</span></p>
 <ul>
 <li>Conceptualmente esto supone estimar <span class="math inline">\(K\)</span> modelos logit binarios (habitual en aprendizaje automático).</li>
 </ul>
@@ -927,17 +927,17 @@ P(y_1, y_2, \ldots, y_K) = \frac{n!}{y_1! y_2! \cdots y_K!} p_1^{y_1} p_2^{y_2} 
 <span class="math display">\[
 P(y_i|\lambda) = \frac{\exp({-\lambda})\, \lambda^{y_i}}{y_i!}
 \]</span></p></li>
-<li><p>El <strong>predictor lineal</strong> es:<br>
+<li><p>El <strong>predictor lineal</strong>:<br>
 <span class="math display">\[
-\nu_j = \beta_{0} + \beta_{1} x_1 + \beta_{2} x_2 + \cdots + \beta_{p} x_p
+\nu_i = \beta_{0} + \beta_{1} x_1 + \beta_{2} x_2 + \cdots + \beta_{p} x_p
 \]</span></p></li>
 <li><p>Una <strong>función de enlace logarítmica</strong> que asegura que los conteos sean siempre no negativos:<br>
 <span class="math display">\[
-\log (\lambda)  = X \beta
+\log (\lambda)  = \nu_i
 \]</span></p></li>
 </ol>
 <p>Observa que esto implica:<br>
-<span class="math display">\[E[y|X]=\lambda=\exp({X\beta})\]</span></p>
+<span class="math display">\[E[y|X]=\lambda=\exp(\nu_i)\]</span></p>
 </section>
 <section id="ejemplo-modelo-de-poisson" class="slide level2" style="color:#447099">
 <h2>Ejemplo: modelo de Poisson</h2>
@@ -973,7 +973,7 @@ P(y_i|\lambda) = \frac{\exp({-\lambda})\, \lambda^{y_i}}{y_i!}
 <td><strong>Logístico (binario)</strong></td>
 <td><span class="math inline">\(y_i \sim \text{Bernoulli}(\mu_i)\)</span></td>
 <td><span class="math inline">\(\nu_i = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p\)</span></td>
-<td>Logit: <span class="math inline">\(\, \nu_i = \log\left(\dfrac{\mu_i}{1-\mu_i}\right)\)</span></td>
+<td>Logit: <span class="math inline">\(\, \log\left(\dfrac{P(Y=1)}{P(Y=0)}\right)=\nu_i\)</span></td>
 </tr>
 <tr class="odd">
 <td><strong>Logístico multinomial</strong></td>
@@ -985,7 +985,7 @@ P(y_i|\lambda) = \frac{\exp({-\lambda})\, \lambda^{y_i}}{y_i!}
 <td><strong>Poisson (conteos)</strong></td>
 <td><span class="math inline">\(y_i \sim \text{Poisson}(\lambda)\)</span></td>
 <td><span class="math inline">\(\nu_i = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p\)</span></td>
-<td>Log: <span class="math inline">\(\, \log(\lambda)=X\beta\)</span></td>
+<td>Log: <span class="math inline">\(\, \log(\lambda)=\nu_i\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -1031,9 +1031,9 @@ P(y_i|\lambda) = \frac{\exp({-\lambda})\, \lambda^{y_i}}{y_i!}
 <span id="cb7-2"><a href=""></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> Poissonregressor</span>
 <span id="cb7-3"><a href=""></a></span>
 <span id="cb7-4"><a href=""></a><span class="co"># Regressión logit o multinomial </span></span>
-<span id="cb7-5"><a href=""></a>lasso_logit <span class="op">=</span> LogisticRegressionCV(Cs<span class="op">=</span><span class="dv">10</span>, penalty<span class="op">=</span><span class="st">"l1"</span>, solver<span class="op">=</span><span class="st">'saga'</span>)</span>
-<span id="cb7-6"><a href=""></a>ridge_logit <span class="op">=</span> LogisticRegressionCV(Cs<span class="op">=</span><span class="dv">10</span>, penalty<span class="op">=</span><span class="st">"l2"</span>,solver<span class="op">=</span><span class="st">'saga'</span>)</span>
-<span id="cb7-7"><a href=""></a>enet_logit <span class="op">=</span> LogisticRegressionCV(Cs<span class="op">=</span><span class="dv">10</span>, penalty<span class="op">=</span><span class="st">"elasticnet"</span>, l1_ratios<span class="op">=</span>[<span class="dv">0</span>,<span class="fl">0.5</span>,<span class="dv">1</span>], solver<span class="op">=</span><span class="st">'saga'</span>)</span>
+<span id="cb7-5"><a href=""></a>lasso_logit <span class="op">=</span> LogisticRegressionCV(Cs<span class="op">=</span><span class="dv">10</span>, penalty<span class="op">=</span><span class="st">"l1"</span>, solver<span class="op">=</span><span class="st">'liblinear'</span>)</span>
+<span id="cb7-6"><a href=""></a>ridge_logit <span class="op">=</span> LogisticRegressionCV(Cs<span class="op">=</span><span class="dv">10</span>, penalty<span class="op">=</span><span class="st">"l2"</span>,solver<span class="op">=</span><span class="st">'liblinear'</span>)</span>
+<span id="cb7-7"><a href=""></a>enet_logit <span class="op">=</span> LogisticRegressionCV(Cs<span class="op">=</span><span class="dv">10</span>, penalty<span class="op">=</span><span class="st">"elasticnet"</span>, l1_ratios<span class="op">=</span>[<span class="fl">0.25</span>,<span class="fl">0.5</span>,<span class="fl">0.75</span>], solver<span class="op">=</span><span class="st">'saga'</span>)</span>
 <span id="cb7-8"><a href=""></a></span>
 <span id="cb7-9"><a href=""></a><span class="co"># El parámetro alpha en PoissonRegressor controla la cantidad de penalización Ridge </span></span>
 <span id="cb7-10"><a href=""></a>pois <span class="op">=</span> PoissonRegressor(alpha<span class="op">=</span><span class="dv">1</span>) <span class="co"># penalización ridge</span></span>
