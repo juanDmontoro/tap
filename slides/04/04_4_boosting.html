@@ -1236,7 +1236,7 @@ L = \frac{1}{2}(y_i - \hat{y}_i^{(t-1)})^2
 </li>
 <li>Tasa de aprendizaje: <span class="math inline">\(\eta\)</span>
 <ul>
-<li>Controla la velocidad de actualización del modelo (valores comunes pequeños: 0.01 o 0.001).</li>
+<li>Controla la velocidad de actualización del modelo (valores comunes pequeños &lt;0.1).</li>
 <li>Interacción con <span class="math inline">\(T\)</span>: un <span class="math inline">\(\eta\)</span> más pequeño requiere un <span class="math inline">\(T\)</span> mayor para obtener buen rendimiento.</li>
 </ul>
 </li>
@@ -1405,9 +1405,8 @@ R2 test 0.8253</code></pre>
 <span id="cb9-9"><a href></a></span>
 <span id="cb9-10"><a href></a>lgbm.fit(X_train,y_train)<span class="op">;</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.000264 seconds.
-You can set `force_row_wise=true` to remove the overhead.
-And if memory is not enough, you can set `force_col_wise=true`.
+<pre><code>[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.000174 seconds.
+You can set `force_col_wise=true` to remove the overhead.
 [LightGBM] [Info] Total Bins 1846
 [LightGBM] [Info] Number of data points in the train set: 14303, number of used features: 12
 [LightGBM] [Info] Start training from score 207.283981</code></pre>
