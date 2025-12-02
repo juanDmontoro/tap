@@ -1258,34 +1258,29 @@ Juan D. Montoro-Pons | 2025/26
 <tr class="odd">
 <td><strong>Adam</strong></td>
 <td>Combina momentum + escalado adaptativo para cada parámetro del LR (promedio de gradientes y cuadrados). Acelera el aprendizaje cuando hay consistencia en dirección del gradiente.</td>
-<td></td>
+<td>Curvatura irregular; ravines; puntos de silla; gradientes de distintas escalas; entrenamiento inestable.</td>
 </tr>
 <tr class="even">
-<td>Curvatura irregular; ravines; puntos de silla; gradientes de distintas escalas; entrenamiento inestable.</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
 <td><strong>Regularización L2 (weight decay)</strong></td>
 <td>Penaliza pesos grandes; distribuye importancia entre múltiples neuronas.</td>
 <td>Sobreajuste; especialización excesiva de neuronas.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><strong>Regularización L1</strong></td>
 <td>Promueve dispersión (sparsity) al fijar determinados pesos a cero.</td>
 <td>Sobreajuste; selección automática de características.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><strong>Dropout</strong></td>
 <td>Desactiva neuronas aleatoriamente durante el entrenamiento.</td>
 <td>Sobreajuste; dependencia excesiva en neuronas concretas.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><strong>Batch Normalization</strong></td>
 <td>Normaliza activaciones por mini-batch; estabiliza el flujo del gradiente.</td>
 <td>Internal covariate shift; saturación en sigmoide/tanh; vanishing gradient; entrenamientos lentos o inestables.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><strong>Ajuste dinámico del learning rate (ReduceLROnPlateau, decay schedules, warmup)</strong></td>
 <td>Modifica LR según progreso del entrenamiento. Estabiliza y acelera convergencia.</td>
 <td>Entrenamiento estancado en plateaus; regiones planas o puntos de silla; dificultad para escapar de mínimos locales poco profundos; oscilaciones por LR alto; convergencia lenta por LR bajo; mínima mejora del loss tras varias épocas</td>
@@ -1297,14 +1292,17 @@ Juan D. Montoro-Pons | 2025/26
 <ul id="tabset-3" class="panel-tabset-tabby">
 <li><a data-tabby-default href="#tabset-3-1">SGD + momento</a></li>
 <li><a href="#tabset-3-2">RMSprop</a></li>
+<li><a href="#tabset-3-3">Adam</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-3-1">
-<p><span class="math display">\[\nu_t =\beta \nu_{t-1}+(1-\beta) g_t\]</span> <span class="math display">\[w_{t}=w_{t-1}-\eta \nu_{t}\]</span></p>
-<p>Donde <span class="math inline">\(g_\)</span> es el gradiente <span class="math inline">\(\nabla L(w)\)</span></p>
+<p><span class="math display">\[\nu_t =\beta \nu_{t-1}+(1-\beta) g_t\]</span> <span class="math display">\[w_{t} = w_{t-1}-\eta \nu_{t}\]</span></p>
+<p>Donde <span class="math inline">\(g\)</span> es el gradiente <span class="math inline">\(\nabla L(w)\)</span></p>
 </div>
 <div id="tabset-3-2">
-<p><span class="math display">\[\nu_t =\beta \nu_{t-1}+(1-\beta) g_t^2\]</span> <span class="math display">\[w_{t}=w_{t-1}-\frac{\eta}{\nu_{t}+\epsilon}g_t\]</span> ## Adam</p>
+<p><span class="math display">\[\nu_t =\beta \nu_{t-1}+(1-\beta) g_t^2 \]</span> <span class="math display">\[w_{t}=w_{t-1}-\frac{\eta}{\sqrt{\nu_{t}+\epsilon}}g_t\]</span></p>
+</div>
+<div id="tabset-3-3">
 <p><span class="math display">\[\nu_t =\beta_1\nu_{t-1}-(1-\beta_1)g_t\]</span> <span class="math display">\[s_t =\beta_2 s_{t-1}-(1-\beta_2)g_t^2\]</span> <span class="math display">\[w_{t}=w_{t-1}-\eta\frac{\nu_t}{s_{t}+\epsilon}*g_t\]</span></p>
 </div>
 </div>
