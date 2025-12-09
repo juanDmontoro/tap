@@ -1102,7 +1102,50 @@ H_\ell =g\left( U \, X_\ell+V \, H_{\ell-1}\right)
 <li><p>Puerta de entrada. Actúa como filtro determinando qué parte de la nueva información debe almacenarse junto al estado de la célula <span class="math inline">\(c_t\)</span>. Genera posibles valores (tanh) a añadir al estado y decide cuales añadir (sigmoid).</p></li>
 <li><p>Actualización del estado de la célula: actualiza olvidando información (multiplicación por la puerta de olvido) y añadiendo nueva información (salida de la puerta de entrada).</p></li>
 <li><p>Puerta de salida: determina que partes del estado de la célula deben influir el output actual. Combina el estado de la célula <span class="math inline">\(c_t\)</span> junto los valores de la puerta de salida.</p></li>
-</ol></section></section>
+</ol></section><section id="rnns-vs.-lstms" class="slide level2" style="color:#447099"><h2>RNNs vs. LSTMs</h2>
+<p> </p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead><tr class="header">
+<th></th>
+<th>RNN</th>
+<th>LSTM</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>Capacidad de memoria</strong></td>
+<td>
+<strong>Corto plazo</strong><br>- Recuerdan con fiabilidad ~5–10 pasos de tiempo<br>- Dificultad con dependencias a largo plazo<br>- Ideales cuando importa sobre todo el contexto reciente</td>
+<td>
+<strong>Largo plazo:</strong><br>- Pueden mantener información durante 100+ pasos de tiempo<br>- Capturan dependencias de largo alcance<br>- Adecuadas cuando se requiere contexto extenso</td>
+</tr>
+<tr class="even">
+<td><strong>Complejidad de entrenamiento</strong></td>
+<td>
+<strong>Más simples:</strong><br>- Menos parámetros a entrenar<br> - Menor propensión al sobreajuste en datasets pequeños</td>
+<td>
+<strong>Más complejas:</strong><br>- <span class="math inline">\(\approx\)</span> 4× más parámetros que una RNN equivalente<br>- Entrenamiento más lento por los cómputos de las puertas<br>- Mejor generalización en tareas complejas</td>
+</tr>
+<tr class="odd">
+<td><strong>Rendimiento según longitud de secuencia</strong></td>
+<td>
+<strong>Secuencias cortas (&lt; 20 pasos):</strong> suelen rendir tan bien como LSTM</td>
+<td>
+<strong>Secuencias medias (20–100):</strong> empiezan a mostrar ventajas<br><strong>Secuencias largas (100+):</strong> superan claramente a las RNN</td>
+</tr>
+<tr class="even">
+<td><strong>Comparación en tareas: series temporales</strong></td>
+<td>
+<strong>Pronóstico a corto plazo:</strong> eficaces para patrones y tendencias de corto plazo</td>
+<td>
+<strong>Estacionalidad y ciclos largos:</strong> mejores capturando patrones estacionales y dependencias de largo plazo</td>
+</tr>
+</tbody>
+</table></section></section>
 </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
