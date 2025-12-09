@@ -1035,18 +1035,31 @@ Juan D. Montoro-Pons | 2025/26
 <li><p>Entrada: secuencia <span class="math inline">\(X = {X_1, X_2, \dots, X_L}\)</span> donde cada <span class="math inline">\(X_\ell\)</span> es un vector que utilizamos como entrada para alimentar la red.</p></li>
 <li><p>Secuencia de activaciones en una capa oculta: <span class="math inline">\(H_\ell\)</span> acumula contexto previo.</p></li>
 <li><p>Cada activación tiene como entrada el vector en <span class="math inline">\(X_t\)</span> y <span class="math inline">\(H_{t-1}\)</span></p></li>
-<li><p>Número de neuronas en la capa oculta: cada activación <span class="math inline">\(H_t\)</span> tiene <span class="math inline">\(K\)</span> neuronas, <span class="math inline">\(H_t=[H_{t1}, H_{t2}\ldots H_{tK}]\)</span></p></li>
 <li><p>Salida: la secuencia de activaciones <span class="math inline">\(H_\ell\)</span> alimentan la capa de salida y produce la secuencia <span class="math inline">\(O_\ell\)</span> (normalmente solo la última es de relevancia).</p></li>
 <li><p>Pesos compartidos: matrices <span class="math inline">\(W\)</span>, <span class="math inline">\(U\)</span>, <span class="math inline">\(V\)</span> se aplican en cada paso.</p></li>
 </ul></section><section id="rnn-ejemplo" class="slide level2" style="color:#447099"><h2>RNN: ejemplo</h2>
 <p> </p>
-<p>Objetivo: predicción de una serie temporal univariante <span class="math inline">\(X_1, X_2,X_3 \ldots X_T\)</span> usando una ventana con las 4 observaciones anteriores (<span class="math inline">\(X_5\)</span> se predice con el vector <span class="math inline">\(X_\ell=X_1\ldots X_4\)</span> etc.) y 6 neuronas en cada capa oculta.</p>
+<p>Objetivo: predicción de una serie temporal univariante <span class="math inline">\(X\)</span> usando una ventana con las 4 observaciones anteriores (<span class="math inline">\(x_5\)</span> se predice con el vector <span class="math inline">\(X_\ell=x_1\ldots x_4\)</span>). Suponemos una capa recurrente con 6 unidades ocultas.</p>
 <ul>
-<li><p>Cada observación alimenta un estado oculto <span class="math inline">\(H_1\)</span>, <span class="math inline">\(H_2\)</span>, <span class="math inline">\(H_3\)</span>, <span class="math inline">\(H_4\)</span>. La representación expandida de la red <span class="math display">\[H_1 \to H_2 \to H_3 \to H_4 \to \text{Salida}\]</span></p></li>
-<li><p>Cada estado oculto recibe dos entradas: la observación del momento <span class="math inline">\(t\)</span> correspondiente y el estado oculto anterior. P.e., <span class="math inline">\(H_3\)</span> recibe <span class="math inline">\(X_{3}\)</span> y <span class="math inline">\(H_2\)</span>.</p></li>
-<li><p>Cada estado oculto <span class="math inline">\(H_\ell\)</span> es vector de dimensión <span class="math inline">\(K=6\)</span>, número de neuronas ocultas. P.e., <span class="math inline">\(H_{1}=[H_{11},H_{12}\ldots H_{16}]\)</span></p></li>
-<li><p>Los pesos compartidos acumulan información diferente: <span class="math inline">\(U\)</span> procesa la observación actual, <span class="math inline">\(V\)</span> acumula la memoria del paso anterior; <span class="math inline">\(W\)</span> conecta output con las activaciones.</p></li>
-</ul></section><section id="actualización-del-estado-oculto-y-salida" class="slide level2" style="color:#447099"><h2>Actualización del estado oculto y salida</h2>
+<li>
+<p>Las secuencias de 4 observaciones alimentan un conjunto de 6 unidades recurrentes, cada una de las cuales genera un estado oculto <span class="math inline">\(h_t \in \mathbb{R}^6\)</span> en cada instante <span class="math inline">\(t\)</span>. La representación expandida de la dinámica temporal es:</p>
+<p><span class="math display">\[h_1 \to h_2 \to h_3 \to h_4 \to \text{Salida}\]</span></p>
+</li>
+<li><p>En cada paso temporal <span class="math inline">\(t\)</span>, el estado oculto se actualiza a partir de dos entradas: la observación en ese instante <span class="math inline">\(x_t\)</span> y el estado oculto anterior <span class="math inline">\(h_{t-1}\)</span>. Por ejemplo, <span class="math inline">\(h_3\)</span> recibe <span class="math inline">\(x_3\)</span> y <span class="math inline">\(h_2\)</span>.</p></li>
+<li>
+<p>Los <strong>pesos compartidos</strong> de la capa recurrente comprenden:</p>
+<ul>
+<li>
+<span class="math inline">\(U\)</span>: pesos que transforman la entrada actual <span class="math inline">\(x_t\)</span>,</li>
+<li>
+<span class="math inline">\(V\)</span>: pesos que transforman la memoria del paso anterior <span class="math inline">\(h_{t-1}\)</span>,</li>
+<li>
+<span class="math inline">\(W\)</span>: pesos que conectan el estado oculto final con la capa de salida.</li>
+</ul>
+</li>
+</ul>
+<p>Estos pesos se reutilizan en todos los pasos temporales, lo que permite acumular información a lo largo de la secuencia.</p>
+</section><section id="actualización-del-estado-oculto-y-salida" class="slide level2" style="color:#447099"><h2>Actualización del estado oculto y salida</h2>
 <p> </p>
 <p>Para cada paso <span class="math inline">\(\ell\)</span>: <span class="math display">\[
 H_\ell =g\left( U \, X_\ell+V \, H_{\ell-1}\right)
