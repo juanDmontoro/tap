@@ -1,0 +1,399 @@
+---
+title: "Matplotlib graphics"
+author: "Juan D. Montoro-Pons"
+toc: true
+format: html
+filters: 
+   - pyodide
+execute: 
+  conda:
+    environment: base
+editor: source
+---
+
+# Introduction to Matplotlib
+
+Matplotlib is a Python library used for creating visualizations. In this guide, we will explore how to use its `pyplot` module to create 2D and 3D plots.
+
+Before starting, we import the required libraries:
+
+```{pyodide-python}
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+## 1. Plots for one variable
+
+### 1.1 Histograms
+
+A histogram displays the distribution of a numerical variable by dividing the data into intervals (or bins) and showing the frequency of values in each interval.
+
+Use `plt.hist()` to create a histogram.
+
+```{pyodide-python}
+
+# Generate random data
+data = np.random.normal(loc=0, scale=1, size=1000)  # Mean 0, Std Dev 1
+
+# Create a histogram. We start by creating a fresh plot with plt.figure
+plt.figure(figsize=(6,4))
+plt.hist(data)
+plt.show()
+```
+
+We can modify the way the histogram is displayed using the following options:
+
+- **`bins`**: Number of intervals to divide the data into.
+- **`color`**: Fill color of the bars.
+- **`edgecolor`**: Color of the bar edges for better readability.
+
+```{pyodide-python}
+
+plt.figure(figsize=(6, 4)) 
+plt.hist(data, bins=20, color='blue', edgecolor='black')
+plt.show()
+```
+
+Finally we can add labels, titles, and legends to improve the presentation of your plots:
+
+```{pyodide-python}
+
+plt.figure(figsize=(6, 4)) 
+plt.hist(data, bins=20, color='blue', edgecolor='black')
+plt.title("Histogram of Data")
+plt.xlabel("Value")
+plt.ylabel("Frequency")
+plt.show()
+```
+
+
+#### Adding normalization
+
+To show relative frequencies instead of absolute counts, use the `density=True` option.
+
+```{pyodide-python}
+
+plt.figure(figsize=(6, 4)) 
+plt.hist(data, bins=20, density=True, color='green', alpha=0.7)
+plt.title("Normalized Histogram")
+plt.xlabel("Value")
+plt.ylabel("Density")
+plt.show()
+```
+
+#### Overlaying a Density Curve
+
+You can overlay a probability density function (PDF) using `scipy.stats`.
+
+```{pyodide-python}
+from scipy.stats import norm
+
+# Fit a normal distribution to the data
+mu, std = norm.fit(data)
+
+
+# Plot histogram
+plt.figure(figsize=(6, 4)) 
+plt.hist(data, bins=20, density=True, color='blue', alpha=0.6, edgecolor='black')
+
+# Plot the PDF
+x = np.linspace(min(data), max(data), 1000)
+pdf = norm.pdf(x, mu, std)
+plt.plot(x, pdf, 'r--', label='Normal PDF')
+
+plt.title("Histogram with Density Curve")
+plt.legend()
+plt.show()
+```
+
+
+
+### 1.2. Bar charts for qualitative variables
+
+A bar chart displays the frequencies or counts of categorical data. Each bar represents a category, and the height indicates its frequency.
+
+Use `plt.bar()` to create a bar chart.
+
+```{pyodide-python}
+categories = ['Category A', 'Category B', 'Category C', 'Category D']
+counts = [10, 15, 7, 12]
+
+
+# Create bar chart
+plt.figure(figsize=(6, 4)) 
+plt.bar(categories, counts, color='orange', edgecolor='black')
+plt.title("Bar Chart of Categories")
+plt.xlabel("Categories")
+plt.ylabel("Counts")
+plt.show()
+```
+
+You can enhance the bar chart with custom colors, labels, and patterns.
+
+```{pyodide-python}
+# Custom bar chart
+plt.figure(figsize=(6, 4)) 
+plt.bar(categories, counts, color=['blue', 'green', 'red', 'purple'], edgecolor='black', hatch='/')
+plt.title("Customized Bar Chart")
+plt.xlabel("Categories")
+plt.ylabel("Counts")
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.show()
+```
+
+Use `plt.barh()` to create a horizontal bar chart.
+
+```{pyodide-python}
+plt.figure(figsize=(6, 4)) 
+plt.barh(categories, counts, color='teal', edgecolor='black')
+plt.title("Horizontal Bar Chart")
+plt.xlabel("Counts")
+plt.ylabel("Categories")
+plt.show()
+```
+
+### 1.3 Grouped and stacked bar charts
+
+
+Grouped bar charts are useful for comparing categories across multiple groups.
+
+```{pyodide-python}
+# Data for grouped bar chart
+categories = ['Category A', 'Category B', 'Category C']
+group1 = [5, 7, 8]
+group2 = [6, 9, 11]
+
+x = np.arange(len(categories))  # X positions for the groups
+width = 0.35  # Width of bars
+
+# Create grouped bar chart
+plt.figure(figsize=(6, 4)) 
+plt.bar(x - width/2, group1, width, label='Group 1', color='blue')
+plt.bar(x + width/2, group2, width, label='Group 2', color='orange')
+plt.xticks(x, categories)
+plt.title("Grouped Bar Chart")
+plt.xlabel("Categories")
+plt.ylabel("Counts")
+plt.legend()
+plt.show()
+```
+
+
+Stacked bar charts display the total counts for each category while breaking them into subgroups.
+
+```{pyodide-python}
+# Data for stacked bar chart
+stack1 = [5, 7, 8]
+stack2 = [6, 9, 11]
+
+# Create stacked bar chart
+plt.figure(figsize=(6, 4)) 
+plt.bar(categories, stack1, label='Stack 1', color='blue')
+plt.bar(categories, stack2, bottom=stack1, label='Stack 2', color='orange')
+plt.title("Stacked Bar Chart")
+plt.xlabel("Categories")
+plt.ylabel("Counts")
+plt.legend()
+plt.show()
+```
+
+
+
+## 2. Two-Dimensional Plots
+
+### 2.1 Creating a Simple Plot
+
+The basic command for creating a 2D plot is `plt.plot(x, y)`, where `x` and `y` are vectors of the same length. For example:
+
+```{pyodide-python}
+
+x = np.array([0, 0.2, 0.8, 1.3, 2])
+y = np.array([4.2, 1.2, -2.2, 1.1, 0.2])
+
+plt.figure(figsize=(6, 4)) 
+plt.plot(x, y)
+plt.show()
+
+# If you wanna clear the existing plot use the method close()
+# as in plt.close()
+
+```
+
+### 2.2 Formatting Options
+
+You can customize the appearance of the plot using the following optional arguments:
+
+- **Line Color:** `'r'` for red, `'g'` for green, etc.
+- **Line Style:** `'-'` (solid), `'--'` (dashed), `':'` (dotted).
+- **Markers:** `'o'` (circle), `'^'` (triangle).
+
+Example:
+
+```{pyodide-python}
+
+# x,y are already defined. We will change the appearance
+plt.figure(figsize=(6, 4)) 
+plt.plot(x, y, 'g--o', linewidth=2, markersize=8, markeredgecolor='k')
+plt.show()
+
+```
+
+
+### 2.3 Plotting Mathematical Functions
+
+To plot mathematical functions $f(x)$, you can generate $x$ points using the `NumPy`'s function `np.linspace` and then map them using $f(\cdot)$. For example:
+
+```{pyodide-python}
+
+x = np.linspace(-2, 4, 100)
+y = (3.5)**(-0.5 * x) * np.cos(6 * x)
+
+plt.figure(figsize=(6, 4)) 
+plt.plot(x, y)
+plt.show()
+```
+
+
+
+### 2.4 Plotting Multiple Curves in the Same Graph
+
+It is always possible to plot multiple curves on the same axes. For example:
+
+```{pyodide-python}
+
+x = np.linspace(-2, 4, 100)
+y = 3 * x**3 - 26 * x + 10
+dy = 9 * x**2 - 26
+ddy = 18 * x
+
+plt.figure(figsize=(6, 4)) 
+plt.plot(x, y, 'b', label='Function')
+plt.plot(x, dy, '--r', label='First Derivative')
+plt.plot(x, ddy, ':k', label='Second Derivative')
+plt.legend()
+plt.show()
+```
+
+### 2.5 Formatting Plots
+
+Add labels, titles, and legends to improve the presentation of your plots:
+
+```{pyodide-python}
+x = np.linspace(10, 22, 1000)
+y = 95000 / x**2
+
+plt.figure(figsize=(6, 4)) 
+plt.plot(x, y, label='Theory')
+plt.xlabel('Distance (cm)')
+plt.ylabel('Intensity (lux)')
+plt.title('Light Intensity vs Distance')
+plt.legend(loc='best')
+plt.grid()
+plt.show()
+```
+
+
+## 3. Three-Dimensional Plots
+
+Matplotlib supports 3D plots using `plot_surface`. First, generate a mesh grid (2D array representing the `x-y` coordinates of a grid) with `np.meshgrid`:
+
+```{pyodide-python}
+x = np.linspace(-np.pi, np.pi, 30)
+y = x
+X, Y = np.meshgrid(x, y)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+
+fig = plt.figure(figsize=(6,4))
+ax = plt.axes(projection='3d')
+ax.plot_surface(X, Y, Z, cmap='viridis')
+plt.show()
+```
+
+
+**Note**: the `cmap` parameter defines the color map. You can explore the available options in the [Matplotlib documentation](https://matplotlib.org/stable/tutorials/colors/colormaps.html).
+
+Alternatives to surface plots are imshows, primarily designed to display image data: it visualizes 2D arrays as a grid of colored squares, where each square's color represents the corresponding array value. This makes it  suitable for creating heatmaps (though its primary purpose is broader).
+
+```{pyodide-python}
+fig = plt.figure(figsize=(6,4))
+plt.imshow(Z,cmap='viridis')
+plt.show()
+```
+
+Finally, we can represent three-dimensional surface data in two dimensions using level curves (lines connecting points of the same value) or contours:
+
+```{pyodide-python}
+fig = plt.figure(figsize=(6,4))
+plt.contour(X,Y,Z)
+plt.show()
+```
+
+
+
+## 4. Subplots
+
+The `plt.subplot(m, n, p)` command divides the window into an `m x n` grid of plots and activates the position `p`.
+
+```{pyodide-python}
+
+x = np.linspace(0, 10, 100)
+y1 = np.sin(x)
+y2 = np.cos(x)
+
+plt.figure(figsize=(6, 4)) 
+
+plt.subplot(2, 1, 1)
+plt.plot(x, y1)
+plt.title('Sine')
+
+plt.subplot(2, 1, 2)
+plt.plot(x, y2)
+plt.title('Cosine')
+
+plt.show()
+```
+
+
+
+
+Let us illustrate the case of subplots in a $2\times 2$ grid:
+
+
+```{pyodide-python}
+x = np.linspace(0,1,100)
+
+plt.figure(figsize=(6,4))
+plt.subplot(221) # note you can also pass the arguments without commas
+plt.plot(x,np.sin(x))
+plt.xlabel("x-Axis")
+plt.title("Figure 1")
+
+plt.subplot(222)
+plt.scatter(np.sin(x),np.cos(x))
+plt.title("Figure 2")
+
+plt.subplot(223)
+plt.hist(np.random.random(100))
+plt.title("Figure 3")
+
+plt.subplot(224)
+plt.plot(x,np.log(x+1))
+plt.title("Figure 4")
+# The line below adjusts vertical spacing so labels do not overlap
+# Change hspace to modify the arrangement
+plt.subplots_adjust(hspace=0.5) 
+plt.show()
+```
+
+## 5. Alternatives to `matplotlib`
+
+There are alternatives in `Python` to `Matplotlib`. Next, `Seaborn` or `Plotnine` are mentioned.
+
+:::{.callout-tip title="Seaborn library"}
+[Seaborn](https://seaborn.pydata.org/) is a powerful data visualization library built on top of matplotlib. While matplotlib provides a foundational framework for creating various plots, seaborn offers a higher-level interface with a focus on statistical graphics and exploratory data analysis. It simplifies the creation of visually appealing and informative plots, such as heatmaps, violin plots, and pair plots, which are often more complex to implement using only matplotlib. Seaborn also provides a more consistent aesthetic style and a wider range of color palettes, making it easier to create visually pleasing and informative visualizations with less code.
+:::
+
+:::{.callout-tip title="Seaborn library"}
+[Plotnine](https://plotnine.org/) If you're familiar with ggplot2 from R, Plotnine offers a similar syntax and philosophy for creating elegant and informative visualizations in Python.
+:::
+

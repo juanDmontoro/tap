@@ -1,0 +1,262 @@
+# Arrays de NumPy {#sec-numpy}
+
+NumPy (*Numerical Python*) es la librería fundamental para el cálculo numérico en Python. Proporciona el **array** (`ndarray`): una estructura para vectores, matrices y tensores de $N$ dimensiones, implementada en C, con la que las operaciones se hacen de forma **vectorizada** (sobre todos los elementos a la vez, sin bucles explícitos). pandas, scikit-learn y Keras están construidos sobre NumPy, así que casi todo lo que veremos en el curso acaba siendo un array.
+
+Se importa siempre con el alias `np`:
+
+```{pyodide-python}
+import numpy as np
+```
+
+## Crear arrays
+
+### A partir de una lista
+
+`np.array()` convierte una lista (o una lista de listas) en un array.
+
+```{pyodide-python}
+anyos = np.array([2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008])
+anyos
+```
+
+A diferencia de una lista, todos los elementos de un array son del **mismo tipo** (`dtype`): enteros, decimales, booleanos... Si mezclas enteros y decimales, todo pasa a decimal.
+
+```{pyodide-python}
+x = np.array([1, 2.5, 3])
+print(x)
+print(x.dtype)
+print(anyos.dtype)
+```
+
+::: {.callout-note title="Escalares de NumPy"}
+Al mostrar un único elemento de un array verás algo como `np.int64(2001)` o `np.float64(2.5)`. Es simplemente un número con el tipo de NumPy; se opera con él como con cualquier `int` o `float`. Con `print()` se muestra sin el prefijo.
+:::
+
+### Secuencias: `arange`, `linspace`, `logspace`
+
+`np.arange(inicio, fin, paso)` genera una secuencia con paso constante. El fin no se incluye, como en `range`, pero admite decimales.
+
+```{pyodide-python}
+print(np.arange(1, 7, 2))
+print(np.arange(0., 10, 2))
+print(np.arange(0, 10, 1.5))
+```
+
+`np.linspace(inicio, fin, n)` genera `n` puntos equiespaciados entre `inicio` y `fin`, **ambos incluidos**. Se fija el número de puntos, no el paso; es lo habitual para dibujar funciones.
+
+```{pyodide-python}
+print(np.linspace(0, 1, 5))
+print(np.linspace(1, 10, 4))
+```
+
+`np.logspace(a, b, n)` genera `n` puntos equiespaciados en escala logarítmica entre $10^a$ y $10^b$. Se usa, por ejemplo, para rejillas de parámetros de regularización (`alpha` en Ridge o Lasso), que conviene explorar en varios órdenes de magnitud.
+
+```{pyodide-python}
+print(np.logspace(0, 3, 4))
+print(np.logspace(-1, 1, 5))
+```
+
+### Matrices
+
+Una lista de listas se convierte en un array de dos dimensiones. NumPy ofrece además constructores para matrices habituales: `np.zeros((i, j))` (ceros), `np.ones((i, j))` (unos), `np.eye(i)` (identidad).
+
+```{pyodide-python}
+A = np.array([[9., 2., 4.],
+              [1., 3., 2.],
+              [6., 5., 4.]])
+print(A)
+
+Z = np.zeros((3, 4))
+U = np.ones((4, 2))
+I = np.eye(3)
+print(I)
+```
+
+El atributo `.shape` devuelve las dimensiones (una tupla), `.ndim` el número de dimensiones y `.size` el número total de elementos. `.reshape()` cambia la forma sin cambiar los datos y `.T` transpone.
+
+```{pyodide-python}
+print(U.shape, U.ndim, U.size)
+v = np.arange(6)
+M = v.reshape(2, 3)    # 2 filas, 3 columnas
+print(M)
+print(M.T)             # transpuesta
+```
+
+::: {.callout-note}
+En scikit-learn la matriz de predictores `X` debe ser 2D, de forma `(n_observaciones, n_variables)`, incluso con una sola variable. `x.reshape(-1, 1)` convierte un vector en una matriz columna (el `-1` significa "las filas que hagan falta").
+:::
+
+## Indexación y rebanadas
+
+### Elementos individuales
+
+Los índices empiezan en 0. En matrices se indica `[fila, columna]`. Se puede asignar a un elemento.
+
+```{pyodide-python}
+x = np.array([12, 8, -2, 0, 32, 2])
+print(x[3])
+x[5] = 1
+print(x)
+
+A = np.array([[12, 9, 2, 3],
+              [-1, 3, 9, 1],
+              [0, 5, 0, 3]])
+print(A[1, 3])
+A[2, 0] = 20
+print(A)
+```
+
+### Rebanadas
+
+La notación `inicio:fin` de las listas funciona igual y, en matrices, se aplica por dimensión. Los dos puntos solos (`:`) significan "todo".
+
+```{pyodide-python}
+print(x[1:4])        # elementos 1, 2 y 3
+print(A[0, :])       # primera fila completa
+print(A[:, 1])       # segunda columna completa
+print(A[:2, 1:3])    # filas 0-1, columnas 1-2
+```
+
+Con rebanadas separamos, por ejemplo, la variable respuesta de los predictores: `y = datos[:, 0]`, `X = datos[:, 1:]`.
+
+### Varios elementos a la vez (*fancy indexing*)
+
+Se puede pasar una lista (o un array) de índices para seleccionar varios elementos en cualquier orden.
+
+```{pyodide-python}
+x = np.array([0.3, 0.1, 1.3, 1.7, -2.4, 0.9])
+print(x[[0, 1]])
+print(x[[4, 2, 5]])
+indices = [3, 1, 2]
+print(x[indices])
+```
+
+### Indexación booleana
+
+Una comparación sobre un array devuelve un array de `True`/`False` (una **máscara**) que sirve para seleccionar elementos. Es la forma vectorizada de filtrar y la base del filtrado en pandas.
+
+```{pyodide-python}
+x = np.array([0.3, 0.1, 1.3, 1.7, -2.4, 0.9])
+mascara = x > 0.5
+print(mascara)
+print(x[mascara])
+print(x[(x > 0) & (x < 1)])      # varias condiciones: & (y), | (o), ~ (no), cada una entre paréntesis
+x[x < 0] = 0                     # asignar a los elementos seleccionados
+print(x)
+```
+
+::: {.callout-warning}
+Con arrays (y con columnas de pandas) las condiciones se combinan con `&`, `|` y `~`, **no** con `and`, `or`, `not`, y cada condición va entre paréntesis.
+:::
+
+## Modificar arrays
+
+`np.append()` y `np.insert()` añaden elementos (devuelven un array nuevo: los arrays no crecen en el sitio como las listas) y `np.delete()` elimina por índice.
+
+```{pyodide-python}
+v = np.array([2, 1, 3, 4])
+v = np.append(v, -1)
+print(v)
+w = np.array([10, -2, 18])
+v = np.insert(v, 2, w)      # inserta w a partir de la posición 2
+print(v)
+```
+
+```{pyodide-python}
+v = np.array([3, 12, 9, 2, 4, 16, -2, 3, 21, 56])
+v = np.delete(v, 3)                   # elimina el elemento de índice 3 (el cuarto)
+print(v)
+print(np.delete(v, np.arange(4, 8)))  # elimina los de índice 4 a 7
+```
+
+En la práctica, si se conoce el tamaño de antemano es más eficiente crear el array completo (`np.zeros(n)`) y rellenarlo que ir añadiendo elementos.
+
+## Operaciones vectorizadas
+
+### Operaciones elemento a elemento
+
+Los operadores aritméticos actúan elemento a elemento entre arrays de la misma forma, y entre un array y un escalar (el escalar se aplica a todos los elementos: *broadcasting*).
+
+```{pyodide-python}
+v1 = np.array([9, 8, 7, 6, 5, 4, 3])
+v2 = np.array([1, 2, 3, 4, 5, 6, 7])
+print(v1 + v2)
+print(v1 - v2)
+print(v1 * v2)        # producto elemento a elemento (no matricial)
+print(v1 * 2 + 1)     # con un escalar
+print((v1 - v1.mean()) / v1.std())   # estandarizar
+```
+
+::: {.callout-note title="Diferencia con las listas"}
+Con listas, `[1, 2] + [3, 4]` concatena y `[1, 2] * 2` repite. Con arrays, suman y multiplican número a número. Por eso los datos numéricos se guardan en arrays, no en listas.
+:::
+
+### Funciones matemáticas
+
+NumPy incluye versiones vectorizadas de las funciones matemáticas habituales (`np.exp`, `np.log`, `np.sqrt`, `np.sin`, `np.abs`, `np.round`...), que se aplican a cada elemento.
+
+```{pyodide-python}
+x = np.linspace(0, np.pi, 5)
+print(np.cos(x))
+
+A = np.array([[1, 4, 9], [16, 25, 26], [49, 64, 81]])
+print(np.sqrt(A))
+```
+
+### Funciones de agregación y el argumento `axis`
+
+`sum`, `mean`, `std`, `min`, `max`, `median`... resumen todo el array o, con `axis`, una dimensión: `axis=0` opera **por columnas** (a lo largo de las filas) y `axis=1` **por filas**.
+
+```{pyodide-python}
+A = np.array([[1., 2., 3.],
+              [4., 5., 6.]])
+print(A.sum())              # total
+print(A.mean(axis=0))       # media de cada columna
+print(A.mean(axis=1))       # media de cada fila
+print(A.max(), A.argmax())  # máximo y su posición (en el array aplanado)
+```
+
+### Producto matricial
+
+El producto matricial se escribe con `@` (o `np.dot`); `*` es siempre elemento a elemento. La transpuesta es `.T` y la inversa `np.linalg.inv()`.
+
+```{pyodide-python}
+X = np.array([[1., 2.], [1., 3.], [1., 5.]])
+y = np.array([3., 4., 7.])
+beta = np.linalg.inv(X.T @ X) @ X.T @ y     # estimador MCO: (X'X)^-1 X'y
+beta
+```
+
+## Números aleatorios
+
+Para simulaciones, remuestreo o particiones de datos se necesitan números aleatorios. La forma recomendada es crear un **generador** con `np.random.default_rng(semilla)`. Fijar la semilla hace que los resultados sean **reproducibles**: quien ejecute el código obtiene los mismos números.
+
+```{pyodide-python}
+rng = np.random.default_rng(seed=123)
+
+print(rng.random(5))                        # uniformes en [0, 1)
+print(rng.standard_normal(5))               # normales estándar
+print(rng.normal(loc=10, scale=3, size=5))  # normal de media 10 y desviación típica 3
+print(rng.integers(1, 7, size=10))          # enteros entre 1 y 6 (dados)
+print(rng.choice(["a", "b", "c"], size=5))  # muestreo con reemplazamiento
+```
+
+Verás también la sintaxis antigua (`np.random.seed(123)`, `np.random.rand()`, `np.random.normal()`), que sigue funcionando pero que la documentación de NumPy desaconseja. En scikit-learn la semilla se fija con el argumento `random_state`.
+
+::: {.callout-important title="Tu turno"}
+Genera con `rng.normal` un array `x` de 1000 valores de una normal de media 5 y desviación típica 2. Calcula (a) la media y la desviación típica muestrales y (b) la **proporción** de valores mayores que 7 usando una máscara booleana (pista: la media de una máscara es la proporción de `True`).
+:::
+
+```{pyodide-python}
+rng = np.random.default_rng(seed=1)
+# Escribe aquí tu código
+
+```
+
+::: {.callout-tip title="Solución" collapse="true"}
+```python
+x = rng.normal(loc=5, scale=2, size=1000)
+print(x.mean(), x.std())
+print((x > 7).mean())      # aproximadamente 0.16
+```
+:::

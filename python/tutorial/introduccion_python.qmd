@@ -1,0 +1,70 @@
+---
+title: "Introducción a `Python` para TAP"
+subtitle: "Fundamentos · listas, tuplas y diccionarios · control de flujo y funciones · NumPy · pandas · matplotlib"
+author: "Juan D. Montoro-Pons"
+date: "Septiembre 2026"
+lang: es
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    toc-title: "Contenido"
+    number-sections: true
+    number-depth: 2
+    code-copy: true
+    embed-resources: true
+filters:
+  - pyodide
+editor: source
+---
+
+## Cómo usar este tutorial {.unnumbered}
+
+Este documento recoge lo **imprescindible** de Python para seguir la asignatura: cómo se escribe una expresión, qué estructuras de datos existen, cómo se repite y se decide, y cómo se trabaja con las tres librerías que usaremos a diario (NumPy, pandas y matplotlib). No es un curso completo de Python; es el mínimo común para que el resto del curso se pueda dedicar a los modelos y no a la sintaxis.
+
+Está pensado para leerse **en orden**: cada parte usa lo que se ha visto en las anteriores. Si ya conoces Python, puedes ir directamente a las partes de NumPy y pandas.
+
+::: {.callout-note title="Las celdas de código se ejecutan en el navegador"}
+Cada bloque de código tiene un botón **Run Code**. Al pulsarlo, el código se ejecuta con una versión de Python que corre dentro del navegador (Pyodide); no hace falta tener nada instalado. Ten en cuenta que:
+
+- La **primera** ejecución tarda unos segundos (descarga Python y las librerías); las siguientes son inmediatas.
+- Las celdas **comparten memoria**: una variable creada en una celda está disponible en las siguientes. Por eso conviene ejecutarlas en orden. Si recargas la página, se pierde todo.
+- Puedes **editar** el código de cualquier celda y volver a ejecutarlo. Es la mejor forma de aprender: cambia un valor, añade una línea, provoca un error y léelo.
+- Se muestra lo que imprime `print()` y el valor de la **última expresión** de la celda, como en un notebook.
+:::
+
+::: {.callout-tip title="Trabajar en VS Code"}
+Todo el código de este tutorial funciona igual en un notebook de VS Code con el entorno `tap` (véase la guía de instalación). Puedes copiar cualquier celda con el icono de la esquina superior derecha. Las celdas de ejercicio ("Tu turno") vienen vacías; las soluciones están plegadas debajo de cada una.
+:::
+
+**Mapa del tutorial**
+
+| Parte | Qué aprenderás | Equivalente en R |
+|---|---|---|
+| @sec-fundamentos | Expresiones, variables, tipos, cadenas, `import`, cómo leer un error | lo básico de la consola |
+| @sec-estructuras | Listas, tuplas y diccionarios; índices desde 0 y rebanadas | vectores y listas |
+| @sec-flujo | `if`, `for`, `while`, comprensión de listas, funciones, `lambda` | `if`, `for`, `function()` |
+| @sec-numpy | Arrays: creación, indexación, vectorización, números aleatorios | vectores y matrices |
+| @sec-pandas | DataFrames: leer, inspeccionar, filtrar, crear variables, `groupby`, `merge` | `data.frame`, `dplyr` |
+| @sec-matplotlib | Histogramas, barras, dispersión, líneas, subplots, guardar figuras | `plot()`, `ggplot2` |
+
+{{< include partes/01_fundamentos.qmd >}}
+
+{{< include partes/02_estructuras_datos.qmd >}}
+
+{{< include partes/03_control_flujo_funciones.qmd >}}
+
+{{< include partes/04_numpy.qmd >}}
+
+{{< include partes/05_pandas.qmd >}}
+
+{{< include partes/06_matplotlib.qmd >}}
+
+## Para seguir aprendiendo {.unnumbered}
+
+- [Tutorial oficial de Python](https://docs.python.org/es/3/tutorial/) (en castellano): las secciones 3 a 5 amplían las partes 1 a 3 de este documento.
+- [NumPy: the absolute basics for beginners](https://numpy.org/doc/stable/user/absolute_beginners.html).
+- [10 minutes to pandas](https://pandas.pydata.org/docs/user_guide/10min.html) y la [chuleta de pandas](https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf).
+- [Matplotlib quick start guide](https://matplotlib.org/stable/users/explain/quick_start.html).
+- Wes McKinney, *Python for Data Analysis*, 3.ª ed. (gratuito en [wesmckinney.com/book](https://wesmckinney.com/book/)): el libro de referencia de pandas escrito por su creador.

@@ -1,0 +1,178 @@
+# Estructuras de datos básicas: listas, tuplas y diccionarios {#sec-estructuras}
+
+## Listas
+
+Una lista es una colección **ordenada y modificable** de elementos, separados por comas y encerrados entre corchetes. Los elementos pueden ser de tipos distintos.
+
+```{pyodide-python}
+a = [0, 1, 1, 2, 3, 5, 8, 13]
+b = [5., "hola", 2 + 0j, "caballo", 21]
+a
+# Ejecuta la celda con "Run Code". Después edita la última línea para mostrar b.
+```
+
+### Índices: acceso a los elementos
+
+Se accede a un elemento escribiendo el nombre de la lista seguido de un entero entre corchetes. **Los índices empiezan en 0**: el primer elemento es `b[0]`, el segundo `b[1]`, etc. Los índices negativos cuentan desde el final: `b[-1]` es el último.
+
+```{pyodide-python}
+print(b[0])    # 5.0
+print(b[1])    # 'hola'
+print(b[-1])   # 21 (el último)
+print(len(b))  # número de elementos
+```
+
+::: {.callout-note title="Diferencia con R"}
+En R, MATLAB o Fortran los índices empiezan en 1; en Python (como en C) empiezan en 0. Una lista de $n$ elementos tiene índices de $0$ a $n-1$. Pedir `b[5]` en una lista de 5 elementos da `IndexError`.
+:::
+
+### Rebanadas (*slicing*)
+
+Con `lista[inicio:fin]` se obtiene una sublista **desde `inicio` hasta `fin` sin incluirlo**. Si se omite `inicio` se empieza en 0; si se omite `fin` se llega al final. Un tercer valor indica el paso.
+
+```{pyodide-python}
+a = [0, 1, 1, 2, 3, 5, 8, 13]
+print(a[2:5])    # elementos con índice 2, 3 y 4
+print(a[:3])     # los tres primeros
+print(a[5:])     # del índice 5 al final
+print(a[::2])    # uno de cada dos
+print(a[-3:])    # los tres últimos
+```
+
+Esta misma notación se usa con cadenas de texto, tuplas, arrays de NumPy y DataFrames de pandas, así que conviene dominarla desde el principio.
+
+### Modificar listas
+
+Las listas son **mutables**: se pueden cambiar elementos, añadir o eliminar.
+
+```{pyodide-python}
+b = [5., "hola", 2 + 0j, "caballo", 21]
+b[0] = b[0] + 2        # cambiar un elemento
+b[3] = 3.14159
+b.append("nuevo")      # añadir al final
+b.remove("hola")       # eliminar la primera aparición de un valor
+ultimo = b.pop()       # extraer (y eliminar) el último
+print(b)
+print(ultimo)
+```
+
+Dos listas se concatenan con `+`:
+
+```{pyodide-python}
+a = [1, 2, 3]
+b = [4, 5, 6]
+a + b
+```
+
+Otras operaciones frecuentes: `x in lista` comprueba la pertenencia, `lista.index(x)` da la posición de `x`, `sorted(lista)` devuelve una copia ordenada, `lista.sort()` ordena en el sitio, y `sum()`, `min()`, `max()` operan sobre listas numéricas.
+
+```{pyodide-python}
+notas = [7.5, 4.0, 9.1, 6.3]
+print(3 in [1, 2, 3])
+print(sorted(notas))
+print(sum(notas) / len(notas))   # media
+```
+
+::: {.callout-warning title="Las listas se copian por referencia"}
+`c = notas` **no** crea una copia: `c` y `notas` son dos nombres para la misma lista, y modificar una modifica la otra. Para copiar usa `c = notas.copy()` o `c = list(notas)`. Lo mismo ocurre con los arrays de NumPy y los DataFrames de pandas.
+:::
+
+```{pyodide-python}
+c = notas
+c[0] = 0
+print(notas)          # también ha cambiado
+d = notas.copy()
+d[0] = 10
+print(notas)          # esta vez no
+```
+
+## Tuplas
+
+Una tupla es una colección ordenada **inmutable**: una vez creada no se pueden cambiar sus elementos. Se define como una lista pero con paréntesis. El acceso por índice y las rebanadas funcionan igual.
+
+```{pyodide-python}
+x = (1, 2, "hola", 3)
+x[1]
+```
+
+```{pyodide-python}
+x[1] = 99     # Esta celda produce un error a propósito: TypeError
+```
+
+Las tuplas permiten el **desempaquetado**: asignar sus elementos a varias variables en una sola línea.
+
+```{pyodide-python}
+punto = (3, -1, 2)
+x, y, z = punto
+print(x, y, z)
+
+# Se puede ignorar parte de la tupla con _
+x1, x2, _ = punto
+print(x1, x2)
+```
+
+Usos habituales de las tuplas:
+
+1. Datos que no deben cambiar (coordenadas, días de la semana).
+2. Devolver varios valores desde una función: `return media, desviacion` crea una tupla, que luego se desempaqueta con `m, s = mi_funcion(...)`.
+3. Claves de un diccionario (véase más abajo): las listas no pueden serlo.
+4. Muchas funciones de las librerías devuelven o piden tuplas: `array.shape` es una tupla, `figsize=(6, 4)` en matplotlib es una tupla.
+
+Al ser inmutables, las tuplas son algo más rápidas y ligeras que las listas, y evitan modificaciones accidentales.
+
+## Diccionarios
+
+Un diccionario asocia **claves** con **valores**. Se define con llaves `{clave: valor, ...}` y se accede al valor por su clave, no por posición. Es la estructura idónea para tablas de consulta y para agrupar con nombre información heterogénea.
+
+```{pyodide-python}
+agenda = {"Alicia": "123-456-789", "Berta": "987-654-321"}
+agenda["Alicia"]
+```
+
+Los diccionarios son mutables: se añaden o modifican entradas asignando a una clave. El método `.get()` devuelve el valor de una clave o, si no existe, un valor por defecto (en lugar de un `KeyError`).
+
+```{pyodide-python}
+habitaciones = {"Rafa": 105, "Teresa": 406, "Marta": 256}
+habitaciones["Luis"] = 312          # añadir
+habitaciones["Rafa"] = 106          # modificar
+print(habitaciones.get("Teresa"))
+print(habitaciones.get("Pedro", "no está"))
+print("Marta" in habitaciones)      # comprobar si existe una clave
+```
+
+Los métodos `.keys()`, `.values()` y `.items()` devuelven las claves, los valores y los pares (clave, valor); son la forma habitual de recorrer un diccionario en un bucle (véase @sec-flujo).
+
+```{pyodide-python}
+print(list(habitaciones.keys()))
+print(list(habitaciones.values()))
+print(list(habitaciones.items()))
+```
+
+Desde Python 3.7 los diccionarios **conservan el orden de inserción**. Las claves deben ser inmutables (texto, números, tuplas); los valores pueden ser cualquier cosa, incluidas listas u otros diccionarios. Los diccionarios aparecen constantemente en el curso: la forma más común de crear un DataFrame es a partir de un diccionario `{"columna": [valores]}`, y las rejillas de hiperparámetros en scikit-learn son diccionarios.
+
+**Comparación de las tres estructuras**
+
+| Característica | Diccionario | Lista | Tupla |
+|---|---|---|---|
+| Acceso | por clave | por posición | por posición |
+| Coste de buscar un valor | $O(1)$ por clave | $O(n)$ | $O(n)$ |
+| Mutable | sí | sí | no |
+| Conserva el orden | sí (desde 3.7) | sí | sí |
+| Uso típico | mapas clave-valor | secuencias que cambian | colecciones fijas, retornos múltiples |
+
+::: {.callout-important title="Tu turno"}
+Crea un diccionario `provincias` con tres pares comunidad autónoma → número de provincias (p. ej. `"Comunitat Valenciana": 3`). Añade una cuarta entrada y muestra la suma de todos los valores usando `sum()` y `.values()`.
+:::
+
+```{pyodide-python}
+# Escribe aquí tu código
+
+```
+
+::: {.callout-tip title="Solución" collapse="true"}
+```python
+provincias = {"Comunitat Valenciana": 3, "Andalucía": 8, "Galicia": 4}
+provincias["Aragón"] = 3
+print(sum(provincias.values()))
+```
+:::

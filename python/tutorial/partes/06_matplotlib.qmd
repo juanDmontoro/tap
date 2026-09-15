@@ -1,0 +1,407 @@
+# Gráficos con matplotlib {#sec-matplotlib}
+
+matplotlib es la librería de referencia para gráficos en Python; pandas y seaborn la usan por debajo. Trabajaremos con su módulo `pyplot`, que se importa como `plt`.
+
+```{pyodide-python}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+```
+
+::: {.callout-note title="Cómo se construye un gráfico"}
+El patrón es siempre el mismo: (1) `plt.figure(figsize=(ancho, alto))` abre una figura nueva (tamaño en pulgadas); (2) una o varias llamadas dibujan sobre ella (`plt.plot`, `plt.hist`, `plt.scatter`...); (3) se añaden título, etiquetas de ejes y leyenda; (4) `plt.show()` la muestra. En un notebook `plt.show()` no es imprescindible, pero es buena costumbre para que cada gráfico aparezca donde toca y no se mezcle con el siguiente.
+:::
+
+## Gráficos de una variable
+
+### Histogramas
+
+Un histograma muestra la distribución de una variable numérica: divide el rango en intervalos (*bins*) y cuenta cuántos valores caen en cada uno. Se crea con `plt.hist()`.
+
+```{pyodide-python}
+rng = np.random.default_rng(seed=42)
+datos = rng.normal(loc=0, scale=1, size=1000)   # media 0, desviación típica 1
+
+plt.figure(figsize=(6, 4))
+plt.hist(datos)
+plt.show()
+```
+
+Opciones habituales: `bins` (número de intervalos), `color` (relleno), `edgecolor` (borde de las barras), `alpha` (transparencia). Las funciones `plt.title()`, `plt.xlabel()` y `plt.ylabel()` añaden título y etiquetas de ejes.
+
+```{pyodide-python}
+plt.figure(figsize=(6, 4))
+plt.hist(datos, bins=20, color="steelblue", edgecolor="black")
+plt.title("Histograma")
+plt.xlabel("Valor")
+plt.ylabel("Frecuencia")
+plt.show()
+```
+
+Con `density=True` el área del histograma se normaliza a 1, lo que permite superponer una función de densidad. Aquí ajustamos una normal con `scipy.stats.norm`:
+
+```{pyodide-python}
+from scipy.stats import norm
+
+mu, sigma = norm.fit(datos)      # media y desviación típica estimadas
+
+plt.figure(figsize=(6, 4))
+plt.hist(datos, bins=20, density=True, color="steelblue", alpha=0.6, edgecolor="black")
+x = np.linspace(datos.min(), datos.max(), 200)
+plt.plot(x, norm.pdf(x, mu, sigma), "r--", label="Densidad normal")
+plt.title("Histograma con densidad ajustada")
+plt.legend()
+plt.show()
+```
+
+### Diagramas de caja (*boxplot*)
+
+El diagrama de caja resume una distribución con la mediana, los cuartiles y los valores atípicos. Es la forma más rápida de comparar una variable numérica entre grupos. Usamos el conjunto de datos de propinas de @sec-pandas.
+
+```{pyodide-python}
+url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/tips.csv"
+propinas = pd.read_csv(url)
+
+dias = ["Thur", "Fri", "Sat", "Sun"]
+cuentas_por_dia = [propinas.loc[propinas["day"] == d, "total_bill"] for d in dias]
+
+plt.figure(figsize=(6, 4))
+plt.boxplot(cuentas_por_dia)
+plt.xticks([1, 2, 3, 4], dias)
+plt.ylabel("Importe de la cuenta")
+plt.title("Cuenta por día de la semana")
+plt.show()
+```
+
+### Diagramas de barras para variables cualitativas
+
+Un diagrama de barras muestra la frecuencia de cada categoría. Se crea con `plt.bar()` (vertical) o `plt.barh()` (horizontal). Es el gráfico adecuado para variables cualitativas; el histograma, para numéricas.
+
+```{pyodide-python}
+conteo = propinas["day"].value_counts()
+
+plt.figure(figsize=(6, 4))
+plt.bar(conteo.index, conteo.values, color="orange", edgecolor="black")
+plt.title("Número de cuentas por día")
+plt.xlabel("Día")
+plt.ylabel("Cuentas")
+plt.show()
+```
+
+Se pueden personalizar los colores por barra, añadir tramas (`hatch`) y una rejilla:
+
+```{pyodide-python}
+plt.figure(figsize=(6, 4))
+plt.barh(conteo.index, conteo.values, color=["blue", "green", "red", "purple"],
+         edgecolor="black", hatch="/")
+plt.title("Número de cuentas por día")
+plt.xlabel("Cuentas")
+plt.grid(axis="x", linestyle="--", alpha=0.7)
+plt.show()
+```
+
+### Barras agrupadas y apiladas
+
+Las barras agrupadas comparan varias series por categoría; se desplazan las posiciones `x` de cada serie media anchura de barra.
+
+```{pyodide-python}
+categorias = ["Categoría A", "Categoría B", "Categoría C"]
+grupo1 = [5, 7, 8]
+grupo2 = [6, 9, 11]
+
+x = np.arange(len(categorias))   # posiciones 0, 1, 2
+ancho = 0.35
+
+plt.figure(figsize=(6, 4))
+plt.bar(x - ancho/2, grupo1, ancho, label="Grupo 1", color="blue")
+plt.bar(x + ancho/2, grupo2, ancho, label="Grupo 2", color="orange")
+plt.xticks(x, categorias)
+plt.title("Barras agrupadas")
+plt.ylabel("Recuento")
+plt.legend()
+plt.show()
+```
+
+Las barras apiladas muestran el total por categoría descompuesto en subgrupos; la segunda serie se dibuja con `bottom=` igual a la primera.
+
+```{pyodide-python}
+plt.figure(figsize=(6, 4))
+plt.bar(categorias, grupo1, label="Grupo 1", color="blue")
+plt.bar(categorias, grupo2, bottom=grupo1, label="Grupo 2", color="orange")
+plt.title("Barras apiladas")
+plt.ylabel("Recuento")
+plt.legend()
+plt.show()
+```
+
+## Gráficos de dos variables
+
+### Diagrama de dispersión (*scatter*)
+
+`plt.scatter(x, y)` dibuja un punto por observación. Es el gráfico básico para ver la relación entre dos variables numéricas y lo usaremos continuamente (predicciones frente a valores reales, residuos, etc.). Los argumentos `s` (tamaño), `c` (color) y `alpha` (transparencia) ayudan cuando hay muchos puntos.
+
+```{pyodide-python}
+plt.figure(figsize=(6, 4))
+plt.scatter(propinas["total_bill"], propinas["tip"], alpha=0.6)
+plt.xlabel("Importe de la cuenta")
+plt.ylabel("Propina")
+plt.title("Propina frente a cuenta")
+plt.show()
+```
+
+Para colorear por una variable categórica se dibuja una serie por grupo, cada una con su etiqueta, y se añade la leyenda:
+
+```{pyodide-python}
+plt.figure(figsize=(6, 4))
+for turno in ["Lunch", "Dinner"]:
+    sub = propinas[propinas["time"] == turno]
+    plt.scatter(sub["total_bill"], sub["tip"], alpha=0.6, label=turno)
+plt.xlabel("Importe de la cuenta")
+plt.ylabel("Propina")
+plt.legend()
+plt.show()
+```
+
+### Gráficos de líneas
+
+`plt.plot(x, y)` une los puntos `(x, y)` con líneas; `x` e `y` deben tener la misma longitud. Es el gráfico para series temporales y para funciones.
+
+```{pyodide-python}
+x = np.array([0, 0.2, 0.8, 1.3, 2])
+y = np.array([4.2, 1.2, -2.2, 1.1, 0.2])
+
+plt.figure(figsize=(6, 4))
+plt.plot(x, y)
+plt.show()
+```
+
+El tercer argumento (una cadena de formato) fija color, estilo de línea y marcador de forma abreviada:
+
+- **Color**: `'r'` rojo, `'g'` verde, `'b'` azul, `'k'` negro.
+- **Estilo de línea**: `'-'` continua, `'--'` discontinua, `':'` punteada.
+- **Marcador**: `'o'` círculo, `'^'` triángulo, `'s'` cuadrado.
+
+```{pyodide-python}
+plt.figure(figsize=(6, 4))
+plt.plot(x, y, "g--o", linewidth=2, markersize=8, markeredgecolor="k")
+plt.show()
+```
+
+### Dibujar funciones matemáticas
+
+Para dibujar $f(x)$ se genera una rejilla fina de valores con `np.linspace` y se evalúa la función sobre ella (vectorizada):
+
+```{pyodide-python}
+x = np.linspace(-2, 4, 100)
+y = 3.5**(-0.5 * x) * np.cos(6 * x)
+
+plt.figure(figsize=(6, 4))
+plt.plot(x, y)
+plt.show()
+```
+
+### Varias curvas en el mismo gráfico
+
+Basta con llamar varias veces a `plt.plot()` antes de `plt.show()`. Con `label=` y `plt.legend()` se identifica cada curva.
+
+```{pyodide-python}
+x = np.linspace(-2, 4, 100)
+y = 3 * x**3 - 26 * x + 10
+dy = 9 * x**2 - 26
+ddy = 18 * x
+
+plt.figure(figsize=(6, 4))
+plt.plot(x, y, "b", label="Función")
+plt.plot(x, dy, "--r", label="Primera derivada")
+plt.plot(x, ddy, ":k", label="Segunda derivada")
+plt.legend()
+plt.show()
+```
+
+### Etiquetas, título, leyenda y rejilla
+
+```{pyodide-python}
+x = np.linspace(10, 22, 1000)
+y = 95000 / x**2
+
+plt.figure(figsize=(6, 4))
+plt.plot(x, y, label="Teoría")
+plt.xlabel("Distancia (cm)")
+plt.ylabel("Intensidad (lux)")
+plt.title("Intensidad luminosa frente a distancia")
+plt.legend(loc="best")
+plt.grid()
+plt.show()
+```
+
+## Varios gráficos en una figura: subplots
+
+`plt.subplot(m, n, p)` divide la figura en una rejilla de `m` filas y `n` columnas y activa la posición `p` (contando desde 1, por filas).
+
+```{pyodide-python}
+x = np.linspace(0, 10, 100)
+
+plt.figure(figsize=(6, 5))
+
+plt.subplot(2, 1, 1)
+plt.plot(x, np.sin(x))
+plt.title("Seno")
+
+plt.subplot(2, 1, 2)
+plt.plot(x, np.cos(x))
+plt.title("Coseno")
+
+plt.tight_layout()     # ajusta los márgenes para que no se solapen títulos y ejes
+plt.show()
+```
+
+Una rejilla $2 \times 2$ con cuatro tipos de gráfico:
+
+```{pyodide-python}
+x = np.linspace(0, 1, 100)
+
+plt.figure(figsize=(7, 5))
+plt.subplot(221)          # equivale a subplot(2, 2, 1)
+plt.plot(x, np.sin(x))
+plt.title("Línea")
+
+plt.subplot(222)
+plt.scatter(np.sin(x), np.cos(x), s=10)
+plt.title("Dispersión")
+
+plt.subplot(223)
+plt.hist(rng.random(100))
+plt.title("Histograma")
+
+plt.subplot(224)
+plt.plot(x, np.log(x + 1))
+plt.title("Logaritmo")
+
+plt.tight_layout()
+plt.show()
+```
+
+## La interfaz orientada a objetos: `fig, ax`
+
+Hasta aquí hemos usado la interfaz "de estado" de `pyplot` (`plt.plot`, `plt.title`...), que actúa sobre el gráfico activo. matplotlib tiene una segunda interfaz, **orientada a objetos**, que es la recomendada en su documentación y la que verás en la mayoría de ejemplos y en los notebooks del curso: `plt.subplots()` devuelve una figura (`fig`) y uno o varios ejes (`ax`), y se dibuja llamando a métodos de `ax`. Los nombres cambian ligeramente (`ax.set_title` en lugar de `plt.title`).
+
+```{pyodide-python}
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.scatter(propinas["total_bill"], propinas["tip"], alpha=0.6)
+ax.set_xlabel("Importe de la cuenta")
+ax.set_ylabel("Propina")
+ax.set_title("Interfaz orientada a objetos")
+plt.show()
+```
+
+Con varios ejes, `axes` es un array y se indexa como tal. Esta forma es más cómoda que `plt.subplot` cuando hay que dibujar en bucle.
+
+```{pyodide-python}
+fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+axes[0].hist(propinas["total_bill"], bins=20, color="steelblue")
+axes[0].set_title("Cuenta")
+axes[1].hist(propinas["tip"], bins=20, color="orange")
+axes[1].set_title("Propina")
+plt.tight_layout()
+plt.show()
+```
+
+| `pyplot` | orientado a objetos |
+|---|---|
+| `plt.plot(x, y)` | `ax.plot(x, y)` |
+| `plt.title("t")` | `ax.set_title("t")` |
+| `plt.xlabel("x")`, `plt.ylabel("y")` | `ax.set_xlabel("x")`, `ax.set_ylabel("y")` |
+| `plt.xlim(a, b)` | `ax.set_xlim(a, b)` |
+| `plt.legend()` | `ax.legend()` |
+
+## Guardar un gráfico
+
+`plt.savefig()` (o `fig.savefig()`) guarda la figura en un fichero; el formato se deduce de la extensión (`.png`, `.pdf`, `.svg`). Debe llamarse **antes** de `plt.show()`. En un proyecto reproducible los gráficos se guardan desde el script con una ruta relativa:
+
+```python
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.scatter(propinas["total_bill"], propinas["tip"])
+fig.savefig("figuras/propinas.png", dpi=150, bbox_inches="tight")
+plt.show()
+```
+
+(Esta celda no se ejecuta en el navegador; pruébala en VS Code con una carpeta `figuras/` creada.)
+
+## Gráficos directamente desde pandas
+
+Las `Series` y los DataFrames tienen un método `.plot()` que llama a matplotlib y ahorra código en los gráficos exploratorios rápidos; `kind` puede ser `"line"`, `"bar"`, `"hist"`, `"box"`, `"scatter"`...
+
+```{pyodide-python}
+propinas.groupby("day")["tip"].mean().plot(kind="bar", figsize=(6, 4), title="Propina media por día")
+plt.ylabel("Propina media")
+plt.show()
+```
+
+## Complemento: gráficos en tres dimensiones
+
+Para funciones de dos variables $z = f(x, y)$ se construye una rejilla con `np.meshgrid` y se dibuja una superficie con `plot_surface` sobre unos ejes con `projection="3d"`. El argumento `cmap` fija el mapa de color (véanse las opciones en la [documentación de matplotlib](https://matplotlib.org/stable/users/explain/colors/colormaps.html)).
+
+```{pyodide-python}
+x = np.linspace(-np.pi, np.pi, 30)
+X, Y = np.meshgrid(x, x)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+
+fig = plt.figure(figsize=(6, 4))
+ax = plt.axes(projection="3d")
+ax.plot_surface(X, Y, Z, cmap="viridis")
+plt.show()
+```
+
+Dos alternativas en dos dimensiones: `plt.imshow()` muestra la matriz `Z` como una imagen (cada celda un color; es la base de los mapas de calor) y `plt.contour()` dibuja las curvas de nivel.
+
+```{pyodide-python}
+plt.figure(figsize=(6, 4))
+plt.imshow(Z, cmap="viridis")
+plt.colorbar()
+plt.show()
+```
+
+```{pyodide-python}
+plt.figure(figsize=(6, 4))
+plt.contour(X, Y, Z)
+plt.show()
+```
+
+## Alternativas a matplotlib
+
+::: {.callout-tip title="seaborn"}
+[seaborn](https://seaborn.pydata.org/) está construida sobre matplotlib y ofrece una interfaz de más alto nivel orientada a gráficos estadísticos y análisis exploratorio: mapas de calor, diagramas de violín, gráficos por pares (`pairplot`), regresiones... con un estilo cuidado y menos código. Está instalada en el entorno `tap` y la usaremos en el curso para el análisis exploratorio.
+:::
+
+::: {.callout-tip title="plotnine"}
+[plotnine](https://plotnine.org/) reproduce en Python la gramática de gráficos de `ggplot2`. Si vienes de R te resultará familiar.
+:::
+
+::: {.callout-tip title="plotly"}
+[plotly](https://plotly.com/python/) genera gráficos interactivos (zoom, información al pasar el ratón) en HTML. Está instalada en el entorno `tap`.
+:::
+
+::: {.callout-important title="Tu turno"}
+Con `propinas`, dibuja en una figura con dos paneles (`plt.subplots(1, 2)`) un histograma del porcentaje de propina (`100 * tip / total_bill`) y un diagrama de dispersión de `size` frente a `tip`. Pon título a cada panel y etiquetas a los ejes.
+:::
+
+```{pyodide-python}
+# Escribe aquí tu código
+
+```
+
+::: {.callout-tip title="Solución" collapse="true"}
+```python
+porcentaje = 100 * propinas["tip"] / propinas["total_bill"]
+fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+axes[0].hist(porcentaje, bins=20, edgecolor="black")
+axes[0].set_title("Porcentaje de propina")
+axes[0].set_xlabel("%")
+axes[1].scatter(propinas["size"], propinas["tip"], alpha=0.5)
+axes[1].set_title("Propina y tamaño del grupo")
+axes[1].set_xlabel("Personas")
+axes[1].set_ylabel("Propina")
+plt.tight_layout()
+plt.show()
+```
+:::

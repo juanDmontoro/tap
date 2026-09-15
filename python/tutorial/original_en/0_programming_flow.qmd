@@ -1,0 +1,209 @@
+---
+title: "`Python` programming: flow control and functions"
+author: "Juan D. Montoro-Pons"
+toc: true
+format: html
+filters: 
+   - pyodide
+execute: 
+  conda:
+    environment: base
+---
+
+
+This file introduces the following concepts in Python:
+
+* If-else statements
+* For loops
+* While loops
+* List comprehension
+* Function definitions
+
+## 1. If-else Statements
+
+If-else statements control the flow of execution based on conditions. The `if` block executes if the condition is `True`, `elif` (short for "else if") executes if the previous `if` conditions are `False` and the current condition is `True`, and `else` executes if none of the previous conditions are `True`.
+
+
+```{pyodide-python}
+number = 10
+
+if number > 0:
+    print("The number is positive.")
+elif number == 0:
+    print("The number is zero.")
+else:
+    print("The number is negative.")
+```
+
+**Q**: The body mass index (BMI) is calculated as one's weight in kilos divided by the square of one's height in meters and allows to classify individuals as underweight (BMI<18.5) regular (between 25 and 30) and overweight (over 30). Write an `if-else` statement that given a value for BMI returns the 'Underweight', 'Regular' or 'Overweight'.
+
+```{pyodide-python}
+# Write here your code
+
+```
+
+
+## 2. Loops
+
+### 2.1 `for` loops
+
+For loops iterate over a sequence (like a list or a range) and execute a block of code for each element in the sequence.
+
+```{pyodide-python}
+fruits = ["apple", "banana", "cherry"]
+
+for fruit in fruits:
+    print(fruit)
+
+# Creates a list with 0, 1, 2, 3, 4 to the square
+mylist=[] #create empty list
+
+for i in range(5):
+    mylist.append(i**2)
+
+mylist
+```
+
+**Q**: Write a for loop that given a weight loops across a list of heights and returns the BMI:
+
+```{pyodide-python}
+# Write here your code
+
+```
+
+
+### 2.2 `while` loops
+
+These execute a block of code as long as a given condition is `True`.
+
+```{pyodide-python}
+count = 0
+
+while count < 5:
+    print(count)
+    count += 1
+```
+
+### 2.3 List Comprehension
+
+While not loop themselves, list comprehensions provide a concise and elegant way to create lists in Python. They offer a shorter and more readable syntax compared to traditional `for` loops, especially for simple list transformations.
+
+Its basic structure is as follows:
+
+```python
+[expression for item in iterable if condition]
+```
+
+1. `expression`: the value to be included in the new list.
+2. `item`: a variable representing each element in the iterable.
+3. `iterable`: any iterable object, such as a list, tuple, string, or range (more on these  in a separate tutorial on `Python`'s data structures).
+4. `condition` (optional): a condition that must be met for an item to be included in the new list.
+
+Example: squaring a list of numbers.
+
+```{pyodide-python}
+# a list is created by enclosing its elements within brackets
+numbers = [0, 1, 2, 3, 4]
+squared_numbers = [x**2 for x in numbers] 
+squared_numbers  # Output: [0, 1, 4, 9, 16]
+```
+
+Example: creating a list of even numbers.
+
+```{pyodide-python}
+numbers = [1, 2, 3, 4, 5]
+even_numbers = [x for x in numbers if x % 2 == 0]
+even_numbers  # Output: [2, 4]
+```
+
+
+Utility in avoiding explicit loops:
+
+1. Conciseness: list comprehensions often result in more concise and readable code compared to equivalent `for` loops.
+2. Readability: the structure of list comprehensions can be more intuitive to understand, especially for simple transformations.
+3. Efficiency: in many cases, list comprehensions can be more efficient than traditional `for` loops due to optimizations in the Python interpreter.
+
+Example: comparing loop and list comprehension increating the list of the first 10 even numbers:
+
+**Using a `for` loop:**
+
+```{pyodide-python}
+
+even_numbers = [] # creates an empty list
+
+for i in range(2, 21, 2):  # Generate numbers from 2 to 20 with a step of 2
+    even_numbers.append(i) # appends to the list the iterator
+
+even_numbers  # Output: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+```
+
+**Using list comprehension:**
+
+```{pyodide-python}
+even_numbers = [i for i in range(2, 21, 2)] 
+even_numbers
+```
+
+The list comprehension version is significantly shorter and more concise while achieving the same result.
+
+
+## 4. Functions
+
+Functions define reusable blocks of code that can be called with specific arguments.
+
+In `Python`, a function is defined using the `def` keyword followed by the function name, parentheses enclosing any parameters, and a colon. The function body is then indented.
+
+```{pyodide-python}
+def function_name(parameter1, parameter2, ...):
+    """
+    Docstring: A brief description of what the function does.
+    """
+    # Function body: The code that the function executes.
+    # ...
+    return value  # Optional: Returns a value from the function
+```
+
+**Key Concepts**
+
+- **Parameters:** These are variables that receive input values when the function is called.
+- **Arguments:** The actual values passed to the function when it's called.
+- **Docstring:** A string within triple quotes ("""...""") that documents the function's purpose, parameters, and return value. It's a good practice to include docstrings for better code readability and maintainability.
+- **Return Statement:** Optionally, a function can return a value using the `return` statement. If no `return` statement is present, the function implicitly returns `None`.
+
+
+```{pyodide-python}
+def calculate_area(width, height):
+    """
+    Calculates the area of a rectangle.
+
+    Args:
+        width: The width of the rectangle.
+        height: The height of the rectangle.
+
+    Returns:
+        The area of the rectangle.
+    """
+    area = width * height
+    return area
+
+# Calling the function
+rectangle_width = 5
+rectangle_height = 10
+rectangle_area = calculate_area(rectangle_width, rectangle_height)
+print("The area of the rectangle is:", rectangle_area) 
+```
+
+Default arguments: You can provide default values for parameters. If no argument is passed for a parameter with a default value, the default value is used.
+
+```{pyodide-python}
+def greet(name, greeting="Hello"):
+    print(greeting + ", " + name + "!")
+
+greet("Alice")  # Output: Hello, Alice!
+greet("Bob", "Hi")  # Output: Hi, Bob!
+```
+
+Variables defined within a function have local scope, meaning they are only accessible within that function. Variables defined outside the function have global scope and can be accessed from anywhere in the program.
+
+> QUESTION: Write a Python function named `first_n_even_numbers` that takes an integer `n` as input. The function should use list comprehension to generate and return a list containing the first `n` even numbers.
+

@@ -1,0 +1,290 @@
+# DataFrames de pandas {#sec-pandas}
+
+pandas es la librería de Python para manipular y analizar **datos tabulares**. Ofrece dos estructuras:
+
+1. **`Series`**: un vector unidimensional con etiquetas (un índice). Cada columna de una tabla es una `Series`.
+2. **`DataFrame`**: una tabla bidimensional con filas y columnas etiquetadas, equivalente al `data.frame` de R.
+
+Se importa con el alias `pd`; cargamos también NumPy porque se usan juntas.
+
+```{pyodide-python}
+import numpy as np
+import pandas as pd
+```
+
+## Crear un DataFrame
+
+La forma más habitual es a partir de un **diccionario** cuyas claves son los nombres de las columnas y cuyos valores son listas (o arrays) de la misma longitud.
+
+```{pyodide-python}
+datos = {"nombre": ["Alicia", "Bruno", "Carla"], "edad": [25, 30, 41]}
+df = pd.DataFrame(datos)
+df
+```
+
+También puede crearse desde un array de NumPy indicando los nombres de columna:
+
+```{pyodide-python}
+X = np.array([[1, 2, 3], [4, 5, 6]])
+pd.DataFrame(X, columns=["A", "B", "C"])
+```
+
+## Leer y guardar ficheros
+
+En la práctica los datos vienen de un fichero. `pd.read_csv()` lee un CSV desde una ruta local o una URL y devuelve un DataFrame. Hay funciones equivalentes para otros formatos: `pd.read_excel()`, `pd.read_parquet()`, `pd.read_json()`...
+
+Usaremos el conjunto de datos `tips` (propinas en un restaurante; 244 cuentas): importe de la cuenta (`total_bill`), propina (`tip`), sexo de quien paga (`sex`), si hay fumadores en la mesa (`smoker`), día (`day`), turno (`time`) y tamaño del grupo (`size`).
+
+```{pyodide-python}
+url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/tips.csv"
+propinas = pd.read_csv(url)
+propinas.head()          # primeras 5 filas
+```
+
+En VS Code, con el fichero descargado en una subcarpeta `datos/` de tu proyecto, la lectura se hace con una **ruta relativa**:
+
+```python
+propinas = pd.read_csv("datos/tips.csv")
+```
+
+Argumentos útiles de `read_csv`: `sep=";"` si el separador es punto y coma (frecuente en ficheros españoles), `decimal=","` si los decimales van con coma, `encoding="latin-1"` si hay problemas con los acentos, `na_values=["..", "-"]` para códigos de valor ausente. Para guardar: `df.to_csv("resultado.csv", index=False)`.
+
+## Inspeccionar un DataFrame
+
+Lo primero al cargar datos es mirar su tamaño, sus columnas, sus tipos y un resumen:
+
+```{pyodide-python}
+print(propinas.shape)        # (filas, columnas)
+print(propinas.columns)      # nombres de las columnas
+print(propinas.dtypes)       # tipo de cada columna
+```
+
+```{pyodide-python}
+propinas.info()              # todo lo anterior más los valores no nulos
+```
+
+`.describe()` da los estadísticos descriptivos de las columnas numéricas (con `include="all"` incluye también las de texto):
+
+```{pyodide-python}
+propinas.describe()
+```
+
+Para una columna categórica, `.value_counts()` cuenta cuántas veces aparece cada valor (`normalize=True` da proporciones):
+
+```{pyodide-python}
+print(propinas["day"].value_counts())
+print(propinas["smoker"].value_counts(normalize=True))
+```
+
+Otros métodos útiles: `.tail()` (últimas filas), `.sample(5)` (5 filas al azar), `.nunique()` (valores distintos por columna), `.corr(numeric_only=True)` (matriz de correlaciones).
+
+## Seleccionar columnas y filas
+
+### Columnas
+
+Una columna se selecciona con su nombre entre corchetes y es una `Series`; una lista de nombres devuelve un DataFrame con esas columnas.
+
+```{pyodide-python}
+print(type(propinas["tip"]))
+propinas[["total_bill", "tip"]].head(3)
+```
+
+Al ser una `Series`, una columna tiene sus propios métodos: `.mean()`, `.max()`, `.unique()`, `.value_counts()`...
+
+```{pyodide-python}
+print(propinas["tip"].mean())
+print(propinas["day"].unique())
+```
+
+### Filas: `.iloc[]` y `.loc[]`
+
+- `.iloc[fila, columna]` selecciona **por posición** (enteros, empezando en 0).
+- `.loc[etiqueta_fila, nombre_columna]` selecciona **por etiqueta**.
+
+En ambos se pueden usar rebanadas y listas. Con `.loc` la rebanada incluye el extremo final.
+
+```{pyodide-python}
+print(propinas.iloc[0])                          # primera fila (una Series)
+print(propinas.iloc[0:3, 0:2])                   # filas 0-2, columnas 0-1
+print(propinas.loc[0:2, ["total_bill", "tip"]])  # mismas filas, por nombre
+```
+
+### El índice
+
+El índice identifica las filas. Por defecto son enteros de 0 a $n-1$, pero puede fijarse una columna como índice con `.set_index()` y deshacerlo con `.reset_index()`. Muchos métodos devuelven un DataFrame **nuevo** en lugar de modificar el original: hay que reasignar el resultado.
+
+```{pyodide-python}
+df = pd.DataFrame({"nombre": ["Alicia", "Bruno", "Carla"], "edad": [25, 30, 41]})
+df = df.set_index("nombre")
+print(df)
+print(df.loc["Bruno"])          # ahora .loc usa el nombre
+df = df.reset_index()
+df
+```
+
+### Filtrar filas con condiciones
+
+Una condición sobre una columna devuelve una `Series` booleana que se usa como máscara, igual que en NumPy. Varias condiciones se combinan con `&`, `|` y `~`, cada una entre paréntesis.
+
+```{pyodide-python}
+grandes = propinas[propinas["total_bill"] > 40]
+print(grandes.shape)
+sabado_fumador = propinas[(propinas["day"] == "Sat") & (propinas["smoker"] == "Yes")]
+print(sabado_fumador.shape)
+propinas[propinas["day"].isin(["Sat", "Sun"])].head(3)
+```
+
+Con `.loc` se puede filtrar filas y elegir columnas a la vez: `propinas.loc[propinas["tip"] > 5, ["total_bill", "tip"]]`.
+
+### Ordenar
+
+```{pyodide-python}
+propinas.sort_values("tip", ascending=False).head(3)
+```
+
+## Valores ausentes
+
+Los valores ausentes se representan como `NaN`. `.isna()` los detecta, `.dropna()` elimina las filas que los contienen y `.fillna()` los sustituye. Antes de modelizar hay que saber cuántos hay y dónde.
+
+```{pyodide-python}
+df = pd.DataFrame({"x": [1.0, np.nan, 3.0, 4.0], "y": [10, 20, np.nan, 40]})
+print(df.isna().sum())            # ausentes por columna
+print(df.dropna())                # filas completas
+print(df.fillna(df.mean()))       # imputar con la media de cada columna
+```
+
+## Crear nuevas variables
+
+### Operaciones vectorizadas
+
+Las operaciones entre columnas (y con funciones de NumPy) se hacen elemento a elemento y son la forma más rápida de crear variables.
+
+```{pyodide-python}
+propinas["porcentaje"] = 100 * propinas["tip"] / propinas["total_bill"]
+propinas["log_cuenta"] = np.log(propinas["total_bill"])
+propinas["por_persona"] = propinas["total_bill"] / propinas["size"]
+propinas.head(3)
+```
+
+### Variables condicionales
+
+Para crear una variable según una condición se puede usar `np.where(condicion, valor_si, valor_no)` (vectorizado) o, para varias categorías, `pd.cut()` con los puntos de corte.
+
+```{pyodide-python}
+propinas["generoso"] = np.where(propinas["porcentaje"] > 20, "sí", "no")
+propinas["tramo"] = pd.cut(propinas["total_bill"], bins=[0, 15, 30, 100],
+                           labels=["baja", "media", "alta"])
+propinas[["total_bill", "porcentaje", "generoso", "tramo"]].head()
+```
+
+### `.apply()` para funciones propias
+
+Cuando no hay una operación vectorizada, `.apply()` aplica una función (a menudo una `lambda`) a cada elemento de una columna o, con `axis=1`, a cada fila del DataFrame. Es más lento que las operaciones vectorizadas; úsalo solo cuando no haya alternativa.
+
+```{pyodide-python}
+df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
+df["C"] = df["A"] + df["B"]                                        # vectorizado
+df["D"] = df.apply(lambda fila: fila["A"]**2 + fila["B"], axis=1)  # por filas
+df["E"] = df["B"].apply(lambda v: "alto" if v > 4 else "bajo")     # por elemento
+print(df)
+print(df[["A", "B"]].apply(sum, axis=0))   # por columnas: suma de cada una
+```
+
+Para eliminar o renombrar columnas: `df.drop(columns=["D", "E"])` y `df.rename(columns={"A": "a"})`.
+
+## Agrupar y resumir: `groupby`
+
+`.groupby()` implementa el esquema **dividir-aplicar-combinar**: divide las filas según los valores de una o varias columnas, aplica una función de resumen a cada grupo y combina los resultados en una tabla.
+
+```{pyodide-python}
+propinas.groupby("day")["tip"].mean()
+```
+
+Funciones de resumen habituales tras `groupby`:
+
+| Método | Descripción |
+|---|---|
+| `.sum()` | suma de cada grupo |
+| `.mean()` | media |
+| `.median()` | mediana |
+| `.std()`, `.var()` | desviación típica, varianza |
+| `.min()`, `.max()` | mínimo, máximo |
+| `.count()` | número de valores no nulos |
+| `.size()` | número de filas del grupo |
+| `.quantile(q)` | cuantil `q` (p. ej. `0.75`) |
+
+```{pyodide-python}
+print(propinas.groupby("day")["tip"].std())
+print(propinas.groupby("day").size())
+```
+
+Con `.agg()` se aplican varias funciones a la vez, funciones propias (`lambda`), o distintas funciones a distintas columnas mediante un diccionario. Se puede agrupar por más de una columna.
+
+```{pyodide-python}
+propinas.groupby("day")["tip"].agg(["mean", "std", "count"])
+```
+
+```{pyodide-python}
+propinas.groupby("day")["tip"].agg(lambda x: x.max() - x.min())   # rango por grupo
+```
+
+```{pyodide-python}
+propinas.groupby(["day", "time"]).agg({"tip": ["mean", "max"], "total_bill": "sum"})
+```
+
+Además de resumir se puede **transformar**: `.transform()` devuelve un valor por fila alineado con el DataFrame original (por ejemplo, la media de su grupo), lo que permite crear variables como "desviación respecto a la media del grupo". Y `.filter()` conserva solo los grupos que cumplen una condición.
+
+```{pyodide-python}
+propinas["media_dia"] = propinas.groupby("day")["tip"].transform("mean")
+propinas["desv_dia"] = propinas["tip"] - propinas["media_dia"]
+print(propinas[["day", "tip", "media_dia", "desv_dia"]].head())
+
+# Solo los días con más de 60 cuentas
+print(propinas.groupby("day").filter(lambda g: len(g) > 60)["day"].unique())
+```
+
+## Combinar tablas: `concat` y `merge`
+
+`pd.concat()` apila DataFrames por filas (`axis=0`, por defecto) o los pone lado a lado por columnas (`axis=1`). Con `ignore_index=True` se renumera el índice.
+
+```{pyodide-python}
+df1 = pd.DataFrame({"id": [1, 2], "nombre": ["Alicia", "Bruno"]})
+df2 = pd.DataFrame({"id": [3, 4], "nombre": ["Carla", "David"]})
+pd.concat([df1, df2], ignore_index=True)
+```
+
+```{pyodide-python}
+df3 = pd.DataFrame({"edad": [25, 30]})
+pd.concat([df1, df3], axis=1)
+```
+
+`pd.merge()` une dos tablas por una clave común (como los `JOIN` de SQL o `merge()` en R). El argumento `how` controla qué filas se conservan: `"inner"` (solo las claves presentes en ambas; por defecto), `"left"` (todas las de la izquierda), `"outer"` (todas).
+
+```{pyodide-python}
+personas = pd.DataFrame({"id": [1, 2, 3], "nombre": ["Alicia", "Bruno", "Carla"]})
+salarios = pd.DataFrame({"id": [1, 2, 4], "salario": [2100, 1800, 2500]})
+print(pd.merge(personas, salarios, on="id", how="inner"))
+print(pd.merge(personas, salarios, on="id", how="left"))
+```
+
+Tras un `merge` conviene comprobar siempre cuántas filas han emparejado: `indicator=True` añade una columna `_merge` con esa información.
+
+::: {.callout-important title="Tu turno"}
+Con el DataFrame `propinas`: (a) calcula el porcentaje medio de propina (`porcentaje`) por turno (`time`) y sexo (`sex`); (b) obtén las 5 cuentas con mayor `porcentaje` entre las de grupos de 2 personas, mostrando solo `total_bill`, `tip` y `porcentaje`.
+:::
+
+```{pyodide-python}
+# Escribe aquí tu código
+
+```
+
+::: {.callout-tip title="Solución" collapse="true"}
+```python
+# (a)
+print(propinas.groupby(["time", "sex"])["porcentaje"].mean())
+# (b)
+(propinas[propinas["size"] == 2]
+    .sort_values("porcentaje", ascending=False)
+    .head(5)[["total_bill", "tip", "porcentaje"]])
+```
+:::

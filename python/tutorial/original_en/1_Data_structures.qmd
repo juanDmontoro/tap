@@ -1,0 +1,691 @@
+---
+title: "Data structures in `Python`"
+author: "Juan D. Montoro-Pons"
+toc: true
+format: html
+filters: 
+   - pyodide
+execute: 
+  conda:
+    environment: base
+---
+
+:::{.callout-note title="Source"}
+
+:::
+
+```{r}
+#| echo: false
+os_info = Sys.info()["sysname"]
+if (os_info == "Darwin") {
+  # macOS (entorno base de anaconda)
+  Sys.setenv(RETICULATE_PYTHON = "/Users/jd/anaconda3/bin/python")
+} else {
+  # Linux y otros sistemas operativos (entorno base de anaconda)
+  Sys.setenv(RETICULATE_PYTHON = "/home/juand/anaconda3/bin/python")
+}
+
+```
+
+
+# 1. Lists, Tuples, and Dictionaries
+
+## 1.1 Lists
+
+Lists are defined as a set of individual elements, separated by commas, between two brackets. For example:
+
+```{pyodide-python}
+a = [0, 1, 1, 2, 3, 5, 8, 13]
+b = [5., "hello", 2+0j, "horse", 21]
+a
+# Run the code chunk by clicking Run Code. 
+# You can also run individual lines with cmd+enter (mac) or  alt+enter (win)
+# You can also edit and run a line. Try to show object b
+```
+
+We can access individual elements of the list using the variable name in which the list is stored followed by an integer (between 0 and the number of elements - 1) written in brackets.
+
+```{pyodide-python}
+b[0] # Output: 5.0
+b[1] # Output: 'hello'
+b[2] # Output: (2+0j)
+```
+
+The first element of `b` is `b[0]`, the second is `b[1]`, the third is `b[2]`, and so on. In some programming languages like C and Python, list and array indices start at 0, while in others they start at 1 (like MATLAB, R, or FORTRAN).
+
+Lists are mutable data structures. We can change individual elements of the list:
+
+```{pyodide-python}
+b[0] = b[0] + 2
+b[3] = 3.14159
+```
+
+Lists can also be concatenated using `+`:
+
+```{pyodide-python}
+a = [1, 2, 3]
+b = [4, 5, 6]
+a + b # Output: [1, 2, 3, 4, 5, 6]
+```
+
+Or elements can be appended using the `append` method:
+
+```{pyodide-python}
+a.append('This is an element')
+a
+```
+
+
+## 1.2 Tuples
+
+Tuples in Python are immutable (meaning their elements cannot be modified once defined) ordered collections of elements. They are similar to lists but have some key differences due to their immutability, which makes them particularly useful in specific scenarios. Tuples are created similarly to lists, but with parentheses instead of brackets.
+
+```{pyodide-python}
+x = (1, 2, 'hello', 3)
+x[1] # Output: 2
+```
+
+Tuples are ideal for storing data that should remain constant throughout the program. For example, storing coordinates or days of the week (things that should not change). 
+
+Tuples allow for unpacking multiple values into variables easily, making simultaneaous assignments in just one line of code. The example below assigns each element of a tuple by unpacking it to three newly defined variables  `x`, `y` and `z`:
+
+
+```{pyodide-python}
+
+point = (3,-1,2)
+x, y, z = point  
+
+# Try and see how x, y and z have stored the corresponding values
+
+# You can also unpack just part of the tuple. Uncomment and try the code below
+# x1,x2, _ = point
+
+```
+
+
+Key Uses of Tuples
+  1. Data That Should Not Change
+  2. Function Returns: tuples are often used to return multiple values from a function.
+  3. Keys in Dictionaries (ssee below)
+  4. Unpacking (tuples allow for unpacking multiple values into variables easily).
+
+The main advantages of using tuples over lists is that tuples are generally faster than lists due to their immutability and simpler internal structure, consume less memory, making them suitable for large collections of constant data and allow for safe iterations (tuples prevent accidental overwriting during iteration or function calls).
+
+
+## 1.3 Dictionaries
+
+A dictionary in Python is a mutable, unordered collection that maps keys to values. It is one of the most widely used data structures due to its efficiency and versatility.
+
+
+Dictionaries allow for key-value pair storage. This makes them appropriate for fast lookups, that is, efficiently retrieve data by keys, making dictionaries ideal for implementing look-up tables or caches.
+
+
+```{pyodide-python}
+   phone_book = {"Alice": "123-456-7890", "Bob": "987-654-3210"}
+   phone_book["Alice"]  # Output: 123-456-7890
+```
+
+
+
+Dictionaries can be modified in place, making them suitable for dynamic datasets. Furtermore built-in methods such as  `.get()`, `.keys()`, `.values()`, and `.items()` provide convenient ways to access, manipulate, or iterate through the dictionary.
+
+```{pyodide-python}
+Rooms = {"Rafa": 105, "Teresa": 406, "Marta": 256}
+Rooms.get("Teresa")  # Output: 406
+```
+
+
+**Comparison of basic data structures**
+
+| **Feature**           | **Dictionary**               | **List**                  | **Tuple**             |
+|-----------------------|-----------------------------|---------------------------|-----------------------|
+| Key-Value Storage     | Yes                         | No                        | No                    |
+| Look-Up Time          | O(1)                        | O(n)                      | O(n)                 |
+| Mutability            | Mutable                     | Mutable                   | Immutable             |
+| Order Preservation    | Preserves since Python 3.7+ | Yes                       | Yes                   |
+| Ideal Use Case        | Mappings                    | Sequential data           | Fixed collections     |
+
+
+
+# 2. `NumPy`'s arrays 
+
+NumPy (short for Numerical Python) is a fundamental library for scientific computing in Python. It provides support for creating and manipulating large, multi-dimensional arrays and matrices, along with a comprehensive collection of mathematical functions to operate on these data structures. 
+
+NumPy offers a core data structure ndarray (N-dimensional array) implemented in C. This implementation is key to NumPy's performance and efficiency. 
+
+## 2.1 NumPy data structures
+### 2.1.1 Creating a vector from a list of numbers
+
+Using the `np.array()` function, we can convert a list of numbers into a NumPy array, enabling us to perform numerical operations efficiently.
+
+```{pyodide-python}
+import numpy as np
+date = np.array([2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008])
+date # Output: [2001 2002 2003 2004 2005 2006 2007 2008]
+```
+
+Here, the date array stores a sequence of integers representing years. NumPy arrays are more efficient than Python lists for numerical computations.
+
+### 2.1.2 Creating a vector with constant spacing
+
+The `np.arange()` function generates sequences of numbers with specified starting, stopping, and stepping values, making it convenient for evenly spaced values.
+
+```{pyodide-python}
+np.arange(1, 7, 2) # Output: array([1, 3, 5])
+np.arange(0., 10, 2) # Output: array([ 0., 2., 4., 6., 8.])
+np.arange(0, 10, 1.5) # Output: array([ 0. , 1.5, 3. , 4.5, 6. , 7.5, 9. ])
+```
+
+This functionality is particularly useful in numerical simulations, where you may need to define ranges of values to iterate over.
+
+### 2.1.3 Generating Sequences with linspace and logspace
+
+NumPy provides additional functions to generate sequences of numbers, which are particularly useful for scientific computations.
+`np.linspace()`
+
+The `np.linspace()` function generates evenly spaced numbers over a specified range. Unlike `np.arange()`, it specifies the number of points rather than the step size.
+
+```{pyodide-python}
+np.linspace(0, 1, 5)  # Output: array([0. , 0.25, 0.5 , 0.75, 1. ])
+np.linspace(1, 10, 4)  # Output: array([ 1.,  4.,  7., 10.])
+```
+
+This is particularly handy for plotting functions or when you need a predefined number of points between two bounds.
+
+The `np.logspace()` function generates numbers evenly spaced on a logarithmic scale. You define the start and stop powers of 10, and NumPy generates values between 10start10start and 10stop10stop.
+
+```{pyodide-python}
+
+np.logspace(0, 3, 4)  # Output: array([   1.,   10.,  100., 1000.])
+np.logspace(-1, 1, 5) # Output: array([ 0.1 ,  0.316,  1.   ,  3.162, 10. ])
+
+```
+
+
+This function is widely used in scientific contexts, for example, when analyzing data that spans several orders of magnitude.
+
+### 2.1.3 Creating a matrix
+
+NumPy arrays extend naturally to two or more dimensions, which makes them ideal for creating and manipulating matrices.
+
+```{pyodide-python}
+A = np.array([[9., 2., 4.], [1., 3., 2.], [6., 5., 4.]])
+print(A)
+# Output:
+# array([[9., 2., 4.],
+#        [1., 3., 2.],
+#        [6., 5., 4.]])
+```
+
+Beyond manually specifying matrices, NumPy offers utility functions for creating arrays with specific patterns:
+
+    - Zeros Matrix: np.zeros([i, i]) creates a ixj matrix filled with zeros.
+    - Ones Matrix: np.ones([i, j]) creates a ixj matrix filled with ones.
+    - Identity Matrix: np.eye(i) creates a ixi identity matrix.
+
+These are highly efficient for initializing arrays in numerical models.
+
+```{pyodide-python}
+Z = np.zeros([3, 4])
+U = np.ones([4, 2])
+I = np.eye(4)
+
+```
+
+To check the dimensions of any array, use the `.shape` attribute:
+
+```{pyodide-python}
+U.shape
+```
+
+
+## 2.2 Indexing NumPy arrays
+
+NumPy arrays support advanced indexing techniques, enabling efficient access and modification of data.
+
+### 2.2.1 Accessing elements of a vector
+
+Access specific elements using their indices (zero-based). You can also modify elements by assigning new values.
+
+```{pyodide-python}
+x = np.array([12, 8, -2, 0, 32, 2])
+x[3] # Output: 0
+x[5] = 1
+x # Output: array([12, 8, -2, 0, 32, 1])
+```
+
+### 2.2.2 Accessing elements of a matrix
+
+For matrices, specify row and column indices to access or modify elements.
+
+```{pyodide-python}
+A = np.array([[12, 9, 2, 3], [-1, 3, 9, 1], [0, 5, 0, 3]])
+A[1, 3] # Output: 1
+A[2, 0] = 20
+A
+
+```
+
+### 2.2.3 Accessing multiple elements at once
+
+NumPy supports fancy indexing, allowing you to access multiple elements simultaneously.
+
+```{pyodide-python}
+x = np.array([0.3, 0.1, 1.3, 1.7, -2.4, 0.9])
+x[[0, 1]] # Output: array([0.1, 1.3])
+x[[4, 2, 5]] # Output: array([-2.4, 1.3, 0.9])
+index = [3, 1, 2]
+x[index] # Output: array([1.7, 0.1, 1.3])
+```
+
+You can use a list or an array of indices to specify the elements.
+
+## 2.3 Manipulating arrays
+
+### 2.3.1 Adding elements to an array
+
+The `np.append()` and `np.insert()` functions allow you to add elements to arrays, extending their size dynamically.
+
+```{pyodide-python}
+v = np.array([2, 1, 3, 4])
+v = np.append(v, -1)
+w = np.array([10, -2, 18])
+v = np.insert(v, 2, w)
+```
+
+### 2.3.2 Deleting elements from an array
+
+The `np.delete()` function removes elements by index.
+
+```{pyodide-python}
+v = np.array([3, 12, 9, 2, 4, 16, -2, 3, 21, 56])
+v = np.delete(v, 3) # Delete the fourth element
+np.delete(v, np.arange(4, 8)) # Delete elements 5 to 8
+```
+
+## 2.4 Element-wise operations
+
+### 2.4.1 Adding and subtracting arrays
+
+Arrays of the same shape can be added or subtracted element-wise.
+
+```{pyodide-python}
+v1 = np.array([9, 8, 7, 6, 5, 4, 3])
+v2 = np.array([1, 2, 3, 4, 5, 6, 7])
+v1 + v2 # Output: array([10, 10, 10, 10, 10, 10, 10])
+v1 - v2 # Output: array([ 8, 6, 4, 2, 0, -2, -4])
+```
+
+### 2.4.2 Using NumPy functions with arrays
+
+NumPy provides a rich library of functions to apply element-wise operations. For instance:
+
+```{pyodide-python}
+x = np.linspace(0, np.pi, 5)
+np.cos(x) 
+# Output: array([ 1.0000e+00, 7.0710e-01, 6.1232e-17, -7.0710e-01, -1.0000e+00])
+
+A = np.array([[1, 4, 9], [16, 25, 26], [49, 64, 81]])
+np.sqrt(A) # Output: array([[1. , 2. , 3. ], [4. , 5. , 5.0990], [7. , 8. , 9. ]])
+
+
+```
+
+## 2.5 Other NumPy features
+
+NumPy's random module allows you to generate random numbers for simulations or statistical analysis.
+
+To generate random draws of a uniform distribution in the support [0,1]:
+
+```{pyodide-python}
+np.random.rand(5)  # 5 random uniform numbers between 0 and 1
+```
+
+
+Here we generate 10 draws from a standard normal distribution:
+
+```{pyodide-python}
+np.random.standard_normal(10) 
+
+```
+
+We can generate draws from any normal distribution:
+
+```{pyodide-python}
+np.random.normal(loc=10,scale=3,size=10)
+```
+
+
+
+# 3. `Pandas` dataframes
+
+
+Pandas is a powerful `Python` library for data manipulation and analysis. It provides two primary data structures:
+
+1. **Series**: A one-dimensional labeled array (like a list with labels).
+2. **DataFrame**: A two-dimensional labeled data structure (like a table with rows and columns).
+
+Pandas is widely used in data science and machine learning due to its flexibility and ease of use for handling tabular data.
+
+
+## 3.1 Creating a `DataFrame`
+
+You can create a DataFrame from a NumPy array and specify the column names.
+
+```{pyodide-python}
+import pandas as pd
+
+# Create a NumPy array (note that you must have imported numpy; we have done that in section 2)
+data = np.array([[1, 2, 3], [4, 5, 6]])
+
+# Create a DataFrame with column names
+df = pd.DataFrame(data, columns=['A', 'B', 'C'])
+df
+```
+
+You can create a DataFrame by passing a dictionary where keys represent column names and values are lists of data.
+
+```{pyodide-python}
+# Create a DataFrame from a dictionary
+data = {'Name': ['Alice', 'Bob'], 'Age': [25, 30]}
+df = pd.DataFrame(data)
+df
+```
+
+## 3.2 Understanding indices in dataframes
+
+The index in a DataFrame identifies the rows uniquely, similar to row labels. By default, Pandas assigns integer indices starting from 0, but you can customize it.
+
+You can set an existing column as the index.
+
+```{pyodide-python}
+df = pd.DataFrame({'Name': ['Alice', 'Bob'], 'Age': [25, 30]})
+df.set_index('Name', inplace=True)  # Set 'Name' as the index
+df
+```
+
+If you want to move the index back into a column and restore the default integer index:
+
+```{pyodide-python}
+df.reset_index(inplace=True)  # Reset the index
+df
+```
+
+## 3.3 DataFrame basics
+
+Accessing columns:
+
+```{pyodide-python}
+df['Name']  # Access a single column
+```
+
+To access rows one can use `.iloc[]` for integer-based indexing or 
+`.loc[]` for label-based indexing:
+
+```{pyodide-python}
+df = pd.DataFrame({'Name': ['Alice', 'Bob'], 'Age': [25, 30]})
+df.set_index('Name', inplace=True)  # Set 'Name' as the index
+
+print(df.iloc[0])  # First row
+print(df.loc['Bob'])  # row by index
+```
+
+We can always add new columns to the dataframe:
+
+```{pyodide-python}
+df['Pets'] = ['F', 'M']
+df
+```
+
+To filter rows we can use logical conditions:
+
+```{pyodide-python}
+print(df[df['Age'] > 25])  # Filter rows where 'Age' > 25
+```
+
+## 3.4 Summary statistics for dataframes
+
+#### 3.4.1 `describe`
+
+The `describe` method provides a quick overview of summary statistics for numerical or categorical columns.
+
+```{pyodide-python}
+# Sample DataFrame
+df = pd.DataFrame({
+    'Values': [10, 20, 30, 40, 50],
+    'Scores': [2.5, 3.6, 4.2, 3.8, 4.0]
+})
+
+# Summary statistics
+df.describe()
+```
+
+
+### 3.4.2 `value_counts`
+
+This method counts the unique values in a Series or a column of a DataFrame.
+
+
+```{pyodide-python}
+# Count occurrences of each category
+df['Values'].value_counts()
+```
+
+
+## 3.5 Creating new variables
+
+To create a new column in a Pandas DataFrame as a transformation of one or more existing columns, you can use basic operations, apply functions, or work with vectorized operations for efficiency. Below are a few common examples:
+
+### 3.5.1. Basic transformations using operators
+
+You can directly apply mathematical operations or transformations on existing columns.
+
+```{pyodide-python}
+# Example DataFrame
+data = {'A': [1, 2, 3], 'B': [4, 5, 6]}
+df = pd.DataFrame(data)
+
+# Create a new column as a sum of A and B
+df['C'] = df['A'] + df['B']
+
+# Create a new column as a product of A and B
+df['D'] = df['A'] * df['B']
+
+df
+```
+
+
+
+### 3.5.2 Using `apply()` for custom transformations
+
+Use the `.apply()` method to apply a custom function to rows or columns.
+
+```{pyodide-python}
+# Create a new column by applying a custom function
+df['E'] = df.apply(lambda row: row['A'] ** 2 + row['B'], axis=1)
+df
+```
+
+Here, `axis=1` indicates that the function should be applied row-wise.
+
+When using apply() with axis=0, the function is applied column-wise (i.e., to each column individually). This is useful when you want to perform a calculation or transformation on each column in the DataFrame.
+
+```{pyodide-python}
+# Create a new column by applying a custom function
+col_sums = df.apply(sum, axis=0)
+col_sums
+```
+
+
+### 3.5.3 Using Vectorized Functions
+
+Use vectorized operations for performance, which are faster than `.apply()`.
+
+```{pyodide-python}
+# Create a new column as the square root of A
+# (note that you must have imported numpy; we have done that in section 2)
+df['sqrt_A'] = np.sqrt(df['A'])
+print(df)
+```
+
+### 3.5.4 Using conditions to create new columns
+
+You can create a new column based on conditions.
+
+```{pyodide-python}
+# Create a new column based on conditions
+df['Category'] = ['High' if x > 5 else 'Low' for x in df['B']]
+df
+```
+
+## 3.6 Grouping across values of a variable: use of `groupby`
+
+`groupby` is a powerful method in pandas for performing split-apply-combine operations. It groups data based on specified keys and allows you to apply aggregation functions to each group.
+
+```{pyodide-python}
+# Sample DataFrame
+data = {
+    'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
+    'Values': [10, 20, 30, 40, 50, 60]
+  }
+
+df = pd.DataFrame(data)
+
+# Group by 'Category' and find summary statistics
+df.groupby('Category')['Values'].sum()
+
+```
+
+Note that after applying `groupby` in pandas, you can use a wide range of summary (aggregation) functions to compute statistics for each group. Here are some commonly used summary statistics.
+
+**Basic Aggregation Functions**:  these functions compute basic statistics for each group.
+
+| **Function** | **Description**                              |
+|--------------|----------------------------------------------|
+| `.sum()`     | Sum of values in each group                 |
+| `.mean()`    | Mean of values in each group                |
+| `.median()`  | Median of values in each group              |
+| `.std()`     | Standard deviation of each group            |
+| `.var()`     | Variance of each group                      |
+| `.min()`     | Minimum value in each group                 |
+| `.max()`     | Maximum value in each group                 |
+| `.count()`   | Number of non-null values in each group     |
+| `.size()`    | Total number of entries in each group       |
+
+
+```{pyodide-python}
+df.groupby('Category')['Values'].sd()
+
+```
+
+
+It is always possible to use `.agg()` to apply multiple functions or custom functions to a grouped object.
+
+```{pyodide-python}
+
+result = df.groupby('Group')['Value'].agg(['sum', 'mean', 'max'])
+result
+```
+
+
+You can also use custom lambda (anonymous) functions:
+
+```{pyodide-python}
+result = df.groupby('Group')['Value'].agg(lambda x: x.max() - x.min())
+result
+```
+
+
+It is also possible to apply **Transformation Functions**, which return values aligned with the original DataFrame instead of reducing them.
+
+| **Function** | **Description**                                         |
+|--------------|---------------------------------------------------------|
+| `.transform()` | Transform values by applying a function to each group |
+| `.cumsum()`    | Cumulative sum within each group                      |
+| `.cummax()`    | Cumulative maximum within each group                  |
+| `.rank()`      | Rank elements within each group                       |
+
+
+```{pyodide-python}
+# Cumulative sum within each group
+df['Cumulative Sum'] = df.groupby('Group')['Value'].cumsum()
+df
+```
+
+**Filtering and Boolean Aggregation** functions help filter groups or compute Boolean aggregates.
+
+| **Function** | **Description**                                         |
+|--------------|---------------------------------------------------------|
+| `.filter()`   | Filters groups based on a condition                    |
+| `.any()`      | Checks if any value in the group satisfies a condition |
+| `.all()`      | Checks if all values in the group satisfy a condition  |
+
+
+```{pyodide-python}
+# Filter groups where the sum of values exceeds 50
+filtered = df.groupby('Group').filter(lambda x: x['Value'].sum() > 50)
+filtered
+```
+
+
+Finally, for more advanced analysis, you can compute statistical properties: 
+
+| **Function**   | **Description**                                         |
+|----------------|---------------------------------------------------------|
+| `.quantile()`  | Computes quantile values (e.g., `.quantile(0.75)`)      |
+| `.skew()`      | Measures skewness of distribution within each group    |
+| `.mad()`       | Mean absolute deviation                                |
+| `.corr()`      | Pairwise correlation of columns within groups          |
+| `.cov()`       | Pairwise covariance of columns within groups           |
+
+```{pyodide-python}
+# 75th percentile within each group
+quantiles = df.groupby('Group')['Value'].quantile(0.75)
+quantiles
+```
+
+It is also possible to combine the use of `.agg()` with a dictionary to compute multiple statistics for different columns.
+
+
+```{pyodide-python}
+# Multi-column aggregation
+data = {'Group': ['A', 'A', 'B', 'B', 'C', 'C'],
+        'Value1': [10, 20, 30, 40, 50, 60],
+        'Value2': [5, 15, 25, 35, 45, 55]}
+
+df = pd.DataFrame(data)
+
+result = df.groupby('Group').agg({
+    'Value1': ['mean', 'sum'],
+    'Value2': 'max'}
+    )
+
+result
+```
+
+## 3.7 Use of `concat`
+
+The `concat` function is used to concatenate two or more pandas objects (like DataFrames or Series) along a specified axis (rows or columns).
+
+
+Concatenating along rows:
+```{pyodide-python}
+# Sample DataFrames
+df1 = pd.DataFrame({'ID': [1, 2], 'Name': ['Alice', 'Bob']})
+df2 = pd.DataFrame({'ID': [3, 4], 'Name': ['Charlie', 'David']})
+
+# Concatenating along rows (default)
+result = pd.concat([df1, df2])
+result
+```
+
+Concatenating along columns:
+```{pyodide-python}
+# Concatenate along columns
+result = pd.concat([df1, df2], axis=1)
+result
+```
+
+
+
+

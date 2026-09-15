@@ -1,0 +1,321 @@
+# Control de flujo y funciones {#sec-flujo}
+
+Esta parte presenta las herramientas para decidir (`if`), repetir (`for`, `while`), construir listas de forma compacta (comprensión de listas) y empaquetar código reutilizable (funciones).
+
+## Sentencias `if`, `elif`, `else`
+
+El bloque `if` se ejecuta si la condición es `True`; `elif` ("else if") se evalúa si las condiciones anteriores han sido `False`; `else` recoge el resto de casos. Recuerda: dos puntos al final de la línea y sangría en el bloque.
+
+```{pyodide-python}
+numero = 10
+
+if numero > 0:
+    print("El número es positivo.")
+elif numero == 0:
+    print("El número es cero.")
+else:
+    print("El número es negativo.")
+```
+
+Las condiciones pueden combinarse con `and`, `or` y `not`:
+
+```{pyodide-python}
+edad = 20
+socio = True
+if edad >= 18 and socio:
+    print("Entrada gratuita")
+```
+
+Existe también una versión en una línea (expresión condicional), muy útil dentro de las comprensiones de listas y en pandas:
+
+```{pyodide-python}
+nota = 6.5
+resultado = "aprobado" if nota >= 5 else "suspenso"
+resultado
+```
+
+::: {.callout-important title="Tu turno"}
+El índice de masa corporal (IMC) es el peso en kilos dividido por el cuadrado de la altura en metros. La OMS clasifica: bajo peso si IMC < 18,5; normal entre 18,5 y 25; sobrepeso entre 25 y 30; obesidad a partir de 30. Escribe una cadena `if`-`elif`-`else` que, dado un valor `imc`, imprima la categoría correspondiente. Prueba con varios valores.
+:::
+
+```{pyodide-python}
+imc = 27.3
+# Escribe aquí tu código
+
+```
+
+::: {.callout-tip title="Solución" collapse="true"}
+```python
+if imc < 18.5:
+    print("Bajo peso")
+elif imc < 25:
+    print("Normal")
+elif imc < 30:
+    print("Sobrepeso")
+else:
+    print("Obesidad")
+```
+:::
+
+## Bucles
+
+### Bucle `for`
+
+Un bucle `for` recorre una secuencia (lista, tupla, cadena, `range`, columnas de un DataFrame...) y ejecuta el bloque una vez por elemento.
+
+```{pyodide-python}
+frutas = ["manzana", "plátano", "cereza"]
+
+for fruta in frutas:
+    print(fruta)
+```
+
+`range(n)` genera los enteros de `0` a `n-1`; `range(inicio, fin, paso)` permite fijar el principio y el salto (el fin no se incluye, como en las rebanadas).
+
+```{pyodide-python}
+print(list(range(5)))
+print(list(range(2, 11, 2)))
+
+# Crea una lista con los cuadrados de 0 a 4
+cuadrados = []              # lista vacía
+for i in range(5):
+    cuadrados.append(i**2)
+cuadrados
+```
+
+Dos ayudantes muy frecuentes: `enumerate()` proporciona a la vez el índice y el elemento, y `zip()` recorre dos secuencias en paralelo.
+
+```{pyodide-python}
+for i, fruta in enumerate(frutas):
+    print(i, fruta)
+
+precios = [1.2, 0.8, 3.5]
+for fruta, precio in zip(frutas, precios):
+    print(f"{fruta}: {precio:.2f} €/kg")
+```
+
+Para recorrer un diccionario se usa `.items()`:
+
+```{pyodide-python}
+habitaciones = {"Rafa": 105, "Teresa": 406}
+for nombre, num in habitaciones.items():
+    print(f"{nombre} está en la habitación {num}")
+```
+
+::: {.callout-important title="Tu turno"}
+Dado un peso fijo `peso = 70`, escribe un bucle `for` que recorra la lista `alturas` e imprima el IMC correspondiente a cada altura con un decimal.
+:::
+
+```{pyodide-python}
+peso = 70
+alturas = [1.60, 1.70, 1.80, 1.90]
+# Escribe aquí tu código
+
+```
+
+::: {.callout-tip title="Solución" collapse="true"}
+```python
+for altura in alturas:
+    print(f"Altura {altura}: IMC = {peso / altura**2:.1f}")
+```
+:::
+
+### Bucle `while`
+
+Ejecuta el bloque mientras la condición sea `True`. Hay que asegurarse de que en algún momento deje de serlo, o el bucle no terminará nunca.
+
+```{pyodide-python}
+contador = 0
+
+while contador < 5:
+    print(contador)
+    contador += 1
+```
+
+Un uso típico en métodos numéricos es iterar hasta que se cumpla un criterio de convergencia:
+
+```{pyodide-python}
+# Raíz cuadrada de 2 por el método de Newton
+x = 1.0
+iteracion = 0
+while abs(x**2 - 2) > 1e-10:
+    x = (x + 2 / x) / 2
+    iteracion += 1
+print(f"x = {x:.8f} tras {iteracion} iteraciones")
+```
+
+### `break` y `continue`
+
+`break` sale del bucle inmediatamente; `continue` salta a la siguiente iteración.
+
+```{pyodide-python}
+for n in range(10):
+    if n % 2 == 0:
+        continue        # salta los pares
+    if n > 7:
+        break           # termina al pasar de 7
+    print(n)
+```
+
+## Comprensión de listas
+
+Aunque no es un bucle en sentido estricto, la **comprensión de listas** (*list comprehension*) es la forma más concisa y legible de crear una lista a partir de otra secuencia. Su estructura básica es:
+
+```python
+[expresion for elemento in iterable if condicion]
+```
+
+1. `expresion`: el valor que se incluye en la nueva lista.
+2. `elemento`: la variable que representa cada elemento del iterable.
+3. `iterable`: cualquier objeto recorrible: lista, tupla, cadena, `range`...
+4. `condicion` (opcional): un filtro; solo se incluyen los elementos que la cumplen.
+
+Ejemplo: elevar al cuadrado una lista de números.
+
+```{pyodide-python}
+numeros = [0, 1, 2, 3, 4]
+cuadrados = [x**2 for x in numeros]
+cuadrados
+```
+
+Ejemplo: quedarse solo con los pares.
+
+```{pyodide-python}
+numeros = [1, 2, 3, 4, 5]
+pares = [x for x in numeros if x % 2 == 0]
+pares
+```
+
+Comparemos las dos formas de construir la lista de los diez primeros números pares:
+
+```{pyodide-python}
+# Con un bucle for
+pares = []
+for i in range(2, 21, 2):
+    pares.append(i)
+print(pares)
+
+# Con una comprensión de listas
+pares = [i for i in range(2, 21, 2)]
+print(pares)
+```
+
+La comprensión es más corta, se lee de un vistazo ("los `i` de 2 a 20 de dos en dos") y suele ser algo más rápida. La usaremos, por ejemplo, para construir listas de nombres de columnas: `[col for col in df.columns if col.startswith("x")]`.
+
+Existe la misma sintaxis para diccionarios: `{clave: valor for ...}`.
+
+```{pyodide-python}
+{fruta: len(fruta) for fruta in ["manzana", "kiwi"]}
+```
+
+## Funciones
+
+Una función es un bloque de código con nombre que se puede llamar cuantas veces se quiera con distintos argumentos. Se define con `def`, el nombre, los parámetros entre paréntesis y dos puntos; el cuerpo va sangrado y `return` devuelve el resultado.
+
+```python
+def nombre_funcion(parametro1, parametro2):
+    """
+    Docstring: descripción breve de lo que hace la función.
+    """
+    # cuerpo de la función
+    return valor      # opcional: si no hay return, la función devuelve None
+```
+
+Conceptos clave:
+
+- **Parámetros**: variables que reciben los valores de entrada.
+- **Argumentos**: valores concretos que se pasan al llamar a la función.
+- **Docstring**: cadena entre triples comillas que documenta la función; `help(nombre_funcion)` la muestra. Es una buena práctica incluirla.
+- **`return`**: devuelve un valor y termina la función. Sin `return`, la función devuelve `None`.
+
+```{pyodide-python}
+def area_rectangulo(base, altura):
+    """
+    Calcula el área de un rectángulo.
+
+    Args:
+        base: base del rectángulo.
+        altura: altura del rectángulo.
+
+    Returns:
+        El área del rectángulo.
+    """
+    area = base * altura
+    return area
+
+# Llamada a la función
+resultado = area_rectangulo(5, 10)
+print("El área del rectángulo es:", resultado)
+```
+
+### Argumentos por defecto y por nombre
+
+Un parámetro puede tener un valor por defecto, que se usa si no se pasa argumento. Al llamar, los argumentos pueden darse por posición o por nombre; los de nombre pueden ir en cualquier orden.
+
+```{pyodide-python}
+def saludar(nombre, saludo="Hola"):
+    print(f"{saludo}, {nombre}!")
+
+saludar("Alicia")                        # usa el valor por defecto
+saludar("Bruno", "Buenos días")          # por posición
+saludar(saludo="Adiós", nombre="Carla")  # por nombre
+```
+
+Así funcionan las librerías del curso: `train_test_split(X, y, test_size=0.2, random_state=1)` mezcla argumentos posicionales y con nombre, y los que no indiques toman su valor por defecto.
+
+### Devolver varios valores
+
+Una función puede devolver varios valores separados por comas; en realidad devuelve una tupla, que se desempaqueta al recibirla.
+
+```{pyodide-python}
+def media_y_rango(valores):
+    media = sum(valores) / len(valores)
+    return media, max(valores) - min(valores)
+
+m, r = media_y_rango([3, 8, 5, 10])
+print(f"media = {m}, rango = {r}")
+```
+
+### Ámbito de las variables
+
+Las variables creadas dentro de una función son **locales**: solo existen mientras se ejecuta la función. Las definidas fuera son **globales** y pueden leerse desde dentro, aunque es mejor pasarlas como argumentos para que la función sea autocontenida.
+
+```{pyodide-python}
+def f():
+    interna = 5
+    return interna * 2
+
+print(f())
+# print(interna)   # descomenta esta línea: NameError, la variable no existe fuera
+```
+
+### Funciones anónimas: `lambda`
+
+Para funciones de una sola expresión existe la sintaxis `lambda argumentos: expresion`. No tienen nombre y se usan sobre todo como argumento de otras funciones (`sorted`, `map`, y los métodos `.apply()` y `.agg()` de pandas).
+
+```{pyodide-python}
+cuadrado = lambda x: x**2       # equivale a: def cuadrado(x): return x**2
+print(cuadrado(4))
+
+palabras = ["plátano", "kiwi", "manzana"]
+print(sorted(palabras, key=lambda p: len(p)))   # ordenar por longitud
+```
+
+::: {.callout-important title="Tu turno"}
+Escribe una función `primeros_pares(n)` que reciba un entero `n` y devuelva, usando una comprensión de listas, la lista de los `n` primeros números pares (empezando en 2). Comprueba que `primeros_pares(4)` devuelve `[2, 4, 6, 8]`.
+:::
+
+```{pyodide-python}
+# Escribe aquí tu código
+
+```
+
+::: {.callout-tip title="Solución" collapse="true"}
+```python
+def primeros_pares(n):
+    """Devuelve la lista de los n primeros números pares."""
+    return [2 * i for i in range(1, n + 1)]
+
+primeros_pares(4)
+```
+:::

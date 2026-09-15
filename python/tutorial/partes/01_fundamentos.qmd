@@ -1,0 +1,227 @@
+# Fundamentos: expresiones, variables y tipos {#sec-fundamentos}
+
+Antes de hablar de bucles o de tablas de datos conviene fijar unas pocas ideas básicas: cómo se escribe una expresión, qué es una variable, qué tipos de datos existen y cómo se llama a una función. Si ya has programado en R casi todo te resultará familiar; fíjate sobre todo en las diferencias que se señalan.
+
+## Python como calculadora
+
+Cualquier celda puede evaluar expresiones aritméticas. El resultado de la **última línea** de la celda se muestra automáticamente, como en un notebook.
+
+```{pyodide-python}
+2 + 3 * 4
+```
+
+Operadores aritméticos:
+
+| Operador | Significado | Ejemplo | Resultado |
+|---|---|---|---|
+| `+`, `-`, `*` | suma, resta, producto | `7 * 3` | `21` |
+| `/` | división (siempre devuelve un decimal) | `7 / 2` | `3.5` |
+| `//` | división entera | `7 // 2` | `3` |
+| `%` | resto de la división | `7 % 2` | `1` |
+| `**` | potencia | `2 ** 10` | `1024` |
+
+```{pyodide-python}
+print(7 / 2)     # división
+print(7 // 2)    # división entera
+print(7 % 2)     # resto
+print(2 ** 10)   # potencia
+```
+
+Fíjate en dos cosas: hemos usado `print()` para mostrar varios resultados en la misma celda (si no, solo se vería el último), y el texto que sigue a `#` es un **comentario** que Python ignora.
+
+::: {.callout-note title="Diferencia con R"}
+En R la potencia se escribe `^`. En Python `^` existe pero es otra cosa (XOR bit a bit): `2 ^ 10` da `8`, no `1024`. Usa siempre `**`.
+:::
+
+## Variables y asignación
+
+Una variable es un nombre que apunta a un valor. Se crea con `=` (no hay `<-`) y sin declarar su tipo.
+
+```{pyodide-python}
+precio = 19.99
+unidades = 3
+total = precio * unidades
+total
+```
+
+Reglas para los nombres: letras, dígitos y guion bajo; no pueden empezar por un dígito; distinguen mayúsculas (`total` y `Total` son variables distintas); no pueden ser palabras reservadas (`if`, `for`, `def`, `class`...). Por convención se escriben en minúsculas con guiones bajos: `renta_media`, `num_obs`.
+
+Una variable puede cambiar de valor (y de tipo) en cualquier momento. Una forma muy habitual de actualizarla es con los operadores compuestos `+=`, `-=`, `*=`:
+
+```{pyodide-python}
+contador = 0
+contador += 1      # equivale a contador = contador + 1
+contador += 1
+contador
+```
+
+## Tipos básicos
+
+Cada valor tiene un tipo. La función `type()` lo devuelve.
+
+| Tipo | Nombre | Ejemplos |
+|---|---|---|
+| `int` | entero | `3`, `-10`, `2024` |
+| `float` | decimal (coma flotante) | `3.14`, `-0.5`, `1e6` |
+| `str` | cadena de texto | `"hola"`, `'Valencia'` |
+| `bool` | lógico | `True`, `False` |
+| `NoneType` | ausencia de valor | `None` |
+
+```{pyodide-python}
+print(type(3))
+print(type(3.0))
+print(type("3"))
+print(type(True))
+print(type(None))
+```
+
+Tres detalles importantes:
+
+- Los decimales usan **punto**, nunca coma: `3.14`.
+- `True` y `False` van con mayúscula inicial (en R son `TRUE` y `FALSE`).
+- `None` es el equivalente aproximado de `NULL` en R: indica "sin valor". Lo verás, por ejemplo, como resultado de funciones que no devuelven nada.
+
+Para convertir entre tipos se usan `int()`, `float()`, `str()` y `bool()`:
+
+```{pyodide-python}
+edad_texto = "42"
+edad = int(edad_texto)      # de texto a entero
+print(edad + 1)
+print(float("3.5") * 2)
+print(str(2024) + "-25")    # de entero a texto, y concatenación
+```
+
+Mezclar tipos incompatibles produce un error. Ejecuta la celda siguiente y lee el mensaje: es un `TypeError`, y la última línea explica el problema.
+
+```{pyodide-python}
+"42" + 1     # Esta celda produce un error a propósito
+```
+
+::: {.callout-tip title="Aprende a leer los errores"}
+Un mensaje de error de Python (un *traceback*) se lee **de abajo arriba**: la última línea dice el tipo de error y la causa (`TypeError: can only concatenate str (not "int") to str`); las anteriores indican en qué línea ocurrió. Los errores más frecuentes al empezar:
+
+- `NameError`: usas una variable que no existe (la has escrito mal, o no has ejecutado la celda que la crea).
+- `TypeError`: operación entre tipos incompatibles, o llamada a una función con argumentos incorrectos.
+- `SyntaxError` / `IndentationError`: falta un `:` o un paréntesis, o la sangría no es correcta.
+- `IndexError` / `KeyError`: pides un elemento que no existe en una lista / diccionario.
+- `ModuleNotFoundError`: la librería no está instalada en el entorno activo (en VS Code, comprueba que el kernel es `tap`).
+:::
+
+## Cadenas de texto
+
+Las cadenas se escriben entre comillas simples o dobles, indistintamente. Se concatenan con `+`, se repiten con `*` y se miden con `len()`.
+
+```{pyodide-python}
+nombre = "Valencia"
+print(nombre + " es una ciudad")
+print(len(nombre))
+print(nombre.upper())            # los métodos se llaman con un punto: objeto.metodo()
+print(nombre.replace("V", "B"))
+print("-" * 20)
+```
+
+La forma más cómoda de construir texto con valores calculados es una **f-string**: se antepone `f` a la cadena y las expresiones entre llaves se sustituyen por su valor. Dentro de las llaves se puede indicar el formato: `:.2f` para dos decimales, `:,` para separador de miles, `:.1%` para porcentaje.
+
+```{pyodide-python}
+pib = 1461889.5   # millones de euros
+poblacion = 48.6  # millones de personas
+print(f"PIB per cápita: {pib / poblacion:.1f} miles de euros")
+print(f"PIB: {pib:,.0f} millones")
+print(f"Tasa: {0.0473:.1%}")
+```
+
+Las usaremos constantemente para presentar resultados, por ejemplo `f"RMSE = {rmse:.3f}"`.
+
+## Booleanos, comparaciones y operadores lógicos
+
+Las comparaciones devuelven `True` o `False`:
+
+| Operador | Significado |
+|---|---|
+| `==` | igual a (dos signos igual) |
+| `!=` | distinto de |
+| `<`, `<=`, `>`, `>=` | menor, menor o igual, mayor, mayor o igual |
+| `in` | pertenece a (una lista, una cadena...) |
+
+Se combinan con `and`, `or` y `not` (en R: `&`, `|`, `!`).
+
+```{pyodide-python}
+x = 7
+print(x > 5)
+print(x == 7 and x % 2 == 0)
+print(x < 0 or x > 5)
+print(not x > 5)
+print("a" in "Valencia")
+```
+
+::: {.callout-warning}
+`=` asigna, `==` compara. Escribir `if x = 7:` es un `SyntaxError`.
+:::
+
+## Funciones, métodos y la notación con punto
+
+Ya hemos usado varias **funciones** integradas: `print()`, `type()`, `len()`, `int()`. Otras útiles son `round()`, `abs()`, `min()`, `max()`, `sum()` y `help()`, que muestra la documentación de cualquier función.
+
+```{pyodide-python}
+print(round(3.14159, 2))
+print(max(4, 9, 2))
+help(round)
+```
+
+Los argumentos pueden pasarse **por posición** o **por nombre** (argumentos con palabra clave). Por nombre el código es más legible y no importa el orden; es la forma habitual de llamar a NumPy, pandas y scikit-learn.
+
+```{pyodide-python}
+print(round(3.14159, 2))                  # por posición
+print(round(number=3.14159, ndigits=2))   # por nombre
+```
+
+Un **método** es una función que pertenece a un objeto y se llama con la notación `objeto.metodo(argumentos)`, como hemos hecho con `nombre.upper()`. Cada tipo de objeto tiene sus propios métodos: las cadenas tienen `.upper()`, las listas `.append()`, los DataFrames `.describe()`. En R lo habitual es `funcion(objeto)`; en Python verás sobre todo `objeto.metodo()`. Esta distinción es clave para leer código ajeno.
+
+## Módulos y librerías: `import`
+
+Python base es pequeño. Casi todo lo que necesitamos (álgebra, tablas, gráficos, modelos) está en **librerías** que hay que importar con `import`. Hay tres formas:
+
+```{pyodide-python}
+import math                      # 1) importar el módulo completo
+print(math.sqrt(16), math.pi)
+
+import numpy as np               # 2) importar con un alias (convención universal)
+print(np.sqrt(16))
+
+from math import log, exp        # 3) importar solo algunos nombres
+print(log(exp(2)))
+```
+
+Los alias `np` (NumPy), `pd` (pandas) y `plt` (matplotlib.pyplot) son convenciones que sigue toda la comunidad; úsalos siempre. Un `import` se hace una sola vez por sesión, normalmente en la primera celda del notebook.
+
+## La sangría es sintaxis
+
+En Python los bloques de código (el cuerpo de un `if`, de un bucle, de una función) no se delimitan con llaves `{}` sino con **sangría** (indentación): la línea que abre el bloque termina en `:` y las líneas del bloque van desplazadas 4 espacios. Volver al margen cierra el bloque.
+
+```{pyodide-python}
+x = 3
+if x > 0:
+    print("dentro del bloque")
+    print("también dentro")
+print("fuera del bloque")
+```
+
+Una sangría incorrecta produce `IndentationError`. Es el error más común al empezar; VS Code ayuda sangrando automáticamente tras un `:`.
+
+::: {.callout-important title="Tu turno"}
+Define dos variables, `peso` (en kg) y `altura` (en metros), calcula el índice de masa corporal ($\text{IMC} = \text{peso} / \text{altura}^2$) y muéstralo con una f-string con **un decimal**, por ejemplo `IMC = 22.9`.
+:::
+
+```{pyodide-python}
+# Escribe aquí tu código
+
+```
+
+::: {.callout-tip title="Solución" collapse="true"}
+```python
+peso = 70
+altura = 1.75
+imc = peso / altura**2
+print(f"IMC = {imc:.1f}")
+```
+:::
