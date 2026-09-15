@@ -201,7 +201,7 @@ La evaluación continua suma el 75 % de la nota. El examen representa el 25 % y 
 - **Entrega final:** repositorio reproducible, memoria y registro de uso IA, junto con la defensa oral.
 
 ::: {.callout-important title="Defensa oral: semana 15"}
-Todos los miembros deben estar presentes y participar. Reservad la fecha cuando se publique en el Aula Virtual.
+Todos los miembros deben estar presentes y participar. Reservad la fecha: semana 15 (última de clase).
 :::
 
 ## Hitos del proyecto {.table-slide .dense}
