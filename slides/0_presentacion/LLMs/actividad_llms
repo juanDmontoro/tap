@@ -1,0 +1,122 @@
+Para motivar a los estudiantes en el curso sobre Procesamiento del Lenguaje Natural (NLP) y la importancia de los Modelos de Lenguaje Grande (LLM), puedes organizar una actividad basada en la lectura del texto proporcionado. A continuación, te propongo una estructura para la actividad, que incluye preguntas de elección múltiple y emparejamiento.
+
+### Actividad: Explorando el impacto de los Modelos de Lenguaje Grande (LLM)
+
+**Instrucciones:**
+1. Lee atentamente el texto proporcionado sobre los Modelos de Lenguaje Grande (LLM).
+2. Una vez finalizada la lectura, responde a las siguientes preguntas.
+
+#### Parte 1: Preguntas de elección múltiple
+
+Por supuesto. Aquí tienes dos preguntas más básicas sobre NLP que se pueden responder a partir del texto:
+
+### Pregunta 1: ¿Qué es el Procesamiento del Lenguaje Natural (NLP)?
+
+- A) Un campo de la informática que se enfoca en generar imágenes y gráficos de alta calidad.
+- B) Una disciplina que se encarga de enseñar a las computadoras a interpretar y generar lenguaje humano.
+- C) Un método utilizado para mejorar la velocidad de los algoritmos de búsqueda en internet.
+- D) Un sistema de entrenamiento físico para atletas de alto rendimiento.
+
+*Respuesta correcta: B*
+
+### Pregunta 2: ¿Por qué es importante el uso de grandes cantidades de datos en NLP? 
+
+- A) Porque permite que los modelos se entrenen más rápido y sin errores.
+- B) Porque las redes neuronales no pueden manejar datos pequeños de manera eficiente.
+- C) Porque cuanto más datos se utilizan, mejor pueden aprender los modelos las asociaciones y estructuras del lenguaje.
+- D) Porque facilita el desarrollo de hardware más avanzado para las computadoras.
+
+*Respuesta correcta: C*
+
+Estas preguntas más generales sobre NLP ayudan a establecer una base para entender la importancia del campo y su relación con los LLMs. ¿Te gustaría algo más en específico?
+
+**Pregunta 1: ¿Qué es un LLM?**
+- A) Un modelo basado en reglas gramaticales estrictas para procesar lenguaje.
+- B) Un ejercicio estadístico que usa grandes cantidades de datos para generar texto.
+- C) Un algoritmo sencillo que puede procesar hasta 50 tokens a la vez.
+- D) Un programa de inteligencia artificial basado en imágenes y gráficos.
+
+*Respuesta correcta: B*
+
+**Pregunta 2: ¿Qué diferencia a GPT-3 de GPT-4 según el texto?**
+- A) GPT-4 puede manejar más tokens a la vez y, por lo tanto, tiene un contexto más amplio.
+- B) GPT-4 es más lento debido a la necesidad de mayor poder computacional.
+- C) GPT-4 requiere menos datos de entrenamiento que GPT-3.
+- D) GPT-4 solo puede procesar imágenes, no texto.
+
+*Respuesta correcta: A*
+
+**Pregunta 3: ¿Cuál es el principal reto para la mejora continua de los LLMs mencionado en el texto?**
+- A) La falta de GPUs avanzadas.
+- B) El alto costo y consumo de recursos durante el entrenamiento.
+- C) La complejidad de las redes neuronales.
+- D) La dificultad para obtener imágenes de alta calidad.
+
+*Respuesta correcta: B*
+
+#### Parte 2: Preguntas de emparejamiento
+
+**Empareja los siguientes conceptos con sus respectivas descripciones:**
+
+1. **Tokens**
+2. **Autoregresión**
+3. **Red de atención**
+4. **Common Crawl**
+5. **Pérdida (Loss)**
+
+**Descripciones:**
+- A) Proceso donde un LLM genera palabras basadas en las previas.
+- B) Base de datos utilizada para entrenar modelos con grandes cantidades de texto.
+- C) Fragmentos de texto que son procesados por un LLM.
+- D) Proceso que ajusta los pesos de la red neuronal para mejorar predicciones.
+- E) Mecanismo que permite al LLM hacer conexiones entre diferentes partes del mensaje.
+
+*Respuestas correctas:*
+- 1C: **Tokens** - Fragmentos de texto que son procesados por un LLM.
+- 2A: **Autoregresión** - Proceso donde un LLM genera palabras basadas en las previas.
+- 3E: **Red de atención** - Mecanismo que permite al LLM hacer conexiones entre diferentes partes del mensaje.
+- 4B: **Common Crawl** - Base de datos utilizada para entrenar modelos con grandes cantidades de texto.
+- 5D: **Pérdida (Loss)** - Proceso que ajusta los pesos de la red neuronal para mejorar predicciones.
+
+
+**Empareja los siguientes conceptos con sus respectivas funciones en el contexto de un LLM:**
+
+1. **Entrenamiento auto-supervisado**
+2. **Pesos**
+3. **GPT-3.5**
+4. **Modelo generativo**
+5. **Filtro de datos**
+
+**Funciones:**
+- A) Parámetros dentro de la red neuronal que se ajustan durante el entrenamiento.
+- B) Proceso de entrenamiento donde el modelo aprende sin intervención humana directa.
+- C) Versión de GPT que no superó el examen de abogados en el percentil 90.
+- D) Proceso que selecciona texto de alta calidad para entrenamiento.
+- E) Tipo de modelo de IA que predice la siguiente palabra en una secuencia de texto.
+
+*Respuestas correctas:*
+- 1B: **Entrenamiento auto-supervisado** - Proceso de entrenamiento donde el modelo aprende sin intervención humana directa.
+- 2A: **Pesos** - Parámetros dentro de la red neuronal que se ajustan durante el entrenamiento.
+- 3C: **GPT-3.5** - Versión de GPT que no superó el examen de abogados en el percentil 90.
+- 4E: **Modelo generativo** - Tipo de modelo de IA que predice la siguiente palabra en una secuencia de texto.
+- 5D: **Filtro de datos** - Proceso que selecciona texto de alta calidad para entrenamiento.
+
+### Parte 3: Pregunta de secuenciación
+
+**Ordena los siguientes pasos del proceso de generación de texto en un LLM en la secuencia correcta:**
+
+- A) El LLM retroalimenta la primera palabra generada en el modelo.
+- B) El mensaje es procesado y se asignan los tokens a un "espacio de significado".
+- C) El LLM genera una palabra basada en el mensaje inicial.
+- D) La red de atención crea probabilidades para cada token.
+- E) Se recibe una consulta y se convierte en un conjunto de tokens.
+
+*Orden correcto:*
+1. E) Se recibe una consulta y se convierte en un conjunto de tokens.
+2. B) El mensaje es procesado y se asignan los tokens a un "espacio de significado".
+3. D) La red de atención crea probabilidades para cada token.
+4. C) El LLM genera una palabra basada en el mensaje inicial.
+5. A) El LLM retroalimenta la primera palabra generada en el modelo.
+
+### Conclusión de la actividad:
+Esta actividad tiene como objetivo que los estudiantes comprendan mejor cómo funcionan los LLMs y su impacto potencial, no solo en el ámbito tecnológico, sino también en la sociedad en general. Al finalizar, se puede abrir un espacio de discusión para que los estudiantes compartan sus impresiones sobre los riesgos y oportunidades de los LLMs.

@@ -1,0 +1,4 @@
+strip-notes: true
+format:
+  clean-revealjs:
+    output-file: presentacion_2627_sn.html

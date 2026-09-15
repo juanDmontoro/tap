@@ -1,0 +1,9 @@
+# Versión 16:10: misma tipografía de aula (32px) que semana 1.
+format:
+  clean-revealjs:
+    include-in-header:
+      text: |
+        <script>document.documentElement.classList.add('tap-proyector');</script>
+    width: 1280
+    height: 800
+    output-file: presentacion_2627_proyector.html

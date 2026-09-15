@@ -1,0 +1,301 @@
+---
+title: "**Técnicas Avanzadas de Predicción en Negocios**"
+subtitle: Presentación curso 2025/26
+author: 
+  - name: Juan D. Montoro-Pons
+    email: juan.d.montoro@uv.es
+    affiliations: Métodos Cuantitativos para la Economía y la Empresa, Universitat de València
+
+format: 
+  clean-revealjs:
+    width: 1920
+    height: 1080
+    footer: "Técnicas avanzadas de predicción - Curso 2025-26"
+    echo: true
+    incremental: false
+    scrollable: true
+    code-overflow: wrap
+    code-line-numbers: true
+    code-copy: true
+    code-link: true
+execute: 
+  eval: true
+  warning: false
+fig-align: center
+lang: es
+embed-resources: true
+---
+
+
+## Información práctica {style="color:#447099"}
+
+&nbsp;
+
+- Horario de tutorías: 
+    - Martes: 13:30-15:00 y 16:30-18:00
+- Correo electrónico: [juan.d.montoro@uv.es](mailto:juan.d.montoro@uv.es)
+- Despacho: 2E02 (Facultad de Economía, 2º piso, Departamento de Economia Aplicada)
+- Docencia presencial (contactad en caso contrario)
+
+
+> Información completa de la asignatura disponible en la [guía docente](https://www.uv.es/fatwirepub/Satellite/universitat/es/asignaturas-1285848977179.html?idA=36520&idT=1332;2026)
+
+
+## Introducción {style="color:#447099"}
+
+&nbsp;
+
+>  [...] esta materia forma en los métodos más avanzados de predicción y en su aplicación en el
+ámbito de la empresa y de negocios. Comprender la **filosofía de predicción basada en los métodos de
+aprendizaje automático** y ser capaz de **aplicar los algoritmos disponibles a diferentes problemas
+asociados con el ámbito empresarial** forma parte de las destrezas básicas que se espera se adquieran con
+esta materia. La compresión a un mayor nivel para poder adaptar los algoritmos actuales a nuevas
+realidades, conjuntos de datos o problemas concretos formará parte del conocimiento más profundo que
+puede comenzar a adquirirse con esta materia.
+
+
+## Predicción en los negocios {style="color:#447099" visibility="hidden"}
+
+&nbsp; 
+
+1. Mejora de la toma de decisiones
+
+2. Reducción de riesgos: minimiza la incertidumbre en entornos volátiles.
+
+3. Optimización de recursos
+
+4. Ventaja competitiva
+
+5. Impacto financiero
+
+> Ejemplos: predicción de la solvencia, **churn**,  o **uplift**
+
+:::{.notes}
+1. Anticipación y toma de decisiones
+
+Permite a las empresas anticipar cambios en la demanda, precios o tendencias del mercado.
+Mejora la planificación estratégica y la asignación de recursos.
+
+
+2. Reducción de riesgos
+
+Minimiza la incertidumbre en entornos volátiles.
+Ayuda a identificar riesgos financieros, operativos y de mercado antes de que ocurran.
+
+
+3. Optimización de recursos
+
+Ajuste de inventarios para evitar sobrestock o roturas de stock.
+Planificación eficiente de la cadena de suministro.
+
+
+4. Ventaja competitiva
+
+Las empresas que predicen mejor reaccionan más rápido que la competencia.
+Permite personalizar ofertas y mejorar la experiencia del cliente.
+
+
+5. Impacto financiero
+
+Mejora la precisión en presupuestos y proyecciones.
+Reduce costes asociados a decisiones erróneas.
+
+
+**EJEMPLOS concretos**
+
+> Marketing: predicción de churn (abandono).
+
+> UPLIFT (o modelización de respuesta incremental): técnica que mide el impacto causal de una acción (por ejemplo, visualización de un anuncio online) sobre un individuo o grupo, comparando lo que ocurre con la intervención frente a lo que habría ocurrido sin ella.
+Esto implica que el objetivo no es solo clasificar o predecir, sino modelar el efecto causal. Por eso, se considera una tarea predictiva con enfoque causal.
+
+:::
+
+
+## Objetivos  {style="color:#447099"}
+
+&nbsp;
+
+- Conocer los fundamentos y aplicaciones de las técnicas 
+de aprendizaje estadístico para la predicción en entornos empresariales.
+- Diferenciar entre análisis predictivo (regresión y clasificación) y análisis causal.
+- Aplicar modelos predictivos para resolver problemas reales.
+
+## Objetivos específicos {style="color:#447099"}
+
+&nbsp;
+
+- Comprender los conceptos clave y fundamentos del aprendizaje automático.
+- Explorar y aplicar técnicas predictivas avanzadas. 
+- Evaluar el rendimiento de modelos predictivos utilizando métricas adecuadas.
+- Interpretar y explicar los resultados de los modelos para una toma de decisiones informada.
+- Implementar aplicaciones prácticas en contextos empresariales.
+- Analizar e incorporar consideraciones éticas, incluyendo la detección y mitigación de sesgos en los modelos.
+
+
+
+## Contenidos {style="color:#447099"}
+
+&nbsp;
+
+1. Aprendizaje automático
+2. Selección y evaluación de modelos
+3. Modelo lineal generalizado
+4. Métodos de ensamble
+5. Introducción al *deep learning*
+6. Otras técnicas de predicción
+7. Predicción y efectos causales
+8. Sistemas de recomendación
+
+## Cronograma {style="color:#447099"}
+
+
+
+```{r error=FALSE, warning=FALSE, include=FALSE}
+library(calendR)
+eventos <- rep(NA,105)
+# eventos[c(25,85)] <- "No lectivo"
+eventos[c(2,3)] <- "1. Intro"
+eventos[c(9,10)] <- "2. Selección"
+eventos[c(16,17)] <- "3. GLMs"
+eventos[c(23,24,30,31)] <- "4.Ensambles"
+eventos[c(37,38,44,45,51,52)] <- "5. Deep learning"
+eventos[c(58,59,65,66)] <- "6. Otras técnicas"
+eventos[c(72,73,79,80)] <- "7. Predicción de efectos causales"
+eventos[c(86,87,93)] <- "8. Sistemas de recomendación"
+eventos[c(94,100)] <- "Presentación oral"
+
+lubridate::date("2025-12-28")-lubridate::date("2025-09-15")
+eventos
+cal <-calendR(from = "2025-09-15", # Fecha de inicio personalizada
+              to = "2025-12-28",   # Fecha de fin personalizada
+              start = "M",               # Comienzo de la semana en lunes
+              mbg.col =  "#FFBB33",               # Color de fondo del nombre de los meses
+              months.col = "white",      # Color del texto del nombre de los meses
+              special.days = eventos,  # Colorea los fines de semana
+              special.col = c("aquamarine","cadetblue1","peachpuff","salmon",
+                              "grey","olivedrab1","lightgreen","pink","purple"), 
+              # Color de los special.days
+              lty = 0,                   # Tipo de linea
+              bg.col = "#f4f4f4",        # Color de fondo
+              title = "Sesiones TAP", # Título
+              title.size = 12,                          # Tamaño del título
+              text.size=4,
+              day.size = 4,                   # Tamaño del número de días
+              weeknames.size=4,
+              months.size=10,
+              legend.pos="bottom",
+              legend.title="",
+            monthnames=c("Septiembre","Octubre",
+                           "Noviembre","Diciembre"),
+              weeknames=c("Lunes","Martes",
+                           "Miércoles","Jueves","Viernes","Sábado","Domingo"))  
+```
+
+
+```{r}
+#| echo: false
+cal
+```
+
+Nota: el cronograma es tentativo y sujeto a cambios 
+
+
+## Recursos {style="color:#447099"}
+
+&nbsp; 
+
+1. Presentaciones disponibles en AV.
+
+2. Código compartido. 
+
+3. Referencias bibliográficas disponibles online.
+
+4. Otros recursos *online*.
+
+## Metodología {style="color:#447099"}
+
+&nbsp; 
+
+1. Clases con enfoque práctico: implementación de soluciones a 
+problemas predictivos en un contexto de negocios  
+a través de código y uso de paquetes específicos.
+
+2. Lenguaje de referencia: `Python` (posible uso complementario de `R`).
+
+3. Entorno de trabajo:
+
+   - Distribución anaconda de `Python` (ver [guía de
+   instalacion](https://aulavirtual.uv.es/pluginfile.php/5449161/mod_resource/content/3/anaconda.html)).
+   - Creación de entorno virtual `conda` (más detalles en primera sesión práctica).
+   - Uso de `Jupyter Notebooks` para facilitar la implementación de prácticas que aseguren la 
+   reproducibilidad y la trazabilidad del flujo de trabajo, integrando código, datos, resultados y narrativa explicativa
+
+## Evaluación {style="color:#447099"}
+&nbsp;
+
+| Categoría             | Descripción                                                                                                                                            | Peso |
+|----------------------|---------------------------------------------------------------------------------------------------------------|------|
+| <br> **Proyecto final**   <br> | - Tarea de predicción en negocios a partir de un conjunto de datos. <br> - A desarrollar en grupos (2 o 3 estudiantes) durante el cuatrimestre. <br> - Presentación oral en la última sesión práctica (todos los miembros deben estar presentes y participar). **RESERVAD LA FECHA** | <br> 35% <br> |
+|<hr>|<hr>|<hr>|
+| <br>**Entregas individuales** <br> | - Tareas desarrolladas (y entregadas) durante las clases prácticas.<br> - Su entrega presupone presencialidad en el aula. <br> - Evaluadas como `apto/parcial/no apto`.                                      | <br> 30% <br> |
+| **Participación en clase** | - Se valorará asistencia regular y participación.                                                                                                     | 10% 
+| <br>**Examen final** <br>         | - Examen escrito. <br> - Incluirá cuestiones teóricas y prácticas. <br> - Se requiere una  puntuación mínima de 4 sobre 10 para aprobar la asignatura.                           | <br>25%<br> |
+
+&nbsp;
+
+:::{.callout-important}
+Por su naturaleza, la evaluación contínua (proyecto, entregas y participación) es **no recuperable**
+:::
+
+## Evaluación {style="color:#447099"}
+
+&nbsp;
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-align: center
+
+library(tidyverse)
+df <- tibble(Categoria=c("Entregas","Participación","Proyecto","Examen"),
+             Porcentaje=c(0.3,0.1,0.35,0.25)) 
+
+df %>% mutate(Porcentaje=Porcentaje*100) %>% 
+  ggplot(aes(x=reorder(Categoria,-Porcentaje),
+                              y=Porcentaje,
+                              colour = Categoria,
+                              fill=Categoria)) +
+  geom_col() +
+  geom_text(
+    aes(x=Categoria,y=Porcentaje,
+        label = paste0(round(Porcentaje, 1), "%\n")),
+    vjust = 1.5, size = 10,color="white") +  
+    labs(x = "Categoría", y = "Porcentaje") +
+    theme(legend.position='none',
+            axis.text.x = element_text(size = 18),  
+    axis.text.y = element_text(size = 18))
+```
+
+## {style="color:#447099"}
+
+&nbsp; 
+
+:::{.callout-warning title="Uso de la IA"}
+
+
+- El uso de ChatGPT (u otras implementaciones de IA) se tratará como un recurso externo adicional. Se debe **citar el uso** y las tareas para las que se ha utilizado. En concreto se debe especificar al menos:
+
+  - Uso en la generación o corrección de código y scripts.
+  - Uso en el análisis de resultados.
+  - Uso para la redacción (corrección ortográfica y estilo).
+  - Usos adicionales (indicar). 
+
+- En trabajos y actividades entregables sois vosotros (y no la IA) los que interpretais los resultados;  no sólo debeis citar su uso sino también verificar la corrección de la respuesta obtenida.
+
+- En caso de que el uso de IA suponga problemas graves con respecto a la integridad académica, se podría replantear la política en el aula al respecto.
+
+:::
+
+

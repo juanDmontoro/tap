@@ -1,0 +1,83 @@
+/* Excepciones locales sobre tap.scss y el aula.scss de semana 1. */
+/*-- scss:rules --*/
+
+/* Booktab vertical: queda en el margen, sin desplazar el título ni el cuerpo. */
+.reveal .slides section:not(.course-cover) > h2 {
+  position: relative;
+}
+.reveal .slides section:not(.course-cover) > h2::before {
+  content: "";
+  position: absolute;
+  left: -0.4em;
+  top: 0.12em;
+  width: 0.1em;
+  height: 0.9em;
+  background-color: #6C757D;
+}
+
+/* Portada manual: misma jerarquía que #title-slide en el tema TAP. */
+.reveal .slides section.course-cover {
+  text-align: left;
+}
+.reveal .slides section.course-cover > h2 {
+  max-width: 19em;
+  color: #fff;
+  font-size: 2.2em;
+  font-weight: 300;
+  line-height: 1.15;
+}
+.reveal .slides section.course-cover .course-subtitle p {
+  font-size: 1.4em;
+  font-weight: 300;
+  margin-top: 0.4em;
+}
+.reveal .slides section.course-cover .course-author p {
+  font-size: 1em;
+  margin-top: 0.8em;
+}
+.reveal .slides section.course-cover .course-affiliation p,
+.reveal .slides section.course-cover .course-email p {
+  font-size: 0.8em;
+  margin-top: 0.35em;
+}
+.reveal .slides section.course-cover a {
+  color: #fff;
+}
+
+/* Tablas a ancho completo y espaciado compacto, sin reducir la letra de aula. */
+.reveal .slides section.table-slide table {
+  width: 100%;
+}
+.reveal .slides section.table-slide th,
+.reveal .slides section.table-slide td {
+  padding: 0.2em 0.45em;
+  font-weight: 400;
+}
+.reveal .slides section.dense {
+  line-height: 1.2;
+}
+.reveal .slides section.dense > h2 {
+  margin-bottom: 0.4em;
+}
+.reveal .slides section.dense p {
+  margin-top: 0.35em;
+  margin-bottom: 0.35em;
+}
+.reveal .slides section.dense li + li {
+  margin-top: 0.2em;
+}
+.reveal .slides section.dense div.callout {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+}
+
+/* Conserva las advertencias del curso, con el terracota de la paleta TAP. */
+.reveal div.callout.callout-important,
+.reveal div.callout.callout-warning {
+  border-left-color: #E07A5F;
+}
+.reveal div.callout.callout-important.callout-style-default .callout-title,
+.reveal div.callout.callout-warning.callout-style-default .callout-title {
+  background-color: rgba(224, 122, 95, 0.12);
+  color: #1F3A5F;
+}

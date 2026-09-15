@@ -1,0 +1,17 @@
+project:
+  type: default
+  render:
+    - presentacion_2627.qmd
+
+# Reutiliza directamente la capa de aula del deck de semana 1.
+# La portada está escrita en el cuerpo del documento, después de Sorolla.
+format:
+  clean-revealjs:
+    theme:
+      - default
+      - _extensions/grantmcdermott/clean/clean.scss
+      - ../topics/_tap_theme/tap.scss
+      - ../topics/01_ML/slides/semana_1/aula.scss
+      - presentacion.scss
+    width: 1920
+    height: 1080
