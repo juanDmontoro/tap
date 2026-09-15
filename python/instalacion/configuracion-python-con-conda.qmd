@@ -1,0 +1,88 @@
+---
+title: "Guía práctica: instalación de Python con Anaconda"
+author: "Juan D. Montoro Pons"
+date: Septiembre 2025
+lang: es
+format: html
+theme: clean
+editor: source
+embed-resources: true
+---
+
+&nbsp; 
+
+:::{.callout-note title="Conda, Anaconda y Miniconda"}
+- **Conda**: un gestor de paquetes y entornos para múltiples lenguajes, incluido Python.
+- **Anaconda**: una distribución completa de Python que incluye Conda y más de 1.500 paquetes preinstalados para ciencia de datos.
+- **Miniconda**: un instalador mínimo de Conda y Python, que permite una configuración ligera y personalizable.
+:::
+
+&nbsp;
+
+---
+
+### Paso 1: Descargar instalador de Anaconda (o Miniconda si hay limitaciones de espacio)
+Ve al [sitio web de distribución de Anaconda](https://www.anaconda.com/download/success).
+
+Descarga el instalador para tu sistema operativo (Windows, macOS o Linux) para Python 3.13.
+
+
+---
+
+### Paso 2: Instalar Anaconda (o Miniconda)
+Ejecuta el instalador:
+
+   - En **Windows**, haz doble clic en el archivo `.exe` descargado.
+   - En **macOS**, abre el archivo `.pkg` descargado.
+   - En **Linux**, abre una terminal y ejecuta el script descargado (`bash archivo.sh`).
+
+Sigue las indicaciones de instalación:
+
+   - Acepta el acuerdo de licencia.
+   - Elige la ubicación de instalación (la predeterminada suele ser adecuada).
+   - En **Windows**, asegúrate de marcar las casillas "Add Anaconda to my PATH environment variable" y "Register Anaconda as my default Python 3.x".
+
+
+---
+
+### Paso 3: Verificar la instalación (solo si usas Anaconda)
+Abre Anaconda Navigator:
+
+   - En **Windows**, busca "Anaconda Navigator" en el menú Inicio.
+   - En **macOS**, ábrelo desde el menú de aplicaciones.
+   - En **Linux**, ejecuta `anaconda-navigator` desde la terminal.
+
+Comprueba la instalación: Anaconda Navigator debería abrirse mostrando varias herramientas como Jupyter Notebook, Spyder, entre otras.
+
+
+---
+
+### Paso 4 (solo si usas Anaconda): Iniciar Jupyter Notebook 
+1. Abre Anaconda Navigator.
+2. Ve a la pestaña "Home".
+3. Lanza *Jupyter Notebook*. 
+4. Abre o crea un nuevo archivo *.ipynb*.
+
+
+### Paso 4 (solo si usas Miniconda): Iniciar Jupyter Notebook 
+
+Abre la consola o terminal:
+
+   - En Windows, busca "cmd" o "Command Prompt".
+   - En macOS/Linux, abre la Terminal.
+
+Instala Jupyter Notebook escribiendo en la terminal:
+
+```bash
+conda install -c conda-forge notebook
+```
+
+Inicia Jupyter Notebook escribiendo en la terminal:
+
+```bash
+jupyter notebook
+```
+
+Abre tu navegador: Jupyter Notebook se abrirá automáticamente en tu navegador predeterminado. Si no lo hace, copia la URL que aparece en la terminal y pégala en el navegador.
+
+Finalmente, abre o crea un nuevo archivo *.ipynb*.
