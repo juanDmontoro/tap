@@ -122,7 +122,7 @@ Predecir riesgo de abandono (*churn*) frente a evaluar a qué clientes dirigir u
 | 9 | 5. SVM | Comparación entre familias de modelos |
 | 10–12 | 6. Redes neuronales y aprendizaje profundo | Implementación con Keras |
 | 13–14 | 7. Predicción y efectos causales | Simulación de sesgos y aplicación de DoubleML |
-| 15 | Evaluación | Defensa oral del proyecto |
+| 14 | Evaluación | Defensa oral del proyecto (sesión de prácticas) |
 :::
 
 ::: {.callout-note title="Planificación orientativa"}
@@ -197,11 +197,11 @@ La evaluación continua suma el 75 % de la nota. El examen representa el 25 % y 
 
 - **Grupos de 3–4 estudiantes:** elección de la pregunta de negocio y del conjunto de datos en la semana 2.
 - **Desarrollo en paralelo con las prácticas**: exploración, modelo base y comparación de métodos con una evaluación común y justificada.
-- **Semana 10:** revisión intermedia con retroalimentación.
+- **Semana 10:** revisión intermedia con retroalimentación (entrega de ensambles o SVM).
 - **Entrega final:** repositorio reproducible, memoria y registro de uso IA, junto con la defensa oral.
 
-::: {.callout-important title="Defensa oral: semana 15"}
-Todos los miembros deben estar presentes y participar. Reservad la fecha: semana 15 (última de clase).
+::: {.callout-important title="Defensa oral: semana 14"}
+Todos los miembros deben estar presentes y participar. Reservad la fecha: semana 14 (última de clase).
 :::
 
 ## Hitos del proyecto {.table-slide .dense}
@@ -215,10 +215,8 @@ Todos los miembros deben estar presentes y participar. Reservad la fecha: semana
 | 4 | Análisis exploratorio de datos (EDA) |
 | 6 | Modelo base del proyecto |
 | 8 | Ensambles |
-| 9 | SVM y comparación con los modelos anteriores |
-| 10 | Revisión intermedia y retroalimentación |
-| 13 | Extensión causal opcional |
-| 15 | Entrega final y defensa oral |
+| 10 | Revisión intermedia y retroalimentación: comparación de modelos (ensambles o SVM) |
+| 14 | Entrega final y defensa oral |
 :::
 
 El registro de IA se entrega de forma acumulada. Fechas previstas: fechas e instrucciones concretas se comunicarán a través del Aula Virtual.
@@ -246,10 +244,10 @@ El bloque de redes neuronales ocupa las semanas 10–12 y forma parte del recorr
 :::
 
 ::: {.callout-warning title="Corrección por hitos no completados"}
-De los 7 hitos previos a la entrega final (semanas 2, 4, 6, 8, 9, 10 y 13), cada hito no completado reduce la nota global del proyecto según:
+De los 5 hitos previos a la entrega final (semanas 2, 4, 6, 8 y 10), cada hito no completado reduce la nota global del proyecto según:
 
 $$
-\text{factor} = 0.5 + 0.5 \times \frac{\text{hitos completados}}{7}
+\text{factor} = 0.5 + 0.5 \times \frac{\text{hitos completados}}{5}
 $$
 
 Nota final del proyecto = nota de rúbrica × factor. Llegar a la entrega final sin haber completado ningún hito limita la nota del proyecto al 50 % de lo obtenido con la rúbrica.
