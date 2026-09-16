@@ -1,0 +1,49 @@
+/*-- scss:defaults --*/
+// Paleta compartida con TAP_project/topics/_tap_theme/tap.scss
+$tap-blue:       #447099;
+$tap-navy:       #1F3A5F;
+$tap-terracotta: #E07A5F;
+$tap-sage:       #81B29A;
+$tap-gray:       #6C757D;
+$tap-cream:      #F7F3EF;
+$tap-light:      #F2F5F8;
+
+$body-color:     #2B2B2B;
+$link-color:     $tap-blue;
+$headings-color: $tap-blue;
+$font-size-root: 17px;
+
+/*-- scss:rules --*/
+h1.title { color: $tap-blue; font-weight: 600; }
+.subtitle { color: $tap-gray; font-size: 1.15rem; }
+.quarto-title-meta { color: $tap-gray; }
+
+h2 {
+  margin-top: 2.2rem;
+  padding-bottom: .25rem;
+  border-bottom: 2px solid mix($tap-blue, white, 30%);
+}
+h3 { color: $tap-navy; margin-top: 1.6rem; }
+
+table { font-size: .93em; }
+thead th { background: $tap-light; color: $tap-navy; vertical-align: bottom; }
+tbody tr:nth-child(even) { background: mix($tap-light, white, 50%); }
+
+blockquote {
+  border-left: 4px solid $tap-sage;
+  color: $tap-navy;
+  padding-left: 1rem;
+  font-size: 1.05em;
+}
+
+.callout-note.callout { border-left-color: $tap-blue; }
+.callout-tip.callout { border-left-color: $tap-sage; }
+.callout-warning.callout { border-left-color: $tap-terracotta; }
+.callout-important.callout { border-left-color: $tap-terracotta; }
+
+code { color: $tap-navy; background: $tap-cream; }
+
+// Ficha: celdas vacías con altura para rellenar (solo HTML)
+.ficha table td { min-height: 2.4em; height: 2.4em; }
+.ficha table td:first-child { color: $tap-navy; font-weight: 600; width: 32%; }
+.ficha .predictores table td:first-child { font-weight: normal; width: auto; }

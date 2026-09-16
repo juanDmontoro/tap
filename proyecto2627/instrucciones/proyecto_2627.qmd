@@ -1,0 +1,192 @@
+---
+title: "Proyecto del cuatrimestre"
+subtitle: "Técnicas Avanzadas de Predicción en Negocios · Curso 2026-27"
+author: "Prof. Juan D. Montoro-Pons"
+date: 2026-09-16
+date-format: "D [de] MMMM [de] YYYY"
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    toc-title: "Contenido"
+    theme: [cosmo, ../_tap_doc.scss]
+    embed-resources: true
+    number-sections: true
+    link-external-newwindow: true
+---
+
+## Presentación
+
+El proyecto es el eje de la evaluación de la asignatura. Cada grupo elige una **pregunta de negocio** y un **conjunto de datos** propios, y desarrolla a lo largo del cuatrimestre un análisis predictivo completo: exploración, modelo base, comparación de familias de modelos e interpretación de los resultados para fundamentar una decisión.
+
+> Predecir bien lo que no hemos visto y explicar qué decisión de negocio se apoya en esa predicción.
+
+| | |
+|:--|:--|
+| **Peso en la nota** | 35 % de la calificación final. Evaluación continua, **no recuperable**. |
+| **Grupos** | 3–4 estudiantes, formados en la semana 2. |
+| **Desarrollo** | En paralelo a las prácticas, con cinco hitos (semanas 2, 4, 6, 8 y 10). |
+| **Entrega final** | Semana 14 (14–18 de diciembre de 2026): repositorio reproducible, memoria y registro de uso de IA. |
+| **Defensa oral** | Semana 14, sesión de prácticas del jueves 17 de diciembre. Todos los integrantes presentes. |
+| **Uso de IA** | Permitido, declarado y auditado (véase la sección [Uso de IA](#sec-ia)). |
+
+::: {.callout-note title="Tarea inmediata: semana 2"}
+Formad el grupo, elegid los datos y entregad la **ficha de elección de datos** (`hitos/S02_datos`) en la semana del 21 de septiembre a través del Aula Virtual. Es el primer hito del proyecto.
+:::
+
+## Normas
+
+### Grupos
+
+- Grupos de **3 a 4 estudiantes**. Se forman en la semana 2 y se mantienen durante todo el cuatrimestre; cualquier cambio posterior requiere autorización del profesor.
+- Todos los integrantes participan en todas las fases. Cada integrante debe poder **explicar y modificar** cualquier parte del trabajo que firme (véase la [rúbrica](#sec-rubrica), dimensión de defensa oral).
+
+### Datos
+
+- El conjunto de datos lo elige el grupo. Debe ser **público o de uso autorizado**, con condiciones de uso que permitan analizarlo y entregarlo con el proyecto.
+- Debe ser **distinto del conjunto de referencia de las prácticas** (Encuesta de Estructura Salarial 2022), que ya se trabaja en clase.
+- Tiene que permitir formular un problema de **regresión o clasificación** con una variable respuesta claramente definida y un tamaño suficiente para partición entrenamiento/prueba y validación cruzada.
+- Sin datos personales identificables. Si el conjunto contiene información sensible, se anonimiza antes de trabajar con él y antes de introducirlo en cualquier servicio externo.
+- Los datos crudos se entregan con el proyecto o, si no es posible, se entrega un script que los descarga de su fuente.
+
+### Entregables
+
+La entrega final consta de tres piezas en una **misma versión congelada**:
+
+1. **Repositorio reproducible.** Carpeta del proyecto (comprimida en el Aula Virtual o, si el grupo lo maneja, enlace a un repositorio `git`) con esta estructura mínima:
+
+   ```text
+   proyecto_<grupo>/
+   ├── README.md            ← qué hay, cómo ejecutarlo y en qué orden
+   ├── environment.yml      ← entorno (conda) o requirements.txt
+   ├── data/                ← datos crudos o script de descarga
+   ├── notebooks/           ← cuadernos numerados: 01_eda, 02_base, 03_ensambles, ...
+   ├── memoria.pdf          ← memoria del proyecto
+   └── registro_ia/         ← conversaciones exportadas (véase Uso de IA)
+   ```
+
+   El análisis debe **reproducirse de principio a fin desde los datos crudos** ejecutando los cuadernos en orden en un entorno limpio. Todo el preprocesado va dentro del *pipeline*; una transformación hecha fuera del *pipeline* (o ajustada con datos de prueba) es una fuga de información.
+
+2. **Memoria.** Documento breve, orientado a un lector de negocio con formación cuantitativa, con esta estructura:
+
+   - pregunta de negocio y decisión que se apoya en la predicción;
+   - datos: procedencia, unidad de observación, variable respuesta, predictores y limitaciones;
+   - análisis exploratorio (lo esencial, no todo);
+   - metodología: partición, métrica, modelo base y familias comparadas, ajuste de hiperparámetros;
+   - resultados: **tabla única de comparación en el mismo conjunto de prueba**, con la selección justificada;
+   - interpretación: qué variables importan, incertidumbre y traducción a la decisión de negocio;
+   - limitaciones y trabajo futuro.
+
+   Cada cifra o figura de la memoria debe salir del código entregado.
+
+3. **Registro de uso de IA.** Carpeta `registro_ia/` con todas las conversaciones exportadas (sección [Uso de IA](#sec-ia)). Se entrega de forma acumulada en cada hito y se congela con la entrega final.
+
+### Hitos y factor de corrección
+
+- Un hito se considera **completado** cuando el grupo presenta un avance válido (no una entrega vacía o simbólica) y recibe retroalimentación del profesor.
+- Los avances/hitos se presentan de forma oral durante la sesión práctica de la semana.
+- Los hitos no completados reducen la nota global del proyecto mediante el factor de corrección descrito en la [rúbrica](#sec-rubrica).
+
+### Defensa oral
+
+- Semana 14, en la sesión de prácticas. **Todos los integrantes presentes y participando.**
+- Formato: 10 minutos de exposición del grupo y, a continuación, preguntas individuales del profesor a cada integrante sobre cualquier parte del trabajo, incluida la **modificación de código en vivo**.
+- No se permite el uso de IA durante la defensa (ni en el examen).
+- La dimensión de defensa oral de la rúbrica se califica **individualmente**; el resto de dimensiones son comunes al grupo.
+
+## Hitos
+
+Cinco hitos previos a la entrega final, ligados al tema en curso. Cada hito se apoya en lo trabajado en las prácticas de las semanas anteriores.
+
+| Semana | Fechas | Hito | Qué se entrega | Tema de apoyo |
+|:--:|:--|:--|:--|:--|
+| 2 | 21–25 sep | **Grupos, pregunta de negocio y datos** | Ficha de elección de datos (una por grupo) | 2. Selección y evaluación |
+| 4 | 8 oct | **Análisis exploratorio (EDA)** | Cuaderno: descripción de variables, valores faltantes, distribuciones, relación con la respuesta; partición entrenamiento/prueba definida y congelada | 3. GLM con regularización |
+| 6 | 22 oct | **Modelo base** | *Pipeline* con preprocesado y GLM (con regularización si procede); métrica elegida y justificada; resultado por validación cruzada y en prueba | 4. Ensambles |
+| 8 | 5 nov | **Ensambles** | Bosques aleatorios, *boosting* y/o *stacking* frente al modelo base en el mismo conjunto de prueba; importancias y valores de Shapley | 4. Ensambles |
+| 10 | 19 nov | **Revisión intermedia** | Tabla de comparación de modelos (ensambles o SVM); borrador de la memoria; registro de IA acumulado. **Retroalimentación del profesor** | 5. SVM · 6. Redes neuronales |
+| 14 | 17 dic | **Entrega final y defensa oral** | Repositorio, memoria y registro de IA completo. Defensa el jueves 17 de diciembre | 7. Predicción y efectos causales |
+
+::: {.callout-tip title="Entre la revisión intermedia y la entrega final"}
+Las semanas 10–12 (redes neuronales) no tienen hito propio, pero forman parte del recorrido de modelización. Usad la retroalimentación de la semana 10 para cerrar la comparación de modelos (al menos tres familias), completar la interpretación y redactar la memoria.
+:::
+
+## Uso de IA {#sec-ia}
+
+**Principio: la IA está permitida, debe ser declarada y es auditada.** Su uso no reduce la calificación; se evalúa es la calidad del proyecto, el uso crítico de las herramientas, la transparencia sobre el proceso y el dominio individual de lo entregado.
+
+### Qué podéis hacer
+
+Usar asistentes conversacionales, asistentes integrados en el editor u otras herramientas  para explorar la pregunta de negocio, proponer código, depurar errores, revisar un *pipeline* o una comparación de modelos, redactar y revisar la memoria, o resumir documentación.
+
+Ello no os evita la responsabilidad: cada integrante responde de la corrección del código y de las afirmaciones de la memoria, verifica las fuentes y debe poder explicar y modificar en directo cualquier parte del trabajo que firme. 
+
+### Qué debéis registrar y cómo
+
+- Guardad en `registro_ia/` **cada conversación relacionada con el proyecto**, exportada tal cual desde la herramienta, incluidos los intentos fallidos, descartados o modificados. No se entrega una selección de los mejores prompts.
+- Nombrad cada archivo `fecha_integrante_herramienta` con la extensión que produzca la exportación, por ejemplo:
+
+  ```text
+  registro_ia/
+  ├── 2026-10-03_ana_chatgpt.md
+  ├── 2026-10-05_luis_claude.html
+  └── 2026-10-09_marta_gemini.pdf
+  ```
+
+- No hace falta índice, anotaciones ni indicar el modelo. El registro entregado se contrasta con la memoria, el cuaderno y en la defensa.
+- Declarad las herramientas de autocompletado sin conversación exportable (tipo Copilot), indicad en un `README.md` dentro de `registro_ia/`.
+- El registro es **acumulativo**: se entrega completo la entrega final.
+- No se exige registrar conversaciones privadas ajenas a la asignatura.
+
+### Límites
+
+No está permitido:
+
+- usar IA en el examen ni en la defensa oral;
+- presentar referencias, resultados, ejecuciones o comprobaciones inexistentes;
+- ocultar, seleccionar retrospectivamente o alterar el registro;
+- atribuir a un integrante trabajo que no pueda explicar.
+
+### Cómo se evalúa el registro
+
+El registro se contrasta con la memoria y el cuaderno entregados para comprobar la coherencia entre el proceso declarado y el resultado. Un agente (local) puede ayudar al profesor a localizar evidencias y proponer preguntas para la defensa; el agente **no califica, no determina autoría y no genera sanciones**. No se usan detectores probabilísticos de texto generado.
+
+::: {.callout-note title="Compromisos del profesor"}
+La cantidad de uso de IA declarado no reduce la nota. Una discrepancia entre el registro y la entrega es una señal que se aclara **con el grupo**. La transparencia se valora; un resultado que el registro y la defensa no consiguen explicar se examina con más profundidad.
+:::
+
+## Rúbrica de evaluación {#sec-rubrica}
+
+Rúbrica basada en la propuesta docente de la asignatura: cinco dimensiones con su peso, lo que se observa en cada una y tres niveles de descriptores.
+
+| Dimensión (peso) | Qué se evalúa | Excelente (9–10) | Apto (5–6) | No apto |
+|:--|:--|:--|:--|:--|
+| **Formulación y datos (15 %)** | Pregunta relevante, conjunto de datos, EDA, predictores admisibles | Pregunta orientada a la toma de decisiones y susceptible de respuesta empírica; EDA que fundamenta las decisiones posteriores (tratamiento de faltantes, transformaciones, partición); predictores justificados y sin fuga por construcción; limitaciones de los datos discutidas | Pregunta clara, EDA correcto | Conjunto de datos sin justificar; pregunta ambigua; EDA ausente; predictores que determinan la respuesta o no disponibles al predecir |
+| **Proyecto reproducible (10 %)** | Repositorio, entorno, ejecución (*pipeline*) sin fugas en el preprocesado | Reproduce todo desde datos crudos, entorno versionado; todo el preprocesado dentro del *pipeline* y ajustado solo con datos de entrenamiento | Reproducible con intervención menor documentada | No reproduce; preprocesado fuera del *pipeline* (fuga) |
+| **Modelización (25 %)** | Modelo base → ensambles → SVM → DL; comparación | Comparación honesta en un conjunto de prueba común; selección justificada | ≥ 3 familias comparadas correctamente; métricas incompletas | Sin modelo base; métricas elegidas a posteriori |
+| **Interpretación y comunicación (20 %)** | Memoria, figuras, lectura de resultados | Resultados traducidos a una decisión de negocio; incorpora la incertidumbre | Interpretación correcta de métricas y efectos | Lectura mecánica o errónea de las salidas |
+| **Defensa oral individual (30 %)** | 10' de grupo + preguntas individuales | Cada integrante explica y modifica en vivo cualquier parte del código | Cada integrante explica las partes que firmó | Un integrante no sabe explicar código propio |
+
+La nota de rúbrica es la suma ponderada de las cinco dimensiones (sobre 10). La defensa oral se califica individualmente; las otras cuatro dimensiones son comunes al grupo.
+
+::: {.callout-warning title="Corrección por hitos no completados"}
+De los 5 hitos previos a la entrega final (semanas 2, 4, 6, 8 y 10), cada hito no completado reduce la nota global del proyecto:
+
+$$
+\text{factor} = 0.5 + 0.5 \times \frac{\text{hitos completados}}{5}
+$$
+
+**Nota del proyecto = nota de rúbrica × factor.** Llegar a la entrega final sin ningún hito completado limita la nota del proyecto al 50 % de lo obtenido con la rúbrica.
+:::
+
+| Hitos completados | 5 | 4 | 3 | 2 | 1 | 0 |
+|:--|:--:|:--:|:--:|:--:|:--:|:--:|
+| Factor | 1,00 | 0,90 | 0,80 | 0,70 | 0,60 | 0,50 |
+
+## Documentos relacionados
+
+- Ficha de elección de datos (hito S2): `hitos/S02_datos`.
+- Guía docente de la asignatura 2026-27 y calendario de sesiones (Aula Virtual).
+- Las fechas límite concretas de cada hito y el medio de entrega se comunican en el Aula Virtual.

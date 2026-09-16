@@ -236,8 +236,8 @@ El bloque de redes neuronales ocupa las semanas 10–12 y forma parte del recorr
 ::: {tbl-colwidths="[25,60,15]"}
 | Dimensión | Qué se valora | Peso |
 |:--|:--|:--:|
-| **Formulación y datos** | Pregunta de negocio, elección de datos y análisis exploratorio | **10 %** |
-| **Proyecto reproducible** | Repositorio, entorno y ejecución del análisis sin fugas de información | **15%** |
+| **Formulación y datos** | Pregunta de negocio, elección de datos, predictores admisibles (sin fuga por construcción) y análisis exploratorio | **15 %** |
+| **Proyecto reproducible** | Repositorio, entorno y ejecución del análisis sin fugas en el preprocesado | **10 %** |
 | **Modelización** | Modelo base y comparación rigurosa de métodos, con selección justificada | **25 %** |
 | **Interpretación y comunicación** | Memoria y figuras, lectura de resultados, incertidumbre y utilidad empresarial | **20 %** |
 | **Defensa oral individual** | Capacidad para explicar el trabajo y modificar código en vivo | **30 %** |
