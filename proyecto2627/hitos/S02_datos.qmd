@@ -1,6 +1,6 @@
 ---
-title: "Ficha de elección de datos"
-subtitle: "Proyecto del cuatrimestre · Hito S2 · Técnicas Avanzadas de Predicción en Negocios 2026-27"
+title: "Ficha de viabilidad de los datos"
+subtitle: "Hito S2 del proyecto de Técnicas Avanzadas de Predicción en Negocios 2026 27"
 lang: es
 format:
   html:
@@ -16,129 +16,31 @@ format:
     number-sections: false
 ---
 
-::: {.callout-note title="Cómo usar esta ficha"}
-Una ficha por grupo. Rellenad todos los campos; si alguno no aplica, escribid «no aplica» y por qué. Se entrega en la **semana 2 (21–25 de septiembre de 2026)** a través del Aula Virtual, en la fecha que allí se indique. La ficha es el primer hito del proyecto y sirve para que el profesor pueda validar la pregunta y los datos antes del análisis exploratorio (hito S4).
-:::
+Esta ficha permite comprobar que la pregunta y los datos son viables antes de iniciar el análisis exploratorio. Entregad una ficha por grupo en la **semana 2 (21–25 de septiembre de 2026)** a través del Aula Virtual.
+
+La ficha debe ocupar **una página como máximo**. Las respuestas pueden ser provisionales y se podrán revisar después de recibir retroalimentación. En este hito no hay que programar, calcular estadísticos, elegir una métrica ni decidir qué modelos se compararán.
 
 ::: {.ficha}
 
-## Grupo
+## Grupo y propuesta
 
 | Campo | Respuesta |
 |:--|:--|
-| Nombre del grupo | |
-| Integrante 1 (nombre y correo UV) | |
-| Integrante 2 (nombre y correo UV) | |
-| Integrante 3 (nombre y correo UV) | |
-| Integrante 4 (nombre y correo UV) | |
-| Portavoz (contacto con el profesor) | |
-
-## Pregunta de negocio
-
-| Campo | Respuesta |
-|:--|:--|
-| Pregunta que queréis responder (1–2 frases) | |
-| Decisión de negocio que apoyaría la predicción | |
-| Quién tomaría esa decisión (tipo de organización o rol) | |
-| Por qué predecir ayuda en este caso (frente a describir o explicar) | |
-
-## Conjunto de datos
-
-| Campo | Respuesta |
-|:--|:--|
-| Nombre del conjunto de datos | |
-| Procedencia (organismo, repositorio, enlace) | |
-| Licencia o condiciones de uso | |
-| Fecha de acceso y versión | |
-| Formato y tamaño del archivo (csv, parquet, varios archivos...) | |
-| Unidad de observación (qué representa una fila) | |
-| Cobertura: periodo temporal y ámbito geográfico | |
-| Número de observaciones (filas) | |
-| Número de variables (columnas) | |
-| ¿Contiene datos personales o sensibles? ¿Cómo los trataréis? | |
-| ¿Se puede entregar el fichero con el proyecto? Si no, ¿cómo se descarga? | |
-
-## Variable respuesta
-
-| Campo | Respuesta |
-|:--|:--|
-| Nombre de la variable | |
-| Definición y unidades | |
-| Tipo de problema (regresión / clasificación; si clasificación, número de clases) | |
-| Distribución: rango y media o mediana (regresión) o frecuencia de cada clase (clasificación) | |
-| ¿Hay desequilibrio de clases o valores extremos relevantes? | |
-| Porcentaje de valores faltantes en la respuesta | |
-| ¿Está disponible para todas las observaciones o hay que construirla? | |
-
-## Predictores
-
-Listad los predictores principales (añadid filas si hace falta). La última columna es clave para evitar **fugas de información**: un predictor solo es válido si su valor se conoce **antes** del momento en que se haría la predicción.
-
-::: {.predictores}
-
-| Variable | Tipo (numérica / categórica / fecha / texto) | Descripción breve | % faltantes | ¿Conocida en el momento de predecir? |
-|:--|:--|:--|:--:|:--:|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Nombre del grupo e integrantes | Escribid aquí |
+| ¿Qué queréis predecir y qué decisión ayudaría a tomar? Máximo dos frases. | Escribid aquí |
+| Nombre de los datos, organismo o repositorio y enlace directo | Escribid aquí |
+| ¿Qué representa una fila y cuántas filas hay aproximadamente? | Escribid aquí |
+| Variable respuesta: nombre, significado y tipo de problema (regresión o clasificación) | Escribid aquí |
+| ¿Cuándo se haría la predicción? Indicad entre 3 y 6 variables que estarían disponibles en ese momento. | Escribid aquí |
+| Posible impedimento o duda para el profesor (opcional) | Escribid aquí |
 
 :::
-
-| Campo | Respuesta |
-|:--|:--|
-| Número total de predictores candidatos | |
-| Variables que excluís y motivo (identificadores, fuga de información, redundancia...) | |
-| Variables que pensáis construir a partir de las existentes | |
-
-## Diseño previsto del análisis
-
-| Campo | Respuesta |
-|:--|:--|
-| Métrica de evaluación prevista y por qué (RMSE, MAE, AUC, F1...) | |
-| Partición entrenamiento/prueba prevista (proporción; aleatoria o temporal) | |
-| Modelo base previsto (por ejemplo, GLM con regularización) | |
-| Familias de modelos que pensáis comparar | |
-| Riesgos y limitaciones que ya veis (tamaño, calidad, sesgo de selección, fuga...) | |
-
-## Organización del grupo
-
-| Campo | Respuesta |
-|:--|:--|
-| Reparto inicial de tareas | |
-| Herramientas que pensáis usar (entorno, IA, control de versiones) | |
-| Dudas para el profesor | |
-
-:::
-
-## Ejemplo ilustrativo
-
-Rellenado con el conjunto de referencia de las prácticas, que **no** puede usarse para el proyecto. Sirve solo para ver el nivel de detalle esperado.
-
-| Campo | Respuesta |
-|:--|:--|
-| Pregunta de negocio | ¿Qué salario cabe esperar para un puesto con unas características dadas (ocupación, sector, jornada, contrato, perfil del trabajador)? |
-| Decisión que apoya | Fijar una banda salarial de oferta en un proceso de selección |
-| Conjunto de datos | Encuesta de Estructura Salarial 2022, microdatos del INE (licencia de reutilización de datos del INE) |
-| Unidad de observación | Trabajador asalariado en un centro de cotización |
-| Tamaño | 240 490 observaciones y 56 variables |
-| Variable respuesta | Salario anual (numérica: regresión); distribución asimétrica a la derecha, se estudiará en escala logarítmica |
-| Predictores | Sexo, tramo de edad, nivel de estudios, ocupación (`CNO1`), actividad (`CNACE`), tipo de jornada, tipo de contrato, antigüedad, tamaño del centro |
-| Excluidas | Identificadores; componentes de la retribución (definen la respuesta: fuga de información); factor de elevación |
-| Métrica y partición | RMSE en escala logarítmica; partición aleatoria 80/20 estratificada por ocupación |
 
 ## Lista de comprobación antes de entregar
 
-- [ ] La pregunta nombra una decisión concreta y a quién le sirve.
-- [ ] Sabemos qué representa una fila y cuántas hay.
-- [ ] La variable respuesta está definida y sabemos si es regresión o clasificación.
-- [ ] Hemos comprobado que ningún predictor «adivina» la respuesta por construcción.
-- [ ] Podemos entregar los datos (o un script de descarga) con el proyecto.
-- [ ] No hay datos personales identificables sin anonimizar.
-- [ ] Hemos leído las normas de uso de IA y creado la carpeta `registro_ia/`.
+- [ ] Hemos abierto o descargado los datos.
+- [ ] La variable respuesta existe o sabemos cómo construirla.
+- [ ] Hay predictores conocidos antes del momento de la predicción.
+- [ ] Las condiciones de uso permiten analizar y entregar los datos, o proporcionar un procedimiento de descarga reproducible.
+- [ ] Los datos no contienen información personal identificable sin anonimizar.
+- [ ] Si hemos usado IA, hemos empezado a conservar el registro exigido por el proyecto.

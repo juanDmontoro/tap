@@ -64,7 +64,7 @@ La imagen permite observar detecciones, pero no conocer el entrenamiento de esta
 
 - Correo electrónico: [juan.d.montoro@uv.es](mailto:juan.d.montoro@uv.es)
 - Despacho: 2E02 (Facultad de Economía, 2.º piso, Departamento de Economía Aplicada).
-- Horario de tutorías: consultad el Aula Virtual.
+- Horario de tutorías: martes de 16:30 a 19:30.
 - Docencia presencial. Guía docente y organización de la asignatura en el Aula Virtual.
 
 ::: {.callout-important title="Asistencia"}
@@ -116,12 +116,12 @@ Predecir riesgo de abandono (*churn*) frente a evaluar a qué clientes dirigir u
 | Semanas | Tema | Trabajo en las prácticas |
 |:--:|:--|:--|
 | 1 | 1. Fundamentos | Entorno de trabajo reproducible |
-| 2–3 | 2. Selección y evaluación | Validación cruzada e hiperparámetros |
-| 4–5 | 3. GLM con regularización | Modelo base sobre el caso de referencia |
-| 6–8 | 4. Ensambles | Comparación con el modelo base |
+| 2--3 | 2. Selección y evaluación | Validación cruzada e hiperparámetros |
+| 4--5 | 3. GLM con regularización | Modelo base sobre el caso de referencia |
+| 6--8 | 4. Ensambles | Comparación con el modelo base |
 | 9 | 5. SVM | Comparación entre familias de modelos |
-| 10–12 | 6. Redes neuronales y aprendizaje profundo | Implementación con Keras |
-| 13–14 | 7. Predicción y efectos causales | Simulación de sesgos y aplicación de DoubleML |
+| 10--12 | 6. Redes neuronales y aprendizaje profundo | Implementación con Keras |
+| 13 | 7. Predicción y efectos causales | Simulación de sesgos y aplicación de DoubleML |
 | 14 | Evaluación | Defensa oral del proyecto (sesión de prácticas) |
 :::
 

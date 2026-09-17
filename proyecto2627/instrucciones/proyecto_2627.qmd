@@ -33,7 +33,7 @@ El proyecto es el eje de la evaluación de la asignatura. Cada grupo elige una *
 | **Uso de IA** | Permitido, declarado y auditado (véase la sección [Uso de IA](#sec-ia)). |
 
 ::: {.callout-note title="Tarea inmediata: semana 2"}
-Formad el grupo, elegid los datos y entregad la **ficha de elección de datos** (`hitos/S02_datos`) en la semana del 21 de septiembre a través del Aula Virtual. Es el primer hito del proyecto.
+Formad el grupo, elegid los datos y entregad la **ficha breve de viabilidad de los datos** (`hitos/S02_datos`) en la semana del 21 de septiembre a través del Aula Virtual. Ocupa una página como máximo y no requiere código ni análisis exploratorio. Es el primer hito del proyecto.
 :::
 
 ## Normas
@@ -86,7 +86,8 @@ La entrega final consta de tres piezas en una **misma versión congelada**:
 ### Hitos y factor de corrección
 
 - Un hito se considera **completado** cuando el grupo presenta un avance válido (no una entrega vacía o simbólica) y recibe retroalimentación del profesor.
-- Los avances/hitos se presentan de forma oral durante la sesión práctica de la semana.
+- El hito S2 se entrega mediante la ficha y se revisa brevemente durante la sesión práctica; no requiere una presentación formal. Los hitos posteriores se presentan oralmente durante la sesión práctica de la semana.
+- La retroalimentación de S2 indicará uno de estos resultados: **propuesta viable**, **viable con cambios** o **es necesario cambiar la propuesta**.
 - Los hitos no completados reducen la nota global del proyecto mediante el factor de corrección descrito en la [rúbrica](#sec-rubrica).
 
 ### Defensa oral
@@ -102,7 +103,7 @@ Cinco hitos previos a la entrega final, ligados al tema en curso. Cada hito se a
 
 | Semana | Fechas | Hito | Qué se entrega | Tema de apoyo |
 |:--:|:--|:--|:--|:--|
-| 2 | 21–25 sep | **Grupos, pregunta de negocio y datos** | Ficha de elección de datos (una por grupo) | 2. Selección y evaluación |
+| 2 | 21–25 sep | **Grupos, pregunta de negocio y datos** | Ficha breve de viabilidad, sin código ni EDA (una página por grupo) | 2. Selección y evaluación |
 | 4 | 8 oct | **Análisis exploratorio (EDA)** | Cuaderno: descripción de variables, valores faltantes, distribuciones, relación con la respuesta; partición entrenamiento/prueba definida y congelada | 3. GLM con regularización |
 | 6 | 22 oct | **Modelo base** | *Pipeline* con preprocesado y GLM (con regularización si procede); métrica elegida y justificada; resultado por validación cruzada y en prueba | 4. Ensambles |
 | 8 | 5 nov | **Ensambles** | Bosques aleatorios, *boosting* y/o *stacking* frente al modelo base en el mismo conjunto de prueba; importancias y valores de Shapley | 4. Ensambles |
@@ -187,6 +188,6 @@ $$
 
 ## Documentos relacionados
 
-- Ficha de elección de datos (hito S2): `hitos/S02_datos`.
+- Ficha de viabilidad de los datos (hito S2): `hitos/S02_datos`.
 - Guía docente de la asignatura 2026-27 y calendario de sesiones (Aula Virtual).
 - Las fechas límite concretas de cada hito y el medio de entrega se comunican en el Aula Virtual.
