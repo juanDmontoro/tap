@@ -1,0 +1,29 @@
+name: tap_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyterlab
+  - graphviz
+  - python-graphviz
+  - ipykernel
+  - shap
+  - xgboost
+  - lightgbm
+  - pytorch
+  - torchvision
+  - torchaudio
+  - plotly
+  - bokeh
+  - altair
+  - pip
+  - pip:
+      - dash
+      - streamlit

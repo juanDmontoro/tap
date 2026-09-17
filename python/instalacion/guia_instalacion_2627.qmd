@@ -222,15 +222,15 @@ Fíjate en que el editor sea **Microsoft** (hay copias con nombres parecidos). O
 
 ## Paso 3 · Crear el entorno `tap` <span class="tiempo">⏱ 5–20 min (casi todo es espera)</span> {#paso-3}
 
-El fichero **`tap.yml`** es la "lista de la compra": Python 3.11 y todas las librerías del curso (scikit-learn, XGBoost, LightGBM, SHAP, Optuna, DoubleML, TensorFlow/Keras, pandas, matplotlib, plotly…). Conda lee la lista, descarga las versiones compatibles y las instala **aisladas** en un entorno llamado `tap`. **Es el mismo fichero para Windows, Mac y Linux.**
+El fichero **`tap.yml`** es la lista de paquetes a instalar: Python 3.11 y todas las librerías del curso (scikit-learn, XGBoost, LightGBM, SHAP, Optuna, DoubleML, TensorFlow/Keras, pandas, matplotlib, plotly…). Conda lee la lista, descarga las versiones compatibles y las instala **aisladas** en un entorno llamado `tap`. **Es el mismo fichero para Windows, Mac y Linux.**
 
 **3.1 Descarga `tap.yml`** del Aula Virtual. Quedará en tu carpeta **Descargas** (`Downloads`). Comprueba que el nombre es exactamente `tap.yml` (Windows a veces lo guarda como `tap.yml.txt`; si es así, renómbralo).
 
-**3.2 Abre la terminal de conda** (Windows: **Anaconda Prompt (miniconda3)** · Mac: **Terminal**) y **entra en la carpeta Descargas** con `cd Downloads`. Después lista su contenido para confirmar que `tap.yml` está ahí:
-
-::: {.panel-tabset}
+:::: {.panel-tabset}
 
 ### Windows
+
+**3.2 Abre Anaconda Prompt (miniconda3)** y **entra en la carpeta Descargas** con `cd Downloads`. Después lista su contenido con `dir tap.yml` para confirmar que el fichero está ahí:
 
 <pre class="terminal"><span class="prompt">(base) C:\Users\TU_USUARIO&gt;</span> cd Downloads
 
@@ -240,22 +240,22 @@ El fichero **`tap.yml`** es la "lista de la compra": Python 3.11 y todas las lib
 
 14/09/2026  10:32               612 tap.yml</pre>
 
-### macOS
-
-<pre class="terminal"><span class="prompt">(base) tu-mac ~ %</span> cd Downloads
-
-<span class="prompt">(base) tu-mac Downloads %</span> ls tap.yml
-tap.yml</pre>
-
-:::
-
 Si aparece `tap.yml`, estás en el sitio correcto.
 
 ::: {.callout-tip title="Si has guardado tap.yml en otra carpeta" collapse="true"}
-Escribe `cd ` (con un espacio) y **arrastra la carpeta** desde el Explorador / Finder hasta la ventana de la terminal: se pega la ruta sola. Pulsa <kbd>Enter</kbd>.
+Escribe `cd ` (con un espacio) y **arrastra la carpeta** desde el Explorador hasta la ventana de la terminal: se pega la ruta sola. Pulsa <kbd>Enter</kbd>.
 :::
 
-**3.3 Crea el entorno** con esta línea (tarda entre 5 y 20 minutos según la conexión; **no cierres la ventana**):
+**3.3 Revisa y acepta los términos de servicio, si se solicitan.** Conda puede pedir que aceptes los términos de los canales de Anaconda o detenerse con un error como `CondaToSNonInteractiveError`. Antes de crear el entorno, puedes consultarlos y, si estás de acuerdo, aceptarlos desde esta misma ventana:
+
+```bash
+conda tos view
+conda tos accept
+```
+
+El comando está documentado en el [plugin oficial de Anaconda](https://github.com/anaconda/conda-anaconda-tos#usage). Si `conda` no reconoce el subcomando `tos`, continúa con la creación del entorno: este paso depende de que esté instalado el plugin `conda-anaconda-tos`.
+
+**3.4 Crea el entorno** con esta línea (tarda entre 5 y 20 minutos según la conexión; **no cierres la ventana**):
 
 ```bash
 conda env create -f tap.yml
@@ -282,16 +282,78 @@ Installing pip dependencies: ...done
 Repite el mismo comando. Si dice que el entorno ya existe: `conda env remove -n tap -y` y vuelve a crearlo. Los paquetes ya descargados no se vuelven a bajar.
 :::
 
-**3.4 Comprueba.** Activa el entorno y mira qué Python responde:
+**3.5 Comprueba.** Activa el entorno y mira qué responde Python:
 
 <pre class="terminal"><span class="prompt">(base) C:\Users\TU_USUARIO\Downloads&gt;</span> conda activate tap
 
 <span class="prompt">(tap) C:\Users\TU_USUARIO\Downloads&gt;</span> python -c "import tensorflow; print('OK')"
 <span class="ok">OK</span></pre>
 
-(En Mac el prompt es `(tap) tu-mac Downloads %`; los comandos son los mismos.)
 
 El prompt ahora empieza por **`(tap)`**. Ese es el entorno que usaremos en toda la asignatura. (Pueden aparecer avisos de TensorFlow en mayúsculas antes del `OK`: son informativos, no errores.)
+
+### macOS
+
+**3.2 Abre la Terminal** (⌘ + Espacio, escribe *Terminal*) y **entra en la carpeta Descargas** con `cd Downloads`. Después lista su contenido con `ls tap.yml` para confirmar que el fichero está ahí:
+
+<pre class="terminal"><span class="prompt">(base) tu-mac ~ %</span> cd Downloads
+
+<span class="prompt">(base) tu-mac Downloads %</span> ls tap.yml
+tap.yml</pre>
+
+Si aparece `tap.yml`, estás en el sitio correcto.
+
+::: {.callout-tip title="Si has guardado tap.yml en otra carpeta" collapse="true"}
+Escribe `cd ` (con un espacio) y **arrastra la carpeta** desde el Finder hasta la ventana de la terminal: se pega la ruta sola. Pulsa <kbd>Enter</kbd>.
+:::
+
+**3.3 Revisa y acepta los términos de servicio, si se solicitan.** Conda puede pedir que aceptes los términos de los canales de Anaconda o detenerse con un error como `CondaToSNonInteractiveError`. Antes de crear el entorno, puedes consultarlos y, si estás de acuerdo, aceptarlos desde esta misma ventana:
+
+```bash
+conda tos view
+conda tos accept
+```
+
+El comando está documentado en el [plugin oficial de Anaconda](https://github.com/anaconda/conda-anaconda-tos#usage). Si `conda` no reconoce el subcomando `tos`, continúa con la creación del entorno: este paso depende de que esté instalado el plugin `conda-anaconda-tos`.
+
+**3.4 Crea el entorno** con esta línea (tarda entre 5 y 20 minutos según la conexión; **no cierres la ventana**):
+
+```bash
+conda env create -f tap.yml
+```
+
+Verás estas fases; en la de descarga aparecen barras de progreso:
+
+<pre class="terminal"><span class="prompt">(base) tu-mac Downloads %</span> conda env create -f tap.yml
+Channels: conda-forge
+Collecting package metadata (repodata.json): done
+Solving environment: done
+Downloading and Extracting Packages: ...
+Preparing transaction: done
+Verifying transaction: done
+Executing transaction: done
+Installing pip dependencies: ...done
+<span class="prompt">   ↑ aquí instala TensorFlow: tarda unos minutos</span>
+#
+# To activate this environment, use
+#
+#     $ conda activate tap</pre>
+
+::: {.callout-tip title="Si se interrumpe (se va la wifi, cierras la ventana...)"}
+Repite el mismo comando. Si dice que el entorno ya existe: `conda env remove -n tap -y` y vuelve a crearlo. Los paquetes ya descargados no se vuelven a bajar.
+:::
+
+**3.5 Comprueba.** Activa el entorno y mira qué responde Python:
+
+<pre class="terminal"><span class="prompt">(base) tu-mac Downloads %</span> conda activate tap
+
+<span class="prompt">(tap) tu-mac Downloads %</span> python -c "import tensorflow; print('OK')"
+<span class="ok">OK</span></pre>
+
+
+El prompt ahora empieza por **`(tap)`**. Ese es el entorno que usaremos en toda la asignatura. (Pueden aparecer avisos de TensorFlow en mayúsculas antes del `OK`: son informativos, no errores.)
+
+::::
 
 ---
 
@@ -399,6 +461,9 @@ Clic derecho sobre el fichero → *Abrir* → *Abrir*.
 Las últimas versiones de TensorFlow no tienen versión para Mac Intel; pip elige automáticamente la 2.16, que exige NumPy 1.x. Abre `tap.yml` con un editor de texto, cambia la línea `- numpy` por `- numpy<2`, borra el entorno (`conda env remove -n tap -y`) y vuelve a crearlo.
 
 ### Ambos
+
+**Error `CondaToSNonInteractiveError` o aviso de términos de servicio pendientes.**
+Consulta los términos con `conda tos view` y, si estás de acuerdo, ejecuta `conda tos accept`. Después repite `conda env create -f tap.yml` (Paso 3).
 
 **Errores `CondaHTTPError` / `SSLError` / "Connection timed out" al crear el entorno.**
 Problema de red (VPN, wifi de la universidad con proxy, red que corta descargas largas). Desactiva la VPN, cambia de red (p. ej. compartir datos del móvil un momento) y repite `conda env create -f tap.yml`.

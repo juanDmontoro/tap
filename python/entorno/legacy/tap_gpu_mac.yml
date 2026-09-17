@@ -1,0 +1,29 @@
+name: tap
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyterlab
+  - notebook
+  - ipywidgets
+  - graphviz
+  - python-graphviz
+  - ipykernel
+  - shap
+  - xgboost
+  - lightgbm
+  - plotly
+  - statsmodels
+  - keras
+  - pip
+  - geopy
+  - pip:
+      - tensorflow-macos
+      - tensorflow-metal

@@ -1,0 +1,29 @@
+name: tap_env_gpu
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyterlab
+  - notebook
+  - graphviz
+  - python-graphviz
+  - ipykernel
+  - shap
+  - xgboost
+  - lightgbm
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=11.8
+  - plotly
+  - statsmodels
+  - pip

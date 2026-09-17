@@ -5451,13 +5451,13 @@ conda 25.x.x</pre>
 </section>
 <section id="paso-3" class="level2">
 <h2 class="anchored" data-anchor-id="paso-3">Paso 3 · Crear el entorno <code>tap</code> <span class="tiempo">⏱ 5–20 min (casi todo es espera)</span></h2>
-<p>El fichero <strong><code>tap.yml</code></strong> es la “lista de la compra”: Python 3.11 y todas las librerías del curso (scikit-learn, XGBoost, LightGBM, SHAP, Optuna, DoubleML, TensorFlow/Keras, pandas, matplotlib, plotly…). Conda lee la lista, descarga las versiones compatibles y las instala <strong>aisladas</strong> en un entorno llamado <code>tap</code>. <strong>Es el mismo fichero para Windows, Mac y Linux.</strong></p>
+<p>El fichero <strong><code>tap.yml</code></strong> es la lista de paquetes a instalar: Python 3.11 y todas las librerías del curso (scikit-learn, XGBoost, LightGBM, SHAP, Optuna, DoubleML, TensorFlow/Keras, pandas, matplotlib, plotly…). Conda lee la lista, descarga las versiones compatibles y las instala <strong>aisladas</strong> en un entorno llamado <code>tap</code>. <strong>Es el mismo fichero para Windows, Mac y Linux.</strong></p>
 <p><strong>3.1 Descarga <code>tap.yml</code></strong> del Aula Virtual. Quedará en tu carpeta <strong>Descargas</strong> (<code>Downloads</code>). Comprueba que el nombre es exactamente <code>tap.yml</code> (Windows a veces lo guarda como <code>tap.yml.txt</code>; si es así, renómbralo).</p>
-<p><strong>3.2 Abre la terminal de conda</strong> (Windows: <strong>Anaconda Prompt (miniconda3)</strong> · Mac: <strong>Terminal</strong>) y <strong>entra en la carpeta Descargas</strong> con <code>cd Downloads</code>. Después lista su contenido para confirmar que <code>tap.yml</code> está ahí:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href>Windows</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href>macOS</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p><strong>3.2 Abre Anaconda Prompt (miniconda3)</strong> y <strong>entra en la carpeta Descargas</strong> con <code>cd Downloads</code>. Después lista su contenido con <code>dir tap.yml</code> para confirmar que el fichero está ahí:</p>
 <pre class="terminal"><span class="prompt">(base) C:\Users\TU_USUARIO&gt;</span> cd Downloads
 
 <span class="prompt">(base) C:\Users\TU_USUARIO\Downloads&gt;</span> dir tap.yml
@@ -5465,15 +5465,6 @@ conda 25.x.x</pre>
  Directorio de C:\Users\TU_USUARIO\Downloads
 
 14/09/2026  10:32               612 tap.yml</pre>
-</div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<pre class="terminal"><span class="prompt">(base) tu-mac ~ %</span> cd Downloads
-
-<span class="prompt">(base) tu-mac Downloads %</span> ls tap.yml
-tap.yml</pre>
-</div>
-</div>
-</div>
 <p>Si aparece <code>tap.yml</code>, estás en el sitio correcto.</p>
 <div class="callout callout-style-default callout-tip callout-titled" title="Si has guardado tap.yml en otra carpeta">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
@@ -5487,12 +5478,16 @@ tap.yml</pre>
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Escribe <code>cd</code> (con un espacio) y <strong>arrastra la carpeta</strong> desde el Explorador / Finder hasta la ventana de la terminal: se pega la ruta sola. Pulsa <kbd>Enter</kbd>.</p>
+<p>Escribe <code>cd</code> (con un espacio) y <strong>arrastra la carpeta</strong> desde el Explorador hasta la ventana de la terminal: se pega la ruta sola. Pulsa <kbd>Enter</kbd>.</p>
 </div>
 </div>
 </div>
-<p><strong>3.3 Crea el entorno</strong> con esta línea (tarda entre 5 y 20 minutos según la conexión; <strong>no cierres la ventana</strong>):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env create <span class="at">-f</span> tap.yml</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>3.3 Revisa y acepta los términos de servicio, si se solicitan.</strong> Conda puede pedir que aceptes los términos de los canales de Anaconda o detenerse con un error como <code>CondaToSNonInteractiveError</code>. Antes de crear el entorno, puedes consultarlos y, si estás de acuerdo, aceptarlos desde esta misma ventana:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> tos view</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> tos accept</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>El comando está documentado en el <a href="https://github.com/anaconda/conda-anaconda-tos#usage">plugin oficial de Anaconda</a>. Si <code>conda</code> no reconoce el subcomando <code>tos</code>, continúa con la creación del entorno: este paso depende de que esté instalado el plugin <code>conda-anaconda-tos</code>.</p>
+<p><strong>3.4 Crea el entorno</strong> con esta línea (tarda entre 5 y 20 minutos según la conexión; <strong>no cierres la ventana</strong>):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env create <span class="at">-f</span> tap.yml</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Verás estas fases; en la de descarga aparecen barras de progreso:</p>
 <pre class="terminal"><span class="prompt">(base) C:\Users\TU_USUARIO\Downloads&gt;</span> conda env create -f tap.yml
 Channels: conda-forge
@@ -5521,13 +5516,79 @@ Installing pip dependencies: ...done
 <p>Repite el mismo comando. Si dice que el entorno ya existe: <code>conda env remove -n tap -y</code> y vuelve a crearlo. Los paquetes ya descargados no se vuelven a bajar.</p>
 </div>
 </div>
-<p><strong>3.4 Comprueba.</strong> Activa el entorno y mira qué Python responde:</p>
+<p><strong>3.5 Comprueba.</strong> Activa el entorno y mira qué responde Python:</p>
 <pre class="terminal"><span class="prompt">(base) C:\Users\TU_USUARIO\Downloads&gt;</span> conda activate tap
 
 <span class="prompt">(tap) C:\Users\TU_USUARIO\Downloads&gt;</span> python -c &quot;import tensorflow; print(&#39;OK&#39;)&quot;
 <span class="ok">OK</span></pre>
-<p>(En Mac el prompt es <code>(tap) tu-mac Downloads %</code>; los comandos son los mismos.)</p>
 <p>El prompt ahora empieza por <strong><code>(tap)</code></strong>. Ese es el entorno que usaremos en toda la asignatura. (Pueden aparecer avisos de TensorFlow en mayúsculas antes del <code>OK</code>: son informativos, no errores.)</p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p><strong>3.2 Abre la Terminal</strong> (⌘ + Espacio, escribe <em>Terminal</em>) y <strong>entra en la carpeta Descargas</strong> con <code>cd Downloads</code>. Después lista su contenido con <code>ls tap.yml</code> para confirmar que el fichero está ahí:</p>
+<pre class="terminal"><span class="prompt">(base) tu-mac ~ %</span> cd Downloads
+
+<span class="prompt">(base) tu-mac Downloads %</span> ls tap.yml
+tap.yml</pre>
+<p>Si aparece <code>tap.yml</code>, estás en el sitio correcto.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Si has guardado tap.yml en otra carpeta">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Si has guardado tap.yml en otra carpeta
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Escribe <code>cd</code> (con un espacio) y <strong>arrastra la carpeta</strong> desde el Finder hasta la ventana de la terminal: se pega la ruta sola. Pulsa <kbd>Enter</kbd>.</p>
+</div>
+</div>
+</div>
+<p><strong>3.3 Revisa y acepta los términos de servicio, si se solicitan.</strong> Conda puede pedir que aceptes los términos de los canales de Anaconda o detenerse con un error como <code>CondaToSNonInteractiveError</code>. Antes de crear el entorno, puedes consultarlos y, si estás de acuerdo, aceptarlos desde esta misma ventana:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> tos view</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> tos accept</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>El comando está documentado en el <a href="https://github.com/anaconda/conda-anaconda-tos#usage">plugin oficial de Anaconda</a>. Si <code>conda</code> no reconoce el subcomando <code>tos</code>, continúa con la creación del entorno: este paso depende de que esté instalado el plugin <code>conda-anaconda-tos</code>.</p>
+<p><strong>3.4 Crea el entorno</strong> con esta línea (tarda entre 5 y 20 minutos según la conexión; <strong>no cierres la ventana</strong>):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env create <span class="at">-f</span> tap.yml</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Verás estas fases; en la de descarga aparecen barras de progreso:</p>
+<pre class="terminal"><span class="prompt">(base) tu-mac Downloads %</span> conda env create -f tap.yml
+Channels: conda-forge
+Collecting package metadata (repodata.json): done
+Solving environment: done
+Downloading and Extracting Packages: ...
+Preparing transaction: done
+Verifying transaction: done
+Executing transaction: done
+Installing pip dependencies: ...done
+<span class="prompt">   ↑ aquí instala TensorFlow: tarda unos minutos</span>
+#
+# To activate this environment, use
+#
+#     $ conda activate tap</pre>
+<div class="callout callout-style-default callout-tip callout-titled" title="Si se interrumpe (se va la wifi, cierras la ventana...)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Si se interrumpe (se va la wifi, cierras la ventana…)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Repite el mismo comando. Si dice que el entorno ya existe: <code>conda env remove -n tap -y</code> y vuelve a crearlo. Los paquetes ya descargados no se vuelven a bajar.</p>
+</div>
+</div>
+<p><strong>3.5 Comprueba.</strong> Activa el entorno y mira qué responde Python:</p>
+<pre class="terminal"><span class="prompt">(base) tu-mac Downloads %</span> conda activate tap
+
+<span class="prompt">(tap) tu-mac Downloads %</span> python -c &quot;import tensorflow; print(&#39;OK&#39;)&quot;
+<span class="ok">OK</span></pre>
+<p>El prompt ahora empieza por <strong><code>(tap)</code></strong>. Ese es el entorno que usaremos en toda la asignatura. (Pueden aparecer avisos de TensorFlow en mayúsculas antes del <code>OK</code>: son informativos, no errores.)</p>
+</div>
+</div>
+</div>
 <hr>
 </section>
 <section id="paso-4" class="level2">
@@ -5656,16 +5717,17 @@ Keras entrena correctamente. Pérdida final: ...</pre>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <p><strong><code>conda: command not found</code> tras instalar.</strong> Cierra la Terminal y abre una nueva. Si persiste, ejecuta estas dos líneas y vuelve a abrir la Terminal:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/miniconda3/bin/activate</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> init zsh</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/miniconda3/bin/activate</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> init zsh</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>“No se puede abrir porque procede de un desarrollador no identificado”.</strong> Clic derecho sobre el fichero → <em>Abrir</em> → <em>Abrir</em>.</p>
 <p><strong>Mac Intel (anterior a 2020): falla la instalación de TensorFlow por pip.</strong> Las últimas versiones de TensorFlow no tienen versión para Mac Intel; pip elige automáticamente la 2.16, que exige NumPy 1.x. Abre <code>tap.yml</code> con un editor de texto, cambia la línea <code>- numpy</code> por <code>- numpy&lt;2</code>, borra el entorno (<code>conda env remove -n tap -y</code>) y vuelve a crearlo.</p>
 </div>
 <div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<p><strong>Error <code>CondaToSNonInteractiveError</code> o aviso de términos de servicio pendientes.</strong> Consulta los términos con <code>conda tos view</code> y, si estás de acuerdo, ejecuta <code>conda tos accept</code>. Después repite <code>conda env create -f tap.yml</code> (Paso 3).</p>
 <p><strong>Errores <code>CondaHTTPError</code> / <code>SSLError</code> / “Connection timed out” al crear el entorno.</strong> Problema de red (VPN, wifi de la universidad con proxy, red que corta descargas largas). Desactiva la VPN, cambia de red (p. ej. compartir datos del móvil un momento) y repite <code>conda env create -f tap.yml</code>.</p>
 <p><strong>Termina todo menos “Installing pip dependencies” (TensorFlow).</strong> El entorno se ha creado pero sin TensorFlow. Instálalo a mano:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate tap</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install tensorflow</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate tap</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install tensorflow</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>En VS Code no aparece <code>tap</code> en “Select Kernel”.</strong> 1. <code>Developer: Reload Window</code> (paleta de comandos). 2. Si sigue sin aparecer, en <em>Select a Python Environment</em> elige <em>Enter interpreter path…</em> y escribe la ruta: Windows <code class="ruta">C:\Users\TU_USUARIO\miniconda3\envs\tap\python.exe</code> · Mac <code class="ruta">/Users/TU_USUARIO/miniconda3/envs/tap/bin/python</code>.</p>
 <p><strong>VS Code pide “ipykernel needs to be installed”.</strong> Pulsa <span class="boton">Install</span>. (Solo ocurre si has elegido un entorno que no es <code>tap</code>; comprueba el kernel.)</p>
 <p><strong>Un notebook del curso da <code>ModuleNotFoundError</code>.</strong> Casi siempre es que el kernel seleccionado no es <code>tap</code>. Mira arriba a la derecha y cámbialo.</p>
@@ -5704,13 +5766,13 @@ Precaución
 </div>
 </div>
 <p>Requisitos: <strong>Python 3.10 a 3.13</strong> (TensorFlow aún no tiene versión para Python 3.14; comprueba con <code>python --version</code>). Descarga <code>requirements.txt</code> del Aula Virtual y, en la carpeta de la asignatura:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv .venv</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows:</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv\Scripts\activate</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS / Linux:</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv .venv</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows:</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv\Scripts\activate</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS / Linux:</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>En VS Code, elige <code>.venv</code> como kernel (aparece como <em>.venv (Python 3.x)</em>) y ejecuta <code>comprobar_entorno.ipynb</code>. Nota: para dibujar árboles con <code>graphviz</code> hace falta además el programa Graphviz del sistema (<code>brew install graphviz</code> en Mac, instalador de <a href="https://graphviz.org/download/">graphviz.org</a> en Windows); con conda viene incluido.</p>
 <hr>
 </section>

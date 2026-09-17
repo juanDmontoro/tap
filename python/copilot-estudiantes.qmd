@@ -1,0 +1,150 @@
+---
+title: "GitHub Copilot para estudiantes"
+lang: es
+format:
+  html:
+    theme: cosmo
+    toc: false
+    number-sections: false
+    anchor-sections: false
+    embed-resources: true
+    page-layout: full
+    include-in-header:
+      text: |
+        <style>
+        :root { --ink: #182d3b; --muted: #526574; --teal: #006d68; --line: #d9e4e8; }
+        body { background: #f3f6f7; color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+        #quarto-content { display: block; }
+        main.content { width: min(960px, calc(100% - 36px)); margin: 28px auto 32px; padding: 0; }
+        #title-block-header { display: none; }
+        .hero { background: #172e3d; color: #fff; border-radius: 20px; padding: 30px 34px 26px; }
+        .hero .eyebrow { color: #98ddd0; font-size: .72rem; font-weight: 750; letter-spacing: .16em; margin-bottom: 10px; }
+        .hero h1 { color: #fff; font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.12; margin: 0 0 12px; font-weight: 780; }
+        .hero .lead { color: #e0e9ee; font-size: 1.05rem; margin-bottom: 20px; }
+        .route { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: .78rem; font-weight: 650; }
+        .route span:not(.arrow) { border: 1px solid #657e8d; border-radius: 100px; padding: 6px 13px; }
+        .route span:last-child { background: #9de6d6; color: #123b37; border-color: #9de6d6; }
+        .route .arrow { color: #9fb5c1; }
+        .prepare { margin: 18px 2px; font-size: .87rem; color: var(--muted); }
+        .prepare strong { color: var(--ink); }
+        .steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        .step { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; }
+        .step h2 { border: 0; padding: 0; margin: 0 0 14px; font-size: 1.13rem; font-weight: 760; line-height: 1.4; display: flex; align-items: center; gap: 12px; }
+        .num { width: 34px; height: 34px; flex: 0 0 34px; display: inline-flex; align-items: center; justify-content: center; background: #e2f3ee; color: #00655f; border-radius: 50%; font-size: .85rem; font-weight: 800; }
+        .step p { font-size: .89rem; line-height: 1.55; margin: 0 0 10px; }
+        .step p:last-child { margin-top: auto; margin-bottom: 0; padding-top: 9px; }
+        a { color: var(--teal); text-underline-offset: 3px; }
+        a.action { display: inline-block; font-size: .79rem; font-weight: 720; text-decoration: none; background: #edf7f4; color: #005952; border: 1px solid #bfdbd4; padding: 8px 12px; border-radius: 8px; }
+        a.action:hover { background: #d6eee6; }
+        a:focus-visible { outline: 3px solid #b05400; outline-offset: 4px; }
+        .note { margin: 17px 0 0; padding: 15px 20px; background: #fff4dc; border-left: 4px solid #c98516; border-radius: 0 12px 12px 0; }
+        .note p { margin: 0; font-size: .82rem; line-height: 1.55; }
+        .try { padding: 16px 2px 12px; }
+        .try p { font-size: .86rem; line-height: 1.6; margin: 0; }
+        .sources { border-top: 1px solid var(--line); padding-top: 12px; color: var(--muted); }
+        .sources p { font-size: .68rem; margin: 0; line-height: 1.7; }
+        @media (max-width: 600px) {
+          main.content { width: calc(100% - 24px); margin-top: 12px; }
+          .hero { padding: 24px; border-radius: 16px; }
+          .steps { grid-template-columns: 1fr; }
+          .step { padding: 20px; }
+          .route { font-size: .7rem; gap: 6px; }
+          .route span:not(.arrow) { padding: 5px 9px; }
+        }
+        @media print {
+          @page { size: A4; margin: 12mm; }
+          body { background: #fff; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          main.content { width: 100%; margin: 0; }
+          .hero { padding: 20px 24px; }
+          .hero h1 { font-size: 25pt; }
+          .hero .lead { font-size: 11pt; margin-bottom: 12px; }
+          .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+          .step { padding: 16px 18px; break-inside: avoid; }
+          .step h2 { font-size: 12pt; margin-bottom: 10px; }
+          .step p { font-size: 9.5pt; }
+          .note p, .try p, .prepare { font-size: 9pt; }
+          .sources p { font-size: 7pt; }
+          a.action { font-size: 8.5pt; }
+        }
+        </style>
+---
+
+::: {.hero}
+::: {.eyebrow}
+GUÍA PARA EL ALUMNADO
+:::
+
+# GitHub Education para estudiantes {.unnumbered}
+
+::: {.lead}
+Acceso gratuito -- proporciona mayor uso para el asistente github copilot en VS Code.
+:::
+
+```{=html}
+<div class="route" aria-label="Proceso: cuenta de GitHub, GitHub Education y Copilot Student">
+  <span>Cuenta de GitHub</span><span class="arrow" aria-hidden="true">→</span>
+  <span>GitHub Education</span><span class="arrow" aria-hidden="true">→</span>
+  <span>Copilot Student</span>
+</div>
+```
+:::
+
+::: {.prepare}
+**Necesitas:** tu email en la Universitat y algún justificante de tu vinculación.
+:::
+
+:::: {.steps}
+
+::: {.step}
+## [1]{.num} Prepara tu cuenta {.unnumbered}
+
+**Crea una cuenta gratuita** y verifica tu correo. Si ya tienes cuenta, úsala.
+
+Añade y verifica tu **correo universitario** en [Settings → Emails](https://github.com/settings/emails).
+
+[Crear cuenta ↗](https://github.com/signup){.action}
+:::
+
+::: {.step}
+## [2]{.num} Solicita Education {.unnumbered}
+
+En **Education benefits**, pulsa **Start an application** y elige **Student**.
+
+Indica tu universidad y aporta la documentación solicitada: matrícula o carné con fecha vigente. Envía la solicitud.
+
+[Solicitar GitHub Education ↗](https://github.com/settings/education/benefits){.action}
+:::
+
+::: {.step}
+## [3]{.num} Activa el beneficio {.unnumbered}
+
+**Cuando te aprueben**, vuelve a **Education benefits**.
+
+En los recursos gratuitos para estudiantes y docentes, pulsa **Learn more** y sigue los pasos para activar **Copilot Student**.
+
+[Ir a mis beneficios ↗](https://github.com/settings/education/benefits){.action}
+:::
+
+::: {.step}
+## [4]{.num} Conecta VS Code {.unnumbered}
+
+Abre VS Code actualizado. En el icono de Copilot, pulsa **Use AI Features** e inicia sesión con **la misma cuenta de GitHub**.
+
+Completa la autorización en el navegador y vuelve al **Chat** de VS Code.
+
+[Descargar VS Code ↗](https://code.visualstudio.com/Download){.action}
+:::
+
+::::
+
+::: {.note}
+**Aprobar Education y activar Copilot son dos pasos distintos.** El beneficio puede tardar varios días en aplicarse. Si solo aparecen opciones de pago, espera y vuelve a intentarlo.
+:::
+
+::: {.try}
+**Mientras esperas:** puedes hacer el paso 4 y usar **Copilot Free**, con límites de uso.\
+:::
+
+::: {.sources}
+Ayuda oficial: [solicitud de estudiante](https://docs.github.com/en/education/about-github-education/github-education-for-students/apply-to-github-education-as-a-student) · [activación de Copilot Student](https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/enable-copilot/set-up-for-students) · [configuración en VS Code](https://code.visualstudio.com/docs/setup/copilot). Revisado: 17/09/2026.
+:::

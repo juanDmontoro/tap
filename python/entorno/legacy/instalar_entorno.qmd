@@ -1,0 +1,71 @@
+---
+title: "Crear un entorno virtual en Python"
+format: html
+---
+
+
+## Utilizando la **terminal**
+
+1. Salir del entorno base ejecutando:
+
+`conda deactivate`
+
+2. Ejecutar la línea:
+
+`conda env create -f environment.yml`
+
+
+
+
+## Utilizando **Anaconda Navigator**
+
+
+### Paso 1: Abrir Anaconda Navigator
+
+* En **Windows**: busca “Anaconda Navigator” en el menú inicio.
+* En **Mac**: abre Spotlight (⌘ + Espacio) y escribe “Anaconda Navigator”.
+
+---
+
+### Paso 2: Ir a la pestaña **Environments**
+
+* En el panel de la izquierda, haz clic en **Environments**.
+* Verás la lista de entornos ya creados (probablemente solo `base` si es la primera vez).
+
+---
+
+### Paso 3: Importar el entorno desde un archivo `.yml`
+
+1. Haz clic en el botón **Import** (abajo a la izquierda).
+2. Se abrirá una ventana para configurar:
+
+   * **Name**: escribe el nombre del entorno (ejemplo: `tap`).
+   * **Specification file**: haz clic en el icono de carpeta y selecciona tu archivo `environment.yml`.
+3. Pulsa **Import**.
+
+---
+
+### Paso 4: Esperar la instalación
+
+* Navigator descargará e instalará todas las librerías del archivo.
+* Puede tardar unos minutos según la conexión y el tamaño de los paquetes.
+
+---
+
+### Paso 5: Activar el entorno
+
+* Una vez creado, aparecerá en la lista de entornos.
+* Selecciónalo y pulsa **Open with JupyterLab** (o con otra interfaz que prefieras).
+
+---
+
+### Instalación de nuevos paquetes
+
+:::{.callout-warning}
+
+* **No es recomendable instalar paquetes a mano dentro del entorno**, ya que se pueden romper dependencias.
+  * `pip` supone un mayor riesgo ya que no gestiona las dependencias de conda; 
+  * `conda install` puede cambiar versiones de paquetes para hacerlas compatibles
+  * Mejor opción: actualizar el `environment.yml` y recrear el entorno.
+
+:::

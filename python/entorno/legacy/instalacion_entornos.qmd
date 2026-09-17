@@ -1,0 +1,13 @@
+---
+title: "Instalacion entornos"
+format: html
+embed-resources: true
+---
+
+## Instalar
+
+`conda env create -f entorno.yml`
+
+## Borrar 
+
+`conda env remove --name NOMBRE`

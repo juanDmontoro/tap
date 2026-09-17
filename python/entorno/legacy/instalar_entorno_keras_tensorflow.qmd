@@ -1,0 +1,127 @@
+---
+title: "Keras + tensorflow"
+format: html
+embed-resources: true
+---
+
+## Entorno con TensorFlow 
+
+Para quieres **reemplazar PyTorch por Keras**, lo más limpio es quitar `pytorch`, `torchvision`, y `torchaudio`, y añadir `keras` junto con `tensorflow` (porque Keras está integrado en TensorFlow desde hace varias versiones).
+
+Aquí tienes un `yml` ajustado:
+
+```yaml
+name: tap
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyterlab
+  - notebook
+  - ipywidgets
+  - graphviz
+  - python-graphviz
+  - ipykernel
+  - shap
+  - xgboost
+  - lightgbm
+  - plotly
+  - statsmodels
+  - tensorflow
+  - keras
+  - pip
+```
+
+### Notas importantes:
+
+1. `keras` está incluido dentro de `tensorflow` (es `tf.keras`), pero conda mantiene un paquete `keras` separado, que puede ser útil si quieres la API independiente.
+
+   * Si prefieres evitar duplicación/confusión, puedes quedarte solo con `tensorflow` y acceder a `keras` como `tensorflow.keras`.
+
+   Entonces, la alternativa más simple sería:
+
+   ```yaml
+   - tensorflow
+   ```
+
+   (sin `keras` aparte).
+
+2. Si tu hardware es **GPU**, quizá quieras instalar `tensorflow-gpu` explícitamente, pero en conda-forge el paquete `tensorflow` ya detecta GPU cuando está disponible.
+
+3. Todo lo demás en tu `yml` es compatible, no hace falta tocar nada.
+
+👉 ¿Quieres que te deje la versión con **solo `tensorflow` (sin `keras` separado)** para que el entorno sea más limpio, o prefieres mantener ambos paquetes por si acaso?
+
+
+--- 
+
+## USO GPU
+
+Windows/Linux → puedes usar tensorflow con soporte GPU (CUDA/CuDNN).
+
+macOS → el soporte GPU va por Metal, y se instala con tensorflow-macos + tensorflow-metal (solo en Apple Silicon/M1/M2).
+
+---
+
+## Integración Keras en Tensorflow
+
+
+### Windows / Linux
+
+* Si instalas **solo `tensorflow` o `tensorflow-gpu`**, ya tienes `tf.keras`.
+
+  ```python
+  from tensorflow import keras
+  ```
+* Si además instalas **`keras`** como paquete independiente:
+
+  ```python
+  import keras
+  ```
+
+también funciona, y usa TensorFlow como backend por defecto.
+
+> Siempre funciona en Win/Linux, da igual si usas `keras` o `tf.keras`, mientras `tensorflow` esté instalado.
+
+
+
+### macOS (Apple Silicon, con Metal)
+
+* En macOS no existe `tensorflow-gpu`. Se instala vía pip:
+
+  ```bash
+  pip install tensorflow-macos tensorflow-metal
+  ```
+* Eso trae **`tf.keras` integrado**.
+
+  ```python
+  from tensorflow import keras
+  ```
+
+funciona sin más.
+
+* Si instalas también **`keras`** por separado, igual que en Win/Linux, puedes usar:
+
+  ```python
+  import keras
+  ```
+
+y seguirá funcionando con TensorFlow (mac usa `tensorflow-macos` como backend).
+
+✅ En macOS también siempre funciona. Lo único importante es tener instalado el `tensorflow` correcto (`tensorflow-macos` en vez de `tensorflow`/`tensorflow-gpu`).
+
+
+
+En resumen:
+
+* La diferencia está en el *motor* que TensorFlow usa para acelerar (CUDA en Win/Linux con GPU, Metal en macOS con M1/M2).
+* `keras` como paquete independiente es opcional, pero consistente en todos los sistemas.
+
+

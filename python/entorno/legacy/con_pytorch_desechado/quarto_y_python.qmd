@@ -1,0 +1,171 @@
+---
+title: "Python + R en quarto"
+format: html
+---
+
+Indicar a Quarto qué entorno de Conda debe usar para tus scripts de Python es crucial para la reproducibilidad y para asegurarte de que todas tus dependencias estén disponibles. Hay varias formas de hacerlo, dependiendo de tu flujo de trabajo y del nivel de especificidad que necesites.
+
+Aquí te presento las opciones principales:
+
+### 1\. **Mediante la configuración del kernel de Jupyter en el YAML del documento (`.qmd`)**
+
+Esta es la forma más recomendada y explícita para un documento Quarto individual. Quarto se basa en los kernels de Jupyter para ejecutar código Python. Si tu entorno de Conda tiene un kernel de Jupyter registrado, puedes indicarlo directamente.
+
+Primero, necesitas asegurarte de que tu entorno de Conda tenga `ipykernel` instalado y que el kernel esté registrado.
+
+1.  **Activa tu entorno Conda:**
+
+    ```bash
+    conda activate tu_entorno_conda
+    ```
+
+2.  **Instala `ipykernel` (si no lo tienes):**
+
+    ```bash
+    conda install ipykernel
+    ```
+
+3.  **Registra el kernel en Jupyter:**
+
+    ```bash
+    python -m ipykernel install --user --name=tu_entorno_conda --display-name="Mi Entorno de Quarto"
+    ```
+
+      * `--user`: Instala el kernel para el usuario actual.
+      * `--name`: El nombre interno del kernel (generalmente el nombre de tu entorno).
+      * `--display-name`: El nombre legible que aparecerá en las interfaces de Jupyter/Quarto.
+
+Una vez que el kernel está registrado, puedes especificarlo en el YAML de tu documento Quarto:
+
+````yaml
+---
+title: "Mi Documento con Conda"
+format: html
+jupyter:
+  kernelspec:
+    name: "tu_entorno_conda" # Debe coincidir con el --name que usaste
+    language: "python"
+    display_name: "Mi Entorno de Quarto" # Opcional, pero buena práctica
+---
+
+```{python}
+import pandas as pd
+import numpy as np
+
+print(f"Estoy usando pandas version: {pd.__version__}")
+print(f"Estoy usando numpy version: {np.__version__}")
+
+df = pd.DataFrame({'a': [1,2,3]})
+print(df)
+````
+
+**Ventajas:**
+
+  * Explícito y reproducible para ese documento específico.
+  * Funciona bien en diferentes IDEs (RStudio, VS Code) y al renderizar desde la línea de comandos.
+
+### 2\. **Mediante la activación del entorno en tu terminal antes de renderizar**
+
+Quarto a menudo usa el entorno Python que está activo en tu terminal cuando ejecutas `quarto render`.
+
+1.  **Activa tu entorno Conda en la terminal:**
+
+    ```bash
+    conda activate tu_entorno_conda
+    ```
+
+2.  **Renderiza tu documento Quarto:**
+
+    ```bash
+    quarto render tu_documento.qmd
+    ```
+
+**Ventajas:**
+
+  * Sencillo para pruebas rápidas.
+  * No requiere configuración en el YAML del documento.
+
+**Desventajas:**
+
+  * Menos reproducible si el documento se comparte y el usuario olvida activar el entorno.
+  * Puede llevar a confusión si tienes múltiples entornos y no estás seguro de cuál está activo.
+
+### 3\. **Usando `reticulate` (si también usas R y necesitas interoperabilidad)**
+
+Si estás combinando Python y R y necesitas `reticulate` para la comunicación, puedes usarlo para especificar el entorno Conda desde un chunk de R.
+
+````qmd
+---
+title: "Documento Quarto con R y Python (usando reticulate)"
+format: html
+---
+
+```{r}
+# Cargar reticulate
+library(reticulate)
+
+# Especificar el entorno Conda
+# Asegúrate de que "tu_entorno_conda" exista
+use_condaenv("tu_entorno_conda", required = TRUE)
+
+# O si conoces la ruta completa al ejecutable de Python:
+# use_python("/ruta/a/miniconda3/envs/tu_entorno_conda/bin/python", required = TRUE)
+````
+
+```{python}
+import sys
+import pandas as pd
+
+print(f"La ruta del intérprete Python es: {sys.executable}")
+print(f"Estoy usando pandas version: {pd.__version__}")
+```
+
+**Ventajas:**
+
+  * Ideal cuando combinas R y Python y `reticulate` es ya parte de tu flujo de trabajo.
+  * Permite la gestión del entorno desde el propio código R.
+
+**Desventajas:**
+
+  * Solo aplica si estás usando R en el documento.
+  * Si solo tienes Python, las opciones 1 o 2 son más directas.
+
+### 4\. **Configurando una variable de entorno `QUARTO_PYTHON` (menos común para Conda directamente)**
+
+Puedes establecer la variable de entorno `QUARTO_PYTHON` para apuntar a un ejecutable Python específico. Esto es más común para rutas directas a instalaciones de Python, pero también puede apuntar al Python dentro de un entorno Conda.
+
+```bash
+# En tu terminal (Linux/macOS)
+export QUARTO_PYTHON="/ruta/a/miniconda3/envs/tu_entorno_conda/bin/python"
+quarto render tu_documento.qmd
+```
+
+```powershell
+# En PowerShell (Windows)
+$env:QUARTO_PYTHON="C:\ruta\a\Anaconda3\envs\tu_entorno_conda\python.exe"
+quarto render tu_documento.qmd
+```
+
+**Ventajas:**
+
+  * Control muy explícito sobre qué ejecutable de Python se usa.
+
+**Desventajas:**
+
+  * Más manual y propenso a errores de ruta.
+  * Menos reproducible si no se documenta bien.
+  * Generalmente, es mejor usar la configuración de `kernelspec` en el YAML.
+
+### Consideraciones Adicionales:
+
+  * **`environment.yml`:** Para una reproducibilidad óptima, siempre es una buena práctica crear un archivo `environment.yml` en la raíz de tu proyecto para definir todas las dependencias de tu entorno Conda.
+    ```bash
+    conda env export > environment.yml
+    ```
+    Luego, otro usuario puede recrear el entorno con:
+    ```bash
+    conda env create -f environment.yml
+    ```
+  * **VS Code y RStudio:** Tanto VS Code (con la extensión de Quarto y la de Python) como RStudio (con soporte Quarto) tienen integraciones que intentan detectar y usar entornos Conda. A menudo, seleccionar el intérprete de Python correcto en tu IDE (por ejemplo, `Ctrl+Shift+P` y `Python: Select Interpreter` en VS Code) puede influir en el entorno que Quarto usa al renderizar desde dentro del IDE.
+
+Para la mayoría de los casos, la opción de **`jupyter: kernelspec` en el YAML de tu documento Quarto** es la más robusta y recomendable para especificar el entorno Conda que deseas usar.

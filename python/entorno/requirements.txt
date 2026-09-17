@@ -1,0 +1,20 @@
+# Ruta avanzada (sin conda): pip install -r requirements.txt
+# Requiere Python 3.10 - 3.12 y un entorno virtual (venv) creado previamente.
+numpy
+pandas<3
+scipy
+statsmodels
+matplotlib
+seaborn
+plotly
+scikit-learn
+xgboost
+lightgbm
+shap
+optuna
+doubleml
+graphviz
+ipykernel
+ipywidgets
+geopy
+tensorflow
