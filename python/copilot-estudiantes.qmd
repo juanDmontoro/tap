@@ -77,7 +77,7 @@ GUÍA PARA EL ALUMNADO
 # GitHub Education para estudiantes {.unnumbered}
 
 ::: {.lead}
-Acceso gratuito -- proporciona mayor uso para el asistente github copilot en VS Code.
+Proporciona un mayor uso para el asistente Github Copilot en VS Code.
 :::
 
 ```{=html}
