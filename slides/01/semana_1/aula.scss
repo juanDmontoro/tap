@@ -1,0 +1,6 @@
+/* Ajustes propios de este deck; la capa de aula compartida está en _tap_theme/tap-aula.scss. */
+/*-- scss:rules --*/
+.reveal .slides section.airbnb table { font-size: 0.85em; }
+.reveal .slides section.airbnb table td,
+.reveal .slides section.airbnb table th { padding: 0.22em 0.4em; }
+html.tap-proyector .reveal .slides section.airbnb table { font-size: 0.78em; }

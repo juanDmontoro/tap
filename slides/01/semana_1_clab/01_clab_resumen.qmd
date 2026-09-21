@@ -1,0 +1,865 @@
+---
+title: "Tema 1. Laboratorio: de la teoría a los datos"
+subtitle: "Técnicas Avanzadas de Predicción en Negocios"
+author: "Prof. Juan D. Montoro-Pons | 2026/27"
+title-slide-attributes:
+  data-background-color: "#447099"
+format:
+  clean-revealjs:
+    slide-number: c/t
+    footer: ""
+    echo: false
+    code-fold: true
+    code-overflow: wrap
+    code-line-numbers: false
+    highlight-style: solarized
+    scrollable: false
+    incremental: false
+    fig-align: center
+lang: es
+fig-dpi: 110
+jupyter: python3
+execute:
+  eval: true
+  warning: false
+  message: false
+filters:
+  - ../../../_tap_theme/strip-notes.lua
+---
+
+```{python}
+#| output: false
+# Reproduce los cálculos de los dos cuadernos del laboratorio (misma semilla, misma muestra):
+#   clabs/tema_01_intro_python.ipynb y clabs/tema_01_regresion_penalizada.ipynb
+import sys
+import warnings
+sys.path.insert(0, "../../../_tap_theme")
+warnings.filterwarnings("ignore")
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import tapviz as tv
+from matplotlib.patches import FancyBboxPatch
+from matplotlib.ticker import FuncFormatter
+from matplotlib_inline.backend_inline import set_matplotlib_formats
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import (ElasticNetCV, Lasso, LassoCV, LinearRegression,
+                                  Ridge, RidgeCV)
+from sklearn.metrics import mean_absolute_error, r2_score, root_mean_squared_error
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+tv.use_style()
+plt.rcParams.update({"font.size": 16, "axes.titlesize": 18,
+                     "axes.labelsize": 16, "legend.fontsize": 14,
+                     "xtick.labelsize": 14, "ytick.labelsize": 14})
+set_matplotlib_formats("png", dpi=110)
+
+SEMILLA = 42
+PURPLE = "#8E5C9E"
+
+
+def num(x, dec=0, sep="\u202f"):
+    """Número con formato español (figuras): espacio fino de millares y coma decimal."""
+    return f"{x:,.{dec}f}".replace(",", sep).replace(".", ",")
+
+
+def txt(x, dec=0):
+    """Igual que num(), para las expresiones en línea del texto."""
+    return num(x, dec, sep="&nbsp;")
+
+
+def eje_coma(eje, dec=1):
+    """Coma decimal en las marcas de un eje lineal (ax.xaxis o ax.yaxis)."""
+    eje.set_major_formatter(FuncFormatter(lambda v, _: num(v, dec)))
+
+
+# ------------------------------------------------------------------ datos ---
+df = pd.read_csv("../../../../datos/estructura_salarial_ine/ees_2022.csv.gz", low_memory=False)
+tope = df["RETRINOIN"].quantile(0.99)
+limpio = df[(df["RETRINOIN"] > 0) & (df["RETRINOIN"] <= tope)]
+datos = limpio.sample(n=10000, random_state=SEMILLA).reset_index(drop=True)
+
+RESPUESTA = "RETRINOIN"
+FUGA_SALARIAL = ["SALBASE", "COMSAL", "COMSALTT", "EXTRAORM", "PHEXTRA", "BASE", "GEXTRA",
+                 "VESPNOIN", "VESPIN", "RETRIIN", "IRPFMES", "COTIZA"]
+PRED_CATEGORICOS = ["SEXO", "ESTU", "ANOS2", "TIPOCON", "TIPOJOR", "CNO1", "CNACE", "CONTROL",
+                    "MERCADO", "REGULACION", "RESPONSA", "NUTS1", "TIPOPAIS", "ESTRATO2"]
+PRED_NUMERICOS = ["ANOANTI", "JAP"]
+
+X = datos[PRED_CATEGORICOS + PRED_NUMERICOS].copy()
+y = datos[RESPUESTA]
+for col in PRED_CATEGORICOS:
+    X[col] = X[col].astype("category")
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=SEMILLA)
+
+
+def crear_preprocesador():
+    return ColumnTransformer([
+        ("numericas", StandardScaler(), PRED_NUMERICOS),
+        ("categoricas", OneHotEncoder(handle_unknown="ignore", min_frequency=0.01,
+                                      sparse_output=False), PRED_CATEGORICOS),
+    ], remainder="drop")
+
+
+def evaluar(estimador, X_entrena, y_entrena):
+    modelo = Pipeline([("preprocesado", crear_preprocesador()), ("modelo", estimador)])
+    modelo.fit(X_entrena, y_entrena)
+    pred = modelo.predict(X_test)
+    return {"modelo": modelo, "pred": pred,
+            "R2_train": r2_score(y_entrena, modelo.predict(X_entrena)),
+            "R2_test": r2_score(y_test, pred),
+            "RMSE": root_mean_squared_error(y_test, pred),
+            "MAE": mean_absolute_error(y_test, pred),
+            "no_nulos": int((np.abs(modelo.named_steps["modelo"].coef_) > 1e-8).sum())}
+
+
+# ------------------------------------------------ cuaderno 1: regresión lineal ---
+ols = evaluar(LinearRegression(), X_train, y_train)
+n_columnas = len(ols["modelo"].named_steps["preprocesado"].get_feature_names_out())
+correlaciones = datos[["ANOANTI", "JAP", "SALBASE", "COMSAL", "GEXTRA"]].corrwith(datos[RESPUESTA])
+
+# --------------------------------------------- cuaderno 2: muestra de 200 filas ---
+X_pocos = X_train.sample(n=200, random_state=SEMILLA)
+y_pocos = y_train.loc[X_pocos.index]
+ols_pocos = evaluar(LinearRegression(), X_pocos, y_pocos)
+
+
+def camino(clase, alphas, **kw):
+    coefs, filas = [], []
+    for a in alphas:
+        r = evaluar(clase(alpha=a, **kw), X_pocos, y_pocos)
+        coefs.append(r["modelo"].named_steps["modelo"].coef_)
+        filas.append({"R2_train": r["R2_train"], "R2_test": r["R2_test"], "no_nulos": r["no_nulos"]})
+    nombres = r["modelo"].named_steps["preprocesado"].get_feature_names_out()
+    return pd.DataFrame(coefs, index=alphas, columns=nombres), pd.DataFrame(filas, index=alphas)
+
+
+camino_ridge, curva_ridge = camino(Ridge, np.logspace(-2, 5, 30))
+camino_lasso, curva_lasso = camino(Lasso, np.logspace(0, 4, 30), max_iter=20_000)
+alpha_ridge_prueba = curva_ridge["R2_test"].idxmax()
+alpha_lasso_prueba = curva_lasso["R2_test"].idxmax()
+
+# Varianza de los coeficientes: 30 muestras de 200 trabajadores
+COLUMNAS = ["numericas__JAP", "numericas__ANOANTI", "categoricas__SEXO_6",
+            "categoricas__ESTU_7", "categoricas__TIPOJOR_2"]
+registros = []
+for semilla in range(30):
+    X_s = X_train.sample(n=200, random_state=semilla)
+    y_s = y_train.loc[X_s.index]
+    for nombre, estimador in [("Lineal", LinearRegression()), ("Ridge", Ridge(alpha=30))]:
+        m = Pipeline([("preprocesado", crear_preprocesador()), ("modelo", estimador)]).fit(X_s, y_s)
+        serie = pd.Series(m.named_steps["modelo"].coef_,
+                          index=m.named_steps["preprocesado"].get_feature_names_out())
+        for col in COLUMNAS:
+            registros.append({"modelo": nombre, "coeficiente": col, "valor": serie.get(col, np.nan)})
+variabilidad = pd.DataFrame(registros)
+desv = variabilidad.groupby(["coeficiente", "modelo"])["valor"].std().unstack()
+razon_desv = desv["Lineal"] / desv["Ridge"]
+
+# Penalización elegida por validación cruzada, con 200 y con 7 500 filas
+REJILLA_ALPHA = np.logspace(-2, 4, 60)
+
+
+def comparar(X_entrena, y_entrena):
+    modelos = {
+        "Lineal": LinearRegression(),
+        "Ridge CV": RidgeCV(alphas=np.logspace(-2, 5, 30)),
+        "Lasso CV": LassoCV(cv=5, random_state=SEMILLA, max_iter=20_000),
+        "Elastic Net CV": ElasticNetCV(l1_ratio=[0.1, 0.5, 0.9, 1.0], alphas=REJILLA_ALPHA,
+                                       cv=5, random_state=SEMILLA, max_iter=20_000),
+    }
+    return {nombre: evaluar(est, X_entrena, y_entrena) for nombre, est in modelos.items()}
+
+
+comp_pocos = comparar(X_pocos, y_pocos)
+comp_todos = comparar(X_train, y_train)
+ridge_cv = comp_pocos["Ridge CV"]["modelo"].named_steps["modelo"]
+lasso_cv = comp_pocos["Lasso CV"]["modelo"].named_steps["modelo"]
+enet_cv = comp_pocos["Elastic Net CV"]["modelo"].named_steps["modelo"]
+
+
+# ------------------------------------------------------ ayudas de dibujo ---
+def lienzo(figsize, xmax=16, ymax=7):
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.set_xlim(0, xmax)
+    ax.set_ylim(0, ymax)
+    ax.axis("off")
+    return fig, ax
+
+
+def caja(ax, x, y, w, h, titulo, texto, color, fs_titulo=19, fs_texto=14):
+    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0,rounding_size=0.12",
+                                fc=color, ec="none"))
+    ax.text(x + w / 2, y + h - 0.42, titulo, ha="center", va="center", color="white",
+            fontsize=fs_titulo, fontweight="bold")
+    ax.text(x + w / 2, y + (h - 0.75) / 2, texto, ha="center", va="center", color="white",
+            fontsize=fs_texto, linespacing=1.35)
+
+
+def flecha(ax, x0, y0, x1, y1, color=tv.NAVY, **kw):
+    ax.annotate("", xy=(x1, y1), xytext=(x0, y0),
+                arrowprops=dict(arrowstyle="-|>", color=color, lw=2.5, mutation_scale=22, **kw))
+```
+
+## Dos cuadernos, un mismo flujo de trabajo {.fig-full}
+
+```{python}
+#| fig-alt: "Diagrama del flujo de trabajo del laboratorio en seis pasos: datos, roles de las variables, partición, preprocesado, modelo y evaluación. El color indica a cuál de las tres preguntas de la teoría responde cada paso."
+fig, ax = lienzo((16, 7.2))
+pasos = [
+    ("Datos", f"EES 2022 (INE)\n{num(df.shape[0])} × {df.shape[1]}\nmuestra de {num(len(datos))}", tv.BLUE),
+    ("Roles", f"respuesta: salario\n{X.shape[1]} predictores\nfuga: fuera", tv.BLUE),
+    ("Partición", f"{num(len(X_train))} entrenam.\n{num(len(X_test))} prueba", tv.SAGE),
+    ("Preprocesado", f"escalar numéricas\ncodificar one-hot\n{X.shape[1]} a {n_columnas} columnas", tv.SAGE),
+    ("Modelo", "Lineal · Ridge\nLasso · Elastic Net", tv.TERRACOTTA),
+    ("Evaluación", "R², RMSE y MAE\nen prueba", tv.SAGE),
+]
+w, h, hueco, y0 = 2.3, 2.5, 0.4, 2.75
+for k, (titulo, texto, color) in enumerate(pasos):
+    x = 0.1 + k * (w + hueco)
+    caja(ax, x, y0, w, h, titulo, texto, color)
+    if k:
+        flecha(ax, x - hueco + 0.02, y0 + h / 2, x - 0.02, y0 + h / 2)
+
+# Leyenda: las tres preguntas de la sesión de teoría
+for x, color, texto in [(0.1, tv.BLUE, "¿Qué es aprender de los datos?"),
+                        (5.6, tv.SAGE, "¿Cómo sabemos si predice bien?"),
+                        (11.3, tv.TERRACOTTA, "¿Cómo se entrena un modelo?")]:
+    ax.add_patch(FancyBboxPatch((x, 6.25), 0.42, 0.42, boxstyle="round,pad=0,rounding_size=0.08",
+                                fc=color, ec="none"))
+    ax.text(x + 0.6, 6.46, texto, va="center", fontsize=17, color=tv.NAVY)
+
+# Alcance de cada cuaderno
+ax.plot([0.1, 15.9], [2.25, 2.25], color=tv.NAVY, lw=3, solid_capstyle="round")
+ax.text(0.1, 1.8, "Cuaderno 1 · Introducción a Python: recorre todo el flujo con la regresión lineal",
+        fontsize=17, color=tv.NAVY, va="center")
+x_modelo = 0.1 + 4 * (w + hueco)
+ax.plot([x_modelo, 15.9], [1.1, 1.1], color=tv.TERRACOTTA, lw=3, solid_capstyle="round")
+ax.text(15.9, 0.65, "Cuaderno 2 · Regresión penalizada: mismo flujo, cambia solo el último paso del Pipeline",
+        fontsize=17, color=tv.TERRACOTTA, va="center", ha="right")
+plt.show()
+```
+
+:::{.source}
+Datos: INE, Encuesta Cuatrienal de Estructura Salarial 2022, microdatos anonimizados.
+:::
+
+:::{.notes}
+Resumen del laboratorio del tema 1 (10-12 min al inicio de la sesión siguiente, o material de repaso). Cuadernos: `tema_01_intro_python.ipynb` y `tema_01_regresion_penalizada.ipynb`.
+
+Mensaje de la figura: los pasos de roles, partición y preprocesado se repetirán sin cambios en todos los temas; lo que cambia es el modelo del último paso del `Pipeline`. Los colores remiten a las tres preguntas de la slide «Tres preguntas» de la teoría.
+
+Todas las cifras del deck se calculan al renderizar (21-09-2026) con la semilla 42 y la misma muestra de 10 000 trabajadores que los cuadernos.
+:::
+
+## Qué parte de la teoría hemos aplicado {.fig-full}
+
+```{python}
+#| fig-alt: "Matriz de cobertura: cada fila es una slide de la sesión de teoría del tema 1 y las columnas indican si el cuaderno 1 o el cuaderno 2 del laboratorio la aplican, solo la mencionan o no la cubren."
+A, M, N = "aplicado", "mencionado", "no"
+filas = [
+    ("¿Qué es aprender de los datos?", tv.BLUE, None, None, ""),
+    ("¿Qué queremos aprender?", None, A, A, "regresión supervisada: predecir el salario anual"),
+    ("Predecir y estimar un efecto causal", None, N, N, "pendiente: se retoma en el tema 7"),
+    ("El problema de predicción", None, A, M, "respuesta, predictores y fuga de información"),
+    ("Una recta y un árbol sobre los mismos datos", None, N, N, "solo la familia lineal; árboles en el tema 4"),
+    ("¿Cómo sabemos si un modelo predice bien?", tv.SAGE, None, None, ""),
+    ("¿Qué error medimos?", None, A, A, "R², RMSE y MAE, en entrenamiento y en prueba"),
+    ("Subajuste y sobreajuste, a la vista", None, N, A,
+     f"n = 200: R² {num(ols_pocos['R2_train'], 2)} en entrenamiento, {num(ols_pocos['R2_test'], 2)} en prueba"),
+    ("La varianza: entrenar con otra muestra", None, N, A, "30 muestras de 200 trabajadores"),
+    ("Varias muestras y el tamaño muestral", None, N, A, f"200 frente a {num(len(X_train))} filas"),
+    ("Sesgo, varianza y complejidad", None, N, A, "curva de R² frente a la penalización"),
+    ("Controlar la complejidad", None, N, A, "Ridge, Lasso y Elastic Net; hiperparámetros"),
+    ("Validar para elegir, probar para evaluar", None, A, A, "partición 75/25; RidgeCV y LassoCV"),
+    ("¿Cómo se entrena un modelo?", tv.TERRACOTTA, None, None, ""),
+    ("Ajustar los parámetros minimizando una pérdida", None, A, A, "RSS y RSS + penalización"),
+    ("Descenso del gradiente (lotes, tasa de aprendizaje)", None, N, M, "de pasada: Lasso es iterativo (max_iter)"),
+    ("Aspectos prácticos: escalado", None, A, A, "StandardScaler dentro del Pipeline"),
+]
+fig, ax = lienzo((16, 7.9), ymax=len(filas) + 1.6)
+ax.set_ylim(-1.0, len(filas) + 1.6)
+x_c1, x_c2, x_txt = 7.75, 9.05, 9.95
+y_cab = len(filas) + 0.75
+ax.text(0.15, y_cab, "Slide de la sesión de teoría", fontsize=16, fontweight="bold", color=tv.NAVY, va="center")
+ax.text(x_c1, y_cab, "Cuad. 1", fontsize=16, fontweight="bold", color=tv.NAVY, ha="center", va="center")
+ax.text(x_c2, y_cab, "Cuad. 2", fontsize=16, fontweight="bold", color=tv.NAVY, ha="center", va="center")
+ax.text(x_txt, y_cab, "Cómo aparece en el laboratorio", fontsize=16, fontweight="bold", color=tv.NAVY, va="center")
+ax.plot([0.1, 15.9], [y_cab - 0.55] * 2, color=tv.NAVY, lw=1.5)
+
+color_bloque = tv.BLUE
+for k, (titulo, bloque, c1, c2, texto) in enumerate(filas):
+    yy = len(filas) - k - 0.35
+    if bloque:                                   # cabecera de bloque
+        color_bloque = bloque
+        ax.text(0.15, yy, titulo, fontsize=16, fontweight="bold", color=bloque, va="center")
+        continue
+    if k % 2:
+        ax.axhspan(yy - 0.5, yy + 0.5, color="#F2F5F8", zorder=0)
+    ax.text(0.55, yy, titulo, fontsize=15, color=tv.NAVY, va="center")
+    for x, estado in [(x_c1, c1), (x_c2, c2)]:
+        if estado == A:
+            ax.scatter(x, yy, s=330, color=color_bloque, zorder=3)
+        elif estado == M:
+            ax.scatter(x, yy, s=330, facecolor="white", edgecolor=color_bloque, linewidth=3, zorder=3)
+        else:
+            ax.plot([x - 0.13, x + 0.13], [yy, yy], color="#C4CBD2", lw=3, zorder=3)
+    ax.text(x_txt, yy, texto, fontsize=14.5, color=tv.GRAY if c1 == N and c2 == N else tv.NAVY, va="center")
+
+# Leyenda de marcadores
+y_ley = -0.55
+ax.scatter(10.2, y_ley, s=260, color=tv.GRAY, clip_on=False)
+ax.text(10.45, y_ley, "aplicado con datos", fontsize=14, va="center", color=tv.NAVY)
+ax.scatter(12.9, y_ley, s=260, facecolor="white", edgecolor=tv.GRAY, linewidth=3, clip_on=False)
+ax.text(13.15, y_ley, "mencionado", fontsize=14, va="center", color=tv.NAVY)
+ax.plot([14.75, 15.0], [y_ley] * 2, color="#C4CBD2", lw=3, clip_on=False)
+ax.text(15.15, y_ley, "no", fontsize=14, va="center", color=tv.NAVY)
+plt.show()
+```
+
+:::{.notes}
+Lectura por columnas: el cuaderno 1 cubre el bloque 1 y la evaluación básica (partición, medidas de error); el cuaderno 2 lleva a datos reales casi todo el bloque 2 (sobreajuste, varianza entre muestras, tamaño muestral, regularización, validación).
+
+Lo que el laboratorio no cubre: la distinción predicción/causalidad (tema 7), la comparación entre familias (recta frente a árbol, tema 4) y el descenso del gradiente, que solo aparece de pasada (Lasso se resuelve de forma iterativa y por eso se fija `max_iter`). La simulación con polinomios de la teoría se sustituye aquí por la penalización como control de complejidad.
+:::
+
+# ¿Qué es aprender de los datos? {background-color="#447099"}
+
+## La respuesta: el salario bruto anual {.fig-wide}
+
+```{python}
+#| fig-alt: "Dos histogramas del salario bruto anual de la EES 2022. En escala original la distribución es muy asimétrica, con cola larga a la derecha; en escala logarítmica se acerca a una campana."
+fig, ejes = plt.subplots(1, 2, figsize=(16, 6.5))
+ejes[0].hist(df.loc[df[RESPUESTA].between(0.01, 150_000), RESPUESTA] / 1000, bins=80, color=tv.BLUE)
+ejes[0].axvline(limpio[RESPUESTA].mean() / 1000, color=tv.TERRACOTTA, lw=2.5, label="media")
+ejes[0].axvline(limpio[RESPUESTA].median() / 1000, color=tv.NAVY, lw=2.5, ls="--", label="mediana")
+ejes[0].set_title("Escala original (hasta 150 000 €)")
+ejes[0].set_xlabel("salario bruto anual (miles de €)")
+ejes[0].set_ylabel("trabajadores")
+ejes[0].legend(frameon=False)
+positivos = df.loc[df[RESPUESTA] > 0, RESPUESTA]
+ejes[1].hist(positivos, bins=np.logspace(np.log10(positivos.min()), np.log10(positivos.max()), 80),
+             color=tv.SAGE)
+ejes[1].set_xscale("log")
+ejes[1].set_title("Escala logarítmica")
+ejes[1].set_xlabel("salario bruto anual (€, escala log)")
+plt.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+$y$ = `RETRINOIN`: media `{python} txt(limpio[RESPUESTA].mean())` €, mediana `{python} txt(limpio[RESPUESTA].median())` €. **En $y=f(X)+\epsilon$, ¿qué recoge $\epsilon$ en un salario?**
+:::
+
+:::{.notes}
+Teoría: «¿Qué queremos aprender?» (regresión supervisada) y «El problema de predicción». Cuaderno 1, secciones 2.1 y 2.2.
+
+Decisiones de limpieza, documentadas en el cuaderno: se eliminan los salarios iguales a cero y el 1 % más alto (tope en el percentil 99), y se trabaja con una muestra aleatoria de 10 000 trabajadores. Media y mediana se calculan tras la limpieza.
+
+Respuesta a la pregunta: todo lo que las 16 características disponibles no anticipan (negociación individual, productividad, horas efectivas, empresa concreta). Es ruido respecto de la información X disponible, no una constante de la naturaleza.
+
+La asimetría reaparece en los residuos de la regresión lineal y motiva el tema 3.
+:::
+
+## Predictores legítimos y fuga de información {.fig-side}
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Barras horizontales con la correlación entre el salario anual y cinco variables. Los predictores legítimos, antigüedad y jornada pactada, tienen correlaciones moderadas; los componentes del salario, mucho más altas."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+etiquetas = {"ANOANTI": "ANOANTI\nantigüedad", "JAP": "JAP\njornada pactada", "SALBASE": "SALBASE\nsalario base",
+             "COMSAL": "COMSAL\ncomplementos", "GEXTRA": "GEXTRA\npagas extra"}
+orden = list(etiquetas)[::-1]
+colores = [tv.TERRACOTTA if v in FUGA_SALARIAL else tv.SAGE for v in orden]
+barras = ax.barh([etiquetas[v] for v in orden], correlaciones[orden], color=colores, height=0.62)
+for b, v in zip(barras, orden):
+    ax.text(b.get_width() + 0.015, b.get_y() + b.get_height() / 2, num(correlaciones[v], 2),
+            va="center", fontsize=16, color=tv.NAVY)
+ax.set_xlim(0, 1)
+ax.set_xlabel("correlación con el salario anual")
+ax.grid(axis="y", visible=False)
+eje_coma(ax.xaxis)
+ax.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=tv.SAGE), plt.Rectangle((0, 0), 1, 1, color=tv.TERRACOTTA)],
+          labels=["predictor legítimo", "componente del salario"], frameon=False,
+          loc="lower center", bbox_to_anchor=(0.5, 1.0), ncols=2)
+plt.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+De 56 variables usamos **16 predictores**: 14 categóricas y 2 numéricas.
+
+Quedan fuera 12 componentes del salario, 2 identificadores y el peso muestral.
+
+> $X$ solo contiene lo que conoceríamos en el momento de predecir.
+
+::: {.callout-tip title="Para pensar"}
+¿Por qué `IDENCCC` o `FACTOTAL` tampoco son predictores?
+:::
+:::
+:::
+
+:::{.notes}
+Teoría: «El problema de predicción». Cuaderno 1, sección 3 (roles de las variables y comprobación empírica de la fuga).
+
+Predecir el salario anual con sus componentes es predecir el total de un ticket conociendo el precio de cada producto: ajuste casi perfecto e inútil. El ejercicio 2 del cuaderno cuantifica el efecto sobre R²; no se resuelve aquí.
+
+Respuesta: los identificadores no contienen información generalizable a trabajadores nuevos; el factor de elevación es un peso del diseño muestral, no una característica del trabajador ni del puesto.
+:::
+
+# ¿Cómo sabemos si un modelo predice bien? {background-color="#447099"}
+
+## Partir primero, preprocesar dentro del Pipeline {.fig-full}
+
+```{python}
+#| fig-alt: "Diagrama de un Pipeline de scikit-learn. Fila superior: los datos de entrenamiento ajustan el preprocesador y el modelo con fit. Fila inferior: los datos de prueba solo se transforman con lo aprendido en entrenamiento y se usan para predecir y evaluar."
+fig, ax = lienzo((16, 7.2))
+ax.add_patch(FancyBboxPatch((4.05, 0.55), 8.3, 6.1, boxstyle="round,pad=0,rounding_size=0.2",
+                            fc="#EEF2F6", ec=tv.NAVY, lw=2, ls="--"))
+ax.text(8.2, 6.25, "Pipeline", ha="center", va="center", fontsize=20, fontweight="bold", color=tv.NAVY)
+
+caja(ax, 0.2, 4.0, 3.1, 1.7, "X_train, y_train", f"{num(len(X_train))} trabajadores", tv.BLUE)
+caja(ax, 4.5, 4.0, 3.5, 1.7, "preprocesado.fit", "aprende medias,\ndesviaciones y categorías", tv.SAGE)
+caja(ax, 8.7, 4.0, 3.2, 1.7, "modelo.fit", "estima los coeficientes", tv.TERRACOTTA)
+caja(ax, 0.2, 1.1, 3.1, 1.7, "X_test", f"{num(len(X_test))} trabajadores", tv.GRAY)
+caja(ax, 4.5, 1.1, 3.5, 1.7, "transform", "aplica lo aprendido,\nsin volver a ajustar", tv.SAGE)
+caja(ax, 8.7, 1.1, 3.2, 1.7, "predict", "una predicción por fila", tv.TERRACOTTA)
+caja(ax, 12.8, 1.1, 3.0, 1.7, "Evaluación", "R², RMSE y MAE\nfrente a y_test", tv.NAVY)
+
+for x0, x1, yy in [(3.3, 4.5, 4.85), (8.0, 8.7, 4.85), (3.3, 4.5, 1.95), (8.0, 8.7, 1.95), (11.9, 12.8, 1.95)]:
+    flecha(ax, x0 + 0.03, yy, x1 - 0.03, yy)
+flecha(ax, 6.25, 3.97, 6.25, 2.83, color=tv.SAGE)
+flecha(ax, 10.3, 3.97, 10.3, 2.83, color=tv.TERRACOTTA)
+ax.text(6.4, 3.4, "parámetros del\npreprocesado", fontsize=13.5, color=tv.NAVY, va="center", linespacing=1.2)
+ax.text(10.45, 3.4, "coeficientes", fontsize=13.5, color=tv.NAVY, va="center")
+ax.text(14.3, 4.85, "fit solo ve\nel entrenamiento", ha="center", va="center", fontsize=18,
+        color=tv.NAVY, fontweight="bold", linespacing=1.3)
+plt.show()
+```
+
+::: {.caption-line}
+`train_test_split` antes de cualquier cálculo; el `Pipeline` garantiza que la prueba no influye en el ajuste.
+:::
+
+:::{.notes}
+Teoría: «¿Qué error medimos?» y «Validar para elegir, probar para evaluar». Cuaderno 1, secciones 4 y 5.
+
+Idea central de scikit-learn: todo objeto tiene `fit` (aprende de los datos de entrenamiento) y `transform` o `predict` (aplica lo aprendido). Escalar con medias calculadas sobre todos los datos es una fuga de información más sutil que la de los componentes salariales.
+
+`OneHotEncoder(handle_unknown="ignore", min_frequency=0.01)`: categorías nuevas en prueba se codifican como ceros y las que no llegan al 1 % se agrupan. De 16 variables se pasa a 88 columnas con 7 500 filas (87 con la muestra de 200, porque la agrupación de infrecuentes cambia).
+:::
+
+## Regresión lineal: evaluación en datos no vistos {.fig-wide}
+
+```{python}
+#| fig-alt: "Dos diagramas de dispersión de la regresión lineal en el conjunto de prueba. Izquierda: predicción frente a salario real, con la diagonal. Derecha: residuos frente a predicción; la dispersión crece con la predicción y hay predicciones negativas."
+pred = ols["pred"]
+residuos = y_test - pred
+fig, ejes = plt.subplots(1, 2, figsize=(16, 6.5))
+ejes[0].scatter(y_test / 1000, pred / 1000, s=9, alpha=0.3, color=tv.BLUE)
+ejes[0].plot([0, y_test.max() / 1000], [0, y_test.max() / 1000], color=tv.TERRACOTTA, lw=2, ls="--")
+ejes[0].set_xlabel("salario real (miles de €)")
+ejes[0].set_ylabel("predicción (miles de €)")
+ejes[0].set_title("Predicción frente a valor real")
+ejes[1].scatter(pred / 1000, residuos / 1000, s=9, alpha=0.3, color=tv.BLUE)
+ejes[1].scatter(pred[pred < 0] / 1000, residuos[pred < 0] / 1000, s=30, color=tv.TERRACOTTA,
+                label=f"predicción negativa ({int((pred < 0).sum())})")
+ejes[1].axhline(0, color=tv.NAVY, lw=1.5)
+ejes[1].set_xlabel("predicción (miles de €)")
+ejes[1].set_ylabel("residuo (miles de €)")
+ejes[1].set_title("Residuos frente a predicción")
+ejes[1].legend(frameon=False, loc="upper left")
+plt.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+En prueba: R² = `{python} txt(ols["R2_test"], 3)`, RMSE = `{python} txt(ols["RMSE"])` €, MAE = `{python} txt(ols["MAE"])` €. **¿Qué dos síntomas de los residuos anuncian el tema 3?**
+:::
+
+:::{.notes}
+Teoría: «¿Qué error medimos?». Cuaderno 1, sección 6. Medidas sobre los 2 500 trabajadores de prueba; el RMSE penaliza más los errores grandes y el MAE se lee directamente en euros.
+
+Respuesta: predicciones negativas, imposibles para un salario, y dispersión de los residuos creciente con el nivel de la predicción. Ambos vienen de la asimetría de la respuesta; el tema 3 cambia la relación entre predictores y respuesta (función de enlace).
+
+`LinearRegression` está orientado a predecir: devuelve `coef_` e `intercept_`, sin errores estándar ni p-valores (para inferencia, `statsmodels`). Sin categoría de referencia, los coeficientes de una misma variable se leen comparándolos entre sí.
+:::
+
+## Sobreajuste con datos reales {.fig-side}
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Barras agrupadas con el R² en entrenamiento y en prueba de la regresión lineal ajustada con 7 500 filas y con 200 filas. Con 7 500 ambos coinciden; con 200 el de entrenamiento sube y el de prueba cae."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+grupos = [f"n = {num(len(X_train))}\n{ols['no_nulos']} coeficientes", f"n = 200\n{ols_pocos['no_nulos']} coeficientes"]
+entrena = [ols["R2_train"], ols_pocos["R2_train"]]
+prueba = [ols["R2_test"], ols_pocos["R2_test"]]
+pos = np.arange(2)
+for desplaza, valores, color, etiqueta in [(-0.19, entrena, tv.GRAY, "entrenamiento"),
+                                            (0.19, prueba, tv.TERRACOTTA, "prueba")]:
+    barras = ax.bar(pos + desplaza, valores, width=0.36, color=color, label=etiqueta)
+    for b, v in zip(barras, valores):
+        ax.text(b.get_x() + b.get_width() / 2, v + 0.015, num(v, 2), ha="center", fontsize=17, color=tv.NAVY)
+ax.set_xticks(pos, grupos, fontsize=16)
+ax.set_ylim(0, 0.9)
+ax.set_ylabel("R² de la regresión lineal")
+eje_coma(ax.yaxis)
+ax.grid(axis="x", visible=False)
+ax.legend(frameon=False, loc="upper left", ncols=2)
+plt.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+Misma familia y mismos predictores: solo cambia $n$.
+
+Con 200 filas el modelo **memoriza la muestra**: mejora en entrenamiento y empeora en los mismos `{python} txt(len(X_test))` trabajadores de prueba.
+
+> La complejidad se mide en relación con los datos disponibles.
+:::
+:::
+
+:::{.notes}
+Teoría: «Subajuste y sobreajuste, a la vista» y «Varias muestras y el tamaño muestral». Cuaderno 2, secciones 1 y 2.1.
+
+En la teoría el sobreajuste se provoca subiendo el grado del polinomio con n fijo; en el laboratorio se provoca bajando n con el número de columnas fijo. Es el mismo fenómeno: la razón entre observaciones y parámetros. La muestra de 200 es el banco de pruebas del resto del cuaderno; el conjunto de prueba no cambia, así que las comparaciones son justas.
+:::
+
+## Ridge: el intercambio entre sesgo y varianza, medido {.fig-wide}
+
+```{python}
+#| fig-alt: "Izquierda: camino de los coeficientes de Ridge al aumentar la penalización; se encogen suavemente hacia cero sin anularse. Derecha: R² en entrenamiento, que baja siempre, y R² en prueba, que sube hasta un máximo y después baja."
+DESTACADAS = {"numericas__JAP": "JAP", "numericas__ANOANTI": "ANOANTI", "categoricas__ESTU_7": "ESTU = 7",
+              "categoricas__TIPOJOR_2": "TIPOJOR = 2", "categoricas__CNO1_A0": "CNO1 = A0"}
+PALETA = [tv.BLUE, tv.TERRACOTTA, tv.SAGE, tv.GOLD, PURPLE]
+
+
+def panel_camino(ax, tabla, titulo):
+    for col in tabla.columns:
+        ax.plot(tabla.index, tabla[col] / 1000, color=tv.GRAY, lw=0.7, alpha=0.4)
+    for (col, etiqueta), color in zip(DESTACADAS.items(), PALETA):
+        ax.plot(tabla.index, tabla[col] / 1000, color=color, lw=2.8, label=etiqueta)
+    ax.axhline(0, color=tv.NAVY, lw=1)
+    ax.set_xscale("log")
+    ax.set_xlabel("penalización alpha (escala log)")
+    ax.set_ylabel("coeficiente (miles de €)")
+    ax.set_title(titulo)
+
+
+def panel_r2(ax, curva, alpha_max, titulo):
+    ax.plot(curva.index, curva["R2_train"], color=tv.GRAY, lw=2.8, label="entrenamiento")
+    ax.plot(curva.index, curva["R2_test"], color=tv.TERRACOTTA, lw=2.8, label="prueba")
+    ax.axhline(ols_pocos["R2_test"], color=tv.NAVY, lw=1.8, ls="--", label="lineal sin penalizar, prueba")
+    ax.scatter([alpha_max], [curva["R2_test"].max()], s=130, color=tv.TERRACOTTA, zorder=4)
+    ax.set_xscale("log")
+    ax.set_ylim(-0.02, 0.88)
+    eje_coma(ax.yaxis)
+    ax.annotate("más varianza", xy=(0.03, 0.93), xycoords="axes fraction", fontsize=14, color=tv.NAVY)
+    ax.annotate("más sesgo", xy=(0.97, 0.93), xycoords="axes fraction", fontsize=14, color=tv.NAVY, ha="right")
+    ax.legend(frameon=False, loc="lower left", fontsize=13)
+    ax.set_xlabel("penalización alpha (escala log)")
+    ax.set_ylabel("R²")
+    ax.set_title(titulo)
+
+
+fig, ejes = plt.subplots(1, 2, figsize=(16, 6.5))
+panel_camino(ejes[0], camino_ridge, "Camino de los coeficientes (n = 200)")
+ejes[0].legend(frameon=False, fontsize=13, loc="lower right")
+panel_r2(ejes[1], curva_ridge, alpha_ridge_prueba, "R² según la penalización (n = 200)")
+plt.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+Ridge minimiza $RSS+\lambda\sum_j\beta_j^2$. En prueba, R² pasa de `{python} txt(ols_pocos["R2_test"], 2)` a `{python} txt(curva_ridge["R2_test"].max(), 2)` con alpha ≈ `{python} txt(alpha_ridge_prueba)`: **la curva en U de la teoría, invertida**.
+:::
+
+:::{.notes}
+Teoría: «Sesgo, varianza y complejidad» y «Controlar la complejidad» (fila de los modelos lineales regularizados; alpha es un hiperparámetro). Cuaderno 2, sección 3.
+
+El R² en entrenamiento baja de forma monótona; el de prueba sube primero y baja después. A la izquierda del máximo domina la varianza, a la derecha el sesgo. Ridge encoge, no anula. Algunos coeficientes no evolucionan de forma monótona (ANOANTI sube antes de bajar) porque recogen el efecto de columnas correlacionadas que se encogen antes.
+
+Nombres: el lambda de las transparencias es `alpha` en scikit-learn. La penalización depende de las unidades, por eso las numéricas se estandarizan dentro del Pipeline.
+:::
+
+## La varianza de los coeficientes, vista {.fig-side}
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Diagramas de caja de cinco coeficientes estimados en 30 muestras distintas de 200 trabajadores, con regresión lineal y con Ridge. Las cajas de Ridge son mucho más estrechas."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+cortas = {"numericas__JAP": "JAP", "numericas__ANOANTI": "ANOANTI", "categoricas__SEXO_6": "SEXO = 6",
+          "categoricas__ESTU_7": "ESTU = 7", "categoricas__TIPOJOR_2": "TIPOJOR = 2"}
+for k, col in enumerate(COLUMNAS):
+    for desplaza, modelo, color in [(-0.2, "Lineal", tv.GRAY), (0.2, "Ridge", tv.TERRACOTTA)]:
+        valores = variabilidad.query("coeficiente == @col and modelo == @modelo")["valor"].dropna() / 1000
+        ax.boxplot(valores, positions=[k + desplaza], widths=0.34, patch_artist=True, showfliers=False,
+                   boxprops=dict(facecolor=color, edgecolor=color, alpha=0.85),
+                   medianprops=dict(color="white", lw=2.2),
+                   whiskerprops=dict(color=color, lw=2), capprops=dict(color=color, lw=2))
+ax.axhline(0, color=tv.NAVY, lw=1)
+ax.set_xticks(range(len(COLUMNAS)), [cortas[c] for c in COLUMNAS], fontsize=13.5)
+ax.set_ylabel("coeficiente (miles de €)")
+ax.grid(axis="x", visible=False)
+ax.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=tv.GRAY), plt.Rectangle((0, 0), 1, 1, color=tv.TERRACOTTA)],
+          labels=["Lineal", "Ridge (alpha = 30)"], frameon=False, loc="upper left")
+plt.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+30 muestras de 200 trabajadores, un ajuste por muestra.
+
+Con Ridge, la desviación típica de cada coeficiente es entre **`{python} txt(razon_desv.min(), 1)` y `{python} txt(razon_desv.max(), 1)` veces menor**.
+
+A cambio, las medias se desplazan: eso es el sesgo.
+
+> Es el haz de curvas de la teoría, ahora con coeficientes.
+:::
+:::
+
+:::{.notes}
+Teoría: «La varianza: entrenar con otra muestra» y «Descomposición del error de predicción». Cuaderno 2, sección 3.2.
+
+La variación relevante es la de las estimaciones al repetir el entrenamiento con otra muestra. En la teoría se ve como un haz de curvas ajustadas; aquí, como la dispersión de cinco coeficientes. Las medias no se acercan a cero en todos los casos: al encoger unos coeficientes, otros correlacionados recogen parte del efecto.
+:::
+
+## Lasso: encoger y seleccionar {.fig-wide}
+
+```{python}
+#| fig-alt: "Tres paneles para Lasso con 200 filas. Camino de los coeficientes, que llegan a cero y se quedan ahí; número de coeficientes distintos de cero, que baja de 87 a 0; y R² en entrenamiento y prueba según la penalización."
+fig, ejes = plt.subplots(1, 3, figsize=(16, 6.5))
+panel_camino(ejes[0], camino_lasso, "Camino de los coeficientes")
+ejes[0].legend(frameon=False, fontsize=12, loc="lower right")
+ejes[1].plot(curva_lasso.index, curva_lasso["no_nulos"], color=tv.BLUE, lw=3)
+ejes[1].set_xscale("log")
+ejes[1].set_xlabel("penalización alpha (escala log)")
+ejes[1].set_ylabel("coeficientes distintos de cero")
+ejes[1].set_title("Tamaño del modelo")
+panel_r2(ejes[2], curva_lasso, alpha_lasso_prueba, "R² según la penalización")
+plt.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+Lasso minimiza $RSS+\lambda\sum_j|\beta_j|$: en el máximo de prueba conserva `{python} int(curva_lasso.loc[alpha_lasso_prueba, "no_nulos"])` de `{python} camino_lasso.shape[1]` columnas. **Ridge encoge; Lasso, además, elige.**
+:::
+
+:::{.notes}
+Teoría: «Controlar la complejidad» (las notas de esa slide ya anticipan que LASSO lleva coeficientes a cero y ridge los contrae). Cuaderno 2, sección 4.
+
+Con alpha muy grande no queda ninguna columna: el modelo predice la media y su R² es cero. El alpha de `Ridge` y el de `Lasso` no están en la misma escala en scikit-learn (Lasso divide el error cuadrático entre 2n): se comparan resultados, no valores de alpha.
+
+El ejercicio 2 del cuaderno (qué variables sobreviven) no se resuelve aquí.
+:::
+
+## Elegir la penalización sin mirar la prueba {.fig-side}
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Curva de validación de LassoCV: RMSE medio de validación en cinco pliegues frente a la penalización, con una línea vertical en el valor elegido."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+rmse_val = np.sqrt(lasso_cv.mse_path_.mean(axis=1)) / 1000
+ax.plot(lasso_cv.alphas_, rmse_val, color=tv.BLUE, lw=3)
+ax.axvline(lasso_cv.alpha_, color=tv.TERRACOTTA, lw=2.5, ls="--",
+           label=f"alpha elegido = {num(lasso_cv.alpha_)}")
+ax.scatter([lasso_cv.alpha_], [rmse_val.min()], s=130, color=tv.TERRACOTTA, zorder=4)
+ax.set_xscale("log")
+ax.set_xlabel("penalización alpha (escala log)")
+ax.set_ylabel("RMSE de validación (miles de €)")
+ax.set_title("LassoCV: 5 pliegues dentro de las 200 filas")
+ax.legend(frameon=False, loc="upper left")
+plt.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+| | Elegido por VC | Máximo en prueba |
+|---|:--:|:--:|
+| Ridge | `{python} txt(ridge_cv.alpha_, 1)` | `{python} txt(alpha_ridge_prueba, 1)` |
+| Lasso | `{python} txt(lasso_cv.alpha_)` | `{python} txt(alpha_lasso_prueba)` |
+
+Valores de `alpha`. En Lasso difieren, pero el R² en prueba apenas cambia: `{python} txt(comp_pocos["Lasso CV"]["R2_test"], 2)` frente a `{python} txt(curva_lasso["R2_test"].max(), 2)`.
+
+La validación cruzada decide **sin usar la prueba**.
+
+::: {.callout-tip title="Para pensar"}
+Si elegimos `alpha` con el R² de prueba, ¿sigue siendo una evaluación final?
+:::
+:::
+:::
+
+:::{.notes}
+Teoría: «Validar para elegir, probar para evaluar». Cuaderno 2, sección 5. Es el adelanto del tema 2.
+
+Respuesta: no. El conjunto de prueba habría influido en una decisión sobre el modelo; es otra forma de fuga de información. `RidgeCV`, `LassoCV` y `ElasticNetCV` eligen alpha dentro del entrenamiento; el valor queda en `alpha_` (el guion bajo final marca lo que scikit-learn aprende de los datos).
+
+En Lasso el alpha de validación es mayor que el del máximo en prueba, pero la curva es plana en esa zona y el R² en prueba apenas cambia. Detalle que se resuelve en el tema 2: con `LassoCV` dentro del Pipeline el preprocesador se ajusta una vez con las 200 filas; la forma limpia es validar el Pipeline entero con `GridSearchCV`.
+:::
+
+## ¿Cuándo compensa penalizar? {.fig-wide}
+
+```{python}
+#| fig-alt: "Dos paneles con el R² en prueba de la regresión lineal, Ridge, Lasso y Elastic Net con penalización elegida por validación cruzada. Con 200 filas los penalizados mejoran claramente a la regresión lineal; con 7 500 filas los cuatro son indistinguibles. Sobre cada barra, el número de coeficientes distintos de cero."
+fig, ejes = plt.subplots(1, 2, figsize=(16, 6.5), sharey=True)
+colores = [tv.GRAY, tv.BLUE, tv.TERRACOTTA, tv.SAGE]
+for ax, comp, titulo in [(ejes[0], comp_pocos, "Entrenamiento con 200 filas"),
+                         (ejes[1], comp_todos, f"Entrenamiento con {num(len(X_train))} filas")]:
+    nombres_m = list(comp)
+    valores = [comp[m]["R2_test"] for m in nombres_m]
+    barras = ax.bar(nombres_m, valores, color=colores, width=0.66)
+    for b, m, v in zip(barras, nombres_m, valores):
+        ax.text(b.get_x() + b.get_width() / 2, v + 0.012, f"{num(v, 3)}\n{comp[m]['no_nulos']} coef.",
+                ha="center", fontsize=14.5, color=tv.NAVY, linespacing=1.25)
+    ax.set_title(titulo)
+    ax.set_ylim(0, 0.75)
+    ax.grid(axis="x", visible=False)
+    eje_coma(ax.yaxis)
+ejes[0].set_ylabel("R² en prueba")
+plt.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+La penalización es un **seguro contra la varianza**: vale mucho con pocos datos y casi nada cuando sobran.
+:::
+
+:::{.notes}
+Teoría: «Varias muestras y el tamaño muestral» (más datos informativos permiten modelos más flexibles) y «Controlar la complejidad». Cuaderno 2, secciones 6 y 7.
+
+Con 7 500 filas la validación cruzada elige penalizaciones pequeñas y el resultado es el de mínimos cuadrados; Lasso y Elastic Net descartan además una o dos decenas de columnas sin perder nada. Elastic Net elige `l1_ratio = 1` (Lasso puro) con 200 filas: ninguna mezcla con parte Ridge mejora en validación con estos datos.
+
+El ejercicio 3 (cuántos datos hacen falta) recorre tamaños intermedios; no se resuelve aquí.
+:::
+
+# ¿Cómo se entrena un modelo? {background-color="#447099"}
+
+## Las pérdidas que hemos minimizado {.body-callout .dense}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+| Modelo | Pérdida |
+|---|---|
+| `LinearRegression` | $RSS=\sum_i (y_i-\hat y_i)^2$ |
+| `Ridge` | $RSS+\lambda\sum_j \beta_j^2$ |
+| `Lasso` | $RSS+\lambda\sum_j \lvert\beta_j\rvert$ |
+| `ElasticNet` | $RSS+\lambda\,[\alpha\sum_j\lvert\beta_j\rvert+\tfrac{1-\alpha}{2}\sum_j\beta_j^2]$ |
+
+Entrenar es minimizar una pérdida; regularizar es cambiar la pérdida.
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.callout-note title="Lo que el laboratorio no ha cubierto"}
+El descenso del gradiente. `LinearRegression` y `Ridge` tienen solución directa; `Lasso` y `ElasticNet` se resuelven de forma iterativa, por eso fijamos `max_iter`. Lotes y tasa de aprendizaje volverán con las redes neuronales (tema 6).
+:::
+
+::: {.callout-note title="Cuidado con los nombres"}
+$\lambda$ (cantidad) es `alpha` en scikit-learn; $\alpha$ (mezcla) es `l1_ratio`.
+:::
+:::
+:::
+
+:::{.notes}
+Teoría: «Ajustar los parámetros minimizando una pérdida» y «Descenso del gradiente: aspectos prácticos» (escalado). Cuaderno 2, secciones 3, 4 y 6.
+
+Precisión: `Lasso` y `ElasticNet` usan descenso por coordenadas, no descenso del gradiente; comparten con él la lógica iterativa y un criterio de parada (iteraciones máximas y tolerancia). El escalado, que en la teoría aparece como ayuda a la optimización, es aquí además condición para que la penalización trate igual a todos los predictores numéricos.
+
+En `glmnet` de R, `lambda` es la cantidad y `alpha` la mezcla; scikit-learn llama `alpha` a la cantidad.
+:::
+
+# ¿Qué sabemos hacer ahora? {background-color="#447099"}
+
+## Conocimientos aplicados {.fig-full}
+
+```{python}
+#| fig-alt: "Cuatro tarjetas con las herramientas de Python practicadas en el laboratorio: datos con pandas, flujo de trabajo con scikit-learn, modelos y evaluación, y programación básica."
+tarjetas = [
+    ("Datos · pandas", tv.BLUE,
+     ["pd.read_csv(url)", "info() · describe()", "df[\"col\"] · map()",
+      "groupby().agg()", "sample(n, random_state)", "astype(\"category\")"]),
+    ("Flujo · scikit-learn", tv.SAGE,
+     ["train_test_split", "StandardScaler", "OneHotEncoder", "ColumnTransformer", "Pipeline",
+      "fit · predict"]),
+    ("Modelos y evaluación", tv.TERRACOTTA,
+     ["LinearRegression", "Ridge · Lasso", "ElasticNet", "RidgeCV · LassoCV",
+      "r2_score", "RMSE · MAE"]),
+    ("Programación", tv.NAVY,
+     ["import … as …", "def … return", "for + append()", "dict  {clave: valor}", "f\"{x:.3f}\"",
+      "tabla de resultados"]),
+]
+fig, ax = lienzo((16, 7.2))
+w, hueco = 3.7, 0.37
+for k, (titulo, color, lineas) in enumerate(tarjetas):
+    x = 0.05 + k * (w + hueco)
+    ax.add_patch(FancyBboxPatch((x, 0.5), w, 6.2, boxstyle="round,pad=0,rounding_size=0.15",
+                                fc="#EEF2F6", ec="none"))
+    ax.add_patch(FancyBboxPatch((x, 5.6), w, 1.1, boxstyle="round,pad=0,rounding_size=0.15",
+                                fc=color, ec="none"))
+    ax.text(x + w / 2, 6.15, titulo, ha="center", va="center", color="white", fontsize=18, fontweight="bold")
+    for j, linea in enumerate(lineas):
+        ax.text(x + 0.22, 5.0 - j * 0.8, linea, fontsize=13.5, family="monospace", color=tv.NAVY, va="center")
+plt.show()
+```
+
+::: {.caption-line}
+Roles de las variables, partición y `Pipeline` se repiten sin cambios en todos los temas: **solo cambiará el último paso**.
+:::
+
+:::{.notes}
+Resumen de los objetivos de los dos cuadernos. Para quien viene de R: `pandas` hace de `data.frame` y `dplyr`; `scikit-learn`, de `lm()`, `caret`, `tidymodels` y `glmnet`. En scikit-learn no hay fórmulas: el modelo recibe `X` e `y`, y la conversión de categóricas la hacemos en el preprocesamiento. Los índices empiezan en 0.
+:::
+
+## De R a Python: el vocabulario del laboratorio {.table-slide .dense}
+
+&nbsp;
+
+::: {tbl-colwidths="[24,40,36]"}
+| Tarea | Python | R |
+|---|---|---|
+| Leer datos | `pd.read_csv(ruta, sep="\t")` | `read.delim(ruta)` |
+| Resumen por grupos | `groupby().agg()` | `group_by() + summarise()` |
+| Factor | `astype("category")` | `factor(x)` |
+| Indicadoras | `OneHotEncoder` | `model.matrix()` |
+| Escalar | `StandardScaler` | `scale()` |
+| Partición | `train_test_split` | `rsample::initial_split()` |
+| Regresión lineal | `LinearRegression().fit(X, y)` | `lm(y ~ ., data)` |
+| Ridge, Lasso, Elastic Net | `ElasticNet(alpha=l, l1_ratio=a)` | `glmnet(X, y, alpha = a, lambda = l)` |
+| Penalización por VC | `LassoCV(cv=5)` → `alpha_` | `cv.glmnet()` → `lambda.min` |
+:::
+
+Cambia la herramienta; los conceptos son los mismos.
+
+:::{.notes}
+Tablas de correspondencias completas al final de cada cuaderno. Diferencia práctica con `glmnet`: estandariza todos los predictores por defecto, incluidas las indicadoras, y devuelve los coeficientes en la escala original; en scikit-learn decidimos qué se estandariza (aquí, solo las numéricas) y los coeficientes se refieren a las columnas transformadas.
+:::
+
+## Recapitulación
+
+&nbsp;
+
+1. **Aprender:** fijar la respuesta y los predictores que tendríamos al predecir. La fuga de información se detecta antes de ajustar nada.
+2. **Evaluar:** partir primero y medir en prueba. Con 200 filas la regresión lineal sobreajusta; penalizar cambia algo de sesgo por menos varianza.
+3. **Entrenar:** cada modelo minimiza una pérdida; la intensidad de la penalización es un hiperparámetro que se elige por validación cruzada.
+
+> Siguiente: validar el `Pipeline` entero (tema 2) y una respuesta asimétrica que pide otro modelo (tema 3).
+
+:::{.notes}
+Un minuto. Una frase por cada pregunta de la sesión de teoría. Pendiente del laboratorio que enlaza con lo que viene: `GridSearchCV` sobre el Pipeline completo (tema 2); predicciones negativas y residuos con dispersión creciente (tema 3, función de enlace; el ejercicio 4 del cuaderno 2 lo anticipa con el logaritmo).
+:::

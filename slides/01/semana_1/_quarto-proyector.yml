@@ -1,0 +1,58 @@
+# Perfil proyector 16:10 → quarto render --profile proyector
+# Misma capa de aula; la fuente pasa a 32px vía html.tap-proyector (tap-aula.scss).
+format:
+  clean-revealjs:
+    theme:
+      - default
+      - _extensions/grantmcdermott/clean/clean.scss
+      - ../../../_tap_theme/tap.scss
+      - ../../../_tap_theme/tap-aula.scss
+      - aula.scss
+    width: 1280
+    height: 800
+    output-file: 01_intro_2ML_proyector.html
+    include-in-header:
+      text: |
+        <script>document.documentElement.classList.add('tap-proyector');</script>
+        <script>
+        // Celdas pyodide (.pyodide-fold): botón que pliega/despliega el editor y
+        // ejecución automática al cargar (la extensión vendorizada no implementa `autorun`).
+        document.addEventListener("click", function (e) {
+          const b = e.target.closest("button.pyodide-toggle");
+          if (!b) return;
+          const cell = b.closest("section").querySelector(".pyodide-fold");
+          if (!cell) return;
+          cell.classList.toggle("open");
+          b.textContent = cell.classList.contains("open") ? "Ocultar código" : "Mostrar código";
+        });
+        (function () {
+          // Indicador de estado (span.pyodide-estado junto al botón) y errores de carga visibles.
+          const estado = (txt) => document.querySelectorAll(".pyodide-estado").forEach(e => e.textContent = txt);
+          let fallo = false;
+          window.addEventListener("error", (e) => {
+            if (/pyodide|monaco|jsdelivr/i.test((e.message || "") + (e.filename || ""))) { fallo = true; estado("Python: error de carga (" + (e.message || e.filename) + ")"); }
+          });
+          window.addEventListener("unhandledrejection", (e) => {
+            fallo = true; estado("Python: error (" + String(e.reason).slice(0, 120) + ")");
+          });
+          let running = false;
+          setInterval(function () {
+            if (!fallo) {
+              const btn = document.querySelector(".pyodide-fold .qpyodide-button-run");
+              estado(!btn ? "Python: preparando la celda…" : btn.disabled ? "Python: cargando el intérprete y scikit-learn (20-40 s)…" : "Python: listo");
+            }
+            if (running) return;
+            const cell = [...document.querySelectorAll(".pyodide-fold:not([data-autorun-done])")]
+              .find(c => { const b = c.querySelector(".qpyodide-button-run"); return b && !b.disabled; });
+            if (!cell) return;
+            running = true;
+            cell.setAttribute("data-autorun-done", "1");
+            cell.querySelector(".qpyodide-button-run").click();
+            const t0 = Date.now();
+            const wait = setInterval(function () {
+              const done = cell.querySelector(".qpyodide-output-code-stdout, .qpyodide-output-code-stderr, .qpyodide-output-graph-area img, .qpyodide-output-graph-area canvas") || Date.now() - t0 > 90000;
+              if (done) { clearInterval(wait); running = false; }
+            }, 500);
+          }, 500);
+        })();
+        </script>
