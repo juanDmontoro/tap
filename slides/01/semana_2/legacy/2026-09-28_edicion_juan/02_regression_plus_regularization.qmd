@@ -1,0 +1,1104 @@
+---
+title: "Tema 1. Introducción al aprendizaje estadístico: regresión lineal regularizada"
+subtitle: "Técnicas Avanzadas de Predicción en Negocios"
+author: "Prof. Juan D. Montoro-Pons | 2026/27"
+title-slide-attributes:
+  data-background-color: "#447099"
+format:
+  clean-revealjs:
+    slide-number: c/t
+    footer: ""
+    echo: true
+    code-fold: true
+    code-overflow: wrap
+    code-line-numbers: false
+    code-copy: true
+    highlight-style: solarized
+    scrollable: false
+    incremental: false
+    fig-align: center
+engine: jupyter
+jupyter: python3
+lang: es
+fig-dpi: 110
+execute:
+  eval: true
+  warning: false
+  message: false
+filters:
+  - ../../../_tap_theme/strip-notes.lua
+---
+
+```{python}
+#| echo: false
+#| output: false
+# Todo el deck se calcula al renderizar. Datos: misma población que la semana 1
+# (listados.csv, 30-400 €/noche, alojamientos enteros y habitaciones), respuesta log(precio).
+import sys
+import warnings
+sys.path.insert(0, "../../../_tap_theme")
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import tapviz as tv
+from matplotlib.ticker import FuncFormatter
+from matplotlib_inline.backend_inline import set_matplotlib_formats
+from sklearn.base import clone
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
+from sklearn.dummy import DummyRegressor
+from sklearn.model_selection import train_test_split, KFold, GridSearchCV
+from sklearn.metrics import root_mean_squared_error, mean_absolute_error, r2_score
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.utils import resample
+
+warnings.filterwarnings("error", category=ConvergenceWarning)
+tv.use_style()
+plt.rcParams.update({"font.size": 16, "axes.titlesize": 18, "axes.labelsize": 16,
+                     "legend.fontsize": 15, "xtick.labelsize": 15, "ytick.labelsize": 15})
+set_matplotlib_formats("png", dpi=110)
+
+
+def es(value, digits=0):
+    """Número con formato español: coma decimal; sin separador hasta 9 999 y espacio fino a partir de cinco cifras (RAE)."""
+    texto = f"{value:,.{digits}f}".replace(",", "_").replace(".", ",")
+    return texto.replace("_", "" if abs(value) < 10000 else "\u202f")
+
+
+def eje_coma(eje, dec=1):
+    """Coma decimal en las marcas de un eje lineal (ax.xaxis o ax.yaxis)."""
+    eje.set_major_formatter(FuncFormatter(lambda v, _: es(v, dec)))
+
+
+SEED, N_TRAIN = 42, 300
+cols = ["neighbourhood_cleansed", "room_type", "latitude", "longitude", "accommodates",
+        "bathrooms", "bedrooms", "beds", "number_of_reviews", "number_of_reviews_ltm",
+        "reviews_per_month", "review_scores_rating", "minimum_nights", "availability_365",
+        "host_is_superhost", "price"]
+df = pd.read_csv("../../../../datos/airbnb_vlc/listados.csv", usecols=cols)
+df["price"] = pd.to_numeric(df.price.str.replace(r"[$,]", "", regex=True))
+lat0, lon0 = 39.4699, -0.3763
+df["dist_km"] = np.sqrt(((df.latitude - lat0) * 111.0) ** 2
+                        + ((df.longitude - lon0) * 111.0 * np.cos(np.radians(lat0))) ** 2)
+df["superhost"] = (df.host_is_superhost == "t").astype(int)
+datos = df[df.price.between(30, 400) & df.room_type.isin(["Entire home/apt", "Private room"])].copy()
+datos["log_precio"] = np.log(datos.price)
+
+num = ["dist_km", "accommodates", "bathrooms", "bedrooms", "beds", "number_of_reviews",
+       "number_of_reviews_ltm", "reviews_per_month", "review_scores_rating", "minimum_nights",
+       "availability_365", "superhost"]
+cat = ["neighbourhood_cleansed", "room_type"]
+features = num + cat
+dev, test = train_test_split(datos, test_size=0.3, random_state=SEED)
+train = dev.sample(N_TRAIN, random_state=SEED)
+X_train, y_train = train[features], train.log_precio
+X_test, y_test = test[features], test.log_precio
+
+
+def preprocesador():
+    # Numéricas: mediana + estandarización. Categóricas: una columna por barrio y tipo,
+    # sin agrupar ni omitir referencia (igual que hace glmnet). Todo se aprende en cada ajuste.
+    return ColumnTransformer([
+        ("num", Pipeline([("imp", SimpleImputer(strategy="median")), ("esc", StandardScaler())]), num),
+        ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), cat),
+    ])
+
+
+def pipeline(model):
+    return Pipeline([("prep", preprocesador()), ("model", model)])
+
+
+# Rejillas en la escala de cada estimador; lambda (glmnet) = alpha en Lasso/ElasticNet, alpha/n en Ridge.
+cv = KFold(n_splits=5, shuffle=True, random_state=SEED)
+ridge_grid = np.logspace(-2, 4, 25)
+l1_grid = np.logspace(-4, 0, 25)
+specs = {
+    "Media": (DummyRegressor(), {}),
+    "MCO": (LinearRegression(), {}),
+    "Ridge": (Ridge(), {"model__alpha": ridge_grid}),
+    "Lasso": (Lasso(max_iter=50000, tol=1e-5), {"model__alpha": l1_grid}),
+    "Elastic net": (ElasticNet(max_iter=50000, tol=1e-5),
+                    {"model__alpha": l1_grid, "model__l1_ratio": [0.1, 0.5, 0.9]}),
+}
+
+
+def rmse_particiones(search, k):
+    """RMSE de cada una de las 5 particiones de validación para la configuración k."""
+    return np.sqrt(-np.array([search.cv_results_[f"split{i}_test_score"][k] for i in range(5)]))
+
+
+def ee_cv(search, k):
+    """Error típico del RMSE de validación: desviación entre particiones / raíz de 5 (misma función en tabla y figuras)."""
+    return rmse_particiones(search, k).std(ddof=1) / np.sqrt(5)
+
+
+searches, fitted, rows = {}, {}, []
+for name, (model, grid) in specs.items():
+    s = GridSearchCV(pipeline(model), grid, cv=cv, scoring="neg_mean_squared_error", n_jobs=1,
+                     return_train_score=True, error_score="raise").fit(X_train, y_train)
+    searches[name], fitted[name] = s, s.best_estimator_
+    coef = getattr(s.best_estimator_["model"], "coef_", np.array([]))
+    rows.append({"Modelo": name,
+                 "RMSE ajuste": root_mean_squared_error(y_train, s.predict(X_train)),
+                 "RMSE CV": np.sqrt(-s.best_score_),          # raíz del MSE medio de las particiones
+                 "EE CV": ee_cv(s, s.best_index_),
+                 "Coef. activos": int(np.count_nonzero(np.abs(coef) > 1e-8))})
+results = pd.DataFrame(rows).set_index("Modelo")
+assert "RMSE test" not in results.columns                 # el test no existe todavía cuando se decide
+winner = results["RMSE CV"].idxmin()                      # regla fijada ANTES de mirar el test
+# Diferencias entre familias emparejadas por partición (las cinco particiones son las mismas)
+_mejor = {n: rmse_particiones(searches[n], searches[n].best_index_) for n in ["Ridge", "Lasso", "Elastic net"]}
+_d = _mejor["Ridge"] - _mejor["Lasso"]
+dif_ridge_lasso, ee_ridge_lasso = _d.mean(), _d.std(ddof=1) / np.sqrt(5)
+_d = _mejor["Lasso"] - _mejor["Elastic net"]
+dif_lasso_en, ee_lasso_en = _d.mean(), _d.std(ddof=1) / np.sqrt(5)
+for name, m in fitted.items():
+    pred = m.predict(X_test)
+    results.loc[name, "RMSE test"] = root_mean_squared_error(y_test, pred)
+    results.loc[name, "MAE test"] = mean_absolute_error(y_test, pred)
+    results.loc[name, "R2 test"] = r2_score(y_test, pred)
+    results.loc[name, "R2 ajuste"] = r2_score(y_train, m.predict(X_train))
+p = len(fitted["MCO"]["model"].coef_)
+feature_names = fitted["MCO"]["prep"].get_feature_names_out()
+n_barrios = int(sum("neighbourhood" in f for f in feature_names))
+barrios_raros = int((train.neighbourhood_cleansed.value_counts() <= 2).sum())
+lam_cv = {"Ridge": searches["Ridge"].best_params_["model__alpha"] / N_TRAIN,
+          "Lasso": searches["Lasso"].best_params_["model__alpha"],
+          "Elastic net": searches["Elastic net"].best_params_["model__alpha"]}
+mix_cv = searches["Elastic net"].best_params_["model__l1_ratio"]
+n_test_barrio_nuevo = int((~test.neighbourhood_cleansed.isin(set(train.neighbourhood_cleansed))).sum())
+corr_personas_dorm = train[["accommodates", "bedrooms"]].corr().iloc[0, 1]
+colors = {"Media": tv.GRAY, "MCO": tv.NAVY, "Ridge": tv.BLUE, "Lasso": tv.TERRACOTTA, "Elastic net": tv.SAGE}
+
+# Nombres legibles de las columnas destacadas en las figuras
+etiquetas = {"num__accommodates": "personas", "cat__room_type_Entire home/apt": "alojamiento entero",
+             "num__bedrooms": "dormitorios", "num__dist_km": "distancia al centro",
+             "num__minimum_nights": "noches mínimas", "num__beds": "camas",
+             "num__bathrooms": "baños", "cat__room_type_Private room": "habitación privada"}
+
+# Trayectorias de coeficientes sobre el diseño ya transformado de los 300 anuncios
+Z = fitted["MCO"]["prep"].transform(X_train)
+path_specs = {"Ridge": (Ridge(), ridge_grid, ridge_grid / N_TRAIN),
+              "Lasso": (Lasso(max_iter=50000, tol=1e-5), l1_grid, l1_grid),
+              "Elastic net": (ElasticNet(l1_ratio=mix_cv, max_iter=50000, tol=1e-5), l1_grid, l1_grid)}
+paths = {k: np.array([clone(m).set_params(alpha=a).fit(Z, y_train).coef_ for a in g])
+         for k, (m, g, _) in path_specs.items()}
+lam_axis = {k: lam for k, (_, _, lam) in path_specs.items()}
+
+# Curva de aprendizaje: validación interna al desarrollo, nunca el test (particiones de validación fijas)
+pool, valid = train_test_split(dev, test_size=0.25, random_state=123)
+learning = []
+for seed in range(5):
+    ordered = pool.sample(frac=1, random_state=seed)
+    for n in [150, 300, 1000, 2500]:
+        sample = ordered.iloc[:n]
+        for name in ["MCO", "Ridge"]:
+            model, grid = specs[name]
+            s = GridSearchCV(pipeline(clone(model)), grid, cv=cv, scoring="neg_mean_squared_error",
+                             n_jobs=1, error_score="raise").fit(sample[features], sample.log_precio)
+            learning.append({"n": n, "Modelo": name, "semilla": seed,
+                             "RMSE": root_mean_squared_error(valid.log_precio, s.predict(valid[features]))})
+        learning.append({"n": n, "Modelo": "Media", "semilla": seed,
+                         "RMSE": root_mean_squared_error(valid.log_precio,
+                                                         np.full(len(valid), sample.log_precio.mean()))})
+learning = pd.DataFrame(learning)
+
+# Bootstrap de selección: lasso frente a elastic net (mezcla 0,5) con la MISMA parte L1
+# (lambda*alpha = lam_sel); elastic net añade la parte L2.
+sel = []
+lam_sel = lam_cv["Lasso"]
+for b in range(50):
+    idx = resample(np.arange(N_TRAIN), random_state=b)
+    for name, model in [("Lasso", Lasso(alpha=lam_sel, max_iter=50000, tol=1e-5)),
+                        ("Elastic net (α = 0,5)", ElasticNet(alpha=lam_sel / 0.5, l1_ratio=0.5, max_iter=50000, tol=1e-5))]:
+        m = pipeline(model).fit(X_train.iloc[idx], y_train.iloc[idx])
+        names = m["prep"].get_feature_names_out()
+        c = pd.Series(m["model"].coef_, index=names)
+        sel.append(pd.DataFrame({"Modelo": name, "var": names, "activo": (c.abs() > 1e-8).values}))
+frecuencia = pd.concat(sel).groupby(["Modelo", "var"]).activo.mean().unstack(0)
+
+# Simulación con beta conocido: p = 20, n = 40, bloques de predictores correlacionados
+rng = np.random.default_rng(SEED)
+P_SIM, N_SIM, RHO, LAM_SIM, N_REP = 20, 40, 0.9, 0.5, 100
+beta_true = np.r_[np.repeat(1.0, 5), np.repeat(0.5, 5), np.repeat(0.0, 10)]
+bloque = np.kron(np.eye(4), np.full((5, 5), RHO)) + (1 - RHO) * np.eye(P_SIM)
+L = np.linalg.cholesky(bloque)
+sim = []
+for r in range(N_REP):
+    Xs = rng.standard_normal((N_SIM, P_SIM)) @ L.T      # varianza poblacional 1 en cada columna
+    ys = Xs @ beta_true + rng.standard_normal(N_SIM)
+    Xs = Xs - Xs.mean(0)                                 # solo se centra: beta no cambia de escala
+    sim.append({"MCO": LinearRegression().fit(Xs, ys).coef_,
+                "Ridge": Ridge(alpha=N_SIM * LAM_SIM).fit(Xs, ys).coef_})
+sim_coef = {k: np.array([d[k] for d in sim]) for k in ["MCO", "Ridge"]}
+ecm_sim = {k: np.mean((v - beta_true) ** 2) for k, v in sim_coef.items()}
+
+# Geometría con dos predictores reales, misma elipse tangente a las dos regiones
+_i_acc, _i_dorm = list(feature_names).index("num__accommodates"), list(feature_names).index("num__bedrooms")
+zg = Z[:, [_i_acc, _i_dorm]]                             # ya imputadas y estandarizadas por el pipeline
+yg = (y_train.to_numpy() - y_train.mean()) / y_train.std(ddof=0)
+G, h = zg.T @ zg / len(yg), zg.T @ yg / len(yg)
+b_ols2 = np.linalg.solve(G, h)
+lam_max = np.abs(h).max()
+lam_l = 0.55 * lam_max
+b_lasso2 = Lasso(alpha=lam_l, fit_intercept=False, max_iter=50000, tol=1e-9).fit(zg, yg).coef_
+
+
+def rss2(b):
+    return 0.5 * np.mean((yg - zg @ b) ** 2)
+
+
+objetivo = rss2(b_lasso2)
+lo, hi = 1e-6, 50.0
+for _ in range(80):                    # bisección: el ridge con el mismo nivel de error
+    mid = np.sqrt(lo * hi)
+    b_mid = Ridge(alpha=len(yg) * mid, fit_intercept=False).fit(zg, yg).coef_
+    lo, hi = (lo, mid) if rss2(b_mid) > objetivo else (mid, hi)
+lam_r = np.sqrt(lo * hi)
+b_ridge2 = Ridge(alpha=len(yg) * lam_r, fit_intercept=False).fit(zg, yg).coef_
+
+# Auditoría de particiones y cifras
+assert set(dev.index).isdisjoint(set(test.index)) and len(train) == N_TRAIN
+assert np.isfinite(results.select_dtypes("number")).all().all()
+assert winner == results["RMSE CV"].idxmin() and winner in lam_cv
+hook = results.loc[["MCO", "Ridge", "Media"], ["RMSE ajuste"]].copy()
+hook.index = ["Modelo A", "Modelo B", "Modelo C"]
+```
+
+## ¿Como controlamos la complejidad en el modelo lineal? {.body-callout}
+
+&nbsp;
+
+::: {.panel-tabset}
+
+### Cuatro preguntas
+
+1. ¿Qué familias (ridge, lasso, elastic net) pueden dejar coeficientes **exactamente** en cero?
+2. Si la penalización de ridge crece sin límite, ¿qué predice el modelo?
+3. ¿Por qué se estandarizan los predictores antes de penalizar?
+4. En `glmnet`, ¿qué controla `alpha` y qué controla `lambda`?
+
+### Respuestas
+
+1. Lasso y elastic net (con parte L1). Ridge contrae sin anular.
+2. La media de $y$ en entrenamiento: el intercepto no se penaliza.
+3. Porque la penalización depende de las unidades: un coeficiente en km y otro en m no se pueden castigar por igual.
+4. `alpha` es la **mezcla** L1/L2 y `lambda` la **intensidad**. En scikit-learn los nombres cambian (slide 12).
+
+:::
+
+
+
+
+:::{.notes}
+Apertura, 3 min. Votación rápida (manos o Wooclap) pregunta a pregunta, sin explicar todavía; las respuestas se muestran en la pestaña y se comentan en una frase cada una. Lo que falle por mayoría marca dónde detenerse más en el bloque 2.
+
+Sesión de tipo repaso-profundización: no se vuelve a definir el modelo lineal ni la validación. Guion de 60 min: portada, apertura y datos 9; bloque 1 (por qué) 12; bloque 2 (qué) 20; bloque 3 (cómo elegir) 11; cierre 7 (59 en total). Variante de 50 min (≈49): slide 8 sin comentario extenso (−1), slide 10 solo la idea-fuerza (−1), slides 13 y 14 fundidas en dos paneles sin votación (−2), slide 15 sin pregunta previa (−1), slide 16 solo figura y frase (−1), slide 17 (−1), slide 19 con la pregunta en un minuto (−2), actividad de salida en 3 min (−1). No suprimir la simulación ni el bootstrap: son la única evidencia nueva respecto al laboratorio.
+
+Todas las cifras del deck se calculan al renderizar (fecha de esta versión: 23-09-2026).
+:::
+
+## ¿Cuál de estos tres modelos predecirá mejor los anuncios nuevos? {.table-slide}
+
+&nbsp;
+
+Tres modelos ajustados con los **mismos 300 anuncios** de Valencia predicen $\log(\text{precio})$. El modelo C no usa ningún predictor.
+
+```{python}
+#| echo: false
+#| output: asis
+tabla = hook.copy()
+tabla["RMSE ajuste"] = tabla["RMSE ajuste"].map(lambda v: es(v, 3))
+tabla["Columnas"] = [p, p, 0]
+print(tv.md_table(tabla.reset_index(names="Modelo")))
+```
+
+::: {.key}
+Ordenad A, B y C por error en anuncios **que el modelo no ha visto**. Votad y anotad vuestro orden: la respuesta, con nombres y cifras, llega al final de la sesión.
+:::
+
+:::{.notes}
+Gancho, 3 min. A es MCO, B es ridge, C es la media; no se dice todavía. El orden ingenuo es A < B < C. Quien recuerde la semana 1 dirá que A puede estar sobreajustando y pondrá B primero. Recoger el reparto de votos en la pizarra: se vuelve a él en la slide 21, donde el orden real es B < A < C con las cifras del render.
+
+Diferencia con el gancho de la semana 1: allí se preguntaba por qué el error de ajuste no basta; aquí se pide una predicción cuantitativa que se puede fallar. No dar pistas sobre el número de columnas de A y B más allá de lo que dice la tabla.
+:::
+
+## Tres preguntas {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+1. **¿Por qué puede fallar MCO?** Explicar con la varianza del estimador cuándo se vuelve inestable y por qué con $p+1>n$ no hay solución única.
+2. **¿Qué cambian ridge, lasso y elastic net?** Distinguir contraer de anular, leer una trayectoria de coeficientes y saber por cuál empezar.
+3. **¿Cómo elegimos la penalización y la familia?** Seleccionar en dos niveles con validación cruzada, leer su incertidumbre y saber qué mide el test.
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.callout-note title="El caso de hoy"}
+Airbnb Valencia, los mismos anuncios de la semana 1: precio entre 30 y 400 €/noche, alojamientos enteros y habitaciones. Respuesta: $\log(\text{precio})$.
+:::
+
+::: {.key}
+Más $\lambda$ = menos complejidad. La U del sesgo y la varianza de la semana 1 se lee hoy de derecha a izquierda.
+:::
+:::
+:::
+
+:::{.notes}
+1 min. Las tres preguntas reaparecen literalmente en las portadas de bloque y en la recapitulación. El eje de complejidad de la semana 1 (grado del polinomio, discreto) se sustituye por lambda (continuo) y crece en sentido contrario: conviene decirlo ahora para que las curvas de validación del bloque 3 no despisten.
+:::
+
+## Los datos de hoy: 300 anuncios, `{python} p` columnas, precio en logaritmos {.table-slide .dense}
+
+&nbsp;
+
+| Información conocida al anunciar | Variables (columnas tras codificar) |
+|:--|:--|
+| Localización | Barrio (`{python} n_barrios` columnas, una por barrio presente en la muestra) y distancia al centro |
+| Alojamiento | Tipo (entero / habitación), personas, dormitorios, camas, baños |
+| Condiciones de la oferta | Noches mínimas, disponibilidad anual, superhost |
+| Historial de reseñas | Total, en los últimos 12 meses, por mes y valoración media |
+
+::: {.key}
+`{python} barrios_raros` de los `{python} n_barrios` barrios tienen uno o dos anuncios en la muestra: cada uno es una columna que MCO ajusta con uno o dos datos. Muchas columnas respecto a $n$, y varias muy correlacionadas (personas, camas, dormitorios).
+:::
+
+::: {.source}
+Fuente: Inside Airbnb, Valencia (`listados.csv`, datos del curso). `{python} es(len(datos))` anuncios tras el filtro; `{python} es(len(test))` reservados como test y 300 extraídos del resto para ajustar.
+:::
+
+:::{.notes}
+1,5 min. La muestra de 300 es una decisión pedagógica para que el problema aparezca; con los 5 324 anuncios de desarrollo la regularización apenas cambia nada (slide 9). No se recomienda tirar datos en una aplicación.
+
+Diferencias con la semana 1: se codifica el barrio (85 en la población, 61 presentes en los 300; allí eran 19 distritos) y se añaden dos variables de reseñas correlacionadas con el total. Los barrios se codifican sin categoría de referencia y sin agrupar infrecuentes, como hace glmnet; con penalización, omitir una referencia cambiaría qué se contrae hacia qué. Un barrio que no aparece en los 300 se codifica con ceros en el test (handle_unknown = ignore).
+
+Partición: 30 % de test (semilla 42, la misma que la actividad final de la semana 1); los 300 se extraen del 70 % restante. El test no interviene en ninguna decisión hasta la slide 21.
+
+Detalle técnico: al codificar todas las categorías (los 61 barrios suman uno, y las dos columnas de tipo también), X′X es singular aunque n > p: "MCO" es la solución de norma mínima que devuelve scikit-learn. Para los anuncios cuyo barrio estaba en el ajuste, las predicciones son las mismas con cualquier solución; para los `{python} n_test_barrio_nuevo` anuncios del test de barrios no vistos (codificados con ceros) la predicción sí depende de la solución elegida. Es el mismo diseño que usa el cuaderno del laboratorio. Ridge y elastic net (α < 1) tienen solución única; lasso no necesariamente con columnas exactamente colineales, aunque sus predicciones sí.
+:::
+
+# ¿Por qué puede fallar MCO? {background-color="#447099"}
+
+## MCO es insesgado, pero su varianza crece con la colinealidad y con $p/n$ {.body-callout .dense}
+
+<!-- JUAN: todo lo que se dice está bien PERO combinamos dos cosas: inestabilidad de los coeficientes con OLS no dan una única solución y esto hay que separarlo. La inestabilidad está OK. La idea de alta dimension puede combinar lo que subyace a $\operatorname{Var}(\hat\beta \mid X)=\sigma^2 (X'X)^{-1}$. con 
+las infinitas rectas o planos que podemos ajustar con uno o dos puntos; podriamos hacer un plot (dos puntos que permiten representar infinitos planos?). IMPORTANTE: son dos problemas que se traducen en elevada varianza y que apuntan a una misma solucion: regularizacion  -->
+
+&nbsp;
+
+Con los supuestos del modelo lineal, $\operatorname{Var}(\hat\beta \mid X)=\sigma^2 (X'X)^{-1}$. Para un coeficiente concreto,
+
+$$\operatorname{Var}(\hat\beta_j)=\frac{\sigma^2}{\sum_i (x_{ij}-\bar x_j)^2\,(1-R_j^2)}$$
+
+:::{.columns}
+:::{.column width="48%"}
+$R_j^2$: cuánto explican **las demás columnas** a la columna $j$. Con $R_j^2 = 0{,}9$ la varianza se multiplica por 10.
+
+El denominador crece con $n$ y con la dispersión de $x_j$: un barrio con dos anuncios tiene un denominador diminuto.
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.key}
+Si $p+1>n$, $X'X$ no se puede invertir: hay infinitas soluciones con el mismo ajuste y ninguna razón para preferir una.
+:::
+
+::: {.callout-note title="Lo que ridge cambia"}
+Con $X$ e $y$ centrados, $\hat\beta_R=(X'X+n\lambda I)^{-1}X'y$ existe para todo $\lambda$ positivo. Es sesgado, con menor varianza, y **algún $\lambda$ positivo mejora el error cuadrático medio de $\hat\beta$ respecto a MCO** (Hoerl y Kennard, 1970).
+:::
+:::
+:::
+
+:::{.notes}
+3 min. El teorema de Hoerl y Kennard supone X′X invertible (no cubre el caso p+1>n de la idea-fuerza, aunque ridge sigue existiendo). Es la teoría que en el laboratorio se vio como resultado empírico (la desviación típica de los coeficientes se redujo entre 1,6 y 4 veces con ridge en 30 muestras de 200 trabajadores): aquí está el motivo. El factor 1/(1−R²_j) es el factor de inflación de la varianza. El denominador es (n−1)·s²_j con la varianza muestral, o n·s²_j con divisor n (la de StandardScaler).
+
+La forma cerrada usa la parametrización del deck (½·MSE + (λ/2)Σβ²), de ahí nλ; en scikit-learn Ridge(alpha) minimiza RSS + alpha·Σβ², luego alpha = nλ. El teorema de existencia de Hoerl y Kennard no dice cuál es ese λ: por eso hay que validar (bloque 3).
+
+Con p+1 > n, o con columnas colineales (como las de barrio y tipo en nuestro diseño, que suman uno), un solver devuelve alguna solución (la de norma mínima en scikit-learn); no es "la" solución MCO. Las predicciones son únicas para las combinaciones de columnas vistas en el ajuste. Matiz sobre el ejemplo del barrio con dos anuncios: con todas las categorías codificadas, la columna de un barrio tiene R²_j = 1 (las demás columnas de barrio la determinan) y la fórmula se aplica al diseño con categoría de referencia; la intuición (poca información sobre ese coeficiente) es la misma.
+:::
+
+## MCO es insesgado; Ridge introduce sesgo, pero reduce la variabilidad {.fig-wide}
+
+<!-- JUAN: Está bien pero se podría buscar un resultado más exagerado n=30? Ahora mismo apenas se aprecia el sesgo de Ridge e imagino que reducir el tamaño aumentará el sesgo  -->
+
+```{python}
+#| code-summary: "Código: simulación con beta conocido, 100 réplicas de MCO y ridge"
+#| fig-alt: "Diagramas de caja de ocho coeficientes estimados en 100 réplicas simuladas con n = 40 y p = 20 predictores correlacionados. Las cajas de MCO son anchas y las de ridge estrechas y algo desplazadas hacia cero; el valor verdadero de cada coeficiente se marca con una línea."
+mostrar = [0, 1, 5, 6, 10, 11, 15, 16]
+fig, ax = plt.subplots(figsize=(16, 6.5))
+for k, j in enumerate(mostrar):
+    for desplaza, name, color in [(-0.2, "MCO", tv.NAVY), (0.2, "Ridge", tv.BLUE)]:
+        ax.boxplot(sim_coef[name][:, j], positions=[k + desplaza], widths=0.34, patch_artist=True,
+                   showfliers=False, boxprops=dict(facecolor=color, edgecolor=color, alpha=0.85),
+                   medianprops=dict(color="white", lw=2), whiskerprops=dict(color=color, lw=2),
+                   capprops=dict(color=color, lw=2))
+    ax.plot([k - 0.42, k + 0.42], [beta_true[j]] * 2, color=tv.TERRACOTTA, lw=3, zorder=4)
+ax.axhline(0, color=tv.GRAY, lw=1)
+ax.set_xticks(range(len(mostrar)), [f"β{j + 1} = {es(beta_true[j], 1)}" for j in mostrar])
+ax.set_ylabel("coeficiente estimado")
+ax.set_title(f"n = {N_SIM}, p = {P_SIM}, correlación {es(RHO, 1)} dentro de cada bloque de 5 predictores; "
+             f"ridge con λ = {es(LAM_SIM, 1)}")
+ax.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=tv.NAVY), plt.Rectangle((0, 0), 1, 1, color=tv.BLUE),
+                   plt.Line2D([], [], color=tv.TERRACOTTA, lw=3)],
+          labels=["MCO", "Ridge", "valor verdadero"], frameon=False, loc="upper right", ncols=3)
+fig.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+Error cuadrático medio de los coeficientes: MCO `{python} es(ecm_sim["MCO"], 3)`, ridge `{python} es(ecm_sim["Ridge"], 3)`. **Ridge acepta sesgo (sus cajas quedan por debajo de la línea cuando β ≠ 0) a cambio de mucha menos varianza.**
+:::
+
+:::{.notes}
+4 min. Simulación primero: conocemos β y vemos el mecanismo sin ruido de interpretación. 100 muestras de 40 observaciones con 20 predictores en 4 bloques correlacionados (0,9 dentro de cada bloque). β = 1 en el primer bloque, 0,5 en el segundo, 0 en los otros dos.
+
+Lectura: las cajas de MCO se centran en el valor verdadero (insesgado) pero son anchas, igual en todos los bloques (la varianza de MCO no depende de β). Las de ridge se desplazan hacia cero cuando β ≠ 0 (sesgo) y son estrechas. El ECM de los coeficientes cae de `{python} es(ecm_sim["MCO"], 3)` a `{python} es(ecm_sim["Ridge"], 3)`. El λ está fijado a mano (0,5): en el bloque 3 se elige por validación.
+
+Enlace con el laboratorio: es la versión con β conocido de los diagramas de caja de 30 muestras de 200 trabajadores (cuaderno 2, sección 3.2). Allí no sabíamos el valor verdadero; aquí sí, y por eso se ve el sesgo.
+
+Variante de 50 min: mostrar la figura y leer el pie, sin preguntar.
+:::
+
+## ¿Cuándo deja de ser útil regularizar? {.fig-wide}
+
+<!-- JUAN: la idea es simple: a mayor n menor ventaja de Ridge. POR CIERTO, hablas de la predicción en la media pero no se visualiza en el plot. Además el eje de la y se indica RMSE (log del precio) pero me da la impresión (por las etiquetas en el eje)  que estamos usando MSE del precio (verificar este extremo) -->
+
+```{python}
+#| code-summary: "Código: error de validación de MCO, ridge y la media según el tamaño de entrenamiento"
+#| fig-alt: "RMSE de validación de MCO, ridge y la media al ajustar con 150, 300, 1000 y 2500 anuncios. Con 150 anuncios MCO es peor que predecir la media; ridge es mejor desde el principio; con 2500 las dos curvas casi coinciden."
+fig, ax = plt.subplots(figsize=(16, 6.5))
+for name in ["Media", "MCO", "Ridge"]:
+    s = learning.loc[learning.Modelo.eq(name)].groupby("n").RMSE.agg(["median", "min", "max"])
+    ax.plot(s.index, s["median"], "o-", color=colors[name], lw=2.5, label=name)
+    ax.fill_between(s.index, s["min"], s["max"], color=colors[name], alpha=0.15)
+ax.set_xscale("log")
+ax.set_xticks([150, 300, 1000, 2500], ["150", "300", "1 000", "2 500"])
+ax.set(xlabel="anuncios utilizados para ajustar", ylabel="RMSE de validación (log precio)")
+n150 = learning.loc[learning.n.eq(150)].groupby("Modelo").RMSE.median()
+texto_150 = ("con 150 anuncios, MCO es peor\nque no usar ningún predictor" if n150["MCO"] > n150["Media"]
+             else "con 150 anuncios, MCO apenas\nmejora a no usar ningún predictor")
+ax.annotate(texto_150, xy=(150, n150["MCO"]), xytext=(210, n150["MCO"] + 0.03), fontsize=15, color=tv.NAVY,
+            arrowprops=dict(arrowstyle="-|>", color=tv.NAVY))
+eje_coma(ax.yaxis, 2)
+ax.legend(frameon=False, loc="center right")
+fig.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+Mediana y rango de cinco submuestras; $\lambda$ de ridge se vuelve a elegir por validación en cada una. **La regularización es un seguro contra la varianza: vale mucho con pocos datos por columna y casi nada cuando sobran.**
+:::
+
+:::{.notes}
+3 min. Antes de mostrar la figura, pedir una predicción: ¿a partir de qué n dejan de distinguirse? (la mayoría dirá un número más alto que el real). Validación interna al desarrollo: un 25 % del desarrollo hace de validación fija; las submuestras anidadas salen del 75 % restante, con cinco semillas. El test no interviene.
+
+Lectura (cifras del render del 23-09-2026): con 150 anuncios (y unos 60 barrios como columnas) MCO tiene más error que predecir la media; ridge ya gana. La anotación de la figura se adapta si al volver a renderizar cambia ese resultado. Con 300, ridge gana claramente; con 2 500, las curvas se juntan. Es la frase del laboratorio ("un seguro contra la varianza") con la curva completa. El rango es el mínimo-máximo de cinco muestras, no un intervalo de confianza.
+:::
+
+## Regularizar restringe la complejidad efectiva dentro de una misma clase; $\lambda$ la controla de forma continua {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+Un modelo predictivo se elige en dos pasos:
+
+1. **La clase de funciones**: lineal, árbol, red…
+2. **Cuánta de esa clase usamos**: el grado del polinomio, la profundidad del árbol o, en un modelo lineal, $\lambda$.
+
+Regularizar es el segundo paso: la clase sigue siendo lineal, pero el conjunto de modelos que realmente puede alcanzar se estrecha al crecer $\lambda$.
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.callout-note title="Dos niveles de decisión"}
+Elegir $\lambda$ **dentro** de una familia y elegir la familia **entre** candidatas. Las dos decisiones se toman con datos de validación (bloque 3).
+:::
+
+::: {.key}
+El grado era un control discreto; $\lambda$ es continuo. Más $\lambda$, menos complejidad efectiva.
+:::
+:::
+:::
+
+:::{.notes}
+2 min. Marco común que atraviesa los temas 3 a 6: en cada familia hay un hiperparámetro que estrecha la clase (ver la tabla "Controlar la complejidad" de la semana 1). Distinguir clase de funciones (paso 1) de complejidad efectiva (paso 2): un modelo lineal con λ grande sigue siendo lineal, pero se comporta casi como una constante.
+
+Variante de 50 min: 1 min, solo la idea-fuerza.
+:::
+
+# ¿Qué cambian ridge, lasso y elastic net? {background-color="#447099"}
+
+## Tres penalizaciones, una misma idea: minimizar $\tfrac{1}{2}\text{MSE}(\beta)+\lambda\cdot\text{penalización}$ {.table-slide .dense}
+
+<!-- JUAN: complejo. Título excesivo. Tabla con mucho detalle matemático. Prefiero mi versión anterior con RSS + penalizacion. Además, no hace falta comparar con glmnet. Sí es apropiado señalar que hablamos de lambda cuando en sklearn veran alpha. Finalmente: eliminar la referencia  -->
+
+&nbsp;
+
+::: {tbl-colwidths="[16,36,36,12]"}
+| Familia | Forma penalizada | Forma restringida (presupuesto $s$) | Ceros exactos |
+|:--|:--|:--|:--:|
+| Ridge | $\tfrac{1}{2}\text{MSE}+\tfrac{\lambda}{2}\sum_j\beta_j^2$ | $\min \text{MSE}$ s.a. $\sum_j\beta_j^2\le s$ | No |
+| Lasso | $\tfrac{1}{2}\text{MSE}+\lambda\sum_j\lvert\beta_j\rvert$ | $\min \text{MSE}$ s.a. $\sum_j\lvert\beta_j\rvert\le s$ | Sí |
+| Elastic net | $\tfrac{1}{2}\text{MSE}+\lambda\big[\alpha\sum_j\lvert\beta_j\rvert+\tfrac{1-\alpha}{2}\sum_j\beta_j^2\big]$ | $\min \text{MSE}$ s.a. $\alpha\sum_j\lvert\beta_j\rvert+\tfrac{1-\alpha}{2}\sum_j\beta_j^2\le s$ | Sí, si $\alpha>0$ |
+:::
+
+Mayor $\lambda$ equivale a menor presupuesto $s$ (Tibshirani, 1996). Con predictores centrados, $\hat\beta_0=\bar y$: el intercepto no se penaliza. La penalización depende de la escala (MCO no): se estandarizan las numéricas, y se aprende **solo con entrenamiento**, también dentro de cada partición de validación.
+
+::: {.key}
+Nombres. Aquí y en `glmnet`: `lambda` = $\lambda$, `alpha` = $\alpha$ (mezcla). En scikit-learn: `Lasso.alpha` = `ElasticNet.alpha` = $\lambda$, `l1_ratio` = $\alpha$ y `Ridge.alpha` = $n\lambda$. El $\alpha$ de hoy no es la tasa de aprendizaje de la semana 1.
+:::
+
+:::{.notes}
+4 min. Una sola slide para las tres fórmulas, en la notación de glmnet (½·MSE en vez de RSS: λ no depende de n y se puede comparar entre particiones y tamaños; ISLR y el cuaderno del laboratorio escriben RSS + λ·pen, que es el mismo problema con λ multiplicada por 2n en lasso y por n en ridge, por el ½ de la parte L2). La forma restringida es la que da sentido a la figura de la slide 14. Con α = 1 se recupera lasso y con α = 0, ridge.
+
+Ridge en scikit-learn minimiza RSS + alpha·Σβ², de ahí alpha = nλ; en el laboratorio se dijo que el alpha de Ridge y el de Lasso no son comparables: este es el motivo. glmnet estandariza también y en la familia gaussiana, así que sus λ tampoco coinciden numéricamente con los de scikit-learn.
+
+Escala: las predicciones de MCO no cambian si un predictor pasa de metros a kilómetros (el coeficiente se reescala); las de un modelo penalizado sí, porque el castigo actúa sobre el tamaño del coeficiente. Es el segundo motivo para estandarizar (el primero, en la semana 1, era la optimización). Las columnas de barrio y tipo son 0/1 y no se estandarizan aquí (misma práctica que el laboratorio; glmnet las estandariza): un barrio raro tiene una desviación típica pequeña y, por unidad de efecto, recibe más castigo que una numérica estandarizada. Por eso las columnas de barrio son las primeras en apagarse en la slide 15.
+:::
+
+## Ridge divide; LASSO resta y trunca {.fig-side}
+
+<!--JUAN: Me gusta mucho la slide y el gráfico pero no sé si se trata de una versión demasiado restringida, necesitamos ortogonalidad; si podemos justificar que en caso de no ortogonaliadad el funcionamiento se desvia (no tanto) entonces vale; sino, evaluar la pertinencia de mantenerla-->
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: las dos funciones de contracción"
+#| fig-alt: "Coeficiente penalizado frente a coeficiente de mínimos cuadrados. La recta de ridge tiene pendiente menor que uno y pasa por el origen; la de lasso es cero en una franja alrededor del origen y después paralela a la identidad, desplazada."
+lam_fig = 1.0
+b = np.linspace(-3.5, 3.5, 400)
+fig, ax = plt.subplots(figsize=(9, 6.8))
+ax.plot(b, b, color=tv.GRAY, lw=1.5, ls="--", label="MCO (sin penalizar)")
+ax.plot(b, b / (1 + lam_fig), color=tv.BLUE, lw=3, label="ridge: divide entre 1 + λ")
+ax.plot(b, np.sign(b) * np.maximum(np.abs(b) - lam_fig, 0), color=tv.TERRACOTTA, lw=3,
+        label="lasso: resta λ y trunca en cero")
+ax.axhline(0, color=tv.GRAY, lw=0.8)
+ax.axvline(0, color=tv.GRAY, lw=0.8)
+ax.axvspan(-lam_fig, lam_fig, color=tv.TERRACOTTA, alpha=0.08)
+ax.annotate("zona en la que lasso\ndevuelve exactamente 0", xy=(0, -0.15), xytext=(0.2, -2.4),
+            ha="left", fontsize=14, color=tv.TERRACOTTA, arrowprops=dict(arrowstyle="-|>", color=tv.TERRACOTTA))
+ax.set(xlabel="coeficiente MCO", ylabel="coeficiente penalizado", title=f"λ = {es(lam_fig, 1)}",
+       xlim=(-3.5, 3.5), ylim=(-3.5, 3.5), aspect="equal")
+ax.legend(frameon=False, loc="upper left", fontsize=13)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+Si $X'X = nI$, cada coeficiente se resuelve por separado:
+
+$$\hat\beta^{R}_j=\frac{\hat\beta_j}{1+\lambda},\qquad \hat\beta^{L}_j=\operatorname{signo}(\hat\beta_j)\,(\lvert\hat\beta_j\rvert-\lambda)_+$$
+
+::: {.panel-tabset}
+
+
+### Para pensar
+
+Con $\lambda$ pequeño, ¿cuál de las dos fórmulas puede anular un coeficiente? ¿Y qué le pasa a un coeficiente grande en cada una?
+
+### Respuesta
+
+Solo lasso: anula todo coeficiente MCO menor que $\lambda$ en valor absoluto, por pequeña que sea $\lambda$. A un coeficiente grande, ridge le quita una **proporción** fija y lasso una **cantidad** fija.
+
+:::
+:::
+:::
+
+:::{.notes}
+3 min. Es la explicación más corta de los ceros de lasso: el umbral suave. Con predictores incorrelados, ridge contrae todos los coeficientes en la misma proporción 1/(1+λ) (no "especialmente los grandes"); lasso resta λ a todos y anula los que no llegan. Con predictores correlacionados las fórmulas ya no son exactas, pero el patrón se mantiene: ridge contrae más las direcciones de poca varianza (las colineales), lasso sigue produciendo ceros.
+
+Votación de 1-2 min sobre la pregunta; desvelar la pestaña. Error frecuente: pensar que ridge acaba anulando coeficientes si λ es grande (se acercan a cero, no llegan).
+
+Variante de 50 min: fundir con la slide siguiente (dos paneles, sin pregunta).
+:::
+
+## La geometría de Lasso genera coeficientes nulos {.fig-wide}
+
+```{python}
+#| code-summary: "Código: geometría de ridge y lasso con dos predictores reales, misma elipse de error"
+#| fig-alt: "Dos paneles con los contornos del error de ajuste usando personas y dormitorios como predictores. A la izquierda, la región circular de ridge; a la derecha, el rombo de lasso. La misma elipse de error es tangente a las dos regiones; en el rombo el punto de contacto está sobre un eje, con un coeficiente exactamente nulo."
+lim = np.abs(b_ols2).max() * 1.6
+a1, a2 = np.meshgrid(np.linspace(-lim * 0.35, lim, 240), np.linspace(-lim * 0.35, lim, 240))
+loss = .5 * (G[0, 0] * a1 * a1 + 2 * G[0, 1] * a1 * a2 + G[1, 1] * a2 * a2) - h[0] * a1 - h[1] * a2 + .5 * np.mean(yg ** 2)
+minimo = rss2(b_ols2)
+fig, axes = plt.subplots(1, 2, figsize=(16, 6.5))
+for ax, name, beta, color in zip(axes, ["Ridge: círculo", "Lasso: rombo"], [b_ridge2, b_lasso2], [tv.BLUE, tv.TERRACOTTA]):
+    ax.contour(a1, a2, loss, levels=np.linspace(minimo + 1e-4, loss.max(), 10), colors=tv.GRAY, alpha=.45)
+    ax.contour(a1, a2, loss, levels=[objetivo], colors=tv.NAVY, linewidths=2.5)
+    if name.startswith("Ridge"):
+        ang = np.linspace(0, 2 * np.pi, 240)
+        r = np.linalg.norm(beta)
+        ax.fill(r * np.cos(ang), r * np.sin(ang), color=color, alpha=.22)
+    else:
+        r = np.abs(beta).sum()
+        ax.fill([r, 0, -r, 0], [0, r, 0, -r], color=color, alpha=.22)
+    ax.scatter(*b_ols2, marker="x", color=tv.NAVY, s=110, zorder=5, label="MCO")
+    ax.scatter(*beta, color=color, s=90, zorder=5, label="solución penalizada")
+    ax.axhline(0, color=tv.GRAY, lw=.7)
+    ax.axvline(0, color=tv.GRAY, lw=.7)
+    ax.set(title=name, xlabel="coeficiente: personas", ylabel="coeficiente: dormitorios",
+           xlim=(-lim * 0.35, lim), ylim=(-lim * 0.35, lim), aspect="equal")
+    eje_coma(ax.xaxis, 1)
+    eje_coma(ax.yaxis, 1)
+    ax.legend(frameon=False, loc="upper left", fontsize=13)
+axes[0].annotate("misma elipse de error\nen los dos paneles", xy=(b_ridge2[0], b_ridge2[1]),
+                 xytext=(lim * 0.42, lim * 0.62), fontsize=14, color=tv.NAVY,
+                 arrowprops=dict(arrowstyle="-|>", color=tv.NAVY))
+axes[1].annotate("contacto sobre el eje:\ndormitorios = 0", xy=(b_lasso2[0], b_lasso2[1]),
+                 xytext=(lim * 0.42, lim * 0.62), fontsize=14, color=tv.TERRACOTTA,
+                 arrowprops=dict(arrowstyle="-|>", color=tv.TERRACOTTA))
+fig.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+Contornos calculados con los 300 anuncios y dos predictores estandarizados. **Si MCO queda fuera de la región, la solución es el primer contacto entre la elipse y la región: en el rombo, a menudo una esquina (y con más predictores, con más frecuencia).**
+:::
+
+:::{.notes}
+3 min. La forma restringida de la slide 12 dibujada: cada región es el presupuesto s y la elipse el nivel de error. Se han elegido λ distintas para ridge y lasso de modo que la solución penalizada tenga el mismo error de ajuste en los dos paneles (misma elipse): así lo único que cambia es la forma de la región. Personas y dormitorios están correlacionados (`{python} es(corr_personas_dorm, 2)` en la muestra), por eso la elipse está inclinada; con estos dos predictores solos, MCO ya da casi todo a personas y algo negativo a dormitorios, así que el ejemplo enseña el mecanismo del contacto más que la fuerza de las esquinas.
+
+Lasso deja dormitorios exactamente en cero; ridge reparte algo. Anticipa la slide 16. X e y estandarizados para dibujar; el resto del deck predice en log-euros.
+:::
+
+## En Airbnb, ridge encoge todos los coeficientes y lasso anula `{python} int(p - results.loc["Lasso", "Coef. activos"])` de los `{python} p` {.table-fig}
+
+```{python}
+#| code-summary: "Código: trayectorias de coeficientes de las tres familias con eje común lambda"
+#| fig-alt: "Tres paneles con las trayectorias de los coeficientes de ridge, lasso y elastic net frente a lambda, con cinco coeficientes destacados con nombre (personas, alojamiento entero, dormitorios, distancia al centro, noches mínimas) y una línea vertical en la lambda elegida por validación cruzada."
+destacar = ["num__accommodates", "cat__room_type_Entire home/apt", "num__bedrooms", "num__dist_km", "num__minimum_nights"]
+paleta = [tv.BLUE, tv.TERRACOTTA, tv.SAGE, tv.GOLD, tv.NAVY]
+idx = {f: i for i, f in enumerate(feature_names)}
+fig, axes = plt.subplots(1, 3, figsize=(16, 5.6), sharey=True)
+for ax, name in zip(axes, ["Ridge", "Lasso", "Elastic net"]):
+    lam, P = lam_axis[name], paths[name]
+    for j in range(P.shape[1]):
+        ax.plot(lam, P[:, j], color=tv.GRAY, lw=0.7, alpha=0.35)
+    for f, color in zip(destacar, paleta):
+        ax.plot(lam, P[:, idx[f]], color=color, lw=2.6, label=etiquetas[f])
+    ax.axvline(lam_cv[name], color=tv.TERRACOTTA, lw=2, ls="--")
+    activos = int((np.abs(P[np.argmin(np.abs(lam - lam_cv[name]))]) > 1e-8).sum())
+    ax.text(lam_cv[name], 0.97, f" λ de CV\n {activos} activas", transform=ax.get_xaxis_transform(),
+            fontsize=13, color=tv.TERRACOTTA, va="top")
+    ax.axhline(0, color=tv.NAVY, lw=0.8)
+    ax.set_xscale("log")
+    ax.set_title(name + (f" (α = {es(mix_cv, 1)})" if name == "Elastic net" else ""))
+    eje_coma(ax.yaxis, 2)
+    ax.set_xlabel("λ (escala log)")
+axes[0].set_ylabel("coeficiente (log precio)")
+axes[0].legend(frameon=False, fontsize=12, loc="lower left")
+fig.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+`{python} p` columnas; en gris, el resto (sobre todo barrios). **Ridge no anula ninguna; lasso conserva `{python} int(results.loc["Lasso", "Coef. activos"])` con la $\lambda$ de validación; elastic net, con la mezcla elegida por validación, `{python} int(results.loc["Elastic net", "Coef. activos"])`.**
+:::
+
+:::{.notes}
+5 min. Antes de mostrar: "¿cuántas de las 75 columnas creéis que conserva lasso con la λ que elija la validación?" (votación rápida; la mayoría dirá muchas más). Los tres paneles comparten el eje λ en la escala de glmnet (para ridge, λ = alpha/n). Las líneas grises son en su mayoría barrios: son las que MCO ajusta con uno o dos anuncios y las primeras que se apagan.
+
+Lectura: personas y alojamiento entero son los dos coeficientes que sobreviven en todas las familias. Dormitorios (correlacionado `{python} es(corr_personas_dorm, 2)` con personas) desaparece pronto. Con λ máxima todos llegan a cero: se predice la media. Las columnas 0/1 no se estandarizan, y por eso los barrios raros se apagan antes (ver notas de la slide 12).
+
+Las trayectorias se calculan sobre el diseño transformado de los 300 anuncios; son ajustes para ver el mecanismo, no errores fuera de muestra. El panel de elastic net usa la mezcla elegida por validación (`{python} es(mix_cv, 1)`); la λ marcada y el recuento de activas son los del modelo seleccionado en la slide 21. Con columnas exactamente colineales (las dos de tipo) la solución de lasso no es única: qué columna conserva depende del algoritmo.
+:::
+
+## Elastic net mantiene juntas las columnas casi idénticas; lasso se queda con una {.fig-side .dense}
+
+<!-- JUAN: tal como está no veo la utilidad de esta slide. El texto es extenso (sería ok algo sintentizado y usando bullets; pero además no se observa qué se pretende (por lo menos yo no lo veo). Si la idea es la selección de variables en LASSO , que tiene sentido, no veo que se consiga mucho, quizá mejor comparar con ridge. Ya hemos dicho que enet puede seleccionar siempre que incluya mezcla lasso--> 
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: frecuencia de selección en 50 remuestras bootstrap"
+#| fig-alt: "Barras horizontales con la frecuencia con la que lasso y elastic net conservan cada variable en 50 remuestras bootstrap de los 300 anuncios, con la misma parte L1. Con las dos columnas de tipo de alojamiento, lasso se queda con una y elastic net con las dos; en el resto de variables las frecuencias son parecidas."
+grupo = ["num__accommodates", "num__bedrooms", "num__beds", "num__bathrooms",
+         "cat__room_type_Entire home/apt", "cat__room_type_Private room"]
+fr = frecuencia.loc[grupo]
+fig, ax = plt.subplots(figsize=(9, 6.8))
+pos = np.arange(len(grupo))
+for desplaza, name, color in [(0.2, "Lasso", tv.TERRACOTTA), (-0.2, "Elastic net (α = 0,5)", tv.SAGE)]:
+    barras = ax.barh(pos + desplaza, fr[name], height=0.38, color=color, label=name)
+    for bb, v in zip(barras, fr[name]):
+        ax.text(min(v + 0.02, 0.9), bb.get_y() + bb.get_height() / 2, f"{v:.0%}", va="center", fontsize=13, color=tv.NAVY)
+ax.set_yticks(pos, [etiquetas[g] for g in grupo])
+ax.invert_yaxis()
+ax.set_xlim(0, 1.08)
+ax.set_xlabel("remuestras en las que la variable sigue activa")
+eje_coma(ax.xaxis, 1)
+ax.grid(axis="y", visible=False)
+ax.legend(frameon=False, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncols=2, fontsize=13)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+Misma parte L1 ($\lambda\alpha$ = `{python} es(lam_sel, 3)`) en las dos familias; elastic net añade la parte L2.
+
+Las dos columnas de tipo de alojamiento suman uno en cada fila: lasso se queda con una (cuál, es arbitrario) y elastic net mantiene las dos con coeficientes opuestos: el **efecto de agrupación** (Zou y Hastie, 2005).
+
+Con personas, dormitorios y camas (correlación `{python} es(corr_personas_dorm, 1)`) las frecuencias apenas cambian: el efecto aparece cuando las columnas son casi idénticas.
+
+::: {.key}
+La lista de lasso cambia de una muestra a otra. Un cero no es ausencia de relación ni de causa (tema 7).
+:::
+:::
+:::
+
+:::{.notes}
+3 min. Evidencia de que la selección depende de la muestra: 50 remuestras bootstrap de los 300 anuncios. Para aislar la mezcla se iguala la parte L1 de las dos familias (λ·α = la λ elegida por validación para lasso; en elastic net, alpha = λ/0,5 con l1_ratio = 0,5) y elastic net añade la parte L2. Es una ilustración del mecanismo, no el modelo elegido en CV (que fija mezcla e intensidad a la vez, slide 21).
+
+Lectura: con columnas exactamente colineales (entero + habitación = 1), lasso se queda con una (cuál, lo decide el algoritmo: la solución no es única) y elastic net con las dos, con coeficientes de signo opuesto. Con el grupo de capacidad (correlación 0,7), las frecuencias de dormitorios y camas apenas cambian entre familias: el teorema de Zou y Hastie habla de predictores casi idénticos. Las frecuencias de personas, baños o noches mínimas muestran además cuánto cambia la lista de una remuestra a otra. Si el objetivo es una lista corta e interpretable, hay que decir que es una lista entre varias posibles. Frecuencias de selección: Meinshausen y Bühlmann (2010).
+
+Variante de 50 min: figura y frase, sin discusión (2 min).
+:::
+
+## Ninguna familia gana por definición, pero hay por dónde empezar {.table-slide .dense}
+
+&nbsp;
+
+::: {tbl-colwidths="[15,25,20,40]"}
+| Familia | Penalización | Ceros exactos | Suele convenir cuando… |
+|:--|:--|:--|:--|
+| Ridge | Cuadrados (L2) | No | Muchos efectos pequeños; predictores muy correlacionados; se quiere estabilidad, no selección |
+| Lasso | Valores absolutos (L1) | Sí | Pocos efectos grandes entre muchas columnas; se quiere una lista corta |
+| Elastic net | Mezcla L1 y L2 | Sí, si $\alpha>0$ | Grupos de predictores correlacionados; $p>n$; se quiere seleccionar sin perder grupos |
+:::
+
+::: {.key}
+El criterio ordena las candidatas; la validación decide. Y la calidad de la decisión depende de la señal y de $n$ (ISLR §6.2; Hastie, Tibshirani y Tibshirani, 2020).
+:::
+
+:::{.notes}
+2 min. Cierre del bloque 2. Los tres criterios son orientaciones: con señal débil o n pequeño la validación no distingue entre familias (se ve en la slide 20). Lasso con p > n selecciona como máximo n columnas; elastic net no tiene ese límite (Zou y Hastie, 2005).
+
+Variante de 50 min: 1 min.
+:::
+
+# ¿Cómo elegimos la penalización y la familia? {background-color="#447099"}
+
+## Dos niveles de selección: $\lambda$ (y $\alpha$) dentro de cada familia, la familia entre candidatas; el test no interviene {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+1. **Ajuste**: estimar $\beta$ con los datos de entrenamiento, con el preprocesado aprendido en cada partición.
+2. **Selección**: validación cruzada de 5 particiones sobre los 300 anuncios. Dentro de cada familia, la mejor $\lambda$ (y $\alpha$); entre familias, la de menor error medio.
+3. **Test**: `{python} es(len(test))` anuncios reservados desde el principio, una sola vez, con la decisión ya tomada.
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.panel-tabset}
+
+### Para pensar
+
+Hemos probado 25 valores de $\lambda$ para lasso, 25 para ridge y 75 combinaciones para elastic net, y nos quedamos con la mejor CV. ¿Es ese error una estimación honesta del error futuro del modelo elegido? ¿Hacia dónde se desvía?
+
+### Respuesta
+
+No del todo: al elegir el mínimo entre muchas candidatas, el error de validación del ganador es **optimista** (es un mínimo de valores con ruido). Por eso el test se reserva. Con muchas candidatas, la validación cruzada anidada estima sin ese sesgo el error del procedimiento completo de selección; aquí basta con saber que el sesgo existe.
+
+:::
+:::
+:::
+
+:::{.notes}
+3 min. La misma regla de la semana 1 (validar para elegir, probar para evaluar) con dos niveles explícitos, como en el curso inglés: hiperparámetro dentro de la familia y familia entre candidatas. GridSearchCV hace el primero; comparar los cinco RMSE de validación, el segundo. La regla de decisión (menor RMSE de validación) se fija antes de mirar la tabla.
+
+Discusión de 2-3 min sobre la pregunta; desvelar la pestaña. Enlace con el laboratorio: RidgeCV y LassoCV hacen la búsqueda dentro de la familia; con el Pipeline entero, GridSearchCV (se desarrolla en el tema 2).
+
+Variante de 50 min: pregunta y respuesta en 1 min.
+:::
+
+## La validación elige, pero entre ridge, lasso y elastic net las diferencias son del orden de su error típico {.fig-wide}
+
+<!-- JUAN: El código devuelve error en la slide ejecutada pero no puedo copiarlo todo; quiza si se incluye un scroll vertical sería posible. Hasta donde puedo copiar:
+`ValueError                                Traceback (most recent call last)
+File ~/anaconda3/lib/python3.11/site-packages/IPython/core/formatters.py:402, in BaseFormatter.__call__(self, obj)
+    400     pass
+    401 else:
+-> 402     return printer(obj)
+    403 # Finally look for special method names
+    404 method = get_real_method(obj, self.print_method)
+
+File ~/anaconda3/lib/python3.11/site-packages/IPython/core/pylabtools.py:170, in print_figure(fig, fmt, bbox_inches, base64, **kwargs)
+    167     from matplotlib.backend_bases import FigureCanvasBase
+    168     FigureCanvasBase(fig)
+-> 170 fig.canvas.print_figure(bytes_io, **kw)
+    171 data = bytes_io.getvalue()
+    172 if fmt == 'svg':
+
+File ~/anaconda3/lib/python3.11/site-packages/matplotlib/backend_bases.py:2204, in FigureCanvasBase.print_figure(self, filename, dpi, facecolor, edgecolor, orientation, format, bbox_inches, pad_inches, bbox_extra_artists, backend, **kwargs)
+   2200 try:
+   2201     # _get_renderer may change the figure dpi (as vector formats
+   2202     # force the figure dpi to 72), so we need to set it again here.
+   2203     with cbook._setattr_cm(self.figure, dpi=dpi):
+-> 2204         result = print_method(
+   2205             filename,
+   2206             facecolor=facecolor,
+   2207             edgecolor=edgecolor,
+   2208             orientation=orientation,
+   2209             bbox_inches_restore=_bbox_inches_restore,
+   2210             **kwargs)
+   2211 finally:
+   2212     if bbox_inches and restore_bbox:
+
+File ~/anaconda3/lib/python3.11/site-packages/matplotlib/backend_bases.py:2054, in FigureCanvasBase._switch_canvas_and_return_print_method.<locals>.<lambda>(*args, **kwargs)
+   2050     optional_kws = {  # Passed by print_figure for other renderers.
+   2051         "dpi", "facecolor", "edgecolor", "orientation",
+   2052         "bbox_inches_restore"}
+   2053     skip = optional_kws - {*inspect.signature(meth).parameters}
+-> 2054     print_method = functools.wraps(meth)(lambda *args, **kwargs: meth(
+   2055         *args, **{k: v for k, v in kwargs.items() if k not in skip}))
+   2056 else:  # Let third-parties do as they see fit. 
+-->
+
+```{python}
+#| code-summary: "Código: curvas de validación con error típico entre particiones"
+#| fig-alt: "Tres paneles con el RMSE medio de validación cruzada frente a lambda para ridge, lasso y elastic net, con barras de error típico y el mínimo marcado. Líneas horizontales de referencia: MCO y la media. Los tres mínimos están a la misma altura dentro del error."
+fig, axes = plt.subplots(1, 3, figsize=(16, 5.8), sharey=True)
+for ax, name in zip(axes, ["Ridge", "Lasso", "Elastic net"]):
+    fr = pd.DataFrame(searches[name].cv_results_)
+    escala = N_TRAIN if name == "Ridge" else 1
+    if name != "Elastic net":
+        fr = fr.assign(lam=fr.param_model__alpha.astype(float) / escala)
+        sub = [(fr, colors[name], None)]
+    else:
+        fr = fr.assign(lam=fr.param_model__alpha.astype(float))
+        sub = [(fr.loc[fr.param_model__l1_ratio.eq(r)], c, f"α = {es(r, 1)}")
+               for r, c in zip([.1, .5, .9], [tv.BLUE, tv.SAGE, tv.TERRACOTTA])]
+    for frame, color, label in sub:
+        rmse = np.sqrt(-frame.mean_test_score)
+        ee = [ee_cv(searches[name], k) for k in frame.index]      # misma función que la tabla de la slide 21
+        ax.errorbar(frame.lam, rmse, yerr=ee, fmt="o-", ms=4, color=color, lw=2, capsize=2, label=label)
+    ax.scatter([lam_cv[name]], [results.loc[name, "RMSE CV"]], s=160, color=tv.TERRACOTTA, zorder=5)
+    ax.axhline(results.loc["MCO", "RMSE CV"], color=tv.NAVY, ls="--", lw=1.5)
+    ax.axhline(results.loc["Media", "RMSE CV"], color=tv.GRAY, ls=":", lw=1.5)
+    ax.set_xscale("log")
+    ax.set(title=name, xlabel="λ (escala log)")
+    if label:
+        ax.legend(frameon=False, fontsize=12, loc="lower left")
+    ax.set_ylim(0.385, 0.6)
+    eje_coma(ax.yaxis, 2)
+axes[0].set_ylabel("RMSE de validación (log precio)")
+axes[0].text(axes[0].get_xlim()[0] * 1.5, results.loc["MCO", "RMSE CV"] + 0.008, "MCO", color=tv.NAVY, fontsize=13)
+axes[0].text(axes[0].get_xlim()[0] * 1.5, results.loc["Media", "RMSE CV"] + 0.008, "media", color=tv.GRAY, fontsize=13)
+fig.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+Barras: ± un error típico entre las cinco particiones. **Penalizar demasiado lleva a la media; demasiado poco, a MCO.** Diferencia emparejada por partición: ridge − lasso `{python} es(dif_ridge_lasso, 3)` ± `{python} es(ee_ridge_lasso, 3)`; lasso − elastic net `{python} es(dif_lasso_en, 3)` ± `{python} es(ee_lasso_en, 3)`. **Con 300 anuncios, la validación no distingue entre las tres familias.**
+:::
+
+:::{.notes}
+4 min. Tres lecturas: (1) la forma en U, invertida respecto a la semana 1 porque λ crece hacia la derecha; (2) ridge, lasso y elastic net tocan fondo casi a la misma altura, muy por debajo de MCO (que aquí es peor que varias de las penalizaciones grandes) y de la media; (3) la diferencia entre mínimos (centésimas entre ridge y lasso, milésimas entre lasso y elastic net) es del tamaño de su error típico: elegir entre ellas por esa diferencia no está justificado por estos datos.
+
+El error típico de cada punto es la desviación típica del RMSE entre las cinco particiones dividida por raíz de 5 (la misma función que la tabla de la slide 21). Como las cinco particiones son las mismas para todas las familias, la comparación correcta es la diferencia emparejada por partición, que es la que da el pie. Las particiones no son independientes, así que estos errores típicos son orientativos y algo optimistas. Detalle: las puntuaciones de ridge en CV proceden de ajustes con 240 filas, donde la λ efectiva es alpha/240; el eje usa alpha/300 (un factor 1,25, menor que el paso de la rejilla). En el tema 2 se estudia la variabilidad de la validación cruzada con más detalle. El RMSE de validación es la raíz del MSE medio de las particiones, coherente con el RMSE de ajuste.
+:::
+
+## Decisión por validación y, solo después, el test: la pregunta inicial, resuelta {.table-slide .dense}
+
+<!-- JUAN: OK a la tabla pero los números de MCO son absurdos (cuando la media tiene un rmse de cv de 0.558 MCO devuelve del orden de miles de millones). Revisar de dónde salen. Esto mismo refleja en el tab `Test` con unos números absurdos en el gráfico y una forma que veien dominada por las unidades de MCO -->
+
+::: {.panel-tabset}
+
+### Decisión
+
+```{python}
+#| echo: false
+#| output: asis
+tabla = results[["RMSE ajuste", "RMSE CV", "EE CV", "Coef. activos"]].copy()
+tabla["λ"] = [lam_cv.get(n, np.nan) for n in tabla.index]
+tabla["α"] = [mix_cv if n == "Elastic net" else (1.0 if n == "Lasso" else (0.0 if n == "Ridge" else np.nan)) for n in tabla.index]
+for c in ["RMSE ajuste", "RMSE CV", "EE CV"]:
+    tabla[c] = tabla[c].map(lambda v: es(v, 3))
+tabla["λ"] = tabla["λ"].map(lambda v: "—" if pd.isna(v) else es(v, 3))
+tabla["α"] = tabla["α"].map(lambda v: "—" if pd.isna(v) else es(v, 1))
+print(tv.md_table(tabla.reset_index()))
+print(f"\n**Regla fijada de antemano: menor RMSE de validación. Seleccionado: {winner}** "
+      f"(λ = {es(lam_cv[winner], 3)}{', α = ' + es(mix_cv, 1) if winner == 'Elastic net' else ''}). "
+      f"Errores en log precio; EE = error típico entre particiones.")
+```
+
+### Test
+
+```{python}
+#| echo: false
+#| fig-alt: "Gráfico de líneas que une, para MCO, ridge y la media, el RMSE de ajuste, el de validación cruzada y el de test. MCO tiene el menor error de ajuste y sube mucho en validación y test; ridge sube poco; la media no cambia."
+fig, ax = plt.subplots(figsize=(16, 4.6))
+etapas = ["RMSE ajuste", "RMSE CV", "RMSE test"]
+for name, letra in [("MCO", "A"), ("Ridge", "B"), ("Media", "C")]:
+    v = results.loc[name, etapas].astype(float).values
+    ax.plot(range(3), v, "o-", color=colors[name], lw=3, ms=9, label=f"{letra} = {name}")
+    ax.text(2.06, v[2], f"{letra} = {name}: {es(v[2], 3)}", va="center", fontsize=14, color=colors[name])
+ax.set_xticks(range(3), ["ajuste (300 anuncios)", "validación cruzada", f"test ({es(len(test))} anuncios)"])
+ax.set_xlim(-0.2, 2.9)
+ax.set_ylabel("RMSE (log precio)")
+eje_coma(ax.yaxis, 2)
+ax.grid(axis="x", visible=False)
+fig.tight_layout()
+plt.show()
+```
+
+```{python}
+#| echo: false
+#| output: asis
+orden = results["RMSE test"].sort_values()
+print(f"Orden real en test: **{' < '.join(orden.index)}**. R² en test: MCO {es(results.loc['MCO', 'R2 test'], 2)}, "
+      f"ridge {es(results.loc['Ridge', 'R2 test'], 2)}, lasso {es(results.loc['Lasso', 'R2 test'], 2)}, "
+      f"elastic net {es(results.loc['Elastic net', 'R2 test'], 2)}. "
+      f"MCO pasa de explicar el {es(100 * results.loc['MCO', 'R2 ajuste'])} % en ajuste al "
+      f"{es(100 * results.loc['MCO', 'R2 test'])} % fuera: varianza. "
+      f"Modelo seleccionado por validación ({winner}): RMSE test {es(results.loc[winner, 'RMSE test'], 3)}. "
+      f"El test no reabre la selección.")
+```
+
+:::
+
+:::{.notes}
+4 min. Pestaña 1: la tabla de validación con error típico. Comentar que el ganador por milésimas no es "mejor": entre ridge, lasso y elastic net la validación no distingue; frente a MCO y la media, sí. Elastic net con α = 0,9 y lasso son casi el mismo modelo (mismas λ y activas parecidas).
+
+Pestaña 2: volver al gancho y al reparto de votos de la pizarra. A = MCO tenía el menor error de ajuste y es el peor de los cuatro modelos con predictores fuera de muestra; B = ridge apenas se degrada; C = la media es la referencia. El error de test que mide el protocolo es el del modelo seleccionado (elastic net), que se da al pie; el resto de la tabla es contexto. Lectura de las cifras en log: un RMSE de 0,40 equivale a un error multiplicativo típico de exp(0,40) ≈ 1,5 en euros.
+
+Advertencias: el test describe la decisión tomada con esta partición y esta muestra de 300; una sola partición no mide la variabilidad del resultado (tema 2). El diseño del ejemplo (variables, filtro, n = 300) se exploró antes de fijarlo, así que el test ilustra el protocolo y no es una validación independiente de una investigación nueva. Si el ranking en test difiere del de CV, no se cambia el ganador.
+:::
+
+## Recapitulación: tres respuestas {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+1. **¿Por qué puede fallar MCO?** Su varianza crece con la colinealidad y con $p/n$; con $p+1>n$ ni siquiera es única. Ridge la reduce a cambio de sesgo (slides 7-9).
+2. **¿Qué cambian ridge, lasso y elastic net?** Ridge divide, lasso resta y trunca (ceros), elastic net mezcla y agrupa correlacionados (slides 12-16).
+3. **¿Cómo elegimos?** En dos niveles con validación cruzada, leyendo su error típico; el test, una sola vez y al final (slides 19-21).
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.key}
+Lo que **no** afirmamos: que regularizar mejore siempre (con datos de sobra apenas cambia nada), ni que un cero de lasso signifique «sin relación».
+:::
+
+::: {.callout-note title="En el laboratorio"}
+`RidgeCV`, `LassoCV` y `ElasticNetCV` sobre la EES 2022: rehaced la selección con vuestra partición y medid cuánto cambia el ganador entre particiones y semillas.
+:::
+:::
+:::
+
+:::{.notes}
+2 min. Una frase por pregunta, con las slides que la sostienen. El puente al laboratorio: el cuaderno 2 del tema 1 hace con la EES 2022 lo que aquí se ha hecho con Airbnb; la tarea añadida es medir la variabilidad de la elección (cambiar random_state de KFold y de la muestra).
+:::
+
+## Actividad de salida {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+Un equipo dispone de **300 anuncios y `{python} p` columnas** (barrios incluidos), con personas, camas y dormitorios muy correlacionados. El área de negocio quiere buenas predicciones **y** una lista corta de variables para explicar el precio.
+
+**En parejas, tres decisiones en dos frases cada una:**
+
+1. ¿Qué familias y qué rejillas probaríais?
+2. ¿Qué haríais antes de ajustar?
+3. ¿Qué advertencia pondríais a la lista de variables?
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.panel-tabset}
+
+### Criterios
+
+- Selección explícita: lasso o elastic net, con rejilla de $\lambda$ en escala logarítmica y, en elastic net, varias mezclas.
+- Estandarizar dentro del `Pipeline`; reservar test antes de tocar nada; validar en dos niveles.
+- La lista es una entre varias posibles (cambia con la muestra) y no dice nada de causas.
+
+### Error frecuente
+
+Elegir por el error de ajuste, o mirar el test para decidir la familia. Y presentar la lista de lasso como «las variables que importan».
+
+:::
+:::
+:::
+
+:::{.notes}
+4 min: 2 min por parejas, 2 min de puesta en común con dos parejas. Desvelar las pestañas después. La actividad evalúa las tres preguntas de la sesión (familia y rejilla; preprocesado y protocolo; lectura de la selección), no el recorte de datos ni la definición de MCO.
+
+Variante de 50 min: 3 min.
+:::
+
+## Lo que viene {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+**Jueves, laboratorio.** Cuaderno 2 del tema 1: ridge, lasso y elastic net sobre la EES 2022; la selección por validación con `RidgeCV`, `LassoCV` y `ElasticNetCV`; cuánto cambia la elección con otra partición.
+
+**Tema 2.** Validar el `Pipeline` entero con `GridSearchCV`, la incertidumbre de la validación cruzada y la búsqueda de hiperparámetros.
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.callout-note title="Siguiente fila de la tabla"}
+**Tema 3**: la misma penalización dentro del modelo lineal generalizado, con otra pérdida y otra función de enlace.
+:::
+
+::: {.key}
+De R a Python: `glmnet(X, y, alpha = a, lambda = l)` se traduce en `ElasticNet(alpha = l, l1_ratio = a)` dentro de un `Pipeline` que estandarice; los valores de $\lambda$ no coinciden exactamente.
+:::
+:::
+:::
+
+:::{.notes}
+1 min. Cierra anticipando la siguiente fila de "Controlar la complejidad" (regularización en el GLM, tema 3) y el tema 2 (selección y evaluación). La correspondencia glmnet/scikit-learn completa está al final del cuaderno 2.
+:::
+
+## {background-color="#447099"}
+
+:::{.closing}
+```{python}
+#| echo: false
+#| fig-alt: "Ilustración de cierre: sobre fondo azul, las dos funciones de contracción en blanco, la recta de ridge y la curva con umbral de lasso, con la leyenda ridge divide, lasso resta y trunca."
+#| fig-align: center
+fig, ax = plt.subplots(figsize=(12, 6.75), facecolor="#447099")
+ax.set_facecolor("#447099")
+b = np.linspace(-3, 3, 400)
+ax.plot(b, b, color="white", lw=1.2, ls="--", alpha=0.5)
+ax.plot(b, b / 2, color="white", lw=4)
+ax.plot(b, np.sign(b) * np.maximum(np.abs(b) - 1, 0), color="#F2B8A2", lw=4)
+ax.text(2.0, 0.65, "ridge divide", color="white", fontsize=28, ha="left", va="top")
+ax.text(2.9, 2.15, "lasso resta y trunca", color="#F2B8A2", fontsize=28, ha="right", va="bottom")
+ax.text(-2.9, 2.6, "Tema 1 · regresión regularizada", color="white", fontsize=22, alpha=0.7, va="top")
+for s in ax.spines.values():
+    s.set_visible(False)
+ax.set_xticks([]); ax.set_yticks([])
+ax.set_xlim(-3, 3); ax.set_ylim(-3, 3)
+fig.tight_layout()
+plt.show()
+```
+:::
+
+:::{.notes}
+Cierre. Referencias citadas o de apoyo: Hoerl y Kennard (1970), Technometrics 12(1); Tibshirani (1996), JRSS-B 58(1); Zou y Hastie (2005), JRSS-B 67(2); Meinshausen y Bühlmann (2010), JRSS-B 72(4); Hastie, Tibshirani y Tibshirani (2020), Statistical Science 35(4); James, Witten, Hastie y Tibshirani, ISLR/ISLP §6.2 y §6.4; Friedman, Hastie y Tibshirani (2010), J. Stat. Software 33(1), para la parametrización de glmnet.
+:::

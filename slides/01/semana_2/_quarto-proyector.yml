@@ -1,0 +1,16 @@
+# Perfil proyector 16:10 → quarto render --profile proyector
+# Misma capa de aula; la fuente pasa a 32px vía html.tap-proyector (tap-aula.scss).
+format:
+  clean-revealjs:
+    theme:
+      - default
+      - _extensions/grantmcdermott/clean/clean.scss
+      - ../../../_tap_theme/tap.scss
+      - ../../../_tap_theme/tap-aula.scss
+      - aula.scss
+    width: 1280
+    height: 800
+    output-file: 02_regression_plus_regularization_proyector.html
+    include-in-header:
+      text: |
+        <script>document.documentElement.classList.add("tap-proyector");</script>
