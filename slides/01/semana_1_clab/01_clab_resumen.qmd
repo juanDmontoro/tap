@@ -148,7 +148,7 @@ registros = []
 for semilla in range(30):
     X_s = X_train.sample(n=200, random_state=semilla)
     y_s = y_train.loc[X_s.index]
-    for nombre, estimador in [("Lineal", LinearRegression()), ("Ridge", Ridge(alpha=30))]:
+    for nombre, estimador in [("MCO", LinearRegression()), ("Ridge", Ridge(alpha=30))]:
         m = Pipeline([("preprocesado", crear_preprocesador()), ("modelo", estimador)]).fit(X_s, y_s)
         serie = pd.Series(m.named_steps["modelo"].coef_,
                           index=m.named_steps["preprocesado"].get_feature_names_out())
@@ -156,7 +156,7 @@ for semilla in range(30):
             registros.append({"modelo": nombre, "coeficiente": col, "valor": serie.get(col, np.nan)})
 variabilidad = pd.DataFrame(registros)
 desv = variabilidad.groupby(["coeficiente", "modelo"])["valor"].std().unstack()
-razon_desv = desv["Lineal"] / desv["Ridge"]
+razon_desv = desv["MCO"] / desv["Ridge"]
 
 # Penalización elegida por validación cruzada, con 200 y con 7 500 filas
 REJILLA_ALPHA = np.logspace(-2, 4, 60)
@@ -164,7 +164,7 @@ REJILLA_ALPHA = np.logspace(-2, 4, 60)
 
 def comparar(X_entrena, y_entrena):
     modelos = {
-        "Lineal": LinearRegression(),
+        "MCO": LinearRegression(),
         "Ridge CV": RidgeCV(alphas=np.logspace(-2, 5, 30)),
         "Lasso CV": LassoCV(cv=5, random_state=SEMILLA, max_iter=20_000),
         "Elastic Net CV": ElasticNetCV(l1_ratio=[0.1, 0.5, 0.9, 1.0], alphas=REJILLA_ALPHA,
@@ -206,14 +206,14 @@ def flecha(ax, x0, y0, x1, y1, color=tv.NAVY, **kw):
 ## Dos cuadernos, un mismo flujo de trabajo {.fig-full}
 
 ```{python}
-#| fig-alt: "Diagrama del flujo de trabajo del laboratorio en seis pasos: datos, roles de las variables, partición, preprocesado, modelo y evaluación. El color indica a cuál de las tres preguntas de la teoría responde cada paso."
+#| fig-alt: "Diagrama del flujo de trabajo del laboratorio en seis pasos: datos, roles de las variables, partición, preprocesado, modelo y evaluación. El color indica a cuál de las tres preguntas de la sesión de teoría de la semana 1 responde cada paso."
 fig, ax = lienzo((16, 7.2))
 pasos = [
     ("Datos", f"EES 2022 (INE)\n{num(df.shape[0])} × {df.shape[1]}\nmuestra de {num(len(datos))}", tv.BLUE),
     ("Roles", f"respuesta: salario\n{X.shape[1]} predictores\nfuga: fuera", tv.BLUE),
     ("Partición", f"{num(len(X_train))} entrenam.\n{num(len(X_test))} prueba", tv.SAGE),
     ("Preprocesado", f"escalar numéricas\ncodificar one-hot\n{X.shape[1]} a {n_columnas} columnas", tv.SAGE),
-    ("Modelo", "Lineal · Ridge\nLasso · Elastic Net", tv.TERRACOTTA),
+    ("Modelo", "MCO · Ridge\nLasso · Elastic Net", tv.TERRACOTTA),
     ("Evaluación", "R², RMSE y MAE\nen prueba", tv.SAGE),
 ]
 w, h, hueco, y0 = 2.3, 2.5, 0.4, 2.75
@@ -223,7 +223,7 @@ for k, (titulo, texto, color) in enumerate(pasos):
     if k:
         flecha(ax, x - hueco + 0.02, y0 + h / 2, x - 0.02, y0 + h / 2)
 
-# Leyenda: las tres preguntas de la sesión de teoría
+# Leyenda: las tres preguntas de la sesión de teoría de la semana 1
 for x, color, texto in [(0.1, tv.BLUE, "¿Qué es aprender de los datos?"),
                         (5.6, tv.SAGE, "¿Cómo sabemos si predice bien?"),
                         (11.3, tv.TERRACOTTA, "¿Cómo se entrena un modelo?")]:
@@ -249,16 +249,59 @@ Datos: INE, Encuesta Cuatrienal de Estructura Salarial 2022, microdatos anonimiz
 :::{.notes}
 Resumen del laboratorio del tema 1 (10-12 min al inicio de la sesión siguiente, o material de repaso). Cuadernos: `tema_01_intro_python.ipynb` y `tema_01_regresion_penalizada.ipynb`.
 
-Mensaje de la figura: los pasos de roles, partición y preprocesado se repetirán sin cambios en todos los temas; lo que cambia es el modelo del último paso del `Pipeline`. Los colores remiten a las tres preguntas de la slide «Tres preguntas» de la teoría.
+Mensaje de la figura: los pasos de roles, partición y preprocesado se repetirán sin cambios en todos los temas; lo que cambia es el modelo del último paso del `Pipeline`. Los colores remiten a las tres preguntas de la slide «Tres preguntas» de la sesión de teoría de la semana 1 (la semana 2, regresión regularizada, tiene sus propias tres preguntas; su cobertura está en la slide 4).
 
-Todas las cifras del deck se calculan al renderizar (21-09-2026) con la semilla 42 y la misma muestra de 10 000 trabajadores que los cuadernos.
+Todas las cifras del deck se calculan al renderizar (versión del 30-09-2026) con la semilla 42 y la misma muestra de 10 000 trabajadores que los cuadernos.
 :::
 
-## Qué parte de la teoría hemos aplicado {.fig-full}
+## Semana 1: qué parte de la teoría hemos aplicado {.fig-full}
 
 ```{python}
-#| fig-alt: "Matriz de cobertura: cada fila es una slide de la sesión de teoría del tema 1 y las columnas indican si el cuaderno 1 o el cuaderno 2 del laboratorio la aplican, solo la mencionan o no la cubren."
+#| fig-alt: "Matriz de cobertura: cada fila es una slide de la sesión de teoría de la semana 1 y las columnas indican si el cuaderno 1 o el cuaderno 2 del laboratorio la aplican, solo la mencionan o no la cubren."
 A, M, N = "aplicado", "mencionado", "no"
+
+
+def matriz_cobertura(filas, cabecera, x_c1=7.75, x_c2=9.05, x_txt=9.95):
+    """Filas (título, color de bloque o None, cuaderno 1, cuaderno 2, texto); las de bloque llevan color."""
+    fig, ax = lienzo((16, 7.9), ymax=len(filas) + 1.6)
+    ax.set_ylim(-1.0, len(filas) + 1.6)
+    y_cab = len(filas) + 0.75
+    ax.text(0.15, y_cab, cabecera, fontsize=16, fontweight="bold", color=tv.NAVY, va="center")
+    ax.text(x_c1, y_cab, "Cuad. 1", fontsize=16, fontweight="bold", color=tv.NAVY, ha="center", va="center")
+    ax.text(x_c2, y_cab, "Cuad. 2", fontsize=16, fontweight="bold", color=tv.NAVY, ha="center", va="center")
+    ax.text(x_txt, y_cab, "Cómo aparece en el laboratorio", fontsize=16, fontweight="bold", color=tv.NAVY, va="center")
+    ax.plot([0.1, 15.9], [y_cab - 0.55] * 2, color=tv.NAVY, lw=1.5)
+
+    color_bloque = tv.BLUE
+    for k, (titulo, bloque, c1, c2, texto) in enumerate(filas):
+        yy = len(filas) - k - 0.35
+        if bloque:                                   # cabecera de bloque
+            color_bloque = bloque
+            ax.text(0.15, yy, titulo, fontsize=16, fontweight="bold", color=bloque, va="center")
+            continue
+        if k % 2:
+            ax.axhspan(yy - 0.5, yy + 0.5, color="#F2F5F8", zorder=0)
+        ax.text(0.55, yy, titulo, fontsize=15, color=tv.NAVY, va="center")
+        for x, estado in [(x_c1, c1), (x_c2, c2)]:
+            if estado == A:
+                ax.scatter(x, yy, s=330, color=color_bloque, zorder=3)
+            elif estado == M:
+                ax.scatter(x, yy, s=330, facecolor="white", edgecolor=color_bloque, linewidth=3, zorder=3)
+            else:
+                ax.plot([x - 0.13, x + 0.13], [yy, yy], color="#C4CBD2", lw=3, zorder=3)
+        ax.text(x_txt, yy, texto, fontsize=14.5, color=tv.GRAY if c1 == N and c2 == N else tv.NAVY, va="center")
+
+    # Leyenda de marcadores
+    y_ley = -0.55
+    ax.scatter(10.2, y_ley, s=260, color=tv.GRAY, clip_on=False)
+    ax.text(10.45, y_ley, "aplicado con datos", fontsize=14, va="center", color=tv.NAVY)
+    ax.scatter(12.9, y_ley, s=260, facecolor="white", edgecolor=tv.GRAY, linewidth=3, clip_on=False)
+    ax.text(13.15, y_ley, "mencionado", fontsize=14, va="center", color=tv.NAVY)
+    ax.plot([14.75, 15.0], [y_ley] * 2, color="#C4CBD2", lw=3, clip_on=False)
+    ax.text(15.15, y_ley, "no", fontsize=14, va="center", color=tv.NAVY)
+    plt.show()
+
+
 filas = [
     ("¿Qué es aprender de los datos?", tv.BLUE, None, None, ""),
     ("¿Qué queremos aprender?", None, A, A, "regresión supervisada: predecir el salario anual"),
@@ -279,50 +322,47 @@ filas = [
     ("Descenso del gradiente (lotes, tasa de aprendizaje)", None, N, M, "de pasada: Lasso es iterativo (max_iter)"),
     ("Aspectos prácticos: escalado", None, A, A, "StandardScaler dentro del Pipeline"),
 ]
-fig, ax = lienzo((16, 7.9), ymax=len(filas) + 1.6)
-ax.set_ylim(-1.0, len(filas) + 1.6)
-x_c1, x_c2, x_txt = 7.75, 9.05, 9.95
-y_cab = len(filas) + 0.75
-ax.text(0.15, y_cab, "Slide de la sesión de teoría", fontsize=16, fontweight="bold", color=tv.NAVY, va="center")
-ax.text(x_c1, y_cab, "Cuad. 1", fontsize=16, fontweight="bold", color=tv.NAVY, ha="center", va="center")
-ax.text(x_c2, y_cab, "Cuad. 2", fontsize=16, fontweight="bold", color=tv.NAVY, ha="center", va="center")
-ax.text(x_txt, y_cab, "Cómo aparece en el laboratorio", fontsize=16, fontweight="bold", color=tv.NAVY, va="center")
-ax.plot([0.1, 15.9], [y_cab - 0.55] * 2, color=tv.NAVY, lw=1.5)
-
-color_bloque = tv.BLUE
-for k, (titulo, bloque, c1, c2, texto) in enumerate(filas):
-    yy = len(filas) - k - 0.35
-    if bloque:                                   # cabecera de bloque
-        color_bloque = bloque
-        ax.text(0.15, yy, titulo, fontsize=16, fontweight="bold", color=bloque, va="center")
-        continue
-    if k % 2:
-        ax.axhspan(yy - 0.5, yy + 0.5, color="#F2F5F8", zorder=0)
-    ax.text(0.55, yy, titulo, fontsize=15, color=tv.NAVY, va="center")
-    for x, estado in [(x_c1, c1), (x_c2, c2)]:
-        if estado == A:
-            ax.scatter(x, yy, s=330, color=color_bloque, zorder=3)
-        elif estado == M:
-            ax.scatter(x, yy, s=330, facecolor="white", edgecolor=color_bloque, linewidth=3, zorder=3)
-        else:
-            ax.plot([x - 0.13, x + 0.13], [yy, yy], color="#C4CBD2", lw=3, zorder=3)
-    ax.text(x_txt, yy, texto, fontsize=14.5, color=tv.GRAY if c1 == N and c2 == N else tv.NAVY, va="center")
-
-# Leyenda de marcadores
-y_ley = -0.55
-ax.scatter(10.2, y_ley, s=260, color=tv.GRAY, clip_on=False)
-ax.text(10.45, y_ley, "aplicado con datos", fontsize=14, va="center", color=tv.NAVY)
-ax.scatter(12.9, y_ley, s=260, facecolor="white", edgecolor=tv.GRAY, linewidth=3, clip_on=False)
-ax.text(13.15, y_ley, "mencionado", fontsize=14, va="center", color=tv.NAVY)
-ax.plot([14.75, 15.0], [y_ley] * 2, color="#C4CBD2", lw=3, clip_on=False)
-ax.text(15.15, y_ley, "no", fontsize=14, va="center", color=tv.NAVY)
-plt.show()
+matriz_cobertura(filas, "Slide de la teoría, semana 1")
 ```
 
 :::{.notes}
 Lectura por columnas: el cuaderno 1 cubre el bloque 1 y la evaluación básica (partición, medidas de error); el cuaderno 2 lleva a datos reales casi todo el bloque 2 (sobreajuste, varianza entre muestras, tamaño muestral, regularización, validación).
 
-Lo que el laboratorio no cubre: la distinción predicción/causalidad (tema 7), la comparación entre familias (recta frente a árbol, tema 4) y el descenso del gradiente, que solo aparece de pasada (Lasso se resuelve de forma iterativa y por eso se fija `max_iter`). La simulación con polinomios de la teoría se sustituye aquí por la penalización como control de complejidad.
+Lo que el laboratorio no cubre: la distinción predicción/causalidad (tema 7), la comparación entre familias (recta frente a árbol, tema 4) y el descenso del gradiente, que solo aparece de pasada (Lasso se resuelve de forma iterativa y por eso se fija `max_iter`). La simulación con polinomios de la semana 1 se sustituye aquí por la penalización como control de complejidad.
+:::
+
+## Semana 2: qué parte de la teoría hemos aplicado {.fig-full}
+
+```{python}
+#| fig-alt: "Matriz de cobertura: cada fila es una slide de la sesión de teoría de la semana 2 (regresión lineal regularizada) y las columnas indican si el cuaderno 1 o el cuaderno 2 del laboratorio la aplican, solo la mencionan o no la cubren."
+filas_s2 = [
+    ("¿Por qué puede fallar MCO?", tv.BLUE, None, None, ""),
+    ("MCO es insesgado, pero su varianza crece con la colinealidad", None, N, M,
+     "se enuncia; la colinealidad no se mide"),
+    ("Con más coeficientes que datos tenemos infinitas soluciones", None, N, N,
+     "no se trata en los cuadernos"),
+    ("Sesgo y varianza", None, N, A, "cajas de MCO y Ridge, sin β conocido"),
+    ("¿Cuándo deja de ser útil regularizar?", None, N, A, f"{len(X_pocos)} frente a {num(len(X_train))} filas; ejercicio 3"),
+    ("Regularizar es restringir la complejidad", None, N, A, "curva de R² frente a la penalización"),
+    ("¿Qué cambian Ridge, Lasso y Elastic Net?", tv.SAGE, None, None, ""),
+    ("Tres variantes sobre el mismo RSS", None, N, A, "las tres pérdidas, en notación RSS"),
+    ("Ridge divide; Lasso resta y trunca", None, N, N, "el umbral suave no aparece"),
+    ("Geometría de la penalización", None, N, N, "no aparece en los cuadernos"),
+    ("Ridge encoge; Lasso anula", None, N, A, "caminos de los coeficientes"),
+    ("Lasso selecciona variables", None, N, A, "columnas activas según alpha; ejercicio 2"),
+    ("¿Con qué familia empezar?", None, N, M, "se enuncia cuándo ganaría una mezcla"),
+    ("¿Cómo elegimos la penalización y la familia?", tv.TERRACOTTA, None, None, ""),
+    ("Elegir en dos niveles", None, N, A, "RidgeCV, LassoCV y ElasticNetCV"),
+    ("Selección por validación", None, N, A, "curva de validación de LassoCV"),
+    ("Decidir con validación; comprobar con el test", None, A, A, "prueba reservada desde el principio"),
+]
+matriz_cobertura(filas_s2, "Slide de la teoría, semana 2", x_c1=8.6, x_c2=9.7, x_txt=10.45)
+```
+
+:::{.notes}
+Lectura: el cuaderno 2 aplica con la EES lo que la semana 2 cuenta con Airbnb, salvo los mecanismos (umbral suave, geometría) y el caso p + 1 > n. La simulación con β conocido de «Sesgo y varianza» es lo único que el laboratorio no puede hacer con datos reales: sin β conocido, las cajas del cuaderno miden la varianza, pero el sesgo solo como desplazamiento respecto a MCO.
+
+Tres diferencias de protocolo con la semana 2: (1) el cuaderno compara las familias por su R² de prueba (sección 7) para describir, no para elegir; en la semana 2 la familia se elige por validación y el test se usa una vez. (2) `RidgeCV` y `LassoCV` dentro del `Pipeline` ajustan el preprocesador una vez con las 200 filas; la semana 2 valida el `Pipeline` entero con `GridSearchCV`. (3) El cuaderno codifica todas las categorías; la semana 2 usa una categoría de referencia para que MCO tenga solución única.
 :::
 
 # ¿Qué es aprender de los datos? {background-color="#447099"}
@@ -350,20 +390,32 @@ plt.show()
 ```
 
 ::: {.caption-line}
-$y$ = `RETRINOIN`: media `{python} txt(limpio[RESPUESTA].mean())` €, mediana `{python} txt(limpio[RESPUESTA].median())` €. **En $y=f(X)+\epsilon$, ¿qué recoge $\epsilon$ en un salario?**
+$y$ = `RETRINOIN`: media `{python} txt(limpio[RESPUESTA].mean())` €, mediana `{python} txt(limpio[RESPUESTA].median())` €.
+:::
+
+::: {.panel-tabset}
+
+### Para pensar
+
+En $y=f(X)+\epsilon$, ¿qué recoge $\epsilon$ en un salario?
+
+### Respuesta
+
+Todo lo que $X$ no anticipa: negociación, productividad, horas efectivas, empresa.
+
 :::
 
 :::{.notes}
-Teoría: «¿Qué queremos aprender?» (regresión supervisada) y «El problema de predicción». Cuaderno 1, secciones 2.1 y 2.2.
+Teoría, semana 1: «¿Qué queremos aprender?» (regresión supervisada) y «El problema de predicción». Cuaderno 1, secciones 2.1 y 2.2.
 
 Decisiones de limpieza, documentadas en el cuaderno: se eliminan los salarios iguales a cero y el 1 % más alto (tope en el percentil 99), y se trabaja con una muestra aleatoria de 10 000 trabajadores. Media y mediana se calculan tras la limpieza.
 
-Respuesta a la pregunta: todo lo que las 16 características disponibles no anticipan (negociación individual, productividad, horas efectivas, empresa concreta). Es ruido respecto de la información X disponible, no una constante de la naturaleza.
+Pregunta al aula: votación rápida y desvelar la pestaña. Matiz para la discusión: ε es ruido respecto de la información X disponible (los 16 predictores), no una constante de la naturaleza.
 
 La asimetría reaparece en los residuos de la regresión lineal y motiva el tema 3.
 :::
 
-## Predictores legítimos y fuga de información {.fig-side}
+## Predictores legítimos y fuga de información {.fig-side .dense}
 
 :::{.columns}
 :::{.column width="52%"}
@@ -392,24 +444,35 @@ plt.show()
 :::{.column width="4%"}
 :::
 :::{.column width="44%"}
+
+&nbsp;
+
 De 56 variables usamos **16 predictores**: 14 categóricas y 2 numéricas.
 
 Quedan fuera 12 componentes del salario, 2 identificadores y el peso muestral.
 
 > $X$ solo contiene lo que conoceríamos en el momento de predecir.
 
-::: {.callout-tip title="Para pensar"}
+::: {.panel-tabset}
+
+### Para pensar
+
 ¿Por qué `IDENCCC` o `FACTOTAL` tampoco son predictores?
+
+### Respuesta
+
+Un identificador no se generaliza; `FACTOTAL` es un peso muestral.
+
 :::
 :::
 :::
 
 :::{.notes}
-Teoría: «El problema de predicción». Cuaderno 1, sección 3 (roles de las variables y comprobación empírica de la fuga).
+Teoría, semana 1: «El problema de predicción». Semana 2: «Los datos: 300 anuncios» (la tabla solo incluye información conocida al anunciar). Cuaderno 1, sección 3 (roles de las variables y comprobación empírica de la fuga).
 
 Predecir el salario anual con sus componentes es predecir el total de un ticket conociendo el precio de cada producto: ajuste casi perfecto e inútil. El ejercicio 2 del cuaderno cuantifica el efecto sobre R²; no se resuelve aquí.
 
-Respuesta: los identificadores no contienen información generalizable a trabajadores nuevos; el factor de elevación es un peso del diseño muestral, no una característica del trabajador ni del puesto.
+Pregunta al aula: votación rápida y desvelar la pestaña. Los identificadores no contienen información generalizable a trabajadores nuevos; el factor de elevación es un peso del diseño muestral, no una característica del trabajador ni del puesto.
 :::
 
 # ¿Cómo sabemos si un modelo predice bien? {background-color="#447099"}
@@ -443,11 +506,11 @@ plt.show()
 ```
 
 ::: {.caption-line}
-`train_test_split` antes de cualquier cálculo; el `Pipeline` garantiza que la prueba no influye en el ajuste.
+`train_test_split` antes de cualquier cálculo; el `Pipeline` garantiza que el conjunto de prueba (test) no influye en el ajuste.
 :::
 
 :::{.notes}
-Teoría: «¿Qué error medimos?» y «Validar para elegir, probar para evaluar». Cuaderno 1, secciones 4 y 5.
+Teoría, semana 1: «¿Qué error medimos?» y «Validar para elegir, probar para evaluar». Semana 2: «Tres variantes sobre el mismo RSS» (se estandariza con los datos de entrenamiento) y «Elegir en dos niveles» (el preprocesado se realiza en cada partición). Cuaderno 1, secciones 4 y 5.
 
 Idea central de scikit-learn: todo objeto tiene `fit` (aprende de los datos de entrenamiento) y `transform` o `predict` (aplica lo aprendido). Escalar con medias calculadas sobre todos los datos es una fuga de información más sutil que la de los componentes salariales.
 
@@ -479,13 +542,25 @@ plt.show()
 ```
 
 ::: {.caption-line}
-En prueba: R² = `{python} txt(ols["R2_test"], 3)`, RMSE = `{python} txt(ols["RMSE"])` €, MAE = `{python} txt(ols["MAE"])` €. **¿Qué dos síntomas de los residuos anuncian el tema 3?**
+En prueba: R² = `{python} txt(ols["R2_test"], 3)`, RMSE = `{python} txt(ols["RMSE"])` €, MAE = `{python} txt(ols["MAE"])` €.
+:::
+
+::: {.panel-tabset}
+
+### Para pensar
+
+¿Qué dos síntomas de los residuos anuncian el tema 3?
+
+### Respuesta
+
+Predicciones negativas y residuos cuya dispersión crece con la predicción.
+
 :::
 
 :::{.notes}
-Teoría: «¿Qué error medimos?». Cuaderno 1, sección 6. Medidas sobre los 2 500 trabajadores de prueba; el RMSE penaliza más los errores grandes y el MAE se lee directamente en euros.
+Teoría, semana 1: «¿Qué error medimos?». Cuaderno 1, sección 6. Medidas sobre los 2 500 trabajadores de prueba; el RMSE penaliza más los errores grandes y el MAE se lee directamente en euros.
 
-Respuesta: predicciones negativas, imposibles para un salario, y dispersión de los residuos creciente con el nivel de la predicción. Ambos vienen de la asimetría de la respuesta; el tema 3 cambia la relación entre predictores y respuesta (función de enlace).
+Pregunta al aula: votación rápida y desvelar la pestaña. Las predicciones negativas son imposibles para un salario; los dos síntomas vienen de la asimetría de la respuesta. El tema 3 cambia la relación entre predictores y respuesta (función de enlace).
 
 `LinearRegression` está orientado a predecir: devuelve `coef_` e `intercept_`, sin errores estándar ni p-valores (para inferencia, `statsmodels`). Sin categoría de referencia, los coeficientes de una misma variable se leen comparándolos entre sí.
 :::
@@ -495,7 +570,7 @@ Respuesta: predicciones negativas, imposibles para un salario, y dispersión de 
 :::{.columns}
 :::{.column width="52%"}
 ```{python}
-#| fig-alt: "Barras agrupadas con el R² en entrenamiento y en prueba de la regresión lineal ajustada con 7 500 filas y con 200 filas. Con 7 500 ambos coinciden; con 200 el de entrenamiento sube y el de prueba cae."
+#| fig-alt: "Barras agrupadas con el R² en entrenamiento y en prueba de MCO ajustado con 7 500 filas y con 200 filas. Con 7 500 ambos coinciden; con 200 el de entrenamiento sube y el de prueba cae."
 fig, ax = plt.subplots(figsize=(9, 6.8))
 grupos = [f"n = {num(len(X_train))}\n{ols['no_nulos']} coeficientes", f"n = 200\n{ols_pocos['no_nulos']} coeficientes"]
 entrena = [ols["R2_train"], ols_pocos["R2_train"]]
@@ -508,7 +583,7 @@ for desplaza, valores, color, etiqueta in [(-0.19, entrena, tv.GRAY, "entrenamie
         ax.text(b.get_x() + b.get_width() / 2, v + 0.015, num(v, 2), ha="center", fontsize=17, color=tv.NAVY)
 ax.set_xticks(pos, grupos, fontsize=16)
 ax.set_ylim(0, 0.9)
-ax.set_ylabel("R² de la regresión lineal")
+ax.set_ylabel("R² de MCO")
 eje_coma(ax.yaxis)
 ax.grid(axis="x", visible=False)
 ax.legend(frameon=False, loc="upper left", ncols=2)
@@ -519,6 +594,9 @@ plt.show()
 :::{.column width="4%"}
 :::
 :::{.column width="44%"}
+
+&nbsp;
+
 Misma familia y mismos predictores: solo cambia $n$.
 
 Con 200 filas el modelo **memoriza la muestra**: mejora en entrenamiento y empeora en los mismos `{python} txt(len(X_test))` trabajadores de prueba.
@@ -528,7 +606,7 @@ Con 200 filas el modelo **memoriza la muestra**: mejora en entrenamiento y empeo
 :::
 
 :::{.notes}
-Teoría: «Subajuste y sobreajuste, a la vista» y «Varias muestras y el tamaño muestral». Cuaderno 2, secciones 1 y 2.1.
+Teoría, semana 1: «Subajuste y sobreajuste, a la vista» y «Varias muestras y el tamaño muestral». Semana 2: «MCO es insesgado, pero su varianza crece con la colinealidad» (la varianza crece con p/n) y «¿Cuándo deja de ser útil regularizar?». Cuaderno 2, secciones 1 y 2.1.
 
 En la teoría el sobreajuste se provoca subiendo el grado del polinomio con n fijo; en el laboratorio se provoca bajando n con el número de columnas fijo. Es el mismo fenómeno: la razón entre observaciones y parámetros. La muestra de 200 es el banco de pruebas del resto del cuaderno; el conjunto de prueba no cambia, así que las comparaciones son justas.
 :::
@@ -557,7 +635,7 @@ def panel_camino(ax, tabla, titulo):
 def panel_r2(ax, curva, alpha_max, titulo):
     ax.plot(curva.index, curva["R2_train"], color=tv.GRAY, lw=2.8, label="entrenamiento")
     ax.plot(curva.index, curva["R2_test"], color=tv.TERRACOTTA, lw=2.8, label="prueba")
-    ax.axhline(ols_pocos["R2_test"], color=tv.NAVY, lw=1.8, ls="--", label="lineal sin penalizar, prueba")
+    ax.axhline(ols_pocos["R2_test"], color=tv.NAVY, lw=1.8, ls="--", label="MCO (sin penalizar), prueba")
     ax.scatter([alpha_max], [curva["R2_test"].max()], s=130, color=tv.TERRACOTTA, zorder=4)
     ax.set_xscale("log")
     ax.set_ylim(-0.02, 0.88)
@@ -579,13 +657,15 @@ plt.show()
 ```
 
 ::: {.caption-line}
-Ridge minimiza $RSS+\lambda\sum_j\beta_j^2$. En prueba, R² pasa de `{python} txt(ols_pocos["R2_test"], 2)` a `{python} txt(curva_ridge["R2_test"].max(), 2)` con alpha ≈ `{python} txt(alpha_ridge_prueba)`: **la curva en U de la teoría, invertida**.
+Ridge minimiza $RSS+\lambda\sum_j\beta_j^2$. Más $\lambda$, menos complejidad (más sesgo y menos varianza): **la relación en forma de U entre sesgo y varianza (ver semana 1) se lee de derecha a izquierda**.
 :::
 
 :::{.notes}
-Teoría: «Sesgo, varianza y complejidad» y «Controlar la complejidad» (fila de los modelos lineales regularizados; alpha es un hiperparámetro). Cuaderno 2, sección 3.
+Teoría, semana 1: «Sesgo, varianza y complejidad» y «Controlar la complejidad» (fila de los modelos lineales regularizados; alpha es un hiperparámetro). Semana 2: «Regularizar es restringir la complejidad» y «Ridge encoge; Lasso anula». Cuaderno 2, sección 3.
 
-El R² en entrenamiento baja de forma monótona; el de prueba sube primero y baja después. A la izquierda del máximo domina la varianza, a la derecha el sesgo. Ridge encoge, no anula. Algunos coeficientes no evolucionan de forma monótona (ANOANTI sube antes de bajar) porque recogen el efecto de columnas correlacionadas que se encogen antes.
+Cifras: en prueba, R² pasa de `{python} txt(ols_pocos["R2_test"], 2)` (MCO) a `{python} txt(curva_ridge["R2_test"].max(), 2)` con alpha ≈ `{python} txt(alpha_ridge_prueba)`.
+
+El R² en entrenamiento baja de forma monótona; el de prueba sube primero y baja después. A la izquierda del máximo domina la varianza, a la derecha el sesgo. La curva de prueba tiene forma de U invertida porque el eje vertical es R², no el error. Ridge encoge, no anula. Algunos coeficientes no evolucionan de forma monótona (ANOANTI sube antes de bajar) porque recogen el efecto de columnas correlacionadas que se encogen antes.
 
 Nombres: el lambda de las transparencias es `alpha` en scikit-learn. La penalización depende de las unidades, por eso las numéricas se estandarizan dentro del Pipeline.
 :::
@@ -595,12 +675,12 @@ Nombres: el lambda de las transparencias es `alpha` en scikit-learn. La penaliza
 :::{.columns}
 :::{.column width="52%"}
 ```{python}
-#| fig-alt: "Diagramas de caja de cinco coeficientes estimados en 30 muestras distintas de 200 trabajadores, con regresión lineal y con Ridge. Las cajas de Ridge son mucho más estrechas."
+#| fig-alt: "Diagramas de caja de cinco coeficientes estimados en 30 muestras distintas de 200 trabajadores, con MCO y con Ridge. Las cajas de Ridge son mucho más estrechas."
 fig, ax = plt.subplots(figsize=(9, 6.8))
 cortas = {"numericas__JAP": "JAP", "numericas__ANOANTI": "ANOANTI", "categoricas__SEXO_6": "SEXO = 6",
           "categoricas__ESTU_7": "ESTU = 7", "categoricas__TIPOJOR_2": "TIPOJOR = 2"}
 for k, col in enumerate(COLUMNAS):
-    for desplaza, modelo, color in [(-0.2, "Lineal", tv.GRAY), (0.2, "Ridge", tv.TERRACOTTA)]:
+    for desplaza, modelo, color in [(-0.2, "MCO", tv.GRAY), (0.2, "Ridge", tv.TERRACOTTA)]:
         valores = variabilidad.query("coeficiente == @col and modelo == @modelo")["valor"].dropna() / 1000
         ax.boxplot(valores, positions=[k + desplaza], widths=0.34, patch_artist=True, showfliers=False,
                    boxprops=dict(facecolor=color, edgecolor=color, alpha=0.85),
@@ -611,7 +691,7 @@ ax.set_xticks(range(len(COLUMNAS)), [cortas[c] for c in COLUMNAS], fontsize=13.5
 ax.set_ylabel("coeficiente (miles de €)")
 ax.grid(axis="x", visible=False)
 ax.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=tv.GRAY), plt.Rectangle((0, 0), 1, 1, color=tv.TERRACOTTA)],
-          labels=["Lineal", "Ridge (alpha = 30)"], frameon=False, loc="upper left")
+          labels=["MCO", "Ridge (alpha = 30)"], frameon=False, loc="upper left")
 plt.tight_layout()
 plt.show()
 ```
@@ -619,18 +699,21 @@ plt.show()
 :::{.column width="4%"}
 :::
 :::{.column width="44%"}
+
+&nbsp;
+
 30 muestras de 200 trabajadores, un ajuste por muestra.
 
 Con Ridge, la desviación típica de cada coeficiente es entre **`{python} txt(razon_desv.min(), 1)` y `{python} txt(razon_desv.max(), 1)` veces menor**.
 
 A cambio, las medias se desplazan: eso es el sesgo.
 
-> Es el haz de curvas de la teoría, ahora con coeficientes.
+> Es el haz de curvas de la semana 1, ahora con coeficientes. Con β conocido, la semana 2 mide además el sesgo.
 :::
 :::
 
 :::{.notes}
-Teoría: «La varianza: entrenar con otra muestra» y «Descomposición del error de predicción». Cuaderno 2, sección 3.2.
+Teoría, semana 1: «La varianza: entrenar con otra muestra» y «Descomposición del error de predicción». Semana 2: «MCO es insesgado, pero su varianza crece con la colinealidad» (por qué: σ²(X′X)⁻¹) y «Sesgo y varianza» (la misma comparación con β conocido, donde el sesgo de Ridge se ve respecto del valor verdadero). Cuaderno 2, sección 3.2.
 
 La variación relevante es la de las estimaciones al repetir el entrenamiento con otra muestra. En la teoría se ve como un haz de curvas ajustadas; aquí, como la dispersión de cinco coeficientes. Las medias no se acercan a cero en todos los casos: al encoger unos coeficientes, otros correlacionados recogen parte del efecto.
 :::
@@ -657,19 +740,19 @@ Lasso minimiza $RSS+\lambda\sum_j|\beta_j|$: en el máximo de prueba conserva `{
 :::
 
 :::{.notes}
-Teoría: «Controlar la complejidad» (las notas de esa slide ya anticipan que LASSO lleva coeficientes a cero y ridge los contrae). Cuaderno 2, sección 4.
+Teoría, semana 1: «Controlar la complejidad» (las notas de esa slide ya anticipan que Lasso lleva coeficientes a cero y Ridge los contrae). Semana 2: «Ridge encoge; Lasso anula», «Lasso selecciona variables» y, para el porqué de los ceros, «Ridge divide; Lasso resta y trunca». Cuaderno 2, sección 4.
 
 Con alpha muy grande no queda ninguna columna: el modelo predice la media y su R² es cero. El alpha de `Ridge` y el de `Lasso` no están en la misma escala en scikit-learn (Lasso divide el error cuadrático entre 2n): se comparan resultados, no valores de alpha.
 
 El ejercicio 2 del cuaderno (qué variables sobreviven) no se resuelve aquí.
 :::
 
-## Elegir la penalización sin mirar la prueba {.fig-side}
+## Elegir la penalización sin mirar la prueba {.fig-side .dense}
 
 :::{.columns}
 :::{.column width="52%"}
 ```{python}
-#| fig-alt: "Curva de validación de LassoCV: RMSE medio de validación en cinco pliegues frente a la penalización, con una línea vertical en el valor elegido."
+#| fig-alt: "Curva de validación de LassoCV: RMSE medio de validación en cinco particiones frente a la penalización, con una línea vertical en el valor elegido."
 fig, ax = plt.subplots(figsize=(9, 6.8))
 rmse_val = np.sqrt(lasso_cv.mse_path_.mean(axis=1)) / 1000
 ax.plot(lasso_cv.alphas_, rmse_val, color=tv.BLUE, lw=3)
@@ -679,7 +762,7 @@ ax.scatter([lasso_cv.alpha_], [rmse_val.min()], s=130, color=tv.TERRACOTTA, zord
 ax.set_xscale("log")
 ax.set_xlabel("penalización alpha (escala log)")
 ax.set_ylabel("RMSE de validación (miles de €)")
-ax.set_title("LassoCV: 5 pliegues dentro de las 200 filas")
+ax.set_title("LassoCV: 5 particiones dentro de las 200 filas")
 ax.legend(frameon=False, loc="upper left")
 plt.tight_layout()
 plt.show()
@@ -688,33 +771,46 @@ plt.show()
 :::{.column width="4%"}
 :::
 :::{.column width="44%"}
+
+&nbsp;
+
 | | Elegido por VC | Máximo en prueba |
 |---|:--:|:--:|
 | Ridge | `{python} txt(ridge_cv.alpha_, 1)` | `{python} txt(alpha_ridge_prueba, 1)` |
 | Lasso | `{python} txt(lasso_cv.alpha_)` | `{python} txt(alpha_lasso_prueba)` |
 
+&nbsp;
+
 Valores de `alpha`. En Lasso difieren, pero el R² en prueba apenas cambia: `{python} txt(comp_pocos["Lasso CV"]["R2_test"], 2)` frente a `{python} txt(curva_lasso["R2_test"].max(), 2)`.
 
 La validación cruzada decide **sin usar la prueba**.
 
-::: {.callout-tip title="Para pensar"}
-Si elegimos `alpha` con el R² de prueba, ¿sigue siendo una evaluación final?
+::: {.panel-tabset}
+
+### Para pensar
+
+¿Qué `alpha` de Lasso usaríais en el modelo final, y por qué?
+
+### Respuesta
+
+El de validación cruzada. Elegir con la prueba anula la evaluación final.
+
 :::
 :::
 :::
 
 :::{.notes}
-Teoría: «Validar para elegir, probar para evaluar». Cuaderno 2, sección 5. Es el adelanto del tema 2.
+Teoría, semana 1: «Validar para elegir, probar para evaluar». Semana 2: «Elegir en dos niveles» y «Selección por validación». Cuaderno 2, sección 5.
 
-Respuesta: no. El conjunto de prueba habría influido en una decisión sobre el modelo; es otra forma de fuga de información. `RidgeCV`, `LassoCV` y `ElasticNetCV` eligen alpha dentro del entrenamiento; el valor queda en `alpha_` (el guion bajo final marca lo que scikit-learn aprende de los datos).
+Pregunta al aula: votación y desvelar la pestaña. Elegir con la prueba es otra forma de fuga de información: el conjunto de prueba habría influido en una decisión sobre el modelo. Además, en Lasso la curva es plana en esa zona, así que el alpha de validación apenas cuesta R² en prueba. `RidgeCV`, `LassoCV` y `ElasticNetCV` eligen alpha dentro del entrenamiento; el valor queda en `alpha_` (el guion bajo final marca lo que scikit-learn aprende de los datos).
 
-En Lasso el alpha de validación es mayor que el del máximo en prueba, pero la curva es plana en esa zona y el R² en prueba apenas cambia. Detalle que se resuelve en el tema 2: con `LassoCV` dentro del Pipeline el preprocesador se ajusta una vez con las 200 filas; la forma limpia es validar el Pipeline entero con `GridSearchCV`.
+Detalle de protocolo: con `LassoCV` dentro del Pipeline el preprocesador se ajusta una vez con las 200 filas. La forma limpia, validar el Pipeline entero con `GridSearchCV` (el preprocesado se realiza en cada partición), ya se usó en la semana 2 («Elegir en dos niveles») y se formaliza en el tema 2.
 :::
 
 ## ¿Cuándo compensa penalizar? {.fig-wide}
 
 ```{python}
-#| fig-alt: "Dos paneles con el R² en prueba de la regresión lineal, Ridge, Lasso y Elastic Net con penalización elegida por validación cruzada. Con 200 filas los penalizados mejoran claramente a la regresión lineal; con 7 500 filas los cuatro son indistinguibles. Sobre cada barra, el número de coeficientes distintos de cero."
+#| fig-alt: "Dos paneles con el R² en prueba de MCO, Ridge, Lasso y Elastic Net con penalización elegida por validación cruzada. Con 200 filas los penalizados mejoran claramente a MCO; con 7 500 filas los cuatro son indistinguibles. Sobre cada barra, el número de coeficientes distintos de cero."
 fig, ejes = plt.subplots(1, 2, figsize=(16, 6.5), sharey=True)
 colores = [tv.GRAY, tv.BLUE, tv.TERRACOTTA, tv.SAGE]
 for ax, comp, titulo in [(ejes[0], comp_pocos, "Entrenamiento con 200 filas"),
@@ -735,11 +831,13 @@ plt.show()
 ```
 
 ::: {.caption-line}
-La penalización es un **seguro contra la varianza**: vale mucho con pocos datos y casi nada cuando sobran.
+La penalización es un **seguro contra la varianza**: vale mucho con pocos datos y casi nada cuando sobran, como muestra también la curva de aprendizaje de Airbnb (ver semana 2).
 :::
 
 :::{.notes}
-Teoría: «Varias muestras y el tamaño muestral» (más datos informativos permiten modelos más flexibles) y «Controlar la complejidad». Cuaderno 2, secciones 6 y 7.
+Teoría, semana 1: «Varias muestras y el tamaño muestral» (más datos informativos permiten modelos más flexibles) y «Controlar la complejidad». Semana 2: «¿Cuándo deja de ser útil regularizar?» (a mayor n, menor ventaja de Ridge) y «¿Con qué familia empezar?». Cuaderno 2, secciones 6 y 7.
+
+Diferencia de protocolo con la semana 2: aquí las familias se comparan por su R² de prueba para describir el resultado, no para elegir; en la semana 2 la familia se elige por validación y el test se consulta una sola vez.
 
 Con 7 500 filas la validación cruzada elige penalizaciones pequeñas y el resultado es el de mínimos cuadrados; Lasso y Elastic Net descartan además una o dos decenas de columnas sin perder nada. Elastic Net elige `l1_ratio = 1` (Lasso puro) con 200 filas: ninguna mezcla con parte Ridge mejora en validación con estos datos.
 
@@ -761,6 +859,8 @@ El ejercicio 3 (cuántos datos hacen falta) recorre tamaños intermedios; no se 
 | `Lasso` | $RSS+\lambda\sum_j \lvert\beta_j\rvert$ |
 | `ElasticNet` | $RSS+\lambda\,[\alpha\sum_j\lvert\beta_j\rvert+\tfrac{1-\alpha}{2}\sum_j\beta_j^2]$ |
 
+&nbsp;
+
 Entrenar es minimizar una pérdida; regularizar es cambiar la pérdida.
 :::
 :::{.column width="4%"}
@@ -771,17 +871,17 @@ El descenso del gradiente. `LinearRegression` y `Ridge` tienen solución directa
 :::
 
 ::: {.callout-note title="Cuidado con los nombres"}
-$\lambda$ (cantidad) es `alpha` en scikit-learn; $\alpha$ (mezcla) es `l1_ratio`.
+$\lambda$ (intensidad) es `alpha` en scikit-learn; $\alpha$ (mezcla) es `l1_ratio`.
 :::
 :::
 :::
 
 :::{.notes}
-Teoría: «Ajustar los parámetros minimizando una pérdida» y «Descenso del gradiente: aspectos prácticos» (escalado). Cuaderno 2, secciones 3, 4 y 6.
+Teoría, semana 1: «Ajustar los parámetros minimizando una pérdida» y «Descenso del gradiente: aspectos prácticos» (escalado). Semana 2: «Tres variantes sobre el mismo RSS» (mismas fórmulas y misma notación). Cuaderno 2, secciones 3, 4 y 6.
 
 Precisión: `Lasso` y `ElasticNet` usan descenso por coordenadas, no descenso del gradiente; comparten con él la lógica iterativa y un criterio de parada (iteraciones máximas y tolerancia). El escalado, que en la teoría aparece como ayuda a la optimización, es aquí además condición para que la penalización trate igual a todos los predictores numéricos.
 
-En `glmnet` de R, `lambda` es la cantidad y `alpha` la mezcla; scikit-learn llama `alpha` a la cantidad.
+En `glmnet` de R, `lambda` es la intensidad y `alpha` la mezcla; scikit-learn llama `alpha` a la intensidad.
 :::
 
 # ¿Qué sabemos hacer ahora? {background-color="#447099"}
@@ -844,6 +944,8 @@ Resumen de los objetivos de los dos cuadernos. Para quien viene de R: `pandas` h
 | Penalización por VC | `LassoCV(cv=5)` → `alpha_` | `cv.glmnet()` → `lambda.min` |
 :::
 
+&nbsp;
+
 Cambia la herramienta; los conceptos son los mismos.
 
 :::{.notes}
@@ -855,11 +957,11 @@ Tablas de correspondencias completas al final de cada cuaderno. Diferencia prác
 &nbsp;
 
 1. **Aprender:** fijar la respuesta y los predictores que tendríamos al predecir. La fuga de información se detecta antes de ajustar nada.
-2. **Evaluar:** partir primero y medir en prueba. Con 200 filas la regresión lineal sobreajusta; penalizar cambia algo de sesgo por menos varianza.
+2. **Evaluar:** partir primero y medir en prueba. Con 200 filas MCO sobreajusta; penalizar cambia algo de sesgo por menos varianza.
 3. **Entrenar:** cada modelo minimiza una pérdida; la intensidad de la penalización es un hiperparámetro que se elige por validación cruzada.
 
-> Siguiente: validar el `Pipeline` entero (tema 2) y una respuesta asimétrica que pide otro modelo (tema 3).
+> Siguiente: el tema 2 formaliza la validación del `Pipeline` entero (ya usada en la semana 2) y el tema 3 trata una respuesta asimétrica que pide otro modelo.
 
 :::{.notes}
-Un minuto. Una frase por cada pregunta de la sesión de teoría. Pendiente del laboratorio que enlaza con lo que viene: `GridSearchCV` sobre el Pipeline completo (tema 2); predicciones negativas y residuos con dispersión creciente (tema 3, función de enlace; el ejercicio 4 del cuaderno 2 lo anticipa con el logaritmo).
+Un minuto. Una frase por cada pregunta de la sesión de teoría de la semana 1. Pendiente del laboratorio que enlaza con lo que viene: `GridSearchCV` sobre el Pipeline completo (la semana 2 ya lo usa; el tema 2 lo formaliza y mide la incertidumbre de la validación cruzada); predicciones negativas y residuos con dispersión creciente (tema 3, función de enlace; el ejercicio 4 del cuaderno 2 lo anticipa con el logaritmo).
 :::

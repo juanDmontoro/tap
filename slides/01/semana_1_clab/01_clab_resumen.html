@@ -143,13 +143,13 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <section id="dos-cuadernos-un-mismo-flujo-de-trabajo" class="slide level2 fig-full">
 <h2>Dos cuadernos, un mismo flujo de trabajo</h2>
 
-<img data-src="01_clab_resumen_files/figure-revealjs/cell-3-output-1.png" alt="Diagrama del flujo de trabajo del laboratorio en seis pasos: datos, roles de las variables, partición, preprocesado, modelo y evaluación. El color indica a cuál de las tres preguntas de la teoría responde cada paso." class="r-stretch"><div class="source">
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-3-output-1.png" alt="Diagrama del flujo de trabajo del laboratorio en seis pasos: datos, roles de las variables, partición, preprocesado, modelo y evaluación. El color indica a cuál de las tres preguntas de la sesión de teoría de la semana 1 responde cada paso." class="r-stretch"><div class="source">
 <p>Datos: INE, Encuesta Cuatrienal de Estructura Salarial 2022, microdatos anonimizados.</p>
 </div>
 <aside class="notes">
 <p>Resumen del laboratorio del tema 1 (10-12 min al inicio de la sesión siguiente, o material de repaso). Cuadernos: <code>tema_01_intro_python.ipynb</code> y <code>tema_01_regresion_penalizada.ipynb</code>.</p>
-<p>Mensaje de la figura: los pasos de roles, partición y preprocesado se repetirán sin cambios en todos los temas; lo que cambia es el modelo del último paso del <code>Pipeline</code>. Los colores remiten a las tres preguntas de la slide «Tres preguntas» de la teoría.</p>
-<p>Todas las cifras del deck se calculan al renderizar (21-09-2026) con la semilla 42 y la misma muestra de 10 000 trabajadores que los cuadernos.</p>
+<p>Mensaje de la figura: los pasos de roles, partición y preprocesado se repetirán sin cambios en todos los temas; lo que cambia es el modelo del último paso del <code>Pipeline</code>. Los colores remiten a las tres preguntas de la slide «Tres preguntas» de la sesión de teoría de la semana 1 (la semana 2, regresión regularizada, tiene sus propias tres preguntas; su cobertura está en la slide 4).</p>
+<p>Todas las cifras del deck se calculan al renderizar (versión del 30-09-2026) con la semilla 42 y la misma muestra de 10 000 trabajadores que los cuadernos.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -162,12 +162,30 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
           display:block!important;
       }</style></aside>
 </section>
-<section id="qué-parte-de-la-teoría-hemos-aplicado" class="slide level2 fig-full">
-<h2>Qué parte de la teoría hemos aplicado</h2>
+<section id="semana-1-qué-parte-de-la-teoría-hemos-aplicado" class="slide level2 fig-full">
+<h2>Semana 1: qué parte de la teoría hemos aplicado</h2>
 
-<img data-src="01_clab_resumen_files/figure-revealjs/cell-4-output-1.png" alt="Matriz de cobertura: cada fila es una slide de la sesión de teoría del tema 1 y las columnas indican si el cuaderno 1 o el cuaderno 2 del laboratorio la aplican, solo la mencionan o no la cubren." class="r-stretch"><aside class="notes">
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-4-output-1.png" alt="Matriz de cobertura: cada fila es una slide de la sesión de teoría de la semana 1 y las columnas indican si el cuaderno 1 o el cuaderno 2 del laboratorio la aplican, solo la mencionan o no la cubren." class="r-stretch"><aside class="notes">
 <p>Lectura por columnas: el cuaderno 1 cubre el bloque 1 y la evaluación básica (partición, medidas de error); el cuaderno 2 lleva a datos reales casi todo el bloque 2 (sobreajuste, varianza entre muestras, tamaño muestral, regularización, validación).</p>
-<p>Lo que el laboratorio no cubre: la distinción predicción/causalidad (tema 7), la comparación entre familias (recta frente a árbol, tema 4) y el descenso del gradiente, que solo aparece de pasada (Lasso se resuelve de forma iterativa y por eso se fija <code>max_iter</code>). La simulación con polinomios de la teoría se sustituye aquí por la penalización como control de complejidad.</p>
+<p>Lo que el laboratorio no cubre: la distinción predicción/causalidad (tema 7), la comparación entre familias (recta frente a árbol, tema 4) y el descenso del gradiente, que solo aparece de pasada (Lasso se resuelve de forma iterativa y por eso se fija <code>max_iter</code>). La simulación con polinomios de la semana 1 se sustituye aquí por la penalización como control de complejidad.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="semana-2-qué-parte-de-la-teoría-hemos-aplicado" class="slide level2 fig-full">
+<h2>Semana 2: qué parte de la teoría hemos aplicado</h2>
+
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-5-output-1.png" alt="Matriz de cobertura: cada fila es una slide de la sesión de teoría de la semana 2 (regresión lineal regularizada) y las columnas indican si el cuaderno 1 o el cuaderno 2 del laboratorio la aplican, solo la mencionan o no la cubren." class="r-stretch"><aside class="notes">
+<p>Lectura: el cuaderno 2 aplica con la EES lo que la semana 2 cuenta con Airbnb, salvo los mecanismos (umbral suave, geometría) y el caso p + 1 &gt; n.&nbsp;La simulación con β conocido de «Sesgo y varianza» es lo único que el laboratorio no puede hacer con datos reales: sin β conocido, las cajas del cuaderno miden la varianza, pero el sesgo solo como desplazamiento respecto a MCO.</p>
+<p>Tres diferencias de protocolo con la semana 2: (1) el cuaderno compara las familias por su R² de prueba (sección 7) para describir, no para elegir; en la semana 2 la familia se elige por validación y el test se usa una vez. (2) <code>RidgeCV</code> y <code>LassoCV</code> dentro del <code>Pipeline</code> ajustan el preprocesador una vez con las 200 filas; la semana 2 valida el <code>Pipeline</code> entero con <code>GridSearchCV</code>. (3) El cuaderno codifica todas las categorías; la semana 2 usa una categoría de referencia para que MCO tenga solución única.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -188,13 +206,24 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <section id="la-respuesta-el-salario-bruto-anual" class="slide level2 fig-wide">
 <h2>La respuesta: el salario bruto anual</h2>
 
-<img data-src="01_clab_resumen_files/figure-revealjs/cell-5-output-1.png" alt="Dos histogramas del salario bruto anual de la EES 2022. En escala original la distribución es muy asimétrica, con cola larga a la derecha; en escala logarítmica se acerca a una campana." class="r-stretch"><div class="caption-line">
-<p><span class="math inline">\(y\)</span> = <code>RETRINOIN</code>: media 26&nbsp;714 €, mediana 22&nbsp;639 €. <strong>En <span class="math inline">\(y=f(X)+\epsilon\)</span>, ¿qué recoge <span class="math inline">\(\epsilon\)</span> en un salario?</strong></p>
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-6-output-1.png" alt="Dos histogramas del salario bruto anual de la EES 2022. En escala original la distribución es muy asimétrica, con cola larga a la derecha; en escala logarítmica se acerca a una campana." class="r-stretch"><div class="caption-line">
+<p><span class="math inline">\(y\)</span> = <code>RETRINOIN</code>: media 26&nbsp;714 €, mediana 22&nbsp;639 €.</p>
+</div>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Para pensar</a></li><li><a href="#tabset-1-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<p>En <span class="math inline">\(y=f(X)+\epsilon\)</span>, ¿qué recoge <span class="math inline">\(\epsilon\)</span> en un salario?</p>
+</div>
+<div id="tabset-1-2">
+<p>Todo lo que <span class="math inline">\(X\)</span> no anticipa: negociación, productividad, horas efectivas, empresa.</p>
+</div>
+</div>
 </div>
 <aside class="notes">
-<p>Teoría: «¿Qué queremos aprender?» (regresión supervisada) y «El problema de predicción». Cuaderno 1, secciones 2.1 y 2.2.</p>
+<p>Teoría, semana 1: «¿Qué queremos aprender?» (regresión supervisada) y «El problema de predicción». Cuaderno 1, secciones 2.1 y 2.2.</p>
 <p>Decisiones de limpieza, documentadas en el cuaderno: se eliminan los salarios iguales a cero y el 1 % más alto (tope en el percentil 99), y se trabaja con una muestra aleatoria de 10 000 trabajadores. Media y mediana se calculan tras la limpieza.</p>
-<p>Respuesta a la pregunta: todo lo que las 16 características disponibles no anticipan (negociación individual, productividad, horas efectivas, empresa concreta). Es ruido respecto de la información X disponible, no una constante de la naturaleza.</p>
+<p>Pregunta al aula: votación rápida y desvelar la pestaña. Matiz para la discusión: ε es ruido respecto de la información X disponible (los 16 predictores), no una constante de la naturaleza.</p>
 <p>La asimetría reaparece en los residuos de la regresión lineal y motiva el tema 3.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -208,15 +237,15 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
           display:block!important;
       }</style></aside>
 </section>
-<section id="predictores-legítimos-y-fuga-de-información" class="slide level2 fig-side">
+<section id="predictores-legítimos-y-fuga-de-información" class="slide level2 fig-side dense">
 <h2>Predictores legítimos y fuga de información</h2>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="5f996650" class="cell" data-execution_count="5">
+<div id="516db638" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img data-src="01_clab_resumen_files/figure-revealjs/cell-6-output-1.png" alt="Barras horizontales con la correlación entre el salario anual y cinco variables. Los predictores legítimos, antigüedad y jornada pactada, tienen correlaciones moderadas; los componentes del salario, mucho más altas."></p>
+<p><img data-src="01_clab_resumen_files/figure-revealjs/cell-7-output-1.png" alt="Barras horizontales con la correlación entre el salario anual y cinco variables. Los predictores legítimos, antigüedad y jornada pactada, tienen correlaciones moderadas; los componentes del salario, mucho más altas."></p>
 </figure>
 </div>
 </div>
@@ -224,31 +253,28 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </div><div class="column" style="width:4%;">
 
 </div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
 <p>De 56 variables usamos <strong>16 predictores</strong>: 14 categóricas y 2 numéricas.</p>
 <p>Quedan fuera 12 componentes del salario, 2 identificadores y el peso muestral.</p>
 <blockquote>
 <p><span class="math inline">\(X\)</span> solo contiene lo que conoceríamos en el momento de predecir.</p>
 </blockquote>
-<div title="Para pensar">
-<div class="callout callout-tip callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Para pensar</strong></p>
-</div>
-<div class="callout-content">
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Para pensar</a></li><li><a href="#tabset-2-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
 <p>¿Por qué <code>IDENCCC</code> o <code>FACTOTAL</code> tampoco son predictores?</p>
 </div>
+<div id="tabset-2-2">
+<p>Un identificador no se generaliza; <code>FACTOTAL</code> es un peso muestral.</p>
 </div>
 </div>
 </div>
 </div></div>
 <aside class="notes">
-<p>Teoría: «El problema de predicción». Cuaderno 1, sección 3 (roles de las variables y comprobación empírica de la fuga).</p>
+<p>Teoría, semana 1: «El problema de predicción». Semana 2: «Los datos: 300 anuncios» (la tabla solo incluye información conocida al anunciar). Cuaderno 1, sección 3 (roles de las variables y comprobación empírica de la fuga).</p>
 <p>Predecir el salario anual con sus componentes es predecir el total de un ticket conociendo el precio de cada producto: ajuste casi perfecto e inútil. El ejercicio 2 del cuaderno cuantifica el efecto sobre R²; no se resuelve aquí.</p>
-<p>Respuesta: los identificadores no contienen información generalizable a trabajadores nuevos; el factor de elevación es un peso del diseño muestral, no una característica del trabajador ni del puesto.</p>
+<p>Pregunta al aula: votación rápida y desvelar la pestaña. Los identificadores no contienen información generalizable a trabajadores nuevos; el factor de elevación es un peso del diseño muestral, no una característica del trabajador ni del puesto.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -269,11 +295,11 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <section id="partir-primero-preprocesar-dentro-del-pipeline" class="slide level2 fig-full">
 <h2>Partir primero, preprocesar dentro del Pipeline</h2>
 
-<img data-src="01_clab_resumen_files/figure-revealjs/cell-7-output-1.png" alt="Diagrama de un Pipeline de scikit-learn. Fila superior: los datos de entrenamiento ajustan el preprocesador y el modelo con fit. Fila inferior: los datos de prueba solo se transforman con lo aprendido en entrenamiento y se usan para predecir y evaluar." class="r-stretch"><div class="caption-line">
-<p><code>train_test_split</code> antes de cualquier cálculo; el <code>Pipeline</code> garantiza que la prueba no influye en el ajuste.</p>
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-8-output-1.png" alt="Diagrama de un Pipeline de scikit-learn. Fila superior: los datos de entrenamiento ajustan el preprocesador y el modelo con fit. Fila inferior: los datos de prueba solo se transforman con lo aprendido en entrenamiento y se usan para predecir y evaluar." class="r-stretch"><div class="caption-line">
+<p><code>train_test_split</code> antes de cualquier cálculo; el <code>Pipeline</code> garantiza que el conjunto de prueba (test) no influye en el ajuste.</p>
 </div>
 <aside class="notes">
-<p>Teoría: «¿Qué error medimos?» y «Validar para elegir, probar para evaluar». Cuaderno 1, secciones 4 y 5.</p>
+<p>Teoría, semana 1: «¿Qué error medimos?» y «Validar para elegir, probar para evaluar». Semana 2: «Tres variantes sobre el mismo RSS» (se estandariza con los datos de entrenamiento) y «Elegir en dos niveles» (el preprocesado se realiza en cada partición). Cuaderno 1, secciones 4 y 5.</p>
 <p>Idea central de scikit-learn: todo objeto tiene <code>fit</code> (aprende de los datos de entrenamiento) y <code>transform</code> o <code>predict</code> (aplica lo aprendido). Escalar con medias calculadas sobre todos los datos es una fuga de información más sutil que la de los componentes salariales.</p>
 <p><code>OneHotEncoder(handle_unknown="ignore", min_frequency=0.01)</code>: categorías nuevas en prueba se codifican como ceros y las que no llegan al 1 % se agrupan. De 16 variables se pasa a 88 columnas con 7 500 filas (87 con la muestra de 200, porque la agrupación de infrecuentes cambia).</p>
 <style type="text/css">
@@ -291,12 +317,23 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <section id="regresión-lineal-evaluación-en-datos-no-vistos" class="slide level2 fig-wide">
 <h2>Regresión lineal: evaluación en datos no vistos</h2>
 
-<img data-src="01_clab_resumen_files/figure-revealjs/cell-8-output-1.png" alt="Dos diagramas de dispersión de la regresión lineal en el conjunto de prueba. Izquierda: predicción frente a salario real, con la diagonal. Derecha: residuos frente a predicción; la dispersión crece con la predicción y hay predicciones negativas." class="r-stretch"><div class="caption-line">
-<p>En prueba: R² = 0,576, RMSE = 11&nbsp;697 €, MAE = 8&nbsp;240 €. <strong>¿Qué dos síntomas de los residuos anuncian el tema 3?</strong></p>
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-9-output-1.png" alt="Dos diagramas de dispersión de la regresión lineal en el conjunto de prueba. Izquierda: predicción frente a salario real, con la diagonal. Derecha: residuos frente a predicción; la dispersión crece con la predicción y hay predicciones negativas." class="r-stretch"><div class="caption-line">
+<p>En prueba: R² = 0,576, RMSE = 11&nbsp;697 €, MAE = 8&nbsp;240 €.</p>
+</div>
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Para pensar</a></li><li><a href="#tabset-3-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1">
+<p>¿Qué dos síntomas de los residuos anuncian el tema 3?</p>
+</div>
+<div id="tabset-3-2">
+<p>Predicciones negativas y residuos cuya dispersión crece con la predicción.</p>
+</div>
+</div>
 </div>
 <aside class="notes">
-<p>Teoría: «¿Qué error medimos?». Cuaderno 1, sección 6. Medidas sobre los 2 500 trabajadores de prueba; el RMSE penaliza más los errores grandes y el MAE se lee directamente en euros.</p>
-<p>Respuesta: predicciones negativas, imposibles para un salario, y dispersión de los residuos creciente con el nivel de la predicción. Ambos vienen de la asimetría de la respuesta; el tema 3 cambia la relación entre predictores y respuesta (función de enlace).</p>
+<p>Teoría, semana 1: «¿Qué error medimos?». Cuaderno 1, sección 6. Medidas sobre los 2 500 trabajadores de prueba; el RMSE penaliza más los errores grandes y el MAE se lee directamente en euros.</p>
+<p>Pregunta al aula: votación rápida y desvelar la pestaña. Las predicciones negativas son imposibles para un salario; los dos síntomas vienen de la asimetría de la respuesta. El tema 3 cambia la relación entre predictores y respuesta (función de enlace).</p>
 <p><code>LinearRegression</code> está orientado a predecir: devuelve <code>coef_</code> e <code>intercept_</code>, sin errores estándar ni p-valores (para inferencia, <code>statsmodels</code>). Sin categoría de referencia, los coeficientes de una misma variable se leen comparándolos entre sí.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -314,11 +351,11 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <h2>Sobreajuste con datos reales</h2>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="910c2790" class="cell" data-execution_count="8">
+<div id="3de99e6e" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img data-src="01_clab_resumen_files/figure-revealjs/cell-9-output-1.png" alt="Barras agrupadas con el R² en entrenamiento y en prueba de la regresión lineal ajustada con 7 500 filas y con 200 filas. Con 7 500 ambos coinciden; con 200 el de entrenamiento sube y el de prueba cae."></p>
+<p><img data-src="01_clab_resumen_files/figure-revealjs/cell-10-output-1.png" alt="Barras agrupadas con el R² en entrenamiento y en prueba de MCO ajustado con 7 500 filas y con 200 filas. Con 7 500 ambos coinciden; con 200 el de entrenamiento sube y el de prueba cae."></p>
 </figure>
 </div>
 </div>
@@ -326,6 +363,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </div><div class="column" style="width:4%;">
 
 </div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
 <p>Misma familia y mismos predictores: solo cambia <span class="math inline">\(n\)</span>.</p>
 <p>Con 200 filas el modelo <strong>memoriza la muestra</strong>: mejora en entrenamiento y empeora en los mismos 2&nbsp;500 trabajadores de prueba.</p>
 <blockquote>
@@ -333,7 +371,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </blockquote>
 </div></div>
 <aside class="notes">
-<p>Teoría: «Subajuste y sobreajuste, a la vista» y «Varias muestras y el tamaño muestral». Cuaderno 2, secciones 1 y 2.1.</p>
+<p>Teoría, semana 1: «Subajuste y sobreajuste, a la vista» y «Varias muestras y el tamaño muestral». Semana 2: «MCO es insesgado, pero su varianza crece con la colinealidad» (la varianza crece con p/n) y «¿Cuándo deja de ser útil regularizar?». Cuaderno 2, secciones 1 y 2.1.</p>
 <p>En la teoría el sobreajuste se provoca subiendo el grado del polinomio con n fijo; en el laboratorio se provoca bajando n con el número de columnas fijo. Es el mismo fenómeno: la razón entre observaciones y parámetros. La muestra de 200 es el banco de pruebas del resto del cuaderno; el conjunto de prueba no cambia, así que las comparaciones son justas.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -350,12 +388,13 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <section id="ridge-el-intercambio-entre-sesgo-y-varianza-medido" class="slide level2 fig-wide">
 <h2>Ridge: el intercambio entre sesgo y varianza, medido</h2>
 
-<img data-src="01_clab_resumen_files/figure-revealjs/cell-10-output-1.png" alt="Izquierda: camino de los coeficientes de Ridge al aumentar la penalización; se encogen suavemente hacia cero sin anularse. Derecha: R² en entrenamiento, que baja siempre, y R² en prueba, que sube hasta un máximo y después baja." class="r-stretch"><div class="caption-line">
-<p>Ridge minimiza <span class="math inline">\(RSS+\lambda\sum_j\beta_j^2\)</span>. En prueba, R² pasa de 0,39 a 0,52 con alpha ≈ 14: <strong>la curva en U de la teoría, invertida</strong>.</p>
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-11-output-1.png" alt="Izquierda: camino de los coeficientes de Ridge al aumentar la penalización; se encogen suavemente hacia cero sin anularse. Derecha: R² en entrenamiento, que baja siempre, y R² en prueba, que sube hasta un máximo y después baja." class="r-stretch"><div class="caption-line">
+<p>Ridge minimiza <span class="math inline">\(RSS+\lambda\sum_j\beta_j^2\)</span>. Más <span class="math inline">\(\lambda\)</span>, menos complejidad (más sesgo y menos varianza): <strong>la relación en forma de U entre sesgo y varianza (ver semana 1) se lee de derecha a izquierda</strong>.</p>
 </div>
 <aside class="notes">
-<p>Teoría: «Sesgo, varianza y complejidad» y «Controlar la complejidad» (fila de los modelos lineales regularizados; alpha es un hiperparámetro). Cuaderno 2, sección 3.</p>
-<p>El R² en entrenamiento baja de forma monótona; el de prueba sube primero y baja después. A la izquierda del máximo domina la varianza, a la derecha el sesgo. Ridge encoge, no anula. Algunos coeficientes no evolucionan de forma monótona (ANOANTI sube antes de bajar) porque recogen el efecto de columnas correlacionadas que se encogen antes.</p>
+<p>Teoría, semana 1: «Sesgo, varianza y complejidad» y «Controlar la complejidad» (fila de los modelos lineales regularizados; alpha es un hiperparámetro). Semana 2: «Regularizar es restringir la complejidad» y «Ridge encoge; Lasso anula». Cuaderno 2, sección 3.</p>
+<p>Cifras: en prueba, R² pasa de 0,39 (MCO) a 0,52 con alpha ≈ 14.</p>
+<p>El R² en entrenamiento baja de forma monótona; el de prueba sube primero y baja después. A la izquierda del máximo domina la varianza, a la derecha el sesgo. La curva de prueba tiene forma de U invertida porque el eje vertical es R², no el error. Ridge encoge, no anula. Algunos coeficientes no evolucionan de forma monótona (ANOANTI sube antes de bajar) porque recogen el efecto de columnas correlacionadas que se encogen antes.</p>
 <p>Nombres: el lambda de las transparencias es <code>alpha</code> en scikit-learn. La penalización depende de las unidades, por eso las numéricas se estandarizan dentro del Pipeline.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -373,11 +412,11 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <h2>La varianza de los coeficientes, vista</h2>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="a49cabde" class="cell" data-execution_count="10">
+<div id="fa5a23fc" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img data-src="01_clab_resumen_files/figure-revealjs/cell-11-output-1.png" alt="Diagramas de caja de cinco coeficientes estimados en 30 muestras distintas de 200 trabajadores, con regresión lineal y con Ridge. Las cajas de Ridge son mucho más estrechas."></p>
+<p><img data-src="01_clab_resumen_files/figure-revealjs/cell-12-output-1.png" alt="Diagramas de caja de cinco coeficientes estimados en 30 muestras distintas de 200 trabajadores, con MCO y con Ridge. Las cajas de Ridge son mucho más estrechas."></p>
 </figure>
 </div>
 </div>
@@ -385,15 +424,16 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </div><div class="column" style="width:4%;">
 
 </div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
 <p>30 muestras de 200 trabajadores, un ajuste por muestra.</p>
 <p>Con Ridge, la desviación típica de cada coeficiente es entre <strong>1,6 y 3,6 veces menor</strong>.</p>
 <p>A cambio, las medias se desplazan: eso es el sesgo.</p>
 <blockquote>
-<p>Es el haz de curvas de la teoría, ahora con coeficientes.</p>
+<p>Es el haz de curvas de la semana 1, ahora con coeficientes. Con β conocido, la semana 2 mide además el sesgo.</p>
 </blockquote>
 </div></div>
 <aside class="notes">
-<p>Teoría: «La varianza: entrenar con otra muestra» y «Descomposición del error de predicción». Cuaderno 2, sección 3.2.</p>
+<p>Teoría, semana 1: «La varianza: entrenar con otra muestra» y «Descomposición del error de predicción». Semana 2: «MCO es insesgado, pero su varianza crece con la colinealidad» (por qué: σ²(X′X)⁻¹) y «Sesgo y varianza» (la misma comparación con β conocido, donde el sesgo de Ridge se ve respecto del valor verdadero). Cuaderno 2, sección 3.2.</p>
 <p>La variación relevante es la de las estimaciones al repetir el entrenamiento con otra muestra. En la teoría se ve como un haz de curvas ajustadas; aquí, como la dispersión de cinco coeficientes. Las medias no se acercan a cero en todos los casos: al encoger unos coeficientes, otros correlacionados recogen parte del efecto.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -410,11 +450,11 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <section id="lasso-encoger-y-seleccionar" class="slide level2 fig-wide">
 <h2>Lasso: encoger y seleccionar</h2>
 
-<img data-src="01_clab_resumen_files/figure-revealjs/cell-12-output-1.png" alt="Tres paneles para Lasso con 200 filas. Camino de los coeficientes, que llegan a cero y se quedan ahí; número de coeficientes distintos de cero, que baja de 87 a 0; y R² en entrenamiento y prueba según la penalización." class="r-stretch"><div class="caption-line">
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-13-output-1.png" alt="Tres paneles para Lasso con 200 filas. Camino de los coeficientes, que llegan a cero y se quedan ahí; número de coeficientes distintos de cero, que baja de 87 a 0; y R² en entrenamiento y prueba según la penalización." class="r-stretch"><div class="caption-line">
 <p>Lasso minimiza <span class="math inline">\(RSS+\lambda\sum_j|\beta_j|\)</span>: en el máximo de prueba conserva 34 de 87 columnas. <strong>Ridge encoge; Lasso, además, elige.</strong></p>
 </div>
 <aside class="notes">
-<p>Teoría: «Controlar la complejidad» (las notas de esa slide ya anticipan que LASSO lleva coeficientes a cero y ridge los contrae). Cuaderno 2, sección 4.</p>
+<p>Teoría, semana 1: «Controlar la complejidad» (las notas de esa slide ya anticipan que Lasso lleva coeficientes a cero y Ridge los contrae). Semana 2: «Ridge encoge; Lasso anula», «Lasso selecciona variables» y, para el porqué de los ceros, «Ridge divide; Lasso resta y trunca». Cuaderno 2, sección 4.</p>
 <p>Con alpha muy grande no queda ninguna columna: el modelo predice la media y su R² es cero. El alpha de <code>Ridge</code> y el de <code>Lasso</code> no están en la misma escala en scikit-learn (Lasso divide el error cuadrático entre 2n): se comparan resultados, no valores de alpha.</p>
 <p>El ejercicio 2 del cuaderno (qué variables sobreviven) no se resuelve aquí.</p>
 <style type="text/css">
@@ -429,15 +469,15 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
           display:block!important;
       }</style></aside>
 </section>
-<section id="elegir-la-penalización-sin-mirar-la-prueba" class="slide level2 fig-side">
+<section id="elegir-la-penalización-sin-mirar-la-prueba" class="slide level2 fig-side dense">
 <h2>Elegir la penalización sin mirar la prueba</h2>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="1daa32a7" class="cell" data-execution_count="12">
+<div id="24e8cda8" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img data-src="01_clab_resumen_files/figure-revealjs/cell-13-output-1.png" alt="Curva de validación de LassoCV: RMSE medio de validación en cinco pliegues frente a la penalización, con una línea vertical en el valor elegido."></p>
+<p><img data-src="01_clab_resumen_files/figure-revealjs/cell-14-output-1.png" alt="Curva de validación de LassoCV: RMSE medio de validación en cinco particiones frente a la penalización, con una línea vertical en el valor elegido."></p>
 </figure>
 </div>
 </div>
@@ -445,6 +485,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </div><div class="column" style="width:4%;">
 
 </div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -466,28 +507,25 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </tr>
 </tbody>
 </table>
+<p>&nbsp;</p>
 <p>Valores de <code>alpha</code>. En Lasso difieren, pero el R² en prueba apenas cambia: 0,48 frente a 0,49.</p>
 <p>La validación cruzada decide <strong>sin usar la prueba</strong>.</p>
-<div title="Para pensar">
-<div class="callout callout-tip callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Para pensar</a></li><li><a href="#tabset-4-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1">
+<p>¿Qué <code>alpha</code> de Lasso usaríais en el modelo final, y por qué?</p>
 </div>
-<p><strong>Para pensar</strong></p>
-</div>
-<div class="callout-content">
-<p>Si elegimos <code>alpha</code> con el R² de prueba, ¿sigue siendo una evaluación final?</p>
-</div>
+<div id="tabset-4-2">
+<p>El de validación cruzada. Elegir con la prueba anula la evaluación final.</p>
 </div>
 </div>
 </div>
 </div></div>
 <aside class="notes">
-<p>Teoría: «Validar para elegir, probar para evaluar». Cuaderno 2, sección 5. Es el adelanto del tema 2.</p>
-<p>Respuesta: no. El conjunto de prueba habría influido en una decisión sobre el modelo; es otra forma de fuga de información. <code>RidgeCV</code>, <code>LassoCV</code> y <code>ElasticNetCV</code> eligen alpha dentro del entrenamiento; el valor queda en <code>alpha_</code> (el guion bajo final marca lo que scikit-learn aprende de los datos).</p>
-<p>En Lasso el alpha de validación es mayor que el del máximo en prueba, pero la curva es plana en esa zona y el R² en prueba apenas cambia. Detalle que se resuelve en el tema 2: con <code>LassoCV</code> dentro del Pipeline el preprocesador se ajusta una vez con las 200 filas; la forma limpia es validar el Pipeline entero con <code>GridSearchCV</code>.</p>
+<p>Teoría, semana 1: «Validar para elegir, probar para evaluar». Semana 2: «Elegir en dos niveles» y «Selección por validación». Cuaderno 2, sección 5.</p>
+<p>Pregunta al aula: votación y desvelar la pestaña. Elegir con la prueba es otra forma de fuga de información: el conjunto de prueba habría influido en una decisión sobre el modelo. Además, en Lasso la curva es plana en esa zona, así que el alpha de validación apenas cuesta R² en prueba. <code>RidgeCV</code>, <code>LassoCV</code> y <code>ElasticNetCV</code> eligen alpha dentro del entrenamiento; el valor queda en <code>alpha_</code> (el guion bajo final marca lo que scikit-learn aprende de los datos).</p>
+<p>Detalle de protocolo: con <code>LassoCV</code> dentro del Pipeline el preprocesador se ajusta una vez con las 200 filas. La forma limpia, validar el Pipeline entero con <code>GridSearchCV</code> (el preprocesado se realiza en cada partición), ya se usó en la semana 2 («Elegir en dos niveles») y se formaliza en el tema 2.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -503,11 +541,12 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <section id="cuándo-compensa-penalizar" class="slide level2 fig-wide">
 <h2>¿Cuándo compensa penalizar?</h2>
 
-<img data-src="01_clab_resumen_files/figure-revealjs/cell-14-output-1.png" alt="Dos paneles con el R² en prueba de la regresión lineal, Ridge, Lasso y Elastic Net con penalización elegida por validación cruzada. Con 200 filas los penalizados mejoran claramente a la regresión lineal; con 7 500 filas los cuatro son indistinguibles. Sobre cada barra, el número de coeficientes distintos de cero." class="r-stretch"><div class="caption-line">
-<p>La penalización es un <strong>seguro contra la varianza</strong>: vale mucho con pocos datos y casi nada cuando sobran.</p>
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-15-output-1.png" alt="Dos paneles con el R² en prueba de MCO, Ridge, Lasso y Elastic Net con penalización elegida por validación cruzada. Con 200 filas los penalizados mejoran claramente a MCO; con 7 500 filas los cuatro son indistinguibles. Sobre cada barra, el número de coeficientes distintos de cero." class="r-stretch"><div class="caption-line">
+<p>La penalización es un <strong>seguro contra la varianza</strong>: vale mucho con pocos datos y casi nada cuando sobran, como muestra también la curva de aprendizaje de Airbnb (ver semana 2).</p>
 </div>
 <aside class="notes">
-<p>Teoría: «Varias muestras y el tamaño muestral» (más datos informativos permiten modelos más flexibles) y «Controlar la complejidad». Cuaderno 2, secciones 6 y 7.</p>
+<p>Teoría, semana 1: «Varias muestras y el tamaño muestral» (más datos informativos permiten modelos más flexibles) y «Controlar la complejidad». Semana 2: «¿Cuándo deja de ser útil regularizar?» (a mayor n, menor ventaja de Ridge) y «¿Con qué familia empezar?». Cuaderno 2, secciones 6 y 7.</p>
+<p>Diferencia de protocolo con la semana 2: aquí las familias se comparan por su R² de prueba para describir el resultado, no para elegir; en la semana 2 la familia se elige por validación y el test se consulta una sola vez.</p>
 <p>Con 7 500 filas la validación cruzada elige penalizaciones pequeñas y el resultado es el de mínimos cuadrados; Lasso y Elastic Net descartan además una o dos decenas de columnas sin perder nada. Elastic Net elige <code>l1_ratio = 1</code> (Lasso puro) con 200 filas: ninguna mezcla con parte Ridge mejora en validación con estos datos.</p>
 <p>El ejercicio 3 (cuántos datos hacen falta) recorre tamaños intermedios; no se resuelve aquí.</p>
 <style type="text/css">
@@ -562,6 +601,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </tr>
 </tbody>
 </table>
+<p>&nbsp;</p>
 <p>Entrenar es minimizar una pérdida; regularizar es cambiar la pérdida.</p>
 </div><div class="column" style="width:4%;">
 
@@ -591,16 +631,16 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p><strong>Cuidado con los nombres</strong></p>
 </div>
 <div class="callout-content">
-<p><span class="math inline">\(\lambda\)</span> (cantidad) es <code>alpha</code> en scikit-learn; <span class="math inline">\(\alpha\)</span> (mezcla) es <code>l1_ratio</code>.</p>
+<p><span class="math inline">\(\lambda\)</span> (intensidad) es <code>alpha</code> en scikit-learn; <span class="math inline">\(\alpha\)</span> (mezcla) es <code>l1_ratio</code>.</p>
 </div>
 </div>
 </div>
 </div>
 </div></div>
 <aside class="notes">
-<p>Teoría: «Ajustar los parámetros minimizando una pérdida» y «Descenso del gradiente: aspectos prácticos» (escalado). Cuaderno 2, secciones 3, 4 y 6.</p>
+<p>Teoría, semana 1: «Ajustar los parámetros minimizando una pérdida» y «Descenso del gradiente: aspectos prácticos» (escalado). Semana 2: «Tres variantes sobre el mismo RSS» (mismas fórmulas y misma notación). Cuaderno 2, secciones 3, 4 y 6.</p>
 <p>Precisión: <code>Lasso</code> y <code>ElasticNet</code> usan descenso por coordenadas, no descenso del gradiente; comparten con él la lógica iterativa y un criterio de parada (iteraciones máximas y tolerancia). El escalado, que en la teoría aparece como ayuda a la optimización, es aquí además condición para que la penalización trate igual a todos los predictores numéricos.</p>
-<p>En <code>glmnet</code> de R, <code>lambda</code> es la cantidad y <code>alpha</code> la mezcla; scikit-learn llama <code>alpha</code> a la cantidad.</p>
+<p>En <code>glmnet</code> de R, <code>lambda</code> es la intensidad y <code>alpha</code> la mezcla; scikit-learn llama <code>alpha</code> a la intensidad.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -621,7 +661,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <section id="conocimientos-aplicados" class="slide level2 fig-full">
 <h2>Conocimientos aplicados</h2>
 
-<img data-src="01_clab_resumen_files/figure-revealjs/cell-15-output-1.png" alt="Cuatro tarjetas con las herramientas de Python practicadas en el laboratorio: datos con pandas, flujo de trabajo con scikit-learn, modelos y evaluación, y programación básica." class="r-stretch"><div class="caption-line">
+<img data-src="01_clab_resumen_files/figure-revealjs/cell-16-output-1.png" alt="Cuatro tarjetas con las herramientas de Python practicadas en el laboratorio: datos con pandas, flujo de trabajo con scikit-learn, modelos y evaluación, y programación básica." class="r-stretch"><div class="caption-line">
 <p>Roles de las variables, partición y <code>Pipeline</code> se repiten sin cambios en todos los temas: <strong>solo cambiará el último paso</strong>.</p>
 </div>
 <aside class="notes">
@@ -704,6 +744,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </tbody>
 </table>
 </div>
+<p>&nbsp;</p>
 <p>Cambia la herramienta; los conceptos son los mismos.</p>
 <aside class="notes">
 <p>Tablas de correspondencias completas al final de cada cuaderno. Diferencia práctica con <code>glmnet</code>: estandariza todos los predictores por defecto, incluidas las indicadoras, y devuelve los coeficientes en la escala original; en scikit-learn decidimos qué se estandariza (aquí, solo las numéricas) y los coeficientes se refieren a las columnas transformadas.</p>
@@ -724,14 +765,14 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <ol type="1">
 <li><strong>Aprender:</strong> fijar la respuesta y los predictores que tendríamos al predecir. La fuga de información se detecta antes de ajustar nada.</li>
-<li><strong>Evaluar:</strong> partir primero y medir en prueba. Con 200 filas la regresión lineal sobreajusta; penalizar cambia algo de sesgo por menos varianza.</li>
+<li><strong>Evaluar:</strong> partir primero y medir en prueba. Con 200 filas MCO sobreajusta; penalizar cambia algo de sesgo por menos varianza.</li>
 <li><strong>Entrenar:</strong> cada modelo minimiza una pérdida; la intensidad de la penalización es un hiperparámetro que se elige por validación cruzada.</li>
 </ol>
 <blockquote>
-<p>Siguiente: validar el <code>Pipeline</code> entero (tema 2) y una respuesta asimétrica que pide otro modelo (tema 3).</p>
+<p>Siguiente: el tema 2 formaliza la validación del <code>Pipeline</code> entero (ya usada en la semana 2) y el tema 3 trata una respuesta asimétrica que pide otro modelo.</p>
 </blockquote>
 <aside class="notes">
-<p>Un minuto. Una frase por cada pregunta de la sesión de teoría. Pendiente del laboratorio que enlaza con lo que viene: <code>GridSearchCV</code> sobre el Pipeline completo (tema 2); predicciones negativas y residuos con dispersión creciente (tema 3, función de enlace; el ejercicio 4 del cuaderno 2 lo anticipa con el logaritmo).</p>
+<p>Un minuto. Una frase por cada pregunta de la sesión de teoría de la semana 1. Pendiente del laboratorio que enlaza con lo que viene: <code>GridSearchCV</code> sobre el Pipeline completo (la semana 2 ya lo usa; el tema 2 lo formaliza y mide la incertidumbre de la validación cruzada); predicciones negativas y residuos con dispersión creciente (tema 3, función de enlace; el ejercicio 4 del cuaderno 2 lo anticipa con el logaritmo).</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
