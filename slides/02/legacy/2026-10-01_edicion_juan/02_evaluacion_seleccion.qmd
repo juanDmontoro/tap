@@ -1,0 +1,1481 @@
+---
+title: "Tema 2. Evaluación y selección de modelos"
+subtitle: "Técnicas Avanzadas de Predicción en Negocios"
+author: "Prof. Juan D. Montoro-Pons | 2026/27"
+title-slide-attributes:
+  data-background-color: "#447099"
+format:
+  clean-revealjs:
+    slide-number: c/t
+    footer: ""
+    echo: true
+    code-fold: true
+    code-overflow: wrap
+    code-line-numbers: false
+    code-copy: true
+    highlight-style: solarized
+    scrollable: false
+    incremental: false
+    # Sin embed-resources: rompe los iconos de las celdas pyodide (ver _tap_theme/README.md).
+    fig-align: center
+engine: jupyter
+jupyter: python3
+lang: es
+fig-dpi: 110
+execute:
+  eval: true
+  warning: false
+  message: false
+pyodide:
+  show-startup-message: false
+filters:
+  - pyodide
+  - ../../../_tap_theme/strip-notes.lua
+---
+
+```{python}
+#| echo: false
+#| output: false
+# Todo el deck se calcula al renderizar. Datos: la población de la semana 2 del tema 1
+# (listados.csv, 30-400 €/noche, alojamientos enteros y habitaciones), con la misma partición
+# (30 % de test, semilla 42). Bloque 1: log(precio) con los mismos 300 anuncios, rejillas y
+# Pipeline de la semana 2. Bloques 2 y 3: superanfitrión (sí/no) con todo el desarrollo y un
+# logit sin penalización. El test solo se consulta en la actividad final.
+import sys
+import warnings
+sys.path.insert(0, "../../../_tap_theme")
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import tapviz as tv
+from matplotlib.ticker import FuncFormatter, MaxNLocator
+from matplotlib_inline.backend_inline import set_matplotlib_formats
+from sklearn.base import clone
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import Ridge, Lasso, ElasticNet, LogisticRegression
+from sklearn.dummy import DummyClassifier
+from sklearn.model_selection import (train_test_split, KFold, StratifiedKFold, ShuffleSplit, LeaveOneOut,
+                                     GridSearchCV, cross_val_score, cross_val_predict,
+                                     TunedThresholdClassifierCV)
+from sklearn.metrics import (root_mean_squared_error, roc_curve, roc_auc_score, log_loss,
+                             precision_recall_curve, average_precision_score, make_scorer)
+from sklearn.exceptions import ConvergenceWarning
+
+warnings.filterwarnings("error", category=ConvergenceWarning)
+warnings.filterwarnings("ignore", message="Found unknown categories")   # barrio no visto en el ajuste: fila de ceros
+tv.use_style()
+plt.rcParams.update({"font.size": 16, "axes.titlesize": 18, "axes.labelsize": 16,
+                     "legend.fontsize": 15, "xtick.labelsize": 15, "ytick.labelsize": 15})
+set_matplotlib_formats("png", dpi=110)
+
+
+def es(value, digits=0):
+    """Número con formato español: coma decimal; sin separador hasta 9 999 y espacio fino a partir de cinco cifras (RAE)."""
+    texto = f"{value:,.{digits}f}".replace(",", "_").replace(".", ",")
+    return texto.replace("_", "" if abs(value) < 10000 else " ")
+
+
+def eje_coma(eje, dec=1):
+    """Coma decimal en las marcas de un eje lineal (ax.xaxis o ax.yaxis)."""
+    eje.set_major_formatter(FuncFormatter(lambda v, _: es(v, dec)))
+
+
+def es_dif(value, digits=3):
+    """Diferencia con signo: sin «-0,000» cuando el valor redondea a cero; signo menos tipográfico."""
+    texto = es(0.0 if abs(value) < 0.5 * 10 ** -digits else value, digits)
+    return texto.replace("-", "−")
+
+
+def es_sig(value, cifras=3):
+    """Número con `cifras` cifras significativas y coma decimal (para valores de alpha)."""
+    return f"{value:.{cifras}g}".replace(".", ",")
+
+
+# ---------------------------------------------------------------- datos (idénticos a la semana 2)
+SEED, N_TRAIN = 42, 300
+cols = ["neighbourhood_cleansed", "room_type", "latitude", "longitude", "accommodates",
+        "bathrooms", "bedrooms", "beds", "number_of_reviews", "number_of_reviews_ltm",
+        "reviews_per_month", "review_scores_rating", "minimum_nights", "availability_365",
+        "host_is_superhost", "price"]
+df = pd.read_csv("../../../../datos/airbnb_vlc/listados.csv", usecols=cols)
+df["price"] = pd.to_numeric(df.price.str.replace(r"[$,]", "", regex=True))
+lat0, lon0 = 39.4699, -0.3763
+df["dist_km"] = np.sqrt(((df.latitude - lat0) * 111.0) ** 2
+                        + ((df.longitude - lon0) * 111.0 * np.cos(np.radians(lat0))) ** 2)
+df["superhost"] = (df.host_is_superhost == "t").astype(int)
+datos = df[df.price.between(30, 400) & df.room_type.isin(["Entire home/apt", "Private room"])].copy()
+datos["log_precio"] = np.log(datos.price)
+
+num = ["dist_km", "accommodates", "bathrooms", "bedrooms", "beds", "number_of_reviews",
+       "number_of_reviews_ltm", "reviews_per_month", "review_scores_rating", "minimum_nights",
+       "availability_365", "superhost"]
+cat = ["neighbourhood_cleansed", "room_type"]
+features = num + cat
+dev, test = train_test_split(datos, test_size=0.3, random_state=SEED)
+train = dev.sample(N_TRAIN, random_state=SEED)
+X_train, y_train = train[features], train.log_precio
+
+# Categorías de referencia (semana 2): el barrio más frecuente y la habitación privada.
+REF = [datos.neighbourhood_cleansed.value_counts().idxmax(), "Private room"]
+
+
+def comprueba_ref(d):
+    """Cada muestra de ajuste debe contener las categorías de referencia (si no, OneHotEncoder falla)."""
+    assert (d.neighbourhood_cleansed == REF[0]).any() and (d.room_type == REF[1]).any(), \
+        "Falta una categoría de referencia en la muestra de ajuste"
+
+
+def comprueba_particiones(d, cv):
+    for _tr, _ in cv.split(d):
+        comprueba_ref(d.iloc[_tr])
+
+
+def preprocesador():
+    return ColumnTransformer([
+        ("num", Pipeline([("imp", SimpleImputer(strategy="median")), ("esc", StandardScaler())]), num),
+        ("cat", OneHotEncoder(drop=REF, handle_unknown="ignore", sparse_output=False), cat),
+    ])
+
+
+def pipeline(model):
+    return Pipeline([("prep", preprocesador()), ("model", model)])
+
+
+ridge_grid = np.logspace(-2, 4, 25)      # alpha de Ridge = λ
+l1_grid = np.logspace(-4, 0, 25)         # alpha de Lasso y ElasticNet = λ/(2n)
+specs = {
+    "Ridge": (Ridge(), {"model__alpha": ridge_grid}),
+    "Lasso": (Lasso(max_iter=50000, tol=1e-5), {"model__alpha": l1_grid}),
+    "Elastic Net": (ElasticNet(max_iter=50000, tol=1e-5),
+                    {"model__alpha": l1_grid, "model__l1_ratio": [0.1, 0.5, 0.9]}),
+}
+N_CAND = len(ridge_grid) + len(l1_grid) + 3 * len(l1_grid)       # configuraciones candidatas
+
+
+def busca(cv, X=X_train, y=y_train):
+    """Las tres búsquedas de la semana 2 con las particiones `cv`."""
+    return {n: GridSearchCV(pipeline(m), g, cv=cv, scoring="neg_mean_squared_error", n_jobs=-1,
+                            error_score="raise").fit(X, y) for n, (m, g) in specs.items()}
+
+
+def rmse_particiones(search, k):
+    """RMSE de cada una de las 5 particiones de validación para la configuración k."""
+    return np.sqrt(-np.array([search.cv_results_[f"split{i}_test_score"][k] for i in range(5)]))
+
+
+def ee_cv(search, k):
+    """Error típico del RMSE de validación: desviación entre particiones / raíz de 5 (semana 2)."""
+    return rmse_particiones(search, k).std(ddof=1) / np.sqrt(5)
+
+
+def activas(model):
+    return int(np.count_nonzero(np.abs(model["model"].coef_) > 1e-8))
+
+
+# ------------------------------------------ bloque 1: la decisión de la semana 2 y el gancho
+cv = KFold(n_splits=5, shuffle=True, random_state=SEED)
+comprueba_particiones(train, cv)
+searches = busca(cv)
+rmse_cv = pd.Series({n: np.sqrt(-s.best_score_) for n, s in searches.items()})
+winner = rmse_cv.idxmin()
+assert winner in ("Lasso", "Elastic Net"), "El ganador de la semana 2 ya no es Lasso ni Elastic Net: revisar el gancho"
+decision = pd.DataFrame({"RMSE CV": rmse_cv,
+                         "EE CV": {n: ee_cv(s, s.best_index_) for n, s in searches.items()},
+                         "Activas": {n: activas(s.best_estimator_) for n, s in searches.items()}})
+
+SEMILLAS = range(30)                       # otras formas de repartir los 300 anuncios en 5 particiones
+ganadores = []
+for s in SEMILLAS:
+    cv_s = KFold(n_splits=5, shuffle=True, random_state=s)
+    comprueba_particiones(train, cv_s)
+    r = pd.Series({n: -b.best_score_ for n, b in busca(cv_s).items()})
+    ganadores.append(r.idxmin())
+victorias = pd.Series(ganadores).value_counts().reindex(list(specs), fill_value=0)
+
+# Slide 5: el mismo Ridge (λ de validación) con una partición 80/20 o con 5 particiones, 100 semillas
+ALPHA_R = searches["Ridge"].best_params_["model__alpha"]
+ridge_fijo = pipeline(Ridge(alpha=ALPHA_R))
+
+
+def rmse_val(model, X, y, cv, n_jobs=-1):
+    """Raíz del MSE medio de validación (misma definición que la semana 2)."""
+    mse = -cross_val_score(model, X, y, cv=cv, scoring="neg_mean_squared_error", n_jobs=n_jobs,
+                           error_score="raise")
+    return np.sqrt(mse.mean()), mse
+
+
+una_part = np.array([rmse_val(ridge_fijo, X_train, y_train, ShuffleSplit(1, test_size=0.2, random_state=s),
+                              n_jobs=1)[0] for s in range(100)])
+cinco_part = np.array([rmse_val(ridge_fijo, X_train, y_train, KFold(5, shuffle=True, random_state=s))[0]
+                       for s in range(100)])
+assert una_part.std() > 2 * cinco_part.std(), "La slide 5 afirma que una sola partición varía mucho más"
+
+# Slides 6 y 7: 50 muestras de 300 del desarrollo; error real en una validación grande que no
+# interviene (la misma división interna que la curva de aprendizaje de la semana 2). El test no se usa.
+pool, valid = train_test_split(dev, test_size=0.25, random_state=123)
+K_OPC = {"k = 2": KFold(2, shuffle=True, random_state=SEED), "k = 5": KFold(5, shuffle=True, random_state=SEED),
+         "k = 10": KFold(10, shuffle=True, random_state=SEED), "LOOCV": LeaveOneOut()}
+AJUSTES = {"k = 2": 2, "k = 5": 5, "k = 10": 10, "LOOCV": N_TRAIN}
+filas = []
+for b in range(50):
+    m_b = pool.sample(N_TRAIN, random_state=1000 + b)
+    assert (m_b.neighbourhood_cleansed == REF[0]).sum() >= 2, "LOOCV necesita dos anuncios del barrio de referencia"
+    for k, cv_k in K_OPC.items():
+        if k != "LOOCV":
+            comprueba_particiones(m_b, cv_k)
+    Xb, yb = m_b[features], m_b.log_precio
+    fila = {"real": root_mean_squared_error(valid.log_precio, clone(ridge_fijo).fit(Xb, yb).predict(valid[features]))}
+    for k, cv_k in K_OPC.items():
+        fila[k], mse = rmse_val(ridge_fijo, Xb, yb, cv_k)
+        if k == "k = 5":
+            fila["ee_ingenuo"] = np.sqrt(mse).std(ddof=1) / np.sqrt(5)
+    filas.append(fila)
+muestras = pd.DataFrame(filas)
+sesgo = {k: (muestras[k] - muestras.real).mean() for k in K_OPC}
+de_real_cv5 = muestras["k = 5"].std(ddof=1)            # variación real de la estimación entre muestras
+ee_medio = muestras.ee_ingenuo.mean()
+
+# Slide 8: regla del error típico sobre la tabla de decisión de la semana 2
+limite_1ee = decision.loc[winner, "RMSE CV"] + decision.loc[winner, "EE CV"]
+en_banda = decision.index[decision["RMSE CV"] <= limite_1ee].tolist()
+elegido_1ee = decision.loc[en_banda, "Activas"].idxmin()             # más sencillo: menos coeficientes no nulos
+fuera_banda = [n for n in decision.index if n not in en_banda]
+_margen = {n: decision.loc[n, "RMSE CV"] - limite_1ee for n in fuera_banda}
+nota_banda = "".join(f" {n} queda fuera por solo {es(m, 4)}: con otra partición podría entrar, pero la regla "
+                     f"no la elegiría (tiene más coeficientes activos)." for n, m in _margen.items() if m < 0.005)
+
+# Slide 9: simulación con predictores de puro ruido (el mejor de 200 parece útil)
+N_R, P_R, REP_R, N_NUEVOS = 100, 200, 100, 5000
+
+
+def mse_cv_simples(X, y, folds):
+    """MSE de validación de las P regresiones simples (una por columna), a la vez."""
+    err = np.zeros(X.shape[1])
+    for tr, va in folds:
+        xm, ym = X[tr].mean(0), y[tr].mean()
+        b = ((X[tr] - xm) * (y[tr] - ym)[:, None]).sum(0) / ((X[tr] - xm) ** 2).sum(0)
+        err += ((y[va][:, None] - ym - (X[va] - xm) * b) ** 2).sum(0)
+    return err / len(y)
+
+
+def ajusta_simple(x, y):
+    xm, ym = x.mean(), y.mean()
+    b = ((x - xm) * (y - ym)).sum() / ((x - xm) ** 2).sum()
+    return lambda z: ym + (z - xm) * b
+
+
+rng = np.random.default_rng(SEED)
+ruido = []
+for r in range(REP_R):
+    X = rng.standard_normal((N_R, P_R))
+    y = rng.standard_normal(N_R)                          # y no depende de ningún predictor
+    X_n, y_n = rng.standard_normal((N_NUEVOS, P_R)), rng.standard_normal(N_NUEVOS)
+    folds = list(KFold(5, shuffle=True, random_state=r).split(X))
+    e = mse_cv_simples(X, y, folds)
+    j = int(e.argmin())                                   # el predictor elegido por validación cruzada
+    nuevo = np.mean((y_n - ajusta_simple(X[:, j], y)(X_n[:, j])) ** 2)
+    anid = 0.0                                            # anidada: la elección se repite dentro de cada partición externa
+    for tr, va in KFold(5, shuffle=True, random_state=1000 + r).split(X):
+        inner = list(KFold(5, shuffle=True, random_state=r).split(X[tr]))
+        ji = int(mse_cv_simples(X[tr], y[tr], inner).argmin())
+        anid += ((y[va] - ajusta_simple(X[tr, ji], y[tr])(X[va, ji])) ** 2).sum()
+    ruido.append({"minimo": e.min(), "anidada": anid / N_R, "nuevos": nuevo})
+ruido = pd.DataFrame(ruido)
+assert ruido.minimo.mean() < 1 < ruido.anidada.mean() and ruido.minimo.mean() < ruido.nuevos.mean()
+
+# La misma comparación en Airbnb (notas): selección entre las tres familias, anidada
+externa = KFold(5, shuffle=True, random_state=7)
+_se = 0.0
+for tr, va in externa.split(X_train):
+    interna = KFold(5, shuffle=True, random_state=SEED)
+    comprueba_particiones(train.iloc[tr], interna)
+    b_in = busca(interna, X_train.iloc[tr], y_train.iloc[tr])
+    w = max(b_in, key=lambda n: b_in[n].best_score_)
+    _se += ((y_train.iloc[va] - b_in[w].predict(X_train.iloc[va])) ** 2).sum()
+anidada_airbnb = np.sqrt(_se / N_TRAIN)
+resto = dev.drop(train.index)                             # desarrollo que no está en los 300
+real_airbnb = root_mean_squared_error(resto.log_precio, searches[winner].predict(resto[features]))
+
+# ------------------------------------------------ bloques 2 y 3: superanfitrión con un logit
+num_c = [v for v in num if v != "superhost"] + ["log_precio"]
+feat_c = num_c + cat
+dv = dev[dev.host_is_superhost.notna()]
+ts = test[test.host_is_superhost.notna()]
+X_c, y_c = dv[feat_c], dv.superhost
+X_ct, y_ct = ts[feat_c], ts.superhost
+MIN_BARRIO = 50                                           # barrios con menos anuncios: una categoría común
+
+
+def preprocesador_c():
+    return ColumnTransformer([
+        ("num", Pipeline([("imp", SimpleImputer(strategy="median")), ("esc", StandardScaler())]), num_c),
+        ("cat", OneHotEncoder(drop=REF, min_frequency=MIN_BARRIO, handle_unknown="infrequent_if_exist",
+                              sparse_output=False), cat),
+    ])
+
+
+# C = inf: logit sin penalización (en scikit-learn 1.8+ `penalty` está obsoleto)
+logit = Pipeline([("prep", preprocesador_c()), ("model", LogisticRegression(C=np.inf, max_iter=5000))])
+logit_bal = Pipeline([("prep", preprocesador_c()),
+                      ("model", LogisticRegression(C=np.inf, max_iter=5000, class_weight="balanced"))])
+cv_c = StratifiedKFold(5, shuffle=True, random_state=SEED)
+p_oof = cross_val_predict(logit, X_c, y_c, cv=cv_c, method="predict_proba")[:, 1]     # fuera de pliegue
+p_bal = cross_val_predict(logit_bal, X_c, y_c, cv=cv_c, method="predict_proba")[:, 1]
+prev = y_c.mean()
+nulo = DummyClassifier(strategy="most_frequent")
+exact_nulo = cross_val_score(nulo, X_c, y_c, cv=cv_c, scoring="accuracy").mean()
+p_prior = cross_val_predict(DummyClassifier(strategy="prior"), X_c, y_c, cv=cv_c, method="predict_proba")[:, 1]
+auc = roc_auc_score(y_c, p_oof)
+ll, ll_nulo, ll_bal = log_loss(y_c, p_oof), log_loss(y_c, p_prior), log_loss(y_c, p_bal)
+coef_max = np.abs(clone(logit).fit(X_c, y_c)["model"].coef_).max()
+n_barrios_c = X_c.neighbourhood_cleansed.nunique()
+n_barrios_propios = int((X_c.neighbourhood_cleansed.value_counts() >= MIN_BARRIO).sum())
+assert 0.15 <= prev <= 0.45, "Prevalencia de superanfitriones fuera de escala"
+assert 0.6 <= auc <= 0.98, "AUC fuera de escala (muy alto: posible fuga)"
+assert coef_max < 15, "Coeficiente del logit fuera de escala: posible separación perfecta"
+
+
+def resumen(y, p, t):
+    """Matriz de confusión y métricas con el umbral t."""
+    y, pred = np.asarray(y).astype(bool), np.asarray(p) >= t
+    vp, fp, fn, vn = (pred & y).sum(), (pred & ~y).sum(), (~pred & y).sum(), (~pred & ~y).sum()
+    return {"vp": vp, "fp": fp, "fn": fn, "vn": vn, "exactitud": (vp + vn) / len(y),
+            "precision": vp / (vp + fp) if vp + fp else np.nan, "sensibilidad": vp / (vp + fn),
+            "especificidad": vn / (vn + fp), "f1": 2 * vp / (2 * vp + fp + fn)}
+
+
+m05 = resumen(y_c, p_oof, 0.5)
+umbrales = np.linspace(0.02, 0.98, 97)
+por_umbral = pd.DataFrame([resumen(y_c, p_oof, t) for t in umbrales], index=umbrales)
+
+# Simulación binormal: puntuación N(0, 1) o N(d, 1) y probabilidad calibrada; d = 1,2 da AUC ≈ 0,80
+SEP = 1.2
+
+
+def simula(prevalencia, n, seed=SEED, d=SEP):
+    rng = np.random.default_rng(seed)
+    y = rng.random(n) < prevalencia
+    s = rng.normal(np.where(y, d, 0.0), 1.0)
+    p = 1 / (1 + np.exp(-(d * s - d ** 2 / 2 + np.log(prevalencia / (1 - prevalencia)))))
+    return y, p
+
+
+PREVS = [0.30, 0.05, 0.01]
+sims = {q: simula(q, 200_000) for q in PREVS}
+raras = pd.DataFrame({q: {"nulo": 1 - y.mean(), **resumen(y, p, 0.5), "auc": roc_auc_score(y, p),
+                          "ap": average_precision_score(y, p), "prev": y.mean()} for q, (y, p) in sims.items()}).T
+assert raras.loc[0.01, "nulo"] > 0.98 and raras.auc.max() - raras.auc.min() < 0.02
+assert raras.ap.is_monotonic_decreasing and raras.sensibilidad.is_monotonic_decreasing
+
+# Slide 27: costes asimétricos y umbral ajustado por validación cruzada
+C_FP, C_FN = 1, 4
+
+
+def coste_medio(y, pred):
+    y, pred = np.asarray(y).astype(bool), np.asarray(pred).astype(bool)
+    return (C_FP * np.sum(pred & ~y) + C_FN * np.sum(~pred & y)) / len(y)
+
+
+coste_umbral = pd.Series([coste_medio(y_c, p_oof >= t) for t in umbrales], index=umbrales)
+t_teorico = C_FP / (C_FP + C_FN)
+ajustado = TunedThresholdClassifierCV(logit, scoring=make_scorer(coste_medio, greater_is_better=False),
+                                      cv=cv_c, thresholds=umbrales).fit(X_c, y_c)
+t_ajustado = ajustado.best_threshold_
+assert coste_umbral[umbrales[np.argmin(np.abs(umbrales - t_teorico))]] < coste_umbral[umbrales[np.argmin(np.abs(umbrales - 0.5))]]
+assert p_bal.mean() > prev and ll_bal > ll, "La slide 28 afirma que class_weight descalibra las probabilidades"
+
+# ------------------------------------------------------ actividad final: única consulta al test
+modelos_final = {"Nulo": (DummyClassifier(strategy="prior").fit(X_c, y_c), 0.5),
+                 "Logit, umbral 0,5": (clone(logit).fit(X_c, y_c), 0.5),
+                 "Logit ponderado": (clone(logit_bal).fit(X_c, y_c), 0.5),
+                 f"Logit, umbral {es(t_ajustado, 2)} (costes)": (ajustado.estimator_, t_ajustado)}
+final = []
+for nombre, (m, t) in modelos_final.items():
+    p_t = m.predict_proba(X_ct)[:, 1]
+    r = resumen(y_ct, p_t, t)
+    final.append({"Clasificador": nombre, "Exactitud": r["exactitud"], "Precisión": r["precision"],
+                  "Sensibilidad": r["sensibilidad"], "AUC": roc_auc_score(y_ct, p_t),
+                  "Log-loss": log_loss(y_ct, p_t), "Coste medio": coste_medio(y_ct, p_t >= t)})
+final = pd.DataFrame(final).set_index("Clasificador")
+assert np.isfinite(final.drop(columns="Precisión").to_numpy()).all()
+assert 0.6 <= final.loc["Logit, umbral 0,5", "AUC"] <= 0.98
+assert set(dev.index).isdisjoint(set(test.index)) and len(train) == N_TRAIN
+colores_k = {"k = 2": tv.GRAY, "k = 5": tv.BLUE, "k = 10": tv.SAGE, "LOOCV": tv.TERRACOTTA}
+
+
+def dibuja_matriz(ax, vp, fn, fp, vn, grande=26, peque=15):
+    """Matriz de confusión con la clase positiva primero y rótulos de negocio."""
+    celdas = [[vp, fn], [fp, vn]]
+    nombres = [["detectados (VP)", "no detectados (FN)"], ["falsas alarmas (FP)", "descartes correctos (VN)"]]
+    for i in range(2):
+        for j in range(2):
+            ax.add_patch(plt.Rectangle((j, 1 - i), 1, 1, facecolor=tv.SAGE if i == j else tv.TERRACOTTA,
+                                       alpha=0.28, edgecolor="white", lw=4))
+            ax.text(j + 0.5, 1.58 - i, es(celdas[i][j]), ha="center", va="center", fontsize=grande,
+                    color=tv.NAVY, weight="bold")
+            ax.text(j + 0.5, 1.3 - i, nombres[i][j], ha="center", va="center", fontsize=peque, color=tv.NAVY)
+    ax.set(xlim=(0, 2), ylim=(0, 2))
+    ax.set_xticks([0.5, 1.5], ["predice sí", "predice no"])
+    ax.set_yticks([1.5, 0.5], ["real sí", "real no"])
+    ax.tick_params(length=0)
+    ax.grid(False)
+    for lado in ax.spines.values():
+        lado.set_visible(False)
+```
+
+## ¿Seguiría ganando `{python} winner` con otra partición? {.table-slide}
+
+&nbsp;
+
+::: {.panel-tabset}
+
+### Pregunta
+
+La semana pasada elegimos entre tres familias con validación cruzada: los mismos 300 anuncios, repartidos en 5 particiones con la semilla 42.
+
+```{python}
+#| echo: false
+#| output: asis
+tabla = decision.copy()
+tabla["RMSE CV"] = tabla["RMSE CV"].map(lambda v: es(v, 3))
+tabla["EE CV"] = tabla["EE CV"].map(lambda v: es(v, 3))
+tabla = tabla.rename(columns={"RMSE CV": "Error de validación", "EE CV": "± error típico",
+                              "Activas": "Coeficientes no nulos"})
+print(tv.md_table(tabla.reset_index(names="Familia")))
+```
+
+&nbsp;
+
+::: {.key}
+Repetimos la validación cruzada con otras `{python} len(SEMILLAS)` semillas, es decir, con otros repartos de los mismos 300 anuncios. ¿En cuántas gana `{python} winner`?
+:::
+
+### Respuesta
+
+```{python}
+#| echo: false
+#| output: asis
+for n in specs:
+    print(f"- **{n}** gana en {victorias[n]} de {len(SEMILLAS)} repartos.")
+```
+
+&nbsp;
+
+::: {.key}
+El ganador depende de cómo se repartan los anuncios: la diferencia entre Lasso y Elastic Net es menor que la variación que introduce la partición.
+:::
+
+:::
+
+:::{.notes}
+Gancho, 4 min. Recordar la tabla de decisión de la semana 2 (mismas cifras: se recalculan aquí con el mismo código). Votación: ¿en cuántas de 30 semillas gana `{python} winner`? La mayoría dirá «en casi todas», porque ganó en la tabla. Desvelar la pestaña. El dato no invalida la decisión del 29-09 (la regla se aplicó bien), pero muestra que el ganador por milésimas es en parte resultado de la partición: es la pregunta del bloque 1.
+
+Cómputo: `GridSearchCV` completo (125 configuraciones) para cada semilla de `KFold`; los 300 anuncios no cambian. Cifras de este render (fecha: 29-09-2026).
+:::
+
+## Tres preguntas {.body-callout}
+
+<!-- JUAN: me falta la existencia de una pequeña tabla como glosario (no sé si al principio o al final) con los conceptos básicos/centrales/focales del tema
+como CV, LOOCV etc -->
+&nbsp;
+
+1. **¿Qué incertidumbre incorpora el error de validación?** ¿Es una métrica fiable? Cuánto varía con la partición, cuántos pliegues usar y qué mide la validación cruzada anidada.
+2. **¿Cómo medimos la capacidad predictiva de un clasificador?** La matriz de confusión, el umbral, la curva ROC y la log-loss, con un logit.
+3. **¿Qué cambia cuando una clase es rara?** Qué métricas dejan de tener validez con *clases desbalanceadas*  y cómo ajustar la decisión.
+
+&nbsp;
+
+::: {.key}
+En este bloque no se añaden modelos: se dan reglas para medir y comparar todos los del curso.
+:::
+
+:::{.notes}
+1 min. Las tres preguntas reaparecen en las portadas de bloque y en la recapitulación. En la tabla «Controlar la complejidad» de la semana 1 no hay fila para el tema 2: es la capa de evaluación que se aplica a todas las filas.
+
+Guion de 60 min (31 slides visibles y 1 oculta): apertura (1-3) 5; bloque 1, validación (4-10) 16; bloque 2, clasificadores (11-22) 22; bloque 3, clases raras (23-28) 10; cierre (29-31) 7. Son 60 min justos, sin margen: si la sesión empieza tarde, usar la variante de 50. Variante de 50 min (≈ 50): sin la regla del error típico (slide 8, −3), sin «¿Puede subir el AUC…?» (−2) ni la pregunta sobre `class_weight` (−2), la celda interactiva en 1 min (−2) y la actividad final en 4 (−1). Variante de 75 min: en la celda interactiva, probar prevalencia 0,05 con umbral 0,5 y 0,1 (anticipa el bloque 3), y la actividad final con puesta en común de cuatro parejas.
+:::
+
+# ¿Cuánto nos podemos fiar del error de validación? {background-color="#447099"}
+
+## Una sola partición da un error que depende de la semilla {.fig-side}
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: el mismo Ridge validado con una partición 80/20 o con 5 particiones, 100 semillas"
+#| fig-alt: "Diagrama de puntos con 100 errores de validación del mismo modelo Ridge sobre los mismos 300 anuncios. Con una sola partición 80/20 los puntos se extienden por un rango amplio; con validación cruzada en 5 particiones se concentran en un intervalo estrecho."
+jit = np.random.default_rng(0)
+fig, ax = plt.subplots(figsize=(9, 6.8))
+for fila, (vals, color) in enumerate([(una_part, tv.TERRACOTTA), (cinco_part, tv.BLUE)]):
+    ax.scatter(vals, fila + jit.uniform(-0.18, 0.18, len(vals)), s=38, color=color, alpha=0.7, edgecolor="none")
+    ax.plot([vals.min(), vals.max()], [fila + 0.32] * 2, color=color, lw=3)
+    ax.text(0.5 * (vals.min() + vals.max()), fila + 0.36, f"de {es(vals.min(), 2)} a {es(vals.max(), 2)}",
+            ha="center", va="bottom", fontsize=15, color=color)
+ax.set_yticks([0, 1], ["una partición\n80/20", "5 particiones\n(validación cruzada)"])
+ax.set_ylim(-0.5, 1.7)
+ax.set_xlabel("RMSE de validación (log precio)")
+eje_coma(ax.xaxis, 2)
+ax.grid(axis="y", visible=False)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Mismo modelo (Ridge con la $\lambda$ elegida) y mismos 300 anuncios; solo cambia el reparto, con 100 semillas.
+- Con una partición 80/20, el error de validación varía `{python} es(una_part.std() / cinco_part.std())` veces más que con 5 particiones.
+- En la validación cruzada, cada anuncio valida una vez y se promedian los cinco errores.
+:::
+:::
+
+:::{.notes}
+3 min. Es la advertencia de la semana 2 («una sola partición no mide la variabilidad del resultado») hecha visible. Cada punto es el error de validación de una semilla. Con una partición, 60 anuncios de validación: el error depende de qué anuncios caigan en ella. Con 5 particiones, cada anuncio valida una vez y los cinco errores se promedian: la media varía mucho menos entre semillas (desviación típica `{python} es(cinco_part.std(), 3)` frente a `{python} es(una_part.std(), 3)`).
+
+Lo que no se afirma: que la validación cruzada elimine la incertidumbre. Estabiliza la estimación respecto al reparto, pero no respecto a la muestra de 300 (slide 7). Ridge con alpha fijo = `{python} es_sig(ALPHA_R)`, el de validación de la semana 2.
+:::
+
+## ¿Cuántas particiones usamos? {.fig-wide}
+
+<!-- JUAN: verificar qué término es  más adecuado para fold: estrato o `partición y usarlo de forma consistente. ADEMAS el concepto de desarrollo
+es muy oscuro. Dejar como 1331 anuncios no utilizados (si esa expresión es adecuada); más simple -->
+
+```{python}
+#| code-summary: "Código: 50 muestras de 300 anuncios; estimación con k = 2, 5, 10 y LOOCV frente al error real"
+#| fig-alt: "Dos paneles. A la izquierda, la media de la estimación del error en 50 muestras para k igual a 2, 5, 10 y validación cruzada dejando uno fuera, frente a una línea horizontal con el error real medio: k igual a 2 queda claramente por encima y el resto, cerca de la línea. A la derecha, barras con el número de ajustes que exige cada opción: 2, 5, 10 y 300."
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6.5), gridspec_kw={"width_ratios": [1.5, 1]})
+nombres_k = list(K_OPC)
+medias = [muestras[k].mean() for k in nombres_k]
+ees = [muestras[k].std(ddof=1) / np.sqrt(len(muestras)) for k in nombres_k]
+ax1.errorbar(range(4), medias, yerr=ees, fmt="none", ecolor=tv.NAVY, capsize=6, lw=2)
+ax1.scatter(range(4), medias, s=160, color=[colores_k[k] for k in nombres_k], zorder=5)
+ax1.axhline(muestras.real.mean(), color=tv.TERRACOTTA, ls="--", lw=2)
+ax1.text(1.0, muestras.real.mean(), " error real", transform=ax1.get_yaxis_transform(), va="center",
+         ha="left", fontsize=15, color=tv.TERRACOTTA)
+ax1.set_xticks(range(4), nombres_k)
+ax1.set(xlim=(-0.5, 3.5), ylabel="RMSE medio en 50 muestras (log precio)", title="Estimación del error")
+eje_coma(ax1.yaxis, 3)
+ax2.bar(range(4), [AJUSTES[k] for k in nombres_k], color=[colores_k[k] for k in nombres_k])
+for i, k in enumerate(nombres_k):
+    ax2.text(i, AJUSTES[k], es(AJUSTES[k]), ha="center", va="bottom", fontsize=15, color=tv.NAVY)
+ax2.set_yscale("log")
+ax2.set_xticks(range(4), nombres_k)
+ax2.set(title="Ajustes por estimación", ylim=(1, AJUSTES["LOOCV"] * 3))
+ax2.set_yticks([])
+ax2.grid(False)
+fig.tight_layout()
+plt.show()
+```
+
+```{python}
+#| echo: false
+#| output: asis
+_frase = ("Con k = 2 cada modelo se entrena con la mitad de los datos y la estimación sale pesimista; "
+          "de k = 5 en adelante apenas cambia, y LOOCV exige 300 ajustes."
+          if sesgo["k = 2"] > sesgo["k = 5"] > 0 and abs(sesgo["k = 10"] - sesgo["LOOCV"]) < sesgo["k = 2"] / 2
+          else "La estimación apenas depende de k; LOOCV exige 300 ajustes.")
+print(f"::: {{.caption-line}}\nError real: el de cada modelo en {es(len(valid))} anuncios de desarrollo que no "
+      f"intervienen en la muestra. **{_frase}**\n:::")
+```
+
+:::{.notes}
+3 min. Experimento: 50 muestras de 300 anuncios extraídas del desarrollo (como si repitiéramos el estudio); en cada una, el mismo Ridge se valida con k = 2, 5, 10 y LOOCV, y se mide su error real en una validación grande que no interviene. El test sigue sin usarse.
+
+Lectura: sesgo medio de la estimación (estimación − real) de `{python} es_dif(sesgo["k = 2"])` con k = 2, `{python} es_dif(sesgo["k = 5"])` con k = 5, `{python} es_dif(sesgo["k = 10"])` con k = 10 y `{python} es_dif(sesgo["LOOCV"])` con LOOCV. Con k pequeño cada modelo se entrena con menos datos (con k = 2, 150 anuncios) y predice peor: la estimación es pesimista. LOOCV (k = n) es casi insesgada, pero exige n ajustes. Barras: error típico de la media entre las 50 muestras.
+
+ISLR (§5.1.4) añade que la estimación con LOOCV tiene más varianza que con k = 5 o 10; en estos datos las cuatro variaron parecido entre muestras (desviación típica entre `{python} es(min(muestras[k].std() for k in K_OPC), 3)` y `{python} es(max(muestras[k].std() for k in K_OPC), 3)`), así que la slide no lo afirma. Regla práctica: k = 5 o 10, con particiones barajadas.
+:::
+
+## Error típico de la validación cruzada {.fig-side}
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: error típico entre pliegues frente a la variación real de la estimación en 50 muestras"
+#| fig-alt: "Histograma del error típico calculado entre los cinco pliegues en 50 muestras de 300 anuncios. Una línea vertical marca su media y otra, más a la derecha, la desviación típica real de la estimación de validación cruzada entre las 50 muestras."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+conteos, _, _ = ax.hist(muestras.ee_ingenuo, bins=14, color=tv.BLUE, alpha=0.75, edgecolor="white")
+ax.set_ylim(0, conteos.max() * 1.45)                     # hueco superior para los rótulos
+izq, der = sorted([(ee_medio, "media del error típico\nentre pliegues ", tv.NAVY, "-"),
+                   (de_real_cv5, " variación real\n entre muestras", tv.TERRACOTTA, "--")])
+for (x, rotulo, color, estilo), ha in [(izq, "right"), (der, "left")]:
+    ax.axvline(x, color=color, lw=3, ls=estilo)
+    ax.text(x, 0.97, rotulo.strip() if ha == "left" else rotulo, transform=ax.get_xaxis_transform(),
+            va="top", ha=ha, fontsize=14, color=color)
+ax.set(xlabel="error típico de la validación cruzada (log precio)", ylabel="muestras")
+ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+eje_coma(ax.xaxis, 3)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Error típico habitual: desviación entre los 5 pliegues dividida por $\sqrt{5}$ (semana 2).
+- Supone pliegues independientes, pero dos conjuntos de entrenamiento comparten tres cuartas partes de sus datos.
+- En 50 muestras de 300 anuncios, además, cambia mucho: de `{python} es(muestras.ee_ingenuo.min(), 3)` a `{python} es(muestras.ee_ingenuo.max(), 3)`.
+:::
+:::
+
+```{python}
+#| echo: false
+#| output: asis
+if ee_medio < de_real_cv5:
+    _frase = (f"En media, el error típico entre pliegues ({es(ee_medio, 3)}) queda por debajo de la variación "
+              f"real de la estimación ({es(de_real_cv5, 3)}): es orientativo y algo optimista.")
+else:
+    _frase = (f"En media, el error típico entre pliegues ({es(ee_medio, 3)}) es comparable a la variación real "
+              f"de la estimación ({es(de_real_cv5, 3)}), pero cambia mucho de una muestra a otra.")
+print(f"::: {{.caption-line}}\n**{_frase}**\n:::")
+```
+
+:::{.notes}
+2 min. Promesa de la semana 2 («estos errores típicos son orientativos y algo optimistas»). La variación real es la desviación típica, entre las 50 muestras, de la estimación con 5 particiones: lo que el error típico pretende medir. El error típico ingenuo se queda en un `{python} es(100 * ee_medio / de_real_cv5)` % de ella. No existe un estimador insesgado de la varianza de la validación cruzada con k particiones (Bengio y Grandvalet, 2004): los pliegues comparten datos.
+
+Consecuencia práctica: el error típico sirve como orden de magnitud para no sobreinterpretar diferencias pequeñas (slide siguiente), no como intervalo de confianza exacto. Repetir la validación cruzada con varias semillas (`RepeatedKFold`) estabiliza la media respecto al reparto, pero no corrige este problema.
+:::
+
+## Si dos modelos empatan, elegimos el más sencillo {.fig-side}
+
+<!-- JUAN: está bien mencionar el gancho pero no en la slide; sí en notas 
+-->
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: regla del error típico sobre la tabla de decisión de la semana 2"
+#| fig-alt: "Error de validación de Ridge, Lasso y Elastic Net con barras de más y menos un error típico. Una línea vertical discontinua marca el mínimo más un error típico; a la derecha de cada familia, su número de coeficientes no nulos."
+orden_f = ["Ridge", "Lasso", "Elastic Net"]
+colores_f = {"Ridge": tv.BLUE, "Lasso": tv.TERRACOTTA, "Elastic Net": tv.SAGE}
+fig, ax = plt.subplots(figsize=(9, 6.8))
+for i, n in enumerate(orden_f):
+    ax.errorbar(decision.loc[n, "RMSE CV"], i, xerr=decision.loc[n, "EE CV"], fmt="o", ms=14,
+                color=colores_f[n], capsize=8, lw=3)
+    ax.text(1.02, i, f"{int(decision.loc[n, 'Activas'])} activas", transform=ax.get_yaxis_transform(),
+            va="center", fontsize=15, color=colores_f[n])
+ax.axvline(limite_1ee, color=tv.NAVY, ls="--", lw=2)
+ax.text(limite_1ee, 1.0, "mínimo + 1 error típico", transform=ax.get_xaxis_transform(), ha="center",
+        va="bottom", fontsize=14, color=tv.NAVY)
+ax.set_yticks(range(3), orden_f)
+ax.set_ylim(-0.6, 2.6)
+ax.invert_yaxis()
+ax.set_xlabel("error de validación ± error típico (log precio)")
+eje_coma(ax.xaxis, 2)
+ax.grid(axis="y", visible=False)
+fig.tight_layout(rect=(0, 0, 0.86, 0.95))
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+**Usamos un criterio de mínima complejidad** (también principio de economía, de parsimonia o navaja de Ockham).
+
+- **Regla del error típico**: entre los modelos cuyo error no supera al mínimo en más de un error típico, el más sencillo.
+- «Más sencillo» se fija de antemano: en un modelo lineal lo interpretamos como menos coeficientes no nulos.
+- Con la tabla la regla elige `{python} elegido_1ee`.
+:::
+:::
+
+:::{.notes}
+3 min. Vuelta al ejemplo: ya que el ganador depende de la semilla, conviene una regla de decisión que no premie diferencias menores que el ruido. La regla del error típico (Breiman et al., 1984; ESL §7.10) elige el modelo más sencillo cuyo error de validación está a menos de un error típico del mínimo. Banda: `{python} es(decision.loc[winner, "RMSE CV"], 4)` + `{python} es(decision.loc[winner, "EE CV"], 4)` = `{python} es(limite_1ee, 4)`; quedan dentro `{python} " y ".join(en_banda)`, y fuera `{python} " y ".join(fuera_banda) if fuera_banda else "ninguna"`.`{python} nota_banda`
+
+Como toda regla, se fija antes de validar, igual que «menor error de validación» en la semana 2. Los estudiantes la conocen como `lambda.1se` de `glmnet`; en scikit-learn no hay atajo: se calcula a partir de `cv_results_`. El error típico es el de la slide anterior: orientativo, así que la regla es una convención razonable, no un contraste.
+:::
+
+## Validación cruzada anidada:  procedimiento completo {.fig-side}
+
+
+<!-- JUAN: Esta simulacion es complicada de entender para los alumnos. No aporta. Me gusta el concepto de validacion cruzada (y se debe incluir) pero con aplicación más evidente.
+Además incluye (en slide o en notas o en ambos) este contenido que explique qué es la expresión sklearn:
+
+cross_val_score(GridSearchCV(...), X, y, cv=5):
+
+`X` e `y` son el conjunto completo que pasas a la validación cruzada; **no son, en bloque, los datos de validación para elegir hiperparámetros**. (DATOS de entrenamiento)
+
+En cada una de las 5 particiones externas ocurre esto:
+
+1. `cross_val_score` reserva una parte de `X` e `y` para **evaluar** el resultado.
+2. `GridSearchCV` recibe solo las otras cuatro partes y hace su propia validación cruzada interna para **elegir los hiperparámetros**.
+3. El modelo con esos parámetros se ajusta con las cuatro partes y se puntúa en la parte reservada.
+
+Así, cada observación participa en la selección de parámetros en algunas vueltas, pero **nunca en la selección de parámetros de la vuelta en la que sirve para evaluar**. El resultado de `cross_val_score` son cinco puntuaciones externas. Si no indicas `cv` dentro de `GridSearchCV`, este usa también 5 particiones por defecto. -->
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: 100 réplicas con 200 predictores de puro ruido; mínimo de validación, anidada y datos nuevos"
+#| fig-alt: "Diagramas de caja del error cuadrático medio en 100 réplicas simuladas: el mínimo de la validación cruzada entre 200 predictores de ruido queda por debajo de 1, la línea del error sin predictores; la validación cruzada anidada y el error en datos nuevos quedan por encima de 1 y se parecen entre sí."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+cajas = [("mínimo de la\nvalidación cruzada", ruido.minimo, tv.TERRACOTTA),
+         ("validación cruzada\nanidada", ruido.anidada, tv.BLUE),
+         (f"{es(N_NUEVOS)} datos\nnuevos", ruido.nuevos, tv.SAGE)]
+for i, (nombre, v, color) in enumerate(cajas):
+    ax.boxplot(v, positions=[i], widths=0.5, patch_artist=True, whis=(5, 95), showfliers=False,
+               boxprops=dict(facecolor=color, edgecolor=color, alpha=0.85), medianprops=dict(color="white", lw=2),
+               whiskerprops=dict(color=color, lw=2), capprops=dict(color=color, lw=2))
+ax.axhline(1, color=tv.NAVY, ls="--", lw=2)
+ax.text(1.0, 1, " sin\n predictores", transform=ax.get_yaxis_transform(), va="center", fontsize=14,
+        color=tv.NAVY)
+ax.set_xticks(range(3), [c[0] for c in cajas])
+ax.set_ylabel("error cuadrático medio")
+eje_coma(ax.yaxis, 1)
+ax.grid(axis="x", visible=False)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Simulación: 100 datos y 200 predictores de puro ruido; elegimos por validación cruzada el predictor que mejor predice.
+- El mínimo de 200 errores es optimista: el elegido parece útil.
+- **Anidada**: un bucle externo evalúa y otro interno elige; la evaluación no ve la elección.
+- En scikit-learn: `cross_val_score(GridSearchCV(...), X, y, cv=5)`.
+:::
+:::
+
+::: {.caption-line}
+Medias en `{python} REP_R` réplicas: mínimo `{python} es(ruido.minimo.mean(), 2)`, anidada `{python} es(ruido.anidada.mean(), 2)` y datos nuevos `{python} es(ruido.nuevos.mean(), 2)`. **La anidada estima el error de todo el procedimiento: ajustar y elegir.**
+:::
+
+:::{.notes}
+Con muchas candidatas, el error de validación del ganador está sesgado a la baja, porque se elige el mínimo de muchas estimaciones ruidosas («maldición del ganador»). Simulación exagerada a propósito: y no depende de ningún predictor, así que el error mínimo alcanzable es 1 (predecir la media verdadera). Aun así, el mejor de 200 predictores de ruido tiene un error de validación medio de `{python} es(ruido.minimo.mean(), 2)`: parece mejor que no usar predictores. La anidada repite la elección dentro de cada partición externa y da `{python} es(ruido.anidada.mean(), 2)`, cerca del error real en datos nuevos.
+
+En Airbnb, con 125 configuraciones casi equivalentes, el sesgo del mínimo es pequeño frente a otro efecto: la anidada entrena con 4/5 de 4/5 de los 300 anuncios (192) y es pesimista. Cifras: mínimo de la validación (`{python} winner`) `{python} es(rmse_cv[winner], 3)`, anidada `{python} es(anidada_airbnb, 3)` y error del modelo elegido en los `{python} es(len(resto))` anuncios de desarrollo que no están en los 300, `{python} es(real_airbnb, 3)`. Por eso la slide usa la simulación: el mecanismo se ve sin el efecto del tamaño.
+:::
+
+## ¿Qué error esperado comunicamos del modelo elegido? {.body-callout}
+
+&nbsp;
+
+::: {.panel-tabset}
+
+### Para pensar
+
+Hemos elegido `{python} winner` entre `{python} N_CAND` configuraciones con validación cruzada. El cliente pregunta qué error puede esperar con anuncios nuevos.
+
+¿Qué cifra damos? ¿el mínimo de la validación cruzada (`best_score_`), la validación cruzada anidada o el error en el test?
+
+### Respuesta
+
+- **El test**, consultado una sola vez y con la decisión ya tomada: mide el modelo elegido en datos que no intervinieron.
+- Sin test, **la validación cruzada anidada**: mide el procedimiento completo, elección incluida.
+- **No el mínimo** de la validación cruzada: mide al ganador con los mismos datos con los que se eligió y, con muchas candidatas, tiende a ser optimista.
+
+:::
+
+:::{.notes}
+2 min. Votación a mano alzada entre las tres opciones; desvelar. Cierre del bloque 1 en una frase: la validación cruzada estabiliza la estimación, su error típico es orientativo y el mínimo entre muchas candidatas necesita una evaluación independiente (test o anidada).
+:::
+
+# ¿Cómo medimos el acierto de un clasificador? {background-color="#447099"}
+
+## ¿Es superanfitrión el anuncio? {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+- **Respuesta**: superanfitrión (1) o no (0). Lo es el `{python} es(100 * prev)` % de los `{python} es(len(dv))` anuncios.
+- **Predictores**: los de la semana 2, sin superanfitrión y con log(precio).
+- **Uso**: una gestora quiere captar anfitriones de calidad en plataformas donde no existe esa insignia (p.e. `booking`).
+
+::: {.key}
+Usamos el logit que ya conocéis: predice una probabilidad por anuncio. En el tema 3 lo veremos como GLM.
+:::
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.panel-tabset}
+
+### Para pensar
+
+La valoración media es uno de los requisitos de la plataforma para obtener la insignia. ¿Es legítimo usarla como predictor?
+
+### Respuesta
+
+Sí, si está disponible cuando se predice: en otro portal la valoración es visible. El modelo recupera en parte la regla de la plataforma; la asociación es por construcción. Para anticipar quién obtendrá la insignia habría que predecir con datos anteriores.
+
+:::
+:::
+:::
+
+::: {.source}
+Fuente: Inside Airbnb, Valencia (`listados.csv`). Misma población y partición que la semana 2; se excluyen `{python} es(len(dev) - len(dv) + len(test) - len(ts))` anuncios sin dato de superanfitrión. Desarrollo: `{python} es(len(dv))`; test: `{python} es(len(ts))`.
+:::
+
+:::{.notes}
+2 min. Cambio de respuesta, no de datos: la misma población y la misma partición que la semana 2; el test sigue reservado hasta la actividad final. Ahora se usa todo el desarrollo (no 300 anuncios): las métricas de clasificación necesitan tamaño.
+
+Modelo: logit sin penalización (`LogisticRegression(C=np.inf)`; en scikit-learn 1.8+ `penalty` está obsoleto) dentro de un `Pipeline` con imputación y estandarización. El barrio va con categoría de referencia; los barrios con menos de `{python} MIN_BARRIO` anuncios de desarrollo se agrupan en una categoría común (`{python} n_barrios_propios` de `{python} n_barrios_c` conservan columna propia) para evitar coeficientes fuera de escala.
+
+Pregunta: la insignia exige, entre otros requisitos, una valoración media de al menos 4,8 y una tasa de respuesta alta. El caso es un buen ejemplo de la diferencia entre predecir y explicar: la valoración predice bien la insignia, pero el coeficiente no dice qué haría un anfitrión para obtenerla (tema 7). Para anticipar quién la obtendrá el próximo año, la partición tendría que ser temporal: predictores de un año, respuesta del siguiente.
+:::
+
+## Un modelo *dummy* acierta el `{python} es(100 * exact_nulo)` % {.fig-side}
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: clasificador nulo (DummyClassifier) frente al logit con predicciones fuera de pliegue"
+#| fig-alt: "Barras de exactitud y de sensibilidad para el clasificador nulo y el logit. Las exactitudes son parecidas, en torno al 70 y al 77 por ciento; la sensibilidad del nulo es cero y la del logit, cercana a la mitad."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+grupos = ["exactitud", "superanfitriones\ndetectados"]
+valores = {"clasificador nulo": [exact_nulo, 0.0], "logit (umbral 0,5)": [m05["exactitud"], m05["sensibilidad"]]}
+for i, ((nombre, v), color) in enumerate(zip(valores.items(), [tv.GRAY, tv.BLUE])):
+    x = np.arange(2) + (i - 0.5) * 0.36
+    ax.bar(x, v, width=0.34, color=color, label=nombre)
+    for xi, vi in zip(x, v):
+        ax.text(xi, vi + 0.015, f"{es(100 * vi)} %", ha="center", va="bottom", fontsize=16, color=tv.NAVY)
+ax.set_xticks(range(2), grupos)
+ax.set(ylim=(0, 1.08), ylabel="proporción")
+eje_coma(ax.yaxis, 1)
+ax.legend(frameon=False, loc="upper right")
+ax.grid(axis="x", visible=False)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- **Clasificador nulo** (`DummyClassifier`): predice siempre la clase más frecuente, «no es superanfitrión».
+- Acierta el `{python} es(100 * exact_nulo)`% sin detectar a ninguno.
+- El logit acierta el `{python} es(100 * m05["exactitud"])`%: solo `{python} es(round(100 * m05["exactitud"]) - round(100 * exact_nulo))` puntos más, pero detecta al `{python} es(100 * m05["sensibilidad"])`% de los superanfitriones.
+:::
+:::
+
+:::{.notes}
+2 min. Antes de mostrar la figura, preguntar: «un modelo acierta el `{python} es(100 * exact_nulo)` %, ¿es bueno?». La exactitud (proporción de aciertos) hay que compararla con la del clasificador nulo, que es 1 − prevalencia. En Python: `DummyClassifier(strategy="most_frequent")`, la referencia que el deck de 2025-26 describía pero no calculaba.
+
+Predicciones fuera de pliegue (`cross_val_predict` con `StratifiedKFold(5)`): cada anuncio de desarrollo se predice con un modelo que no lo ha visto. El test no se usa. El logit clasifica como superanfitrión si la probabilidad es al menos 0,5 (lo que hace `predict`).
+:::
+
+## Matriz de confusión {.fig-side}
+
+<!-- JUAN: se trata de la matriz sobre el conjunto test? PUES debemos indicarlo.
+EN LUGAR DE `Cada anuncio se predice con un modelo que no lo ha visto (fuera de pliegue).` usar algo menos
+convoluted: pedicciones para datos/anuncios no vistos por el modelo (predicciones sobre conjunto test)
+ADEMÁS, trata de usar términos menos flashy! FALSA ALARMA o NO DETECTADO se deben sustituir por 
+FALSO positivo y  Falso negativo. ADEMÁS, INCICAR EL TIPO DE ERROR (TIPO I Y TIPO II)-->
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: matriz de confusión del logit con umbral 0,5 (predicciones fuera de pliegue)"
+#| fig-alt: "Matriz de confusión de dos por dos con la clase positiva primero. Arriba, superanfitriones reales detectados y no detectados; abajo, falsas alarmas y descartes correctos, con el recuento de anuncios en cada celda."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+dibuja_matriz(ax, m05["vp"], m05["fn"], m05["fp"], m05["vn"])
+ax.set_title("logit, umbral 0,5")
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Filas: clase real; columnas: predicción del logit con umbral 0,5.
+- Dos errores con costes distintos para la gestora:
+  - **falsa alarma**: contactar a quien no es de calidad;
+  - **no detectado**: perder a un anfitrión de calidad.
+- Cada anuncio se predice con un modelo que no lo ha visto (fuera de pliegue).
+:::
+:::
+
+::: {.caption-line}
+De los `{python} es(m05["vp"] + m05["fn"])` superanfitriones, el logit detecta `{python} es(m05["vp"])` (el `{python} es(100 * m05["sensibilidad"])` %). **La exactitud mezcla los dos errores; la matriz los separa.**
+:::
+
+:::{.notes}
+2 min. La matriz de la slide pone la clase positiva primero, como en los textos de negocio; `confusion_matrix` de scikit-learn ordena las etiquetas 0, 1 (primero los negativos), así que su salida aparece al revés: conviene decirlo antes del laboratorio. Terminología: VP, FN, FP, VN (en inglés TP, FN, FP, TN). Error tipo I = falsa alarma; tipo II = no detectado.
+:::
+
+## Precisión y sensibilidad responden a preguntas distintas {.body-callout}
+
+&nbsp;
+
+<!-- JUAN: Incluir la mención de F1 como media armónmica y derivar la expresión -->
+
+:::{.columns}
+:::{.column width="48%"}
+- **Precisión**: de los anuncios que el modelo señala, ¿cuántos son superanfitriones? `{python} es(100 * m05["precision"])` %.
+- **Sensibilidad** (*recall*): de los superanfitriones, ¿cuántos señala el modelo? `{python} es(100 * m05["sensibilidad"])` %.
+- **Especificidad**: de los que no lo son, ¿cuántos descarta? `{python} es(100 * m05["especificidad"])` %.
+- **F1**: resume las dos primeras y solo es alta si lo son ambas. `{python} es(m05["f1"], 2)`.
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.callout-note title="Fórmulas"}
+$$\text{precisión}=\frac{VP}{VP+FP}\qquad \text{sensibilidad}=\frac{VP}{VP+FN}$$
+
+$$\text{especificidad}=\frac{VN}{VN+FP}\qquad F_1=\frac{2\,VP}{2\,VP+FP+FN}$$
+
+$$\text{exactitud}=\frac{VP+VN}{n}$$
+:::
+:::
+:::
+
+:::{.notes}
+2 min. Intuición antes que fórmula: precisión mira la columna «predice sí»; sensibilidad, la fila «real sí»; especificidad, la fila «real no». F1 es la media armónica de precisión y sensibilidad. Vocabulario: *precision* se traduce como precisión y *accuracy* como exactitud; no confundirlas. Sensibilidad = tasa de verdaderos positivos; 1 − especificidad = tasa de falsos positivos (eje horizontal de la curva ROC).
+
+En scikit-learn: `precision_score`, `recall_score`, `f1_score` y `classification_report`. Con el umbral 0,5, el logit es prudente: señala pocos anuncios y acierta en la mayoría (precisión alta), pero deja escapar a más de la mitad (sensibilidad baja).
+:::
+
+## Métricas para distintos umbrales  {.fig-wide}
+
+```{python}
+#| code-summary: "Código: precisión, sensibilidad y exactitud del logit según el umbral"
+#| fig-alt: "Tres curvas frente al umbral de clasificación entre 0 y 1: la sensibilidad baja de 1 a 0 al subir el umbral, la precisión sube y la exactitud tiene un máximo intermedio. Líneas verticales en la prevalencia y en 0,5."
+fig, ax = plt.subplots(figsize=(16, 6.5))
+pocos = (por_umbral.vp + por_umbral.fp) < 30                  # precisión con menos de 30 señalados: no se dibuja
+for col, nombre, color in [("sensibilidad", "sensibilidad", tv.TERRACOTTA), ("precision", "precisión", tv.BLUE),
+                           ("exactitud", "exactitud", tv.SAGE)]:
+    ax.plot(umbrales, por_umbral[col].mask(pocos) if col == "precision" else por_umbral[col],
+            color=color, lw=3, label=nombre)
+for t, rotulo in [(prev, "prevalencia"), (0.5, "0,5 (predict)")]:
+    ax.axvline(t, color=tv.GRAY, ls="--", lw=1.5)
+    ax.text(t, 0.03, f" {rotulo}", transform=ax.get_xaxis_transform(), fontsize=15, color=tv.GRAY)
+ax.set(xlabel="umbral: se predice superanfitrión si la probabilidad lo supera", ylabel="proporción",
+       xlim=(0, 1), ylim=(0, 1.02))
+eje_coma(ax.xaxis, 1)
+eje_coma(ax.yaxis, 1)
+fig.legend(loc="lower center", ncols=3, frameon=False)
+fig.tight_layout(rect=(0, 0.08, 1, 1))
+plt.show()
+```
+
+::: {.caption-line}
+**El umbral es una decisión: bajarlo detecta más superanfitriones a costa de más falsos positivos.**
+:::
+
+:::{.notes}
+2 min. El logit estima probabilidades; la etiqueta aparece al compararlas con un umbral. `predict` usa 0,5 por convención, pero el umbral es una decisión de negocio que se toma después de estimar: el modelo (los coeficientes) no cambia. Con umbral 0 todo es «sí» (sensibilidad 1, precisión = prevalencia); con umbral 1, todo es «no».
+
+La exactitud máxima está cerca de 0,5 porque, con probabilidades calibradas y costes iguales, clasificar como «sí» cuando p > 0,5 minimiza los errores. Con costes distintos, el umbral óptimo cambia (bloque 3).
+:::
+
+## La curva ROC: sensibilidad y especificidad para distintos umbrales {.fig-wide}
+
+
+<!-- JUAN: YA que tenemos el modelo estimado, pq no los usamos? Podriamos usar diferente umbral al que muestra por defecto la tabla anterior en lugar de usar datos simulados. Además, en esta tabla se menciona un umbral de 0.5, que es exactamente el umbral que usamos en la tabla correspondiente a la matriz de confusión. INDUCE A ERROR: si tenemos el mismo umbral que en la slide 14, ¿porqué los rdos varían? -->
+
+```{python}
+#| code-summary: "Código: la simulación de la slide siguiente con umbral 0,5"
+#| fig-alt: "Dos paneles con datos simulados. A la izquierda, la matriz de confusión con umbral 0,5. A la derecha, la curva ROC con la diagonal del azar y un punto que marca la tasa de falsos positivos y la sensibilidad del umbral 0,5."
+umbral, prevalencia, separacion = 0.5, 0.30, SEP        # mismos valores iniciales que la celda interactiva
+y_s, p_s = simula(prevalencia, 5000)
+r_s = resumen(y_s, p_s, umbral)
+fpr_s, tpr_s, _ = roc_curve(y_s, p_s)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6.5))
+dibuja_matriz(ax1, r_s["vp"], r_s["fn"], r_s["fp"], r_s["vn"], grande=24, peque=14)
+ax1.set_title(f"umbral {es(umbral, 1)}: precisión {es(r_s['precision'], 2)} · sensibilidad {es(r_s['sensibilidad'], 2)}")
+ax2.plot(fpr_s, tpr_s, color=tv.BLUE, lw=3, label=f"ROC (AUC = {es(roc_auc_score(y_s, p_s), 2)})")
+ax2.plot([0, 1], [0, 1], color=tv.GRAY, ls="--", label="azar")
+ax2.scatter(1 - r_s["especificidad"], r_s["sensibilidad"], s=180, color=tv.TERRACOTTA, zorder=5,
+            label=f"umbral {es(umbral, 1)}")
+ax2.set(xlabel="tasa de falsos positivos (1 − especificidad)", ylabel="sensibilidad", xlim=(0, 1), ylim=(0, 1.02))
+eje_coma(ax2.xaxis, 1)
+eje_coma(ax2.yaxis, 1)
+ax2.legend(frameon=False, loc="lower right")
+fig.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+Puntuaciones simuladas con la prevalencia de superanfitriones y un AUC parecido al del logit. **Al bajar el umbral, el punto sube por la curva: más detectados y más falsas alarmas.**
+:::
+
+:::{.notes}
+1 min. Figura estática de respaldo de la slide siguiente (mismo cálculo, mismos valores iniciales). Simulación binormal: la puntuación de los superanfitriones sigue una normal desplazada `{python} es(SEP, 1)` desviaciones típicas respecto a la de los demás; la probabilidad es la calibrada de ese modelo. Con esa separación el AUC es ≈ 0,80, como el del logit en Airbnb.
+:::
+
+## Probad otro umbral {.fig-full}
+
+
+<!--OCULTAR ESTA SLIDE. Si es una simulacion no aporta nada -->
+
+<button class="pyodide-toggle">Mostrar código</button> <span class="pyodide-estado"></span>
+
+```{pyodide-python}
+#| autorun: true
+#| classes: pyodide-fold
+umbral = 0.5        # cambia el umbral (0.2, 0.5, 0.8...) y pulsa Run
+prevalencia = 0.30  # proporción de superanfitriones (prueba 0.05)
+separacion = 1.2    # distancia entre las dos clases (1.2 da un AUC de 0,80)
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(42)
+n = 5000
+y = rng.random(n) < prevalencia                              # True = superanfitrión
+s = rng.normal(np.where(y, separacion, 0.0), 1.0)            # puntuación del modelo
+p = 1 / (1 + np.exp(-(separacion * s - separacion ** 2 / 2
+                      + np.log(prevalencia / (1 - prevalencia)))))   # probabilidad calibrada
+pred = p >= umbral
+vp, fn = np.sum(pred & y), np.sum(~pred & y)
+fp, vn = np.sum(pred & ~y), np.sum(~pred & ~y)
+
+orden = np.argsort(-p)                                       # curva ROC: todos los umbrales
+tpr = np.r_[0, np.cumsum(y[orden]) / y.sum()]
+fpr = np.r_[0, np.cumsum(~y[orden]) / (~y).sum()]
+auc = np.sum(np.diff(fpr) * (tpr[1:] + tpr[:-1]) / 2)
+coma = lambda v: f"{v:.2f}".replace(".", ",")
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6), dpi=110)
+celdas = [[vp, fn], [fp, vn]]
+nombres = [["detectados", "no detectados"], ["falsas alarmas", "descartes correctos"]]
+for i in range(2):
+    for j in range(2):
+        ax1.add_patch(plt.Rectangle((j, 1 - i), 1, 1, color="#81B29A" if i == j else "#E07A5F", alpha=0.3))
+        ax1.text(j + 0.5, 1.58 - i, str(celdas[i][j]), ha="center", va="center", fontsize=24, color="#1F3A5F")
+        ax1.text(j + 0.5, 1.3 - i, nombres[i][j], ha="center", va="center", fontsize=14, color="#1F3A5F")
+ax1.set_xlim(0, 2)
+ax1.set_ylim(0, 2)
+ax1.set_xticks([0.5, 1.5], ["predice sí", "predice no"])
+ax1.set_yticks([1.5, 0.5], ["real sí", "real no"])
+ax1.tick_params(length=0)
+ax1.set_title(f"Umbral {coma(umbral)}: precisión {coma(vp / max(vp + fp, 1))} · "
+              f"sensibilidad {coma(vp / (vp + fn))}", fontsize=15)
+ax2.plot(fpr, tpr, color="#447099", lw=2.5, label=f"ROC (AUC = {coma(auc)})")
+ax2.plot([0, 1], [0, 1], ls="--", color="#6C757D", label="azar")
+ax2.scatter(fp / (fp + vn), vp / (vp + fn), s=140, color="#E07A5F", zorder=5, label=f"umbral {coma(umbral)}")
+ax2.set_xlabel("tasa de falsos positivos (1 − especificidad)")
+ax2.set_ylabel("sensibilidad")
+ax2.legend(loc="lower right", frameon=False)
+for a in (ax1, ax2):
+    for lado in ("top", "right"):
+        a.spines[lado].set_visible(False)
+plt.tight_layout()
+plt.show()
+```
+
+:::{.notes}
+Slide interactiva, 3 min. Preguntar antes de ejecutar qué pasará con las dos métricas y con el punto. Probar umbral 0,2 (más detectados, más falsas alarmas; el punto sube por la curva) y 0,8 (lo contrario). La curva no cambia: es el modelo; el punto es la decisión. Variante de 75 min: prevalencia 0,05 con umbral 0,5 (casi no se detecta a nadie) y después umbral 0,1; anticipa el bloque 3.
+
+Requiere red: el intérprete se descarga al abrir la slide (20-40 s); la celda solo usa numpy y matplotlib. Si no carga, la slide anterior tiene el mismo cálculo con los valores iniciales. En el código de la celda el punto decimal es el de Python (0.2, no 0,2).
+:::
+
+## El AUC resume todos los umbrales en un número {.fig-side}
+
+<!-- JUAN: Esta redacción Es la probabilidad de que un superanfitrión elegido al azar reciba más probabilidad que un anuncio que no lo es. -->
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: curva ROC del logit (fuera de pliegue) frente al clasificador nulo"
+#| fig-alt: "Curva ROC del logit sobre los anuncios de Airbnb, bien por encima de la diagonal del azar, con el área bajo la curva sombreada y un punto que marca el umbral 0,5."
+fpr, tpr, _ = roc_curve(y_c, p_oof)
+fig, ax = plt.subplots(figsize=(9, 6.8))
+ax.fill_between(fpr, tpr, color=tv.BLUE, alpha=0.12)
+ax.plot(fpr, tpr, color=tv.BLUE, lw=3, label=f"logit (AUC = {es(auc, 2)})")
+ax.plot([0, 1], [0, 1], color=tv.GRAY, ls="--", lw=2, label="nulo o azar (AUC = 0,5)")
+ax.scatter(1 - m05["especificidad"], m05["sensibilidad"], s=170, color=tv.TERRACOTTA, zorder=5, label="umbral 0,5")
+ax.set(xlabel="tasa de falsos positivos (1 − especificidad)", ylabel="sensibilidad", xlim=(0, 1), ylim=(0, 1.02),
+       aspect="equal")
+eje_coma(ax.xaxis, 1)
+eje_coma(ax.yaxis, 1)
+ax.legend(frameon=False, loc="lower right", fontsize=14)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- AUC: área bajo la curva ROC; en el logit, `{python} es(auc, 2)`.
+- Mide la capacidad del modelo para ordenar: es la probabilidad de que un superanfitrión elegido al azar reciba una puntuación más alta que un anfitrión regular elegido al azar.
+- 0,5 equivale a ordenar al azar (la diagonal); 1, a ordenar sin errores.
+- No depende del umbral: mide cómo ordena el modelo, no cómo decide.
+:::
+:::
+
+:::{.notes}
+2 min. Ahora con los datos reales (predicciones fuera de pliegue). La interpretación como probabilidad de ordenar bien un par (un positivo y un negativo) es exacta: el AUC es el estadístico de Mann-Whitney normalizado. En scikit-learn: `roc_curve`, `roc_auc_score` y `RocCurveDisplay.from_predictions`.
+
+Lo que no se afirma: que un AUC alto garantice buenas decisiones; con un umbral mal elegido, un modelo con buen AUC puede clasificar mal. Tampoco que el AUC valore la calidad de las probabilidades: solo usa el orden (slide siguiente).
+:::
+
+## La log-loss evalúa las probabilidades, no las etiquetas {.fig-side}
+
+<!-- JUAN: algo que no hemos comentado es el uso de lenguaje AI. Hay que cortarlo. `It's X, NOT Y` 
+resulta poco natural. Cambia el título para que refleje el concepto, además hay que hablar de como penaliza errores y más errores que se cometen con mucha seguridad; estas ideas estaban en los documentos originales y se han periddo aquí (lee carpeta legacy). Finalmente, respecto a la forma de escribir AI, 
+copio en el proyecto un documento `anti-AI.md`que define expresiones y modismos a evitar.
+Es para el inglés pero, adaptado, vale también para español    -->
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: pérdida de una observación según la probabilidad predicha"
+#| fig-alt: "Dos curvas de pérdida frente a la probabilidad predicha de ser superanfitrión. Si el anuncio es superanfitrión, la pérdida crece sin límite cuando la probabilidad se acerca a 0; si no lo es, cuando se acerca a 1."
+pp = np.linspace(0.005, 0.995, 300)
+fig, ax = plt.subplots(figsize=(9, 6.8))
+ax.plot(pp, -np.log(pp), color=tv.BLUE, lw=3, label="es superanfitrión: −log p")
+ax.plot(pp, -np.log(1 - pp), color=tv.TERRACOTTA, lw=3, label="no lo es: −log(1 − p)")
+ax.set(xlabel="probabilidad predicha de ser superanfitrión (p)", ylabel="pérdida de la observación",
+       xlim=(0, 1), ylim=(0, 5.5))
+eje_coma(ax.xaxis, 1)
+eje_coma(ax.yaxis, 0)
+ax.legend(frameon=False, loc="upper center")
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+::: {.callout-note title="Pérdida logarítmica (log-loss)"}
+Un error con mucha seguridad cuesta mucho:
+$$-\frac1n\sum_i\big[y_i\log\hat p_i+(1-y_i)\log(1-\hat p_i)\big]$$
+Es la función que minimiza la estimación del logit.
+:::
+
+- Nulo (siempre la prevalencia): `{python} es(ll_nulo, 3)`.
+- Logit: `{python} es(ll, 3)`. Menor es mejor.
+:::
+:::
+
+:::{.notes}
+2 min. Intuición: la pérdida de un anuncio solo depende de la probabilidad que el modelo dio a la clase que ocurrió. Decir 0,9 y acertar cuesta poco (0,11); decir 0,01 y fallar cuesta mucho (4,6). La log-loss es menos la log-verosimilitud media de un modelo Bernoulli: estimar el logit por máxima verosimilitud es minimizar la log-loss en entrenamiento (tema 3). También se llama entropía cruzada; es la pérdida de las redes neuronales de clasificación (tema 6).
+
+El nulo predice para todos la prevalencia de entrenamiento: `DummyClassifier(strategy="prior")`. El Brier score (error cuadrático de las probabilidades) es otra regla para evaluar probabilidades; no se ve en el curso. En scikit-learn: `log_loss` y `scoring="neg_log_loss"` (con signo cambiado para maximizar).
+:::
+
+## Cada métrica responde a una pregunta distinta {.table-slide}
+
+&nbsp;
+
+::: {tbl-colwidths="[22,53,25]"}
+| Métrica | Pregunta que responde | Valor de scoring |
+|:--|:--|:--|
+| Exactitud | ¿Qué proporción clasifica bien? | `"accuracy"` |
+| Precisión | De los señalados, ¿cuántos son positivos? | `"precision"` |
+| Sensibilidad | De los positivos, ¿cuántos señala? | `"recall"` |
+| F1 | ¿Son altas a la vez precisión y sensibilidad? | `"f1"` |
+| AUC | ¿Ordena a los positivos por encima de los negativos? | `"roc_auc"` |
+| Log-loss | ¿Son buenas las probabilidades? | `"neg_log_loss"` |
+| Precisión media (AP) | ¿Ordena bien cuando los positivos escasean? | `"average_precision"` |
+:::
+
+&nbsp;
+
+::: {.key}
+La métrica forma parte de la regla de decisión y se fija antes de validar. Con un clasificador, `GridSearchCV(cv=5)` usa particiones estratificadas.
+:::
+
+:::{.notes}
+2 min. Es la tabla que se usará en el laboratorio: cualquier `GridSearchCV` o `cross_val_score` de clasificación acepta estos valores en `scoring`. Las tres primeras dependen del umbral (0,5 por defecto); AUC, log-loss y AP no. Con `cv=5` y un clasificador, scikit-learn usa `StratifiedKFold` (sin barajar): cada partición conserva la prevalencia. Para barajar, pasar `StratifiedKFold(5, shuffle=True, random_state=...)`.
+
+Elegir la métrica después de ver los resultados es la versión de clasificación de mirar el test para decidir (rúbrica del proyecto: «métricas elegidas a posteriori»). AP se explica en el bloque 3.
+:::
+
+## ¿Puede subir el AUC sin que suba la exactitud? {.body-callout}
+
+&nbsp;
+
+::: {.panel-tabset}
+
+### Para pensar
+
+Cambiamos el logit por otro modelo y el AUC sube de `{python} es(auc, 2)` a 0,85. ¿Tiene que subir también la exactitud con el umbral 0,5?
+
+### Respuesta
+
+No necesariamente. El AUC mide cómo ordena el modelo con todos los umbrales; la exactitud, cuántos acierta con uno. Si la mejora reordena anuncios lejos del umbral (por ejemplo, entre probabilidades de 0,05 y 0,2), el AUC sube y la exactitud con 0,5 no cambia.
+
+:::
+
+:::{.notes}
+2 min. Discusión por parejas y puesta en común. Idea que se lleva el bloque: métricas de orden (AUC, AP), de probabilidad (log-loss) y de decisión con un umbral (exactitud, precisión, sensibilidad, F1) miden cosas distintas; ninguna es «la buena» en abstracto.
+:::
+
+# ¿Qué cambia cuando una clase es rara? {background-color="#447099"}
+
+## Con clases raras, la exactitud premia no detectar nada {.table-slide}
+
+&nbsp;
+
+Simulación con la misma capacidad de separar las clases (AUC ≈ `{python} es(raras.auc.mean(), 2)`) y tres prevalencias; umbral 0,5.
+
+```{python}
+#| echo: false
+#| output: asis
+tabla = pd.DataFrame({
+    "Positivos": [f"{es(100 * q)} %" for q in raras.index],
+    "Exactitud del nulo": [f"{es(100 * v, 1)} %" for v in raras.nulo],
+    "Exactitud del modelo": [f"{es(100 * v, 1)} %" for v in raras.exactitud],
+    "Precisión": ["—" if vp + fp < 30 else f"{es(100 * v)} %"          # con menos de 30 señalados, no se da
+                  for v, vp, fp in zip(raras.precision, raras.vp, raras.fp)],
+    "Sensibilidad": [f"{es(100 * v, 1)} %" for v in raras.sensibilidad],
+})
+print(tv.md_table(tabla))
+```
+
+&nbsp;
+
+- Con un 1 % de positivos, el nulo acierta el 99 % y el modelo casi nunca señala un anuncio.
+- Con una clase rara, la probabilidad calibrada casi nunca supera 0,5: ese umbral deja de tener sentido.
+
+:::{.notes}
+2 min. Simulación exagerada a propósito (200 000 casos por prevalencia; la precisión solo se da con 30 anuncios señalados o más, como en la figura del umbral): la separación entre clases es la misma en las tres filas, solo cambia la proporción de positivos. Con clases raras, la exactitud del nulo roza el 100 % y la del modelo no la mejora; la sensibilidad con 0,5 cae a `{python} es(100 * raras.loc[0.01, "sensibilidad"], 1)` %. En la práctica: fraude, impagos, abandono o averías, con prevalencias del 1-5 %.
+
+Lo que no se afirma: que el modelo sea peor con clases raras. Ordena igual de bien (slide siguiente); lo que falla es el umbral por defecto y la métrica.
+:::
+
+## La curva ROC no cambia; la curva PR se hunde {.fig-wide}
+
+<!-- JUAN: esta muy bien pero es la primera vez que introducimos la curva PR!!!. DEBEMOS
+incluir una slide antes paa definir y saber qué captura -->
+
+```{python}
+#| code-summary: "Código: curvas ROC y precisión-sensibilidad con tres prevalencias (misma separación)"
+#| fig-alt: "Dos paneles. A la izquierda, las curvas ROC de las tres prevalencias casi superpuestas. A la derecha, las curvas de precisión frente a sensibilidad: con 30 por ciento de positivos la precisión es alta; con 5 y 1 por ciento se hunde, y cada curva tiene su línea base en la prevalencia."
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6.5))
+for (q, (y, p)), color in zip(sims.items(), [tv.BLUE, tv.SAGE, tv.TERRACOTTA]):
+    f_, t_, _ = roc_curve(y, p)
+    ax1.plot(f_, t_, color=color, lw=3, label=f"{es(100 * q)} % positivos (AUC {es(raras.loc[q, 'auc'], 2)})")
+    pr, rc, _ = precision_recall_curve(y, p)
+    ax2.plot(rc, pr, color=color, lw=3, label=f"{es(100 * q)} % positivos (AP {es(raras.loc[q, 'ap'], 2)})")
+    ax2.axhline(q, color=color, ls=":", lw=1.8)
+ax1.plot([0, 1], [0, 1], color=tv.GRAY, ls="--")
+ax1.set(title="Curva ROC", xlabel="tasa de falsos positivos", ylabel="sensibilidad", xlim=(0, 1), ylim=(0, 1.02))
+ax2.set(title="Curva precisión-sensibilidad (PR)", xlabel="sensibilidad", ylabel="precisión", xlim=(0, 1),
+        ylim=(0, 1.02))
+for a in (ax1, ax2):
+    eje_coma(a.xaxis, 1)
+    eje_coma(a.yaxis, 1)
+    a.legend(frameon=False, loc="lower right" if a is ax1 else "upper right", fontsize=14)
+fig.tight_layout()
+plt.show()
+```
+
+::: {.caption-line}
+Misma simulación; en la curva PR, la línea base de cada prevalencia (punteada) es la precisión de señalar al azar. **La ROC ignora la prevalencia; la curva PR y la precisión media (AP) la reflejan.**
+:::
+
+:::{.notes}
+2 min. La ROC usa tasas dentro de cada clase (sensibilidad en los positivos, falsos positivos en los negativos): no depende de cuántos haya de cada una. La precisión mezcla las dos clases: con un 1 % de positivos, incluso un falso positivo por cada cien negativos pesa tanto como todos los positivos. La precisión media (AP, `average_precision_score`) resume la curva PR; su referencia es la prevalencia, no 0,5.
+
+Regla práctica: con clases raras, informar de la curva PR o de la AP además de (o en lugar de) la ROC.
+:::
+
+## Tres correcciones: estratificar, ponderar y mover el umbral {.body-callout}
+
+&nbsp;
+
+<!-- JUAN: ya hemos dicho que con un clasificador debemos estratificar en la slide 25. Ahora aparece como una corrección? (p.s. prefierro corrección a remedio).
+Quizá tiene más sentido hablar de ponderaciones, mover umbral (calibrar?) y ponderar (aunque no lo veamos)
+Y asumimso que siempre, con un clasificador, hacemos una partición estratificada
+ -->
+
+1. **Estratificar** las particiones para que todas tengan la misma prevalencia: `train_test_split(..., stratify=y)` y `StratifiedKFold`.
+2. **Ponderar** los errores de la clase rara en la pérdida: `LogisticRegression(class_weight="balanced")`.
+3. **Mover el umbral** según los costes: con probabilidades calibradas, el óptimo es $C_{FP}/(C_{FP}+C_{FN})$. `TunedThresholdClassifierCV` lo busca por validación cruzada.
+
+&nbsp;
+
+Remuestrear (submuestreo o SMOTE) cambia la muestra de entrenamiento; no lo usamos en el curso.
+
+:::{.notes}
+2 min. (1) Estratificar no cambia el modelo, solo evita particiones sin apenas positivos: con 1 % de prevalencia, un pliegue de 200 casos puede tener 0 o 5 positivos. (2) Ponderar multiplica la pérdida de cada positivo por n/(2·n₁): el modelo se desplaza hacia la clase rara (slide 28). (3) El umbral óptimo sale de comparar el coste esperado de cada decisión: se predice «sí» si p·C_FN > (1 − p)·C_FP, es decir, si p > C_FP/(C_FP + C_FN). Exige probabilidades calibradas; si no lo están, se busca por validación cruzada.
+
+(4) Submuestrear o generar positivos sintéticos (SMOTE) requiere `imbalanced-learn`, que no está en el entorno del curso, y distorsiona las probabilidades igual que ponderar. Con modelos que dan probabilidades, mover el umbral suele bastar.
+:::
+
+## Con costes asimétricos, el umbral óptimo se desplaza {.fig-side}
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| code-summary: "Código: coste esperado según el umbral y umbral ajustado con TunedThresholdClassifierCV"
+#| fig-alt: "Coste medio por anuncio frente al umbral, con predicciones fuera de pliegue del logit. La curva tiene un mínimo cerca de 0,2, muy por debajo del coste con el umbral 0,5. Líneas verticales en el umbral teórico, el ajustado por validación cruzada y 0,5."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+ax.plot(umbrales, coste_umbral, color=tv.BLUE, lw=3)
+for t, rotulo, color, y_txt in [(t_teorico, "teórico", tv.SAGE, 0.95), (t_ajustado, "ajustado (CV)", tv.TERRACOTTA, 0.82),
+                                (0.5, "0,5", tv.GRAY, 0.95)]:
+    ax.axvline(t, color=color, ls="--", lw=2)
+    ax.text(t, y_txt, f" {rotulo}", transform=ax.get_xaxis_transform(), fontsize=14, color=color, va="top")
+ax.set(xlabel="umbral", ylabel="coste medio por anuncio", xlim=(0, 1),
+       ylim=(0, coste_umbral.max() * 1.05))
+eje_coma(ax.xaxis, 1)
+eje_coma(ax.yaxis, 1)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Caso: contactar a un anfitrión que no es de calidad cuesta 1; dejar escapar a uno que sí lo es, `{python} C_FN`.
+- Umbral teórico: 1/(1 + `{python} C_FN`) = `{python} es(t_teorico, 1)`.
+- `TunedThresholdClassifierCV` elige `{python} es(t_ajustado, 2)`: coste medio `{python} es(coste_umbral.iloc[np.argmin(np.abs(umbrales - t_ajustado))], 2)` por anuncio, frente a `{python} es(coste_umbral.iloc[np.argmin(np.abs(umbrales - 0.5))], 2)` con 0,5.
+:::
+:::
+
+:::{.notes}
+2 min. Los costes son del caso, no de los datos: los fija el negocio antes de validar. La curva usa las predicciones fuera de pliegue del desarrollo; `TunedThresholdClassifierCV` hace lo mismo dentro de scikit-learn (validación cruzada estratificada, `scoring` con el coste cambiado de signo) y después reajusta el logit con todo el desarrollo. El umbral teórico y el ajustado coinciden si las probabilidades del logit están bien calibradas.
+
+Código mínimo (plegado arriba y en el laboratorio): `TunedThresholdClassifierCV(logit, scoring=make_scorer(coste, greater_is_better=False), cv=...)`; `best_threshold_` da el umbral. Para fijar un umbral a mano: `FixedThresholdClassifier`.
+:::
+
+## ¿Qué les pasa a las probabilidades con `class_weight`? {.body-callout}
+
+<!-- JUAN: la pregunta está bien, pero quizá debemos intentar contar qué pasa en el modelo. Son pesos de estimación? Lo debiamos contar -->
+
+&nbsp;
+
+::: {.panel-tabset}
+
+### Para pensar
+
+Con `class_weight="balanced"`, el logit da más peso a los superanfitriones al estimar. ¿Siguen siendo sus probabilidades una buena estimación de la proporción de superanfitriones?
+
+### Respuesta
+
+No. La probabilidad media predicha pasa de `{python} es(100 * p_oof.mean())` % a `{python} es(100 * p_bal.mean())` %, frente a una prevalencia de `{python} es(100 * prev)` %, y la log-loss empeora de `{python} es(ll, 3)` a `{python} es(ll_bal, 3)`. Ponderar se parece a bajar el umbral; si necesitamos probabilidades (para costes o para priorizar), es mejor mover el umbral.
+
+:::
+
+:::{.notes}
+2 min. Por parejas. En el logit, la ponderación balanceada desplaza sobre todo el intercepto hacia la clase rara: el orden de los anuncios apenas cambia (AUC parecido), pero las probabilidades dejan de estar calibradas. Cifras con predicciones fuera de pliegue. Mensaje: `class_weight` y remuestrear son útiles si solo importa la etiqueta; si la probabilidad se usa para algo (costes, ordenar clientes, precios), se pierde su interpretación.
+:::
+
+## Recapitulación: tres respuestas {.body-callout}
+
+&nbsp;
+
+1. **¿Cuánto nos podemos fiar del error de validación?** Varía con la partición; la validación cruzada lo estabiliza, su error típico es orientativo y el mínimo entre muchas candidatas es optimista (la anidada lo corrige).
+2. **¿Cómo medimos un clasificador?** Con la matriz de confusión y un umbral elegido; la ROC y el AUC resumen cómo ordena, y la log-loss, la calidad de las probabilidades.
+3. **¿Qué cambia con clases raras?** La exactitud y la ROC engañan; la curva PR, la estratificación y el umbral por costes no.
+
+::: {.key}
+Lo que **no** afirmamos: que exista una métrica mejor que las demás. La elige el problema de negocio, antes de validar.
+:::
+
+:::{.notes}
+2 min. Una frase por pregunta; la idea-fuerza enlaza con la rúbrica del proyecto (métrica y regla de decisión fijadas antes de mirar el test).
+:::
+
+## Actividad final {.table-slide .dense}
+
+&nbsp;
+
+Cuatro clasificadores ajustados con los `{python} es(len(dv))` anuncios de desarrollo y evaluados **una sola vez** en los `{python} es(len(ts))` del test.
+
+```{python}
+#| echo: false
+#| output: asis
+tabla = final.copy()
+for c in ["Exactitud", "Precisión", "Sensibilidad"]:
+    tabla[c] = ["—" if np.isnan(v) else f"{es(100 * v)} %" for v in tabla[c]]
+for c in ["AUC", "Coste medio"]:
+    tabla[c] = tabla[c].map(lambda v: es(v, 2))
+tabla["Log-loss"] = tabla["Log-loss"].map(lambda v: es(v, 3))
+print(tv.md_table(tabla.reset_index()))
+```
+
+&nbsp;
+
+::: {.panel-tabset}
+
+### En parejas
+
+¿Qué clasificador elegiríais **(a)** si la gestora solo puede contactar a pocos anfitriones y cada contacto fallido es caro, y **(b)** si perder a un anfitrión de calidad cuesta `{python} C_FN` veces más que un contacto fallido?
+
+### Respuesta
+
+```{python}
+#| echo: false
+#| output: asis
+_sin_nulo = final.drop(index="Nulo")
+_a = _sin_nulo["Precisión"].idxmax()
+_costes = _sin_nulo["Coste medio"].sort_values()
+print(f"- **(a)** La métrica es la precisión: {_a} ({es(100 * final.loc[_a, 'Precisión'])} %).")
+if _costes.iloc[1] - _costes.iloc[0] < 0.02:
+    print(f"- **(b)** La métrica es el coste: {_costes.index[0]} y {_costes.index[1]} empatan "
+          f"({es(_costes.iloc[0], 2)} y {es(_costes.iloc[1], 2)} por anuncio). Ponderar se parece a bajar el umbral; "
+          f"el umbral por costes conserva las probabilidades (mejor log-loss).")
+else:
+    print(f"- **(b)** La métrica es el coste: {_costes.index[0]} ({es(_costes.iloc[0], 2)} por anuncio).")
+print("- Los dos logit sin ponderar tienen el mismo AUC y la misma log-loss: son el mismo modelo; cambia la decisión.")
+```
+
+:::
+
+:::{.notes}
+5 min: 2 por parejas y 3 de puesta en común. Es la única consulta al test del deck; la regla (la métrica de cada escenario) se fija en la pregunta, antes de mirar la respuesta. El nulo no tiene precisión (no señala a nadie) y su AUC es 0,5 por construcción. El logit ponderado tiene peor log-loss por la descalibración de la slide anterior.
+
+Si el orden del test difiriera del de validación, no se cambia la elección: el test describe la decisión tomada.
+:::
+
+:::{.content-hidden}
+## Lo que viene {.body-callout}
+
+&nbsp;
+
+- **Jueves 8-10.** Tema 3: teoría y práctica de GLM (modelo base sobre la EES 2022) e hito S4 (EDA).
+- **Tema 3.** El logit como modelo lineal generalizado: componentes, función de enlace y la misma penalización de la semana 2 (`LogisticRegressionCV`).
+
+:::{.notes}
+1 min. Oculta, como en la semana 2 del tema 1. Enlace: la log-loss es la pérdida del GLM binomial; regularizar el logit es sumarle la penalización.
+:::
+:::
+
+## {background-color="#447099"}
+
+:::{.closing}
+```{python}
+#| echo: false
+#| fig-alt: "Ilustración de cierre: sobre fondo azul, una curva ROC en blanco con un punto terracota que marca un umbral, y el texto la curva es el modelo, el punto es la decisión."
+#| fig-align: center
+fig, ax = plt.subplots(figsize=(12, 6.75), facecolor="#447099")
+ax.set_facecolor("#447099")
+ax.plot(fpr, tpr, color="white", lw=4)
+ax.plot([0, 1], [0, 1], color="white", lw=1.2, ls="--", alpha=0.5)
+ax.scatter(1 - m05["especificidad"], m05["sensibilidad"], s=260, color="#F2B8A2", zorder=5)
+ax.text(0.97, 0.3, "La curva es el modelo", color="white", fontsize=28, ha="right", va="top")
+ax.text(0.97, 0.18, "el punto es la decisión", color="#F2B8A2", fontsize=28, ha="right", va="top")
+ax.text(0.02, 1.0, "Tema 2 · evaluación y selección", color="white", fontsize=22, alpha=0.7, va="top")
+for s in ax.spines.values():
+    s.set_visible(False)
+ax.set_xticks([])
+ax.set_yticks([])
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1.02)
+fig.tight_layout()
+plt.show()
+```
+:::

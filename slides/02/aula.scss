@@ -1,0 +1,23 @@
+/* Excepciones del deck del tema 2 (evaluación y selección). Estilo compartido: tap-aula.scss.
+   Se copian las del deck de regularización (01_ML/slides/semana_2/aula.scss: cuerpo a 36 px en
+   azul marino e idea-fuerza en .key), pendientes de pasar a _tap_theme/, y la regla de tablas
+   .airbnb de la semana 1. */
+/*-- scss:rules --*/
+.reveal { font-size: 36px; }                              /* la capa compartida fija 40 px */
+.reveal .slides section { color: #1F3A5F; }               /* cuerpo en azul marino */
+.reveal .slides section h2 { color: #447099; }            /* títulos en el azul de tap.scss */
+.reveal .slides section .key {                            /* idea-fuerza (sustituye a la blockquote) */
+  color: #1F3A5F; font-weight: 500; font-size: 1.02em;
+  border-left: 0.14em solid #E07A5F; padding: 0.12em 0 0.12em 0.6em; margin: 0.55em 0;
+}
+.reveal .slides section .key p { margin: 0.15em 0; }
+.reveal .slides section blockquote { color: #1F3A5F; }
+.reveal .slides section details > summary { font-size: 0.5em; }
+.reveal .slides section .formula { font-size: 0.92em; }
+/* Tablas de resultados más compactas */
+.reveal .slides section.airbnb table { font-size: 0.85em; }
+.reveal .slides section.airbnb table td,
+.reveal .slides section.airbnb table th { padding: 0.22em 0.4em; }
+/* Salidas de error con desplazamiento vertical: el mensaje completo se puede leer y copiar */
+.reveal .slides section .cell-output-stderr pre,
+.reveal .slides section .cell-output-error pre { max-height: 600px; overflow: auto; font-size: 0.45em; }

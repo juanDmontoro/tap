@@ -1,0 +1,5 @@
+# Perfil sin notas (versión pública) → quarto render --profile sn
+strip-notes: true
+format:
+  clean-revealjs:
+    output-file: 02_evaluacion_seleccion_sn.html
