@@ -1,1 +1,1 @@
-Introducción al aprendizaje profundo
+Máquinas de vectores de soporte

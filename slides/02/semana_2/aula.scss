@@ -1,0 +1,54 @@
+/* Excepciones del deck de código del tema 2 (semana 2). Estilo compartido: tap-aula.scss.
+   Base copiada de ../semana_1/aula.scss (cuerpo a 36 px en azul marino, .key). Lo propio de
+   este deck: slides .codigo con la celda pyodide a la izquierda y «Para pensar» a la derecha,
+   editor y salida a tamaño de aula. */
+/*-- scss:rules --*/
+.reveal { font-size: 36px; }                              /* la capa compartida fija 40 px */
+.reveal .slides section { color: #1F3A5F; }               /* cuerpo en azul marino */
+.reveal .slides section h2 { color: #447099; }            /* títulos en el azul de tap.scss */
+.reveal .slides section .key {                            /* idea-fuerza */
+  color: #1F3A5F; font-weight: 500; font-size: 1.02em;
+  border-left: 0.14em solid #E07A5F; padding: 0.12em 0 0.12em 0.6em; margin: 0.55em 0;
+}
+.reveal .slides section .key p { margin: 0.15em 0; }
+
+/* ---------- Slides de código (.codigo) ---------- */
+/* Barra Run / Reset / Copy. El editor Monaco fija su fuente en 17,5 pt dentro de la extensión (≈ 23 px en el lienzo). */
+.reveal .slides section.codigo .qpyodide-editor-toolbar { font-size: 20px; }
+/* Salida de texto: sin recorte vertical excesivo; se desplaza si es larga */
+.reveal .slides section.codigo .qpyodide-output-code-area pre {
+  font-size: 23px; line-height: 1.3; max-height: 380px; overflow: auto; margin: 0.2em 0;
+}
+.reveal .slides section.codigo .qpyodide-output-code-area pre code { font-size: inherit; }
+/* Diagramas de estimadores de scikit-learn (HTML, como en Jupyter; ver _quarto.yml): sin el
+   espaciado del <pre> de la salida y a tamaño de lectura */
+.reveal .slides section.codigo .qpyodide-output-code-area [id^="sk-container-id"] {
+  white-space: normal; font-size: 18px; line-height: 1.25; margin: 0.2em 0;
+}
+.reveal .slides section.codigo .qpyodide-output-code-area [id^="sk-container-id"] * { line-height: 1.25; }
+.reveal .slides section.codigo .qpyodide-output-code-area [id^="sk-container-id"] p,
+.reveal .slides section.codigo .qpyodide-output-code-area [id^="sk-container-id"] div { margin-top: 0; margin-bottom: 0; }
+/* Figuras de matplotlib en la salida */
+.reveal .slides section.codigo .qpyodide-output-graph-area img,
+.reveal .slides section.codigo .qpyodide-output-graph-area canvas {
+  height: 540px !important; width: auto !important; max-width: 100% !important;
+}
+.reveal .slides section.codigo .qpyodide-output-graph-area figure > div { width: auto !important; }
+/* Columna derecha: pestañas Para pensar / Qué deberías ver */
+.reveal .slides section.codigo .panel-tabset { font-size: 0.78em; }
+.reveal .slides section.codigo .panel-tabset code { font-size: 0.9em; }
+.reveal .slides section.codigo .panel-tabset li + li { margin-top: 0.3em; }
+
+/* Chuleta final: bloque estático compacto */
+.reveal .slides section.chuleta pre { font-size: 0.6em; line-height: 1.3; max-height: 860px; }
+.reveal .slides section.chuleta pre code { max-height: 860px; }
+
+/* Glosario */
+.reveal .slides section.glosario table { font-size: 0.62em; }
+.reveal .slides section.glosario table td,
+.reveal .slides section.glosario table th { padding: 0.2em 0.45em; }
+
+/* Cierre sin figura */
+.reveal .slides section .cierre { color: white; text-align: center; margin-top: 3.2em; }
+.reveal .slides section .cierre p { font-size: 1.5em; margin: 0.3em 0; }
+.reveal .slides section .cierre .tenue { font-size: 0.8em; opacity: 0.75; }
