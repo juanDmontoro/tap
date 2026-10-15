@@ -1,0 +1,18 @@
+project:
+  type: default
+  render:
+    - 03_glm_familias.qmd
+
+# Opciones que los perfiles sobreescriben (dimensiones, tema). NO pueden estar en
+# el YAML del .qmd: el documento tiene prioridad sobre el proyecto.
+# Sin celdas pyodide en este deck: no se carga la extensión ni su script.
+format:
+  clean-revealjs:
+    theme:
+      - default
+      - _extensions/grantmcdermott/clean/clean.scss
+      - ../../../_tap_theme/tap.scss
+      - ../../../_tap_theme/tap-aula.scss
+      - aula.scss
+    width: 1920
+    height: 1080

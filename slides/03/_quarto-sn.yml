@@ -1,0 +1,5 @@
+# Perfil sin notas (versión pública) → quarto render --profile sn
+strip-notes: true
+format:
+  clean-revealjs:
+    output-file: 03_glm_familias_sn.html

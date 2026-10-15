@@ -1,1 +1,0 @@
-El modelo lineal generalizado
