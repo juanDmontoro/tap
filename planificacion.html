@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Planificación de las sesiones – Técnicas Avanzadas de Predicción</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-702e08239ac3b5eeb6a3c2a3f2bd3066.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Técnicas Avanzadas de Predicción</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./planificacion.html" aria-current="page"> 
+<span class="menu-text">Planificación</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./materiales.html"> 
+<span class="menu-text">Materiales</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./proyecto.html"> 
+<span class="menu-text">Proyecto</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/juanDmontoro/tap"> <i class="bi bi-github" role="img" aria-label="Repositorio en GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Meses</h2>
+   
+  <ul>
+  <li><a href="#septiembre" id="toc-septiembre" class="nav-link active" data-scroll-target="#septiembre">Septiembre</a></li>
+  <li><a href="#octubre" id="toc-octubre" class="nav-link" data-scroll-target="#octubre">Octubre</a></li>
+  <li><a href="#noviembre" id="toc-noviembre" class="nav-link" data-scroll-target="#noviembre">Noviembre</a></li>
+  <li><a href="#diciembre" id="toc-diciembre" class="nav-link" data-scroll-target="#diciembre">Diciembre</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Planificación de las sesiones</h1>
+<p class="subtitle lead">Curso 2026-27</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-warning callout-titled" title="Planificación sujeta a cambios">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Planificación sujeta a cambios
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 18-10-2026. La hora límite de cada entrega se comunica en el Aula Virtual.</p>
+</div>
+</div>
+<p><strong>Teoría:</strong> martes, 12:30-13:30. <strong>Prácticas:</strong> jueves, 8:30-11:30 y 11:30-14:30 (mismo contenido en los dos grupos).</p>
+<p>T y P con número: sesión de teoría o de prácticas de ese tema. <strong>H1-H5:</strong> hitos del proyecto. <strong>E1-E5:</strong> entregas individuales.</p>
+<section id="septiembre" class="level2">
+<h2 class="anchored" data-anchor-id="septiembre">Septiembre</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Fecha</th>
+<th style="text-align: left;">Sesión</th>
+<th style="text-align: left;">Contenido</th>
+<th style="text-align: left;">Materiales</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">lunes 14</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><em>Inicio del cuatrimestre</em></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">martes 15</td>
+<td style="text-align: left;"><strong>Presentación de la asignatura</strong></td>
+<td style="text-align: left;">Organización del curso.</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">jueves 17</td>
+<td style="text-align: left;"><strong>P1 · Instalación del entorno</strong></td>
+<td style="text-align: left;">En línea por alerta roja: Python, entorno conda, VS Code y extensiones.</td>
+<td style="text-align: left;"><a href="./materiales.html#tema-1">Tema 1</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">martes 22</td>
+<td style="text-align: left;"><strong>T1 · Introducción</strong></td>
+<td style="text-align: left;">Tema 1, parte 1: introducción al aprendizaje automático.</td>
+<td style="text-align: left;"><a href="./materiales.html#tema-1">Tema 1</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">jueves 24</td>
+<td style="text-align: left;"><strong>P1 · Cancelada (concurso)</strong></td>
+<td style="text-align: left;">Trabajo autónomo: primer clab con la EES 2022. <strong>H1 · Proyecto: grupos, pregunta de negocio y datos.</strong></td>
+<td style="text-align: left;"><a href="./materiales.html#tema-1">Tema 1</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">martes 29</td>
+<td style="text-align: left;"><strong>T1 · Regularización</strong></td>
+<td style="text-align: left;">Tema 1, parte 2: regularización en el modelo lineal y selección en modelos de regresión.</td>
+<td style="text-align: left;"><a href="./materiales.html#tema-1">Tema 1</a></td>
+</tr>
+</tbody>
+</table>
+<p><em>Sesiones reales: 17 sep, en línea por alerta roja (instalación de Python, entorno y VS Code); 24 sep, práctica cancelada (concurso), trabajo autónomo con el primer clab de la EES 2022; H1 no presencial.</em></p>
+</section>
+<section id="octubre" class="level2">
+<h2 class="anchored" data-anchor-id="octubre">Octubre</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Fecha</th>
+<th style="text-align: left;">Sesión</th>
+<th style="text-align: left;">Contenido</th>
+<th style="text-align: left;">Materiales</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">jueves 1</td>
+<td style="text-align: left;"><strong>P1 · Regresión regularizada</strong></td>
+<td style="text-align: left;">Clab 2 solo con el grupo 1. Grupo 2: cancelada por alerta roja (lluvias).</td>
+<td style="text-align: left;"><a href="./materiales.html#tema-1">Tema 1</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">martes 6</td>
+<td style="text-align: left;"><strong>T2 · Evaluación y clasificación</strong></td>
+<td style="text-align: left;">Tema 2, partes 1 y 2: evaluación y selección; evaluación de clasificadores.</td>
+<td style="text-align: left;"><a href="./materiales.html#tema-2">Tema 2</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">jueves 8</td>
+<td style="text-align: left;"><strong>P2 · Evaluación y selección</strong></td>
+<td style="text-align: left;">Cuaderno del tema 2: sección 0 y bloque 1 (de 3).</td>
+<td style="text-align: left;"><a href="./materiales.html#tema-2">Tema 2</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">viernes 9</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><em>Festivo</em></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lunes 12</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><em>Festivo</em></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">martes 13</td>
+<td style="text-align: left;"><strong>T2 · Clases desequilibradas</strong></td>
+<td style="text-align: left;">Tema 2, parte 3: clasificación con clases desequilibradas.</td>
+<td style="text-align: left;"><a href="./materiales.html#tema-2">Tema 2</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">jueves 15</td>
+<td style="text-align: left;"><strong>Proyecto · Hito 2</strong></td>
+<td style="text-align: left;">30 min: código esencial de un proyecto (deck del tema 2). <strong>H2 · análisis exploratorio del proyecto (EDA).</strong></td>
+<td style="text-align: left;"><a href="./materiales.html#tema-2">Tema 2</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">martes 20</td>
+<td style="text-align: left;"><strong>T3 · GLM</strong></td>
+<td style="text-align: left;">Componentes, familias, evaluación y penalización (deck único, 60 min).</td>
+<td style="text-align: left;"><a href="./materiales.html#tema-3">Tema 3</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">jueves 22</td>
+<td style="text-align: left;"><strong>P3 · GLM</strong></td>
+<td style="text-align: left;">GLM sobre la EES 2022. <strong>Entrega E1 · GLM (T3).</strong></td>
+<td style="text-align: left;"><a href="./materiales.html#tema-3">Tema 3</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">martes 27</td>
+<td style="text-align: left;"><strong>T4 · Árboles y bosques</strong></td>
+<td style="text-align: left;">Árboles, bootstrap, bagging y random forests.</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">jueves 29</td>
+<td style="text-align: left;"><strong>P4 · Bosques aleatorios</strong></td>
+<td style="text-align: left;">90 min: mejorar el modelo base. <strong>H3 · 90 min: modelo base del proyecto.</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><em>1 oct: clab 2 solo con el grupo 1. 6 y 13 oct: tema 2. 15 oct: H2. 20 oct: tema 3. E1: 22 oct. H3: 29 oct. Desde el 27 oct todo se desplaza una semana (reajuste del 14-10).</em></p>
+</section>
+<section id="noviembre" class="level2">
+<h2 class="anchored" data-anchor-id="noviembre">Noviembre</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Fecha</th>
+<th style="text-align: left;">Sesión</th>
+<th style="text-align: left;">Contenido</th>
+<th style="text-align: left;">Materiales</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">martes 3</td>
+<td style="text-align: left;"><strong>T4 · Boosting</strong></td>
+<td style="text-align: left;">Gradient boosting y XGBoost.</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">jueves 5</td>
+<td style="text-align: left;"><strong>P4 · XGBoost</strong></td>
+<td style="text-align: left;">Ajuste y validación de XGBoost; comparación con random forest. <strong>Entrega E2 · Ensambles (T4).</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">martes 10</td>
+<td style="text-align: left;"><strong>T4 · Ensambles</strong></td>
+<td style="text-align: left;">Voting y stacking; importancias y valores de Shapley.</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">jueves 12</td>
+<td style="text-align: left;"><strong>P4 · Interpretación</strong></td>
+<td style="text-align: left;">90 min: stacking y SHAP guiados. <strong>H4 · 90 min: ensambles del proyecto.</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">martes 17</td>
+<td style="text-align: left;"><strong>T5 · SVM</strong></td>
+<td style="text-align: left;">Clasificación y regresión con vectores de soporte; núcleos.</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">jueves 19</td>
+<td style="text-align: left;"><strong>P5 · Comparar modelos</strong></td>
+<td style="text-align: left;">SVM: escalado, ajuste y comparación transversal de modelos. <strong>Entrega E3 · SVM (T5).</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">martes 24</td>
+<td style="text-align: left;"><strong>T6 · Redes neuronales</strong></td>
+<td style="text-align: left;">Perceptrón multicapa (MLP).</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">jueves 26</td>
+<td style="text-align: left;"><strong>P6 · Keras</strong></td>
+<td style="text-align: left;">90 min: MLP guiado en Keras. <strong>H5 · 90 min: revisión intermedia; todos los modelos + SVM y feedback.</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><em>E2: 5 nov, ensambles vistos hasta esa fecha. H4: 12 nov. E3: 19 nov, exclusivamente SVM. H5: 26 nov, revisión de todos los modelos + SVM y feedback.</em></p>
+</section>
+<section id="diciembre" class="level2">
+<h2 class="anchored" data-anchor-id="diciembre">Diciembre</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Fecha</th>
+<th style="text-align: left;">Sesión</th>
+<th style="text-align: left;">Contenido</th>
+<th style="text-align: left;">Materiales</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">martes 1</td>
+<td style="text-align: left;"><strong>T6 · Aprendizaje</strong></td>
+<td style="text-align: left;">Backpropagation y regularización de redes neuronales.</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">jueves 3</td>
+<td style="text-align: left;"><strong>P6 · Regularización</strong></td>
+<td style="text-align: left;">Regularización y búsqueda de arquitecturas en Keras. <strong>Entrega E4 · Redes neuronales (T6).</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lunes 7</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><em>Fiesta de centro</em></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">martes 8</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><em>Festivo: sin teoría</em></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">jueves 10</td>
+<td style="text-align: left;"><strong>P7 · Predicción y causalidad</strong></td>
+<td style="text-align: left;">DAG y sesgos; simulación guiada, ortogonalización y cross-fitting. <strong>Entrega E5 · Simulación de sesgos (T7).</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">domingo 13</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong><em>Límite de entrega del proyecto</em></strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">martes 15</td>
+<td style="text-align: left;"><strong>T7 · DoubleML</strong></td>
+<td style="text-align: left;">Caso Hillstrom: demostración, interpretación y discusión de supuestos.</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">jueves 17</td>
+<td style="text-align: left;"><strong>Proyecto · Defensa oral</strong></td>
+<td style="text-align: left;">Presentación y defensa oral del proyecto (sesión completa).</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">martes 22</td>
+<td style="text-align: left;"><strong>Repaso del examen escrito</strong></td>
+<td style="text-align: left;">Síntesis de contenidos, preguntas y resolución de dudas.</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">miércoles 23</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><em>Fin del cuatrimestre</em></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><em>E4: 3 dic. Por el reajuste del 14-10 se suprimen RNN/CNN y LLMs. 13 dic: fecha límite del proyecto (repositorio, memoria y registro de IA). Defensa oral: 17 dic. Repaso: 22 dic.</em></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/juandmontoro\.github\.io\/tap\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Técnicas Avanzadas de Predicción en Negocios · Universitat de València · Curso 2026-27</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Juan D. Montoro-Pons</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

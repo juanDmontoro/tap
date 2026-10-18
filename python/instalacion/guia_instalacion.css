@@ -1,0 +1,57 @@
+/* ---------- Guía de instalación TAP: estilos ---------- */
+:root { --tap: #1f5fbf; --tap-light: #e8f0fc; --ok: #1a7f37; --warn: #b35c00; }
+
+h2 { border-left: 6px solid var(--tap); padding-left: .6rem; margin-top: 2.5rem; }
+
+/* Cajas que imitan una ventana / pantalla del instalador */
+.pantalla {
+  border: 1px solid #b7c3d6; border-radius: 8px; background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.10); margin: 1rem 0 1.4rem 0; overflow: hidden;
+  max-width: 640px; font-size: .95rem;
+}
+.pantalla > p:first-child {
+  background: #e9edf3; margin: 0; padding: .35rem .8rem; font-weight: 600;
+  border-bottom: 1px solid #b7c3d6; color: #2b3a55;
+}
+.pantalla > p:first-child::before { content: "● ● ●  "; color: #a4afc0; letter-spacing: -1px; }
+.pantalla > :not(:first-child) { margin: .4rem .9rem; }
+.pantalla ul { list-style: none; padding-left: .3rem; }
+.pantalla li { margin: .25rem 0; }
+
+/* Botón simulado */
+.boton {
+  display: inline-block; background: var(--tap); color: #fff; border-radius: 5px;
+  padding: .1rem .7rem; font-weight: 600; font-size: .9em; white-space: nowrap;
+}
+.boton-gris { display: inline-block; background: #d9dee6; color: #333; border-radius: 5px;
+  padding: .1rem .7rem; font-size: .9em; white-space: nowrap; }
+
+/* Terminal simulada */
+pre.terminal {
+  background: #1e1e1e; color: #d4d4d4; border: none; border-radius: 8px; padding: .6rem 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9rem;
+  max-width: 640px; margin: .8rem 0 1.4rem 0; white-space: pre-wrap; overflow-x: auto; line-height: 1.45;
+}
+.terminal .prompt { color: #6fcf6f; }
+.terminal .ok { color: #6fcf6f; font-weight: 600; }
+
+/* Tiempo estimado */
+.tiempo {
+  display: inline-block; background: var(--tap-light); color: var(--tap); border: 1px solid var(--tap);
+  border-radius: 999px; padding: .05rem .7rem; font-size: .85rem; font-weight: 600; margin-left: .5rem;
+  vertical-align: middle;
+}
+
+kbd {
+  background: #f4f4f4; border: 1px solid #bbb; border-bottom-width: 2px; border-radius: 4px;
+  padding: 0 .4em; font-size: .85em; color: #222;
+}
+
+code.ruta, .ruta { font-family: ui-monospace, Menlo, Consolas, monospace; background: #f4f6f9; color: #222; padding: 0 .3em; border-radius: 3px; }
+
+/* Lista de verificación */
+.checklist ul { list-style: none; padding-left: 0; }
+.checklist li::before { content: "☐  "; color: var(--tap); font-size: 1.1em; }
+
+.nav-tabs .nav-link.active { font-weight: 700; color: var(--tap); }
+table { font-size: .95rem; }

@@ -1,0 +1,56 @@
+# ------------------------------------------------------------------
+# Entorno de la asignatura TAP (Técnicas Avanzadas de Predicción)
+# Curso 2026-27  ·  UNICO para Windows, macOS (Apple Silicon) y Linux
+#
+# Crear:      conda env create -f tap.yml
+# Activar:    conda activate tap
+# Eliminar:   conda env remove -n tap
+#
+# Nota Mac Intel (anteriores a 2020): cambiar "numpy" por "numpy<2"
+# ------------------------------------------------------------------
+name: tap
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  - python=3.11
+
+  # --- ciencia de datos básica ---
+  - numpy
+  - pandas<3        # los notebooks del curso están escritos para pandas 2.x
+  - scipy
+  - statsmodels
+
+  # --- gráficos ---
+  - matplotlib-base
+  - seaborn
+  - plotly
+
+  # --- machine learning ---
+  - scikit-learn
+  - xgboost
+  - lightgbm
+  - shap
+  - optuna          # búsqueda de hiperparámetros (uso ligero)
+  - doubleml        # tema 7: predicción y efectos causales
+
+  # --- árboles: visualización ---
+  - graphviz
+  - python-graphviz
+
+  # --- notebooks (VS Code / JupyterLab) y render Quarto con motor jupyter ---
+  - jupyter
+  - ipykernel
+  - ipywidgets
+  - nbformat
+  - nbclient
+  - nbconvert
+
+  # --- utilidades ---
+  - geopy
+  - pip
+
+  # --- deep learning: TensorFlow + Keras 3 (via pip, igual en todos los SO) ---
+  - pip:
+      - tensorflow
