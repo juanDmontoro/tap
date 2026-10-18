@@ -1,0 +1,1153 @@
+---
+title: "Tema 3. Modelos lineales generalizados con regularización"
+subtitle: "Técnicas Avanzadas de Predicción en Negocios"
+author: "Prof. Juan D. Montoro-Pons | 2026/27"
+title-slide-attributes:
+  data-background-color: "#447099"
+format:
+  clean-revealjs:
+    slide-number: c/t
+    footer: ""
+    echo: false
+    code-overflow: wrap
+    code-line-numbers: false
+    code-copy: true
+    highlight-style: solarized
+    scrollable: false
+    incremental: false
+    fig-align: center
+engine: jupyter
+jupyter: python3
+lang: es
+fig-dpi: 110
+execute:
+  eval: true
+  warning: false
+  message: false
+filters:
+  - ../../../_tap_theme/strip-notes.lua
+---
+```{python}
+#| output: false
+# El deck no muestra código. Todas las figuras y cifras se calculan aquí al renderizar; el mismo
+# cálculo, explicado paso a paso para los estudiantes, está en el cuaderno compañero
+# ../../clabs/tema_03_glm_codigo.ipynb (mismos datos, semillas y tamaños).
+#
+# Datos: la población del tema 2 (listados.csv, 30-400 €/noche, alojamientos enteros y
+# habitaciones), con la misma división (30 % de test, semilla 42). Todo se calcula con el
+# conjunto de entrenamiento y validación cruzada en 5 particiones; el test no se usa.
+# Cuatro respuestas: superanfitrión (logit, el del tema 2), tramo de precio (multinomial), precio
+# (Gamma) y reseñas del último año (Poisson). Métricas (R35, revisión del 12-10-2026): la métrica se
+# elige según el problema y se muestran las alternativas. Precio: RMSE, con MAE y R². Superanfitrión
+# (30 % de positivos): log-loss, con AUC, AP y exactitud. Tramo (tres tercios): exactitud y log-loss.
+# Todas son medias de las 5 particiones de validación cruzada.
+# Bloque 3: sobreajuste y penalización del Gamma (300 anuncios frente al entrenamiento completo) y
+# Lasso en el logit.
+import sys
+import warnings
+sys.path.insert(0, "../../../_tap_theme")
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
+from matplotlib_inline.backend_inline import set_matplotlib_formats
+import tapviz as tv
+from sklearn.base import clone
+from sklearn.compose import ColumnTransformer, TransformedTargetRegressor
+from sklearn.inspection import partial_dependence
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import (LinearRegression, LogisticRegression, LogisticRegressionCV,
+                                  GammaRegressor, PoissonRegressor)
+from sklearn.dummy import DummyClassifier, DummyRegressor
+from sklearn.model_selection import (train_test_split, KFold, StratifiedKFold, cross_val_predict,
+                                     cross_val_score, cross_validate, GridSearchCV)
+from sklearn.metrics import root_mean_squared_error
+from sklearn.exceptions import ConvergenceWarning
+
+warnings.filterwarnings("error", category=ConvergenceWarning)
+warnings.filterwarnings("ignore", message="Found unknown categories")   # barrio no visto en el ajuste: fila de ceros
+tv.use_style()
+plt.rcParams.update({"font.size": 16, "axes.titlesize": 18, "axes.labelsize": 16,
+                     "legend.fontsize": 15, "xtick.labelsize": 15, "ytick.labelsize": 15})
+set_matplotlib_formats("png", dpi=110)
+
+# Colores del curso (los mismos que en el cuaderno compañero)
+AZUL, MARINO, TERRACOTA, SALVIA, GRIS = "#447099", "#1F3A5F", "#E07A5F", "#81B29A", "#6C757D"
+
+
+def es(value, digits=0):
+    """Número con formato español: coma decimal; sin separador hasta 9 999 y espacio fino a partir de cinco cifras (RAE)."""
+    texto = f"{value:,.{digits}f}".replace(",", "_").replace(".", ",")
+    return texto.replace("_", "" if abs(value) < 10000 else " ")
+
+
+def eje_coma(eje, dec=1):
+    """Coma decimal en las marcas de un eje lineal (ax.xaxis o ax.yaxis)."""
+    eje.set_major_formatter(FuncFormatter(lambda v, _: es(v, dec).replace("-", "−")))
+
+
+# ------------------------------------------------------------ datos (idénticos al tema 2)
+SEED = 42
+cols = ["neighbourhood_cleansed", "room_type", "latitude", "longitude", "accommodates",
+        "bathrooms", "bedrooms", "beds", "number_of_reviews", "number_of_reviews_ltm",
+        "reviews_per_month", "review_scores_rating", "minimum_nights", "availability_365",
+        "host_is_superhost", "price"]
+df = pd.read_csv("../../../../datos/airbnb_vlc/listados.csv", usecols=cols)
+df["price"] = pd.to_numeric(df["price"].str.replace(r"[$,]", "", regex=True))
+
+# Distancia al centro (plaza del Ayuntamiento) en km
+lat0, lon0 = 39.4699, -0.3763
+dif_norte = (df["latitude"] - lat0) * 111.0
+dif_este = (df["longitude"] - lon0) * 111.0 * np.cos(np.radians(lat0))
+df["dist_km"] = np.sqrt(dif_norte ** 2 + dif_este ** 2)
+df["superhost"] = (df["host_is_superhost"] == "t").astype(int)
+
+en_rango = df["price"].between(30, 400)
+tipo_valido = df["room_type"].isin(["Entire home/apt", "Private room"])
+datos = df[en_rango & tipo_valido].copy()
+datos["log_precio"] = np.log(datos["price"])
+
+num = ["dist_km", "accommodates", "bathrooms", "bedrooms", "beds", "number_of_reviews",
+       "number_of_reviews_ltm", "reviews_per_month", "review_scores_rating", "minimum_nights",
+       "availability_365", "superhost"]
+cat = ["neighbourhood_cleansed", "room_type"]
+entreno, test = train_test_split(datos, test_size=0.3, random_state=SEED)
+
+# Categorías de referencia (tema 1, semana 2): el barrio más frecuente y la habitación privada
+REF = [datos["neighbourhood_cleansed"].value_counts().idxmax(), "Private room"]
+MIN_BARRIO = 50                     # barrios con menos anuncios: una categoría común (tema 2)
+
+
+def preprocesador(numericas, min_barrio=MIN_BARRIO):
+    """Imputación y estandarización de las numéricas; barrio y tipo con categoría de referencia.
+    Con min_barrio=None, cada barrio tiene su columna (los 300 anuncios del bloque 3)."""
+    pasos_num = Pipeline([("imp", SimpleImputer(strategy="median")), ("esc", StandardScaler())])
+    pasos_cat = OneHotEncoder(drop=REF, min_frequency=min_barrio, handle_unknown="infrequent_if_exist",
+                              sparse_output=False)
+    return ColumnTransformer([("num", pasos_num, numericas), ("cat", pasos_cat, cat)])
+
+
+def rmse_cv(modelo, X, y):
+    """RMSE de cada una de las 5 particiones de validación cruzada."""
+    return -cross_val_score(modelo, X, y, cv=cv, scoring="neg_root_mean_squared_error")
+
+
+cv = KFold(5, shuffle=True, random_state=SEED)
+cv_estrat = StratifiedKFold(5, shuffle=True, random_state=SEED)
+
+# ------------------------------------------------------------ 1. superanfitrión: logit (tema 2)
+num_c = [v for v in num if v != "superhost"] + ["log_precio"]
+ent_c = entreno[entreno["host_is_superhost"].notna()]
+X_c, y_c = ent_c[num_c + cat], ent_c["superhost"]
+prev = y_c.mean()
+
+# Modelo lineal con respuesta 0/1 (probabilidad lineal), ajustado con todo el entrenamiento
+mpl = Pipeline([("prep", preprocesador(num_c)), ("model", LinearRegression())]).fit(X_c, y_c)
+pred_mpl = mpl.predict(X_c)
+fuera_mpl = np.mean((pred_mpl < 0) | (pred_mpl > 1))
+bajo_cero = np.mean(pred_mpl < 0)
+sobre_uno = np.mean(pred_mpl > 1)
+
+# C = inf: logit sin penalización (en scikit-learn 1.8+ `penalty` está obsoleto)
+logit = Pipeline([("prep", preprocesador(num_c)), ("model", LogisticRegression(C=np.inf, max_iter=5000))])
+logloss_logit = -cross_val_score(logit, X_c, y_c, cv=cv_estrat, scoring="neg_log_loss").mean()
+logloss_nulo_c = -cross_val_score(DummyClassifier(strategy="prior"), X_c, y_c, cv=cv_estrat,
+                                  scoring="neg_log_loss").mean()
+# Cuatro métricas de clasificación para el nulo y el logit (slide de métricas de clasificación)
+METRICAS_C = {"log-loss": "neg_log_loss", "AUC": "roc_auc", "AP": "average_precision", "exactitud": "accuracy"}
+metricas_c = {}
+for nombre_modelo, modelo in [("Nulo (proporción)", DummyClassifier(strategy="prior")), ("Logit", logit)]:
+    res = cross_validate(modelo, X_c, y_c, cv=cv_estrat, scoring=METRICAS_C)
+    metricas_c[nombre_modelo] = {m: res[f"test_{m}"].mean() for m in METRICAS_C}
+metricas_c = pd.DataFrame(metricas_c).T
+metricas_c["log-loss"] = -metricas_c["log-loss"]
+logit_fit = clone(logit).fit(X_c, y_c)
+pred_lineal_c = logit_fit.decision_function(X_c)          # predictor lineal ν de cada anuncio
+prob_c = logit_fit.predict_proba(X_c)[:, 1]
+
+# ------------------------------------------------------------ 2. tramo de precio: multinomial
+cortes = entreno["price"].quantile([1 / 3, 2 / 3]).to_numpy()
+NOMBRES_TRAMO = ["bajo", "medio", "alto"]
+tramo = pd.cut(entreno["price"], [0, cortes[0], cortes[1], np.inf], labels=NOMBRES_TRAMO).astype(str)
+X_t = entreno[num + cat]                                    # el precio no entra como predictor
+multi = Pipeline([("prep", preprocesador(num)), ("model", LogisticRegression(C=np.inf, max_iter=5000))])
+logloss_multi = -cross_val_score(multi, X_t, tramo, cv=cv_estrat, scoring="neg_log_loss").mean()
+logloss_nulo_t = -cross_val_score(DummyClassifier(strategy="prior"), X_t, tramo, cv=cv_estrat,
+                                  scoring="neg_log_loss").mean()
+exact_multi = cross_val_score(multi, X_t, tramo, cv=cv_estrat, scoring="accuracy").mean()
+exact_nulo_t = cross_val_score(DummyClassifier(strategy="prior"), X_t, tramo, cv=cv_estrat,
+                               scoring="accuracy").mean()
+prop_tramos = tramo.value_counts(normalize=True)          # tres tercios: clases equilibradas
+multi_fit = clone(multi).fit(X_t, tramo)
+
+# Probabilidad media de cada tramo si todos los anuncios tuvieran la misma capacidad (dependencia parcial;
+# partial_dependence exige columnas numéricas de tipo float)
+CAPACIDADES = list(range(1, 9))
+dependencia = partial_dependence(multi_fit, X_t.astype({"accommodates": float}), ["accommodates"],
+                                 response_method="predict_proba", kind="average",
+                                 custom_values={"accommodates": CAPACIDADES})
+prob_por_capacidad = pd.DataFrame(dependencia["average"].T, index=CAPACIDADES, columns=multi_fit.classes_)
+
+# ------------------------------------------------------------ 3. precio: GLM Gamma con enlace log
+X_p, y_p = entreno[num + cat], entreno["price"]
+gamma = Pipeline([("prep", preprocesador(num)), ("model", GammaRegressor(alpha=0, max_iter=5000))])
+pred_gamma = cross_val_predict(gamma, X_p, y_p, cv=cv)
+
+# Dispersión del precio por décimos de la media predicha (slide de la familia Gamma)
+decil_p = pd.qcut(pred_gamma, 10, labels=False)
+por_decil_p = pd.DataFrame({"media_pred": pred_gamma, "precio": y_p.values, "decil": decil_p})
+por_decil_p = por_decil_p.groupby("decil").agg(media=("precio", "mean"), dt=("precio", "std"))
+
+# ------------------------------------------------------------ 4. reseñas del último año: Poisson
+# Sin las otras variables de reseñas (son la misma información) ni la valoración (falta si no hay reseñas)
+num_r = ["dist_km", "accommodates", "bathrooms", "bedrooms", "beds", "minimum_nights",
+         "availability_365", "superhost", "log_precio"]
+X_r, y_r = entreno[num_r + cat], entreno["number_of_reviews_ltm"]
+poisson = Pipeline([("prep", preprocesador(num_r)), ("model", PoissonRegressor(alpha=0, max_iter=5000))])
+lineal_r = Pipeline([("prep", preprocesador(num_r)), ("model", LinearRegression())])
+pred_pois = cross_val_predict(poisson, X_r, y_r, cv=cv)
+pred_lineal_r = cross_val_predict(lineal_r, X_r, y_r, cv=cv)
+negativos_r = np.mean(pred_lineal_r < 0)
+rmse_pois = rmse_cv(poisson, X_r, y_r).mean()
+rmse_lineal_r = rmse_cv(lineal_r, X_r, y_r).mean()
+rmse_nulo_r = rmse_cv(DummyRegressor(strategy="mean"), X_r, y_r).mean()
+mae_pois = -cross_val_score(poisson, X_r, y_r, cv=cv, scoring="neg_mean_absolute_error").mean()
+mae_nulo_r = -cross_val_score(DummyRegressor(strategy="mean"), X_r, y_r, cv=cv,
+                              scoring="neg_mean_absolute_error").mean()
+media_r, var_r = y_r.mean(), y_r.var()
+ceros_r = np.mean(y_r == 0)
+
+# Media predicha y media observada en diez grupos de anuncios según la predicción de validación cruzada
+decil_r = pd.qcut(pred_pois, 10, labels=False)
+por_decil_r = pd.DataFrame({"pred": pred_pois, "resenas": y_r.values, "decil": decil_r})
+por_decil_r = por_decil_r.groupby("decil").agg(media_pred=("pred", "mean"), media=("resenas", "mean"),
+                                               varianza=("resenas", "var"))
+razon_min = (por_decil_r["varianza"] / por_decil_r["media"]).min()
+razon_max = (por_decil_r["varianza"] / por_decil_r["media"]).max()
+
+# ------------------------------------------------------------ 5. elección del modelo del precio (bloque 3)
+lineal_p = Pipeline([("prep", preprocesador(num)), ("model", LinearRegression())])
+# MCO sobre log(precio): se ajusta con el logaritmo y predice en euros (exp), así que el RMSE es en euros
+mco_log = TransformedTargetRegressor(regressor=Pipeline([("prep", preprocesador(num)), ("model", LinearRegression())]),
+                                     func=np.log, inverse_func=np.exp)
+rmse_part = {"nulo": rmse_cv(DummyRegressor(strategy="mean"), X_p, y_p),
+             "lineal": rmse_cv(lineal_p, X_p, y_p),
+             "mco_log": rmse_cv(mco_log, X_p, y_p),
+             "gamma": rmse_cv(gamma, X_p, y_p)}
+pred_mco = cross_val_predict(mco_log, X_p, y_p, cv=cv)
+rmse_precio = {nombre: valores.mean() for nombre, valores in rmse_part.items()}
+# MAE y R² de validación cruzada de los mismos cuatro modelos (alternativas al RMSE, R35)
+modelos_precio = {"nulo": DummyRegressor(strategy="mean"), "lineal": lineal_p, "mco_log": mco_log, "gamma": gamma}
+mae_precio, r2_precio = {}, {}
+for nombre, modelo in modelos_precio.items():
+    res = cross_validate(modelo, X_p, y_p, cv=cv, scoring=["neg_mean_absolute_error", "r2"])
+    mae_precio[nombre] = -res["test_neg_mean_absolute_error"].mean()
+    r2_precio[nombre] = res["test_r2"].mean()
+CANDIDATOS_P = ["lineal", "mco_log", "gamma"]
+mejor_mae = min(CANDIDATOS_P, key=mae_precio.get)                       # el de menor MAE
+dif_mae = max(mae_precio[m] for m in CANDIDATOS_P) - min(mae_precio[m] for m in CANDIDATOS_P)
+dif_r2 = max(r2_precio[m] for m in CANDIDATOS_P) - min(r2_precio[m] for m in CANDIDATOS_P)
+NOMBRE_MODELO = {"lineal": "la regresión lineal", "mco_log": "MCO sobre log(precio)", "gamma": "el Gamma"}
+pred_lineal_p = cross_val_predict(lineal_p, X_p, y_p, cv=cv)
+negativos_p = np.mean(pred_lineal_p < 0)
+media_precio, media_pred_gamma, media_pred_mco = y_p.mean(), pred_gamma.mean(), pred_mco.mean()
+
+# Diferencias emparejadas entre los tres modelos (notas): media y error típico entre particiones
+CANDIDATOS = ["lineal", "mco_log", "gamma"]
+diferencias = {}
+for i, a in enumerate(CANDIDATOS):
+    for b in CANDIDATOS[i + 1:]:
+        dif = rmse_part[a] - rmse_part[b]
+        diferencias[(a, b)] = (dif.mean(), dif.std(ddof=1) / np.sqrt(len(dif)))
+max_dif = max(abs(m) for m, _ in diferencias.values())
+mejora_nulo = [rmse_precio["nulo"] - rmse_precio[m] for m in CANDIDATOS]
+
+# ------------------------------------------------------------ 6. sobreajuste y penalización (bloque 3)
+# GammaRegressor y PoissonRegressor solo penalizan con Ridge: alpha es la penalización λ.
+ALPHAS = np.logspace(-4, 1, 11)
+
+# Gamma con los 300 anuncios de la semana 2 del tema 1 (misma semilla) y una columna por barrio
+entreno_300 = entreno.sample(300, random_state=SEED)
+X_300, y_300 = entreno_300[num + cat], entreno_300["price"]
+gamma_300 = Pipeline([("prep", preprocesador(num, min_barrio=None)),
+                      ("model", GammaRegressor(alpha=0, max_iter=5000))])
+n_barrios_300 = entreno_300["neighbourhood_cleansed"].nunique()
+n_columnas_300 = clone(gamma_300).fit(X_300, y_300)["prep"].get_feature_names_out().size
+
+# Sobreajuste: RMSE medio de entrenamiento y de validación en las 5 particiones, sin penalización
+ajuste_300 = cross_validate(gamma_300, X_300, y_300, cv=cv, scoring="neg_root_mean_squared_error",
+                            return_train_score=True)
+ajuste_todo = cross_validate(gamma, X_p, y_p, cv=cv, scoring="neg_root_mean_squared_error",
+                             return_train_score=True)
+rmse_ent_300, rmse_val_300 = -ajuste_300["train_score"].mean(), -ajuste_300["test_score"].mean()
+rmse_ent_todo, rmse_val_todo = -ajuste_todo["train_score"].mean(), -ajuste_todo["test_score"].mean()
+rmse_nulo_300 = rmse_cv(DummyRegressor(strategy="mean"), X_300, y_300).mean()
+pred_300_sin = cross_val_predict(gamma_300, X_300, y_300, cv=cv)
+peor = np.argmax(pred_300_sin)                                        # anuncio con mayor precio predicho
+pred_300_min = cross_val_predict(clone(gamma_300).set_params(model__alpha=ALPHAS[0]), X_300, y_300, cv=cv)
+
+# Curvas de validación: GridSearchCV puntúa con el RMSE (media de las 5 particiones)
+busqueda_300 = GridSearchCV(gamma_300, {"model__alpha": ALPHAS}, cv=cv,
+                            scoring="neg_root_mean_squared_error").fit(X_300, y_300)
+busqueda_todo = GridSearchCV(gamma, {"model__alpha": ALPHAS}, cv=cv,
+                             scoring="neg_root_mean_squared_error").fit(X_p, y_p)
+rmse_curva_300 = -busqueda_300.cv_results_["mean_test_score"]
+rmse_curva_todo = -busqueda_todo.cv_results_["mean_test_score"]
+alpha_300 = busqueda_300.best_params_["model__alpha"]
+alpha_todo = busqueda_todo.best_params_["model__alpha"]
+rmse_300_pen = -busqueda_300.best_score_
+k_todo = int(np.argmin(rmse_curva_todo))
+plana_hasta = ALPHAS[np.max(np.where(rmse_curva_todo <= rmse_curva_todo.min() + 0.1)[0])]
+
+# Comprobación fuera de la validación cruzada (notas): los anuncios de entrenamiento no usados
+resto = entreno.drop(entreno_300.index)
+gamma_300_sin = clone(gamma_300).fit(X_300, y_300)
+gamma_300_pen = clone(gamma_300).set_params(model__alpha=alpha_300).fit(X_300, y_300)
+rmse_resto_sin = root_mean_squared_error(resto["price"], gamma_300_sin.predict(resto[num + cat]))
+rmse_resto_pen = root_mean_squared_error(resto["price"], gamma_300_pen.predict(resto[num + cat]))
+
+# Lasso en el logit de superanfitrión: C = 1/λ, l1_ratio = 1
+CS = np.logspace(-3, 1, 9)
+logit_lasso_cv = Pipeline([("prep", preprocesador(num_c)),
+                           ("model", LogisticRegressionCV(Cs=CS, l1_ratios=[1.0], solver="saga",
+                                                          cv=cv_estrat, scoring="neg_log_loss",
+                                                          max_iter=20000, use_legacy_attributes=False))])
+logit_lasso_cv.fit(X_c, y_c)
+logloss_part = -logit_lasso_cv["model"].scores_[:, 0, :]              # particiones x valores de C
+logloss_media = logloss_part.mean(axis=0)
+logloss_ee = logloss_part.std(axis=0, ddof=1) / np.sqrt(logloss_part.shape[0])
+activos = []
+for c_valor in CS:
+    lasso_c = Pipeline([("prep", preprocesador(num_c)),
+                        ("model", LogisticRegression(C=c_valor, l1_ratio=1.0, solver="saga", max_iter=20000))])
+    lasso_c.fit(X_c, y_c)
+    activos.append(int(np.count_nonzero(lasso_c["model"].coef_)))
+activos = np.array(activos)
+n_coef_logit = logit_lasso_cv["model"].coef_.size
+k_min = int(np.argmin(logloss_media))
+k_1ee = int(np.min(np.where(logloss_media <= logloss_media[k_min] + logloss_ee[k_min])[0]))   # regla del error típico
+lasso_1ee = Pipeline([("prep", preprocesador(num_c)),
+                      ("model", LogisticRegression(C=CS[k_1ee], l1_ratio=1.0, solver="saga", max_iter=20000))]).fit(X_c, y_c)
+nombres_1ee = [n for n, b in zip(lasso_1ee["prep"].get_feature_names_out(), lasso_1ee["model"].coef_[0]) if b != 0]
+barrios_activos = [n for n in nombres_1ee if n.startswith("cat__neighbourhood")]
+texto_ceros = "Quedan en cero la capacidad, los baños, las camas y todos los indicadores de barrio."
+corr_capacidad = X_c["accommodates"].corr(X_c["bedrooms"])
+
+# Salvaguardas: el render se detiene si no se cumple lo que dicen las slides
+assert max_dif < 2 and min(mejora_nulo) > 10, "Slide de elección: los tres modelos del precio ya no predicen parecido"
+assert negativos_p > 0 and pred_gamma.min() > 0 and pred_mco.min() > 0, "Slide de elección: rango de las predicciones"
+assert negativos_r > 0 and pred_pois.min() > 0, "Slide de Poisson: rango de las predicciones"
+assert mejor_mae == "mco_log", "Slide de elección: el texto dice que con el MAE gana MCO sobre log(precio)"
+assert max_dif < 2 and dif_r2 < 0.03, "Slide de elección: RMSE y R² ya no dejan de separar a los candidatos"
+assert metricas_c.loc["Logit", "exactitud"] - metricas_c.loc["Nulo (proporción)", "exactitud"] < 0.1, \
+    "Slide de clasificación: la exactitud separa claramente al logit del nulo"
+assert abs(exact_multi / exact_nulo_t - 2) < 0.25 and prop_tramos.max() - prop_tramos.min() < 0.02, \
+    "Slide de clasificación: el texto dice tres clases del mismo tamaño y el doble de aciertos"
+assert rmse_ent_300 < rmse_val_300 - 10, "Con 300 anuncios no hay sobreajuste"
+assert rmse_val_todo - rmse_ent_todo < 5, "Con todo el entrenamiento hay sobreajuste"
+assert rmse_300_pen < rmse_val_300 - 5, "Con 300 anuncios la penalización no mejora el RMSE"
+assert rmse_resto_pen < rmse_resto_sin, "Con 300 anuncios la penalización no mejora fuera de la validación cruzada"
+assert rmse_curva_todo[0] - rmse_curva_todo.min() < 0.1, "Con todo el entrenamiento la penalización mejora el RMSE"
+assert np.isclose(logit_lasso_cv["model"].C_, CS[k_min]), "LogisticRegressionCV no elige el mínimo de la log-loss"
+assert activos[k_1ee] < activos[k_min] < n_coef_logit, "Lasso no deja coeficientes en cero"
+assert not barrios_activos and not {"num__accommodates", "num__bathrooms", "num__beds"} & set(nombres_1ee), \
+    "texto_ceros no coincide con los coeficientes en cero"
+assert {"num__bedrooms", "cat__room_type_Entire home/apt"} <= set(nombres_1ee), \
+    "La respuesta de la slide del coeficiente cero dice que dormitorios y tipo entran"
+```
+
+## ¿Sirve la regresión lineal para estas cuatro variables? {.fig-side}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="56%"}
+```{python}
+#| fig-alt: "Cuatro paneles con la distribución de cuatro respuestas en los anuncios de entrenamiento: el precio por noche, positivo y con cola a la derecha; superanfitrión, con dos barras; el tramo de precio, con tres barras iguales; y las reseñas del último año, con muchos ceros y una cola larga."
+fig, axes = plt.subplots(2, 2, figsize=(10, 7.2))
+axes[0, 0].hist(entreno["price"], bins=40, color=AZUL)
+axes[0, 0].set(title="precio (€/noche)", yticks=[])
+axes[0, 1].bar(["no", "sí"], [1 - prev, prev], color=[GRIS, AZUL], width=0.6)
+axes[0, 1].set(title="¿superanfitrión?", ylim=(0, 1), yticks=[])
+reparto_tramo = tramo.value_counts(normalize=True)[NOMBRES_TRAMO]
+axes[1, 0].bar(NOMBRES_TRAMO, reparto_tramo, color=[SALVIA, AZUL, TERRACOTA], width=0.6)
+axes[1, 0].set(title="tramo de precio", ylim=(0, 1), yticks=[])
+axes[1, 1].hist(y_r.clip(upper=100), bins=50, color=AZUL)
+axes[1, 1].set(title="reseñas del último año", yticks=[])
+for ax in axes.ravel():
+    ax.grid(False)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="40%"}
+::: {.panel-tabset}
+
+### Pregunta
+
+Para cada alojamiento anunciado:
+
+- ¿Qué precio medio cabe esperar?
+- ¿Es superanfitrión?
+- ¿En qué tramo de precio se ubica?
+- ¿Cuántas reseñas recibe en un año?
+
+### Respuesta
+
+- La regresión lineal estima una media condicional en las cuatro.
+- Su predicción puede salir del rango de la respuesta: un precio o un recuento negativo, una probabilidad mayor que 1.
+- Codificar los tramos como 1, 2 y 3 supone la misma distancia entre tramos. Con clases sin orden, como el barrio, el número no significa nada: es un problema multiclase.
+
+:::
+:::
+:::
+
+::: {.source}
+Fuente: Inside Airbnb, Valencia (`listados.csv`). Misma población y división que el tema 2, con `{python} es(len(entreno))` anuncios de entrenamiento. Reseñas truncadas en 100 en el gráfico.
+:::
+
+:::{.notes}
+4 min. Partimos de los anuncios del tema 2 y de cuatro preguntas sobre cada uno. Los paneles muestran cómo es cada respuesta: el precio es positivo y tiene una cola larga a la derecha; ser superanfitrión es un sí o un no (lo es el `{python} es(100 * prev)` % de los anuncios); el tramo de precio tiene tres clases del mismo tamaño; y las reseñas del último año son un recuento con muchos ceros (`{python} es(100 * ceros_r)` %).
+
+Pregunto a la clase si usarían la regresión lineal para las cuatro y pido que voten a mano alzada. Lo esperable es que digan que sí para el precio y duden con el resto. Al abrir la pestaña: la regresión lineal estima una media condicional en los cuatro casos, pero no respeta el rango de la respuesta, y con clases numerar los tramos supone distancias que no existen. El tema da un marco común para las cuatro.
+:::
+
+## Tres preguntas {.body-callout}
+
+&nbsp;
+
+1. **¿Qué tienen en común la regresión lineal y el logit?** Los tres componentes de un modelo lineal generalizado (GLM) y cómo se estima.
+2. **¿Qué familia elegimos para cada respuesta?** Logit para superanfitrión, multinomial para el tramo, Gamma para el precio y Poisson para las reseñas.
+3. **¿Cómo evaluamos un GLM?** Con la métrica de cada problema y validación cruzada. Si el modelo sobreajusta, se penaliza.
+
+:::{.notes}
+1 min. Estas tres preguntas ordenan la sesión, y cada una abre un bloque. Primero veremos qué tienen en común la regresión lineal y el logit; después, qué familia corresponde a cada una de las cuatro respuestas; y al final, cómo evaluamos un GLM y qué hacemos cuando sobreajusta. Es la misma idea de regularización del tema 1, ahora para respuestas que no son un número real cualquiera.
+:::
+
+# ¿Qué tienen en común la regresión lineal y el logit? {background-color="#447099"}
+
+## Una recta da probabilidades fuera de [0, 1] {.fig-side}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Predicciones de dos modelos para los mismos anuncios, ordenados en el eje horizontal de menor a mayor predicción de la regresión lineal. Los puntos terracota, la regresión lineal, forman una curva creciente que empieza por debajo de 0 y termina por encima de 1. Los puntos azules, el logit, crecen en el mismo sentido y quedan siempre entre 0 y 1. Dos líneas discontinuas marcan 0 y 1."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+Y_MIN_S5, Y_MAX_S5 = -1, 1.4                                   # eje recortado: un valor extremo aplasta la escala
+fuera_eje = int(np.sum((pred_mpl < Y_MIN_S5) | (pred_mpl > Y_MAX_S5)))
+texto_fuera_eje = "queda fuera 1 predicción" if fuera_eje == 1 else f"quedan fuera {fuera_eje} predicciones"
+orden = np.argsort(pred_mpl)                                   # anuncios de menor a mayor predicción lineal
+percentil = 100 * np.arange(len(orden)) / (len(orden) - 1)
+ax.scatter(percentil, prob_c[orden], s=10, color=AZUL, alpha=0.35, edgecolor="none", label="logit")
+ax.scatter(percentil, pred_mpl[orden], s=10, color=TERRACOTA, alpha=0.6, edgecolor="none",
+           label="regresión lineal")
+ax.axhline(0, color=GRIS, lw=1.5, ls="--")
+ax.axhline(1, color=GRIS, lw=1.5, ls="--")
+ax.set(xlabel="anuncios ordenados por la predicción de la regresión lineal (percentil)", ylabel="probabilidad predicha",
+       xlim=(0, 100), ylim=(Y_MIN_S5, Y_MAX_S5))
+eje_coma(ax.yaxis, 1)
+leyenda = ax.legend(frameon=False, loc="upper left", markerscale=2)
+for marca in leyenda.legend_handles:
+    marca.set_alpha(1)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+Para una respuesta binaria $(0,1)$ estimamos $P(\text{superanfitrión}=1 \mid X)$.
+
+- El **modelo de probabilidad lineal**: aplica la regresión lineal a una respuesta 0/1.
+- Ajustado con todo el conjunto de entrenamiento, el modelo da al `{python} es(100 * fuera_mpl, 1)` % de los anuncios una predicción menor que 0 o mayor que 1.
+- El logit (en azul) mantiene todas las probabilidades entre 0 y 1. ¿Cómo?
+:::
+:::
+
+::: {.caption-line}
+Eje vertical recortado entre −1 y 1,4: `{python} texto_fuera_eje` de la regresión lineal.
+:::
+
+:::{.notes}
+3 min. Volvemos al superanfitrión del tema 2. Si aplicamos la regresión lineal a una respuesta 0/1, su predicción se lee como una probabilidad. La figura ordena los anuncios según esa predicción y muestra, para cada uno, lo que predice la regresión lineal (terracota) y lo que predice el logit (azul). Los dos modelos ordenan los anuncios de forma parecida, pero la regresión lineal da probabilidades negativas a la izquierda y mayores que 1 a la derecha: el `{python} es(100 * bajo_cero, 1)` % queda por debajo de 0 y el `{python} es(100 * sobre_uno, 1)` % por encima de 1.
+
+El problema está en la escala. La pregunta «¿cómo?» da paso a la slide siguiente: el logit, y en general un GLM, lleva la predicción lineal al rango de la respuesta con una función de enlace.
+:::
+
+## Componentes de un GLM {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+
+::: {.callout-note title="Modelo lineal generalizado (GLM)"}
+1. **Distribución de la respuesta** (componente aleatorio): $y_i$ sigue una distribución de la familia exponencial (normal, Bernoulli, Gamma, Poisson…) con media $\mu_i$.
+2. **Predictor lineal** (componente sistemático), como en la regresión lineal: $$\nu_i = \beta_0 + \beta_1 x_{1i} + \dots + \beta_p x_{pi}$$
+3. **Función de enlace**: conecta la media de la respuesta con el predictor lineal, $g(\mu_i) = \nu_i \quad \to \quad \mu_i = g^{-1}(\nu_i)$.
+:::
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+&nbsp;
+
+- La distribución se elige según el tipo de respuesta.
+- El enlace mantiene $\mu_i$ en el rango de la respuesta.
+- Ejemplos:
+    - La regresión lineal es un GLM cuya respuesta sigue una distribución normal y un enlace identidad: $\mu_i = \nu_i$.
+    - El modelo logit es un GLM cuya respuesta sigue una distribución de Bernoulli y enlace logit.
+:::
+:::
+
+:::{.notes}
+4 min. Un GLM tiene tres piezas. La primera es la distribución que suponemos para la respuesta, que se elige según su tipo. La segunda es el predictor lineal, la misma combinación de predictores y coeficientes de la regresión lineal, que puede tomar cualquier valor. La tercera es la función de enlace, que conecta ese predictor lineal con la media de la respuesta y la mantiene en su rango.
+
+Con estas piezas, la regresión lineal es un GLM con distribución normal y enlace identidad, y el logit es un GLM con distribución de Bernoulli y enlace logit. La forma concreta del enlace logit la vemos al empezar el bloque 2. La distribución es una aproximación útil para predecir; no afirmamos que los datos sean exactamente normales o Poisson.
+:::
+
+## Los coeficientes se estiman por máxima verosimilitud {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+::: {.callout-note title="Verosimilitud"}
+Probabilidad (o densidad) de los datos observados según los coeficientes $\beta$:
+$$L(\beta) = \prod_{i=1}^{n} P(y_i \mid x_i;\, \beta)$$
+
+Se trabaja con su logaritmo, la **log-verosimilitud**:
+$$\ell(\beta) = \log L(\beta)$$
+:::
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+- Los coeficientes estimados $\hat{\beta}$ maximizan la log-verosimilitud $\ell(\beta)$ (valores que hacen los datos observados más probables).
+- Casos particulares:
+    - Con distribución normal, maximizar $\ell(\beta)$ equivale a minimizar RSS (regresión lineal).
+    - Con distribución Bernoulli (y multinomial) maximizar $\ell(\beta)$ equivale a minimizar la **log-loss** de dos clases (de $K$ clases).
+:::
+:::
+
+:::{.notes}
+3 min. ¿Cómo se estiman los coeficientes de un GLM? Cada distribución da una probabilidad a los datos observados para cada valor de los coeficientes: es la verosimilitud. Estimar consiste en elegir los coeficientes que hacen más probables los datos que hemos observado. Por comodidad se trabaja con su logaritmo, que convierte el producto en una suma.
+
+El criterio ya lo conocemos en dos casos. Con la distribución normal, maximizar la log-verosimilitud equivale a minimizar la RSS de la regresión lineal. Con Bernoulli equivale a minimizar la log-loss del tema 2, y con la multinomial, la log-loss de K clases. En scikit-learn, cada estimador de GLM maximiza la log-verosimilitud de su familia.
+:::
+
+# ¿Qué familia elegimos para cada respuesta? {background-color="#447099"}
+
+## Superanfitrión: distribución de Bernoulli y enlace logit {.fig-side}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Curva en forma de S que transforma el predictor lineal del logit, en el eje horizontal, en una probabilidad entre 0 y 1. Los anuncios aparecen como puntos en 1 si son superanfitriones y en 0 si no lo son, con los de la clase positiva más frecuentes a la derecha."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+ruido = np.random.default_rng(0).uniform(-0.03, 0.03, len(y_c))
+ax.scatter(pred_lineal_c, y_c + ruido, s=8, color=GRIS, alpha=0.25, edgecolor="none")
+rejilla_nu = np.linspace(pred_lineal_c.min(), pred_lineal_c.max(), 300)
+ax.plot(rejilla_nu, 1 / (1 + np.exp(-rejilla_nu)), color=AZUL, lw=4)
+ax.set(xlabel=r"predictor lineal $\nu_i$", ylabel="P(superanfitrión)", ylim=(-0.08, 1.08), xlim=(-8, 6))
+eje_coma(ax.yaxis, 1)
+ax.text(-7.7, 0.9, "superanfitriones (y = 1)", color=GRIS, fontsize=15)
+ax.text(-7.7, 0.1, "resto (y = 0)", color=GRIS, fontsize=15)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Respuesta 0/1: distribución de **Bernoulli**, donde $\mu_i$ es la probabilidad de superanfitrión para el anuncio $i$ ($P(y_i=1 \mid X_i)$).
+- **Enlace logit**:
+$$\log\frac{\mu_i}{1-\mu_i} = \nu_i \quad\Longrightarrow\quad \mu_i = \frac{1}{1+e^{-\nu_i}}$$
+- La curva lleva cualquier valor de $\nu_i$ a una probabilidad entre 0 y 1.
+:::
+:::
+
+:::{.notes}
+3 min. Empezamos el bloque con el modelo que ya conocemos. La respuesta es 0 o 1, así que su distribución es de Bernoulli y su media es la probabilidad de ser superanfitrión. Cada punto gris es un anuncio: en horizontal, su predictor lineal; en vertical, si es superanfitrión (arriba) o no (abajo), con un poco de ruido para que se vean.
+
+La curva azul es la inversa del enlace logit. Lleva cualquier valor del predictor lineal a una probabilidad entre 0 y 1, sin llegar nunca a los extremos. Por eso el logit no da las probabilidades imposibles de la slide de la recta. Es el mismo logit del tema 2, con los mismos predictores.
+:::
+
+## Tramo de precio: el logit multinomial {.fig-side}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Áreas apiladas con la probabilidad media de cada tramo de precio, bajo, medio y alto, para capacidades de 1 a 8 plazas. Al aumentar la capacidad crece la probabilidad del tramo alto y baja la del tramo bajo; las tres probabilidades suman 1 en cada capacidad."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+colores_tramo = {"bajo": SALVIA, "medio": AZUL, "alto": TERRACOTA}
+ax.stackplot(CAPACIDADES, [prob_por_capacidad[t] for t in NOMBRES_TRAMO],
+             colors=[colores_tramo[t] for t in NOMBRES_TRAMO], alpha=0.85, labels=NOMBRES_TRAMO)
+ax.set(xlabel="capacidad (plazas)", ylabel="probabilidad media del tramo", xlim=(1, 8), ylim=(0, 1))
+eje_coma(ax.yaxis, 1)
+handles, labels = ax.get_legend_handles_labels()
+ax.legend(handles[::-1], labels[::-1], frameon=False, loc="upper left", bbox_to_anchor=(1, 1))
+ax.grid(False)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Definimos tres tramos de precio, con un tercio de los anuncios cada uno: bajo (hasta `{python} es(cortes[0])`€), medio (de `{python} es(cortes[0])` a `{python} es(cortes[1])`€) y alto (más de `{python} es(cortes[1])`€).
+- Se define un predictor lineal por tramo, $\nu_{ik}$ y enlace **softmax**:
+$$P(y_i = k) = \frac{e^{\nu_{ik}}}{\sum_{j} e^{\nu_{ij}}}$$
+- Las probabilidades de los tres tramos suman 1.
+:::
+:::
+
+:::{.notes}
+3 min. El tramo de precio tiene tres clases. El logit multinomial estima un predictor lineal para cada tramo y el enlace softmax los convierte en tres probabilidades que suman 1. Con dos clases, el softmax es el enlace logit de la slide anterior. El precio no entra como predictor, porque define el tramo.
+
+La figura muestra cómo cambian esas probabilidades con la capacidad: para cada número de plazas, damos a todos los anuncios esa capacidad y promediamos sus probabilidades. Al aumentar las plazas crece la probabilidad del tramo alto y baja la del tramo bajo. La figura describe el modelo y no permite saber qué pasaría si un anfitrión añadiera plazas. El tramo predicho es el de mayor probabilidad: así acierta el `{python} es(100 * exact_multi)` % de los anuncios en validación cruzada, frente al `{python} es(100 * exact_nulo_t)` % del modelo nulo.
+:::
+
+## Precio: distribución Gamma y enlace logarítmico {.fig-side}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Diagrama de dispersión del precio observado frente al precio medio predicho por el GLM Gamma, con la diagonal. La nube se abre a medida que crece el precio predicho: la dispersión de los precios observados es mayor para los anuncios caros."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+ax.scatter(pred_gamma, y_p, s=8, color=AZUL, alpha=0.25, edgecolor="none")
+ax.plot([30, 330], [30, 330], color=TERRACOTA, lw=2.5)
+ax.set(xlabel="precio medio predicho (€)", ylabel="precio observado (€)", xlim=(25, 340), ylim=(0, 410))
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Un proceso estrictamente positivo y asimétrico por la derecha se puede modelizar como una variable Gamma:
+    - El precio es positivo y su dispersión crece con la media.
+- **Gamma**: respuesta positiva con varianza proporcional a $\mu_i^2$.
+- **Enlace log**: $\log \mu_i = \nu_i$, así que $\mu_i = e^{\nu_i}$ es siempre positiva.
+:::
+:::
+
+::: {.caption-line}
+Desviación típica del precio observado: `{python} es(por_decil_p["dt"].iloc[0])` € en el 10 % de anuncios con menor precio predicho y `{python} es(por_decil_p["dt"].iloc[-1])` € en el 10 % con mayor precio predicho.
+:::
+
+:::{.notes}
+3 min. Para el precio usamos la distribución Gamma, pensada para respuestas positivas y asimétricas. La figura compara el precio observado con el precio medio predicho, y cada anuncio se predice con un modelo estimado sin él (validación cruzada). La nube se abre hacia la derecha: los anuncios caros tienen precios más dispersos, como indica el pie. La Gamma supone una varianza que crece con la media, que es lo que se ve en la figura.
+
+El enlace log garantiza que el precio medio predicho sea siempre positivo. En el tema 1 modelábamos el logaritmo del precio con MCO; el GLM Gamma usa el logaritmo en el enlace y predice la media del precio en euros. Compararemos los dos en el bloque 3.
+:::
+
+## Reseñas del último año: distribución de Poisson {.fig-side}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Diez puntos, uno por grupo de anuncios ordenados por el número de reseñas predicho por el modelo de Poisson. Eje horizontal: media predicha de reseñas en el grupo; eje vertical: media observada. Los puntos quedan cerca de la diagonal, entre unas 4 y unas 32 reseñas."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+limite = max(por_decil_r["media_pred"].max(), por_decil_r["media"].max()) * 1.1
+ax.plot([0, limite], [0, limite], color=TERRACOTA, lw=2.5)
+ax.scatter(por_decil_r["media_pred"], por_decil_r["media"], s=120, color=AZUL, zorder=3)
+ax.set(xlabel="media predicha de reseñas en el grupo", ylabel="media observada de reseñas en el grupo",
+       xlim=(0, limite), ylim=(0, limite))
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Si la respuesta es un recuento (0, 1, 2…): distribución de **Poisson**.
+- El modelo predice el número esperado de reseñas de cada anuncio: $\mu_i$.
+- **Enlace log**: $\log \mu_i = \nu_i$, así que $\mu_i = e^{\nu_i}$ es siempre positiva.
+- En los diez grupos, la media predicha queda cerca de la observada.
+- La regresión lineal predice un número negativo de reseñas para el `{python} es(100 * negativos_r, 1)`&nbsp;% de los anuncios.
+:::
+:::
+
+::: {.caption-line}
+Diez grupos del mismo tamaño según las reseñas predichas por validación cruzada en el conjunto de entrenamiento. La diagonal es «media predicha = media observada».
+:::
+
+:::{.notes}
+3 min. Las reseñas del último año son un recuento: 0, 1, 2… La distribución de Poisson es la natural para recuentos, y con el enlace log el número esperado de reseñas es siempre positivo.
+
+Para ver si el modelo predice bien, agrupamos los anuncios en diez grupos según su predicción y comparamos, en cada grupo, la media predicha con la media observada. Los puntos quedan cerca de la diagonal: en promedio, el modelo acierta. La regresión lineal, en cambio, predice un número negativo de reseñas para el `{python} es(100 * negativos_r, 1)` % de los anuncios. En RMSE de validación, el Poisson (`{python} es(rmse_pois, 1)`) mejora al modelo nulo (`{python} es(rmse_nulo_r, 1)`), y también en MAE (`{python} es(mae_pois, 1)` frente a `{python} es(mae_nulo_r, 1)` reseñas).
+:::
+
+## Cada respuesta tiene su familia y su enlace {.table-slide}
+
+&nbsp;
+
+::: {tbl-colwidths="[24,18,18,16,24]"}
+| Respuesta | Rango | Distribución | Enlace | scikit-learn |
+|:--|:--|:--|:--|:--|
+| Precio (regresión lineal) | número real | normal | identidad | `LinearRegression` |
+| Superanfitrión | 0 o 1 | Bernoulli | logit | `LogisticRegression` |
+| Tramo de precio | una de K clases | multinomial | softmax | `LogisticRegression` |
+| Precio | positiva | Gamma | log | `GammaRegressor` |
+| Reseñas del último año | 0, 1, 2… | Poisson | log | `PoissonRegressor` |
+:::
+
+&nbsp;
+
+- La distribución y el enlace se eligen según el rango de la respuesta.
+
+:::{.notes}
+2 min. Esta tabla resume el bloque y sirve de referencia para la práctica. La regla es una: la distribución y el enlace se eligen según los valores que puede tomar la respuesta. Todas las filas comparten el predictor lineal; cambian la distribución, el enlace y la clase de scikit-learn. La primera fila recuerda que la regresión lineal también es un GLM.
+:::
+
+# ¿Cómo evaluamos un GLM? {background-color="#447099"}
+
+## ¿Qué modelo elegimos para el precio? {.table-slide}
+
+&nbsp;
+
+::: {tbl-colwidths="[40,20,20,20]"}
+| Modelo | RMSE (€) | MAE (€) | R² |
+|:--|:--|:--|:--|
+| Nulo (precio medio) | `{python} es(rmse_precio["nulo"], 1)` | `{python} es(mae_precio["nulo"], 1)` | `{python} es(abs(r2_precio["nulo"]), 2)` |
+| Regresión lineal | `{python} es(rmse_precio["lineal"], 1)` | `{python} es(mae_precio["lineal"], 1)` | `{python} es(r2_precio["lineal"], 2)` |
+| MCO sobre log(precio) | `{python} es(rmse_precio["mco_log"], 1)` | `{python} es(mae_precio["mco_log"], 1)` | `{python} es(r2_precio["mco_log"], 2)` |
+| GLM Gamma | `{python} es(rmse_precio["gamma"], 1)` | `{python} es(mae_precio["gamma"], 1)` | `{python} es(r2_precio["gamma"], 2)` |
+:::
+
+&nbsp;
+
+- **Métrica principal, el RMSE**: pesa más los errores grandes, que con una cola de precios altos son los que más cuestan. Los tres modelos bajan el del nulo en más de `{python} es(np.floor(min(mejora_nulo)))`&nbsp;€ y difieren entre sí en menos de `{python} es(np.ceil(max_dif))`&nbsp;€.
+- Con el MAE queda por delante MCO sobre log(precio), por `{python} es(dif_mae, 1)`&nbsp;€: predice la mediana del precio, que es lo que minimiza el error absoluto. El Gamma estima el precio medio.
+- La regresión lineal predice precios negativos para el `{python} es(100 * negativos_p, 1)`&nbsp;% de los anuncios. El enlace log del Gamma impide esas predicciones.
+
+::: {.caption-line}
+Medias de las 5 particiones de validación cruzada del conjunto de entrenamiento.
+:::
+
+:::{.notes}
+5 min. Elegimos como en los temas 1 y 2: por validación cruzada, frente al modelo nulo y con una métrica que se justifica por el problema. Para el precio, la métrica principal es el RMSE: eleva al cuadrado los errores, así que pesa más los grandes, y con una cola de precios altos un error de 100 € en un anuncio caro es justo el que más cuesta a la gestora. La tabla muestra también el MAE (error absoluto medio, en euros) y el R² (proporción de la varianza del precio que el modelo reproduce en validación). Comparamos la regresión lineal, MCO sobre el logaritmo del precio y el GLM Gamma. Los tres mejoran mucho al nulo y entre ellos apenas difieren en RMSE y en R²: esas métricas no permiten elegir.
+
+El MAE ordena de otra forma, y la razón es interesante: el error absoluto se minimiza prediciendo la mediana, y MCO sobre el logaritmo devuelve justamente la mediana del precio. El Gamma estima la media, que con una cola a la derecha queda por encima de la mediana. Así que la métrica también dice qué queremos predecir: si interesa el ingreso esperado por noche, la media, y con ella el RMSE y el Gamma. Además, la regresión lineal predice precios negativos para algunos anuncios, y el Gamma no puede hacerlo.
+:::
+
+## La métrica de clasificación depende del problema {.table-slide}
+
+&nbsp;
+
+::: {tbl-colwidths="[36,16,16,16,16]"}
+| Problema y modelo | log-loss | AUC | AP | Exactitud |
+|:--|:--|:--|:--|:--|
+| Superanfitrión: nulo | `{python} es(metricas_c.loc["Nulo (proporción)", "log-loss"], 2)` | `{python} es(metricas_c.loc["Nulo (proporción)", "AUC"], 2)` | `{python} es(metricas_c.loc["Nulo (proporción)", "AP"], 2)` | `{python} es(100 * metricas_c.loc["Nulo (proporción)", "exactitud"])`&nbsp;% |
+| Superanfitrión: logit | `{python} es(metricas_c.loc["Logit", "log-loss"], 2)` | `{python} es(metricas_c.loc["Logit", "AUC"], 2)` | `{python} es(metricas_c.loc["Logit", "AP"], 2)` | `{python} es(100 * metricas_c.loc["Logit", "exactitud"])`&nbsp;% |
+| Tramo de precio: nulo | `{python} es(logloss_nulo_t, 2)` | — | — | `{python} es(100 * exact_nulo_t)`&nbsp;% |
+| Tramo de precio: multinomial | `{python} es(logloss_multi, 2)` | — | — | `{python} es(100 * exact_multi)`&nbsp;% |
+:::
+
+(—: el AUC y la AP se definen para dos clases.)
+
+- **Superanfitrión**: lo es el `{python} es(100 * prev)`&nbsp;% de los anuncios, así que el nulo ya acierta el `{python} es(100 * metricas_c.loc["Nulo (proporción)", "exactitud"])`&nbsp;%. Priorizamos la log-loss porque queremos probabilidades bien calibradas. El AUC y la AP dicen si el logit ordena bien a los superanfitriones.
+- **Tramo de precio**: tres clases del mismo tamaño, sin un error más costoso que otro. Aquí la exactitud sirve, y el multinomial acierta el doble que el nulo.
+
+::: {.caption-line}
+Medias de las 5 particiones de validación cruzada estratificada del conjunto de entrenamiento.
+:::
+
+:::{.notes}
+3 min. Las dos respuestas de clase del tema piden métricas distintas, y esa es la idea de la slide: la métrica se elige con la definición del problema. En superanfitrión las clases están desequilibradas: un modelo que dijera siempre «no» acertaría el `{python} es(100 * metricas_c.loc["Nulo (proporción)", "exactitud"])` % de los anuncios, así que la exactitud apenas separa al logit del nulo. Si la gestora va a usar la probabilidad (para ordenar a quién contacta o para calcular un coste esperado), lo que importa es que esté bien calibrada, y eso lo mide la log-loss. El AUC mide si el modelo ordena bien: 0,5 es azar. La AP es la precisión media al recorrer la lista ordenada, y para el nulo coincide con la proporción de superanfitriones. Si contactar a un anuncio equivocado tuviera un coste, miraríamos la sensibilidad, la precisión o el coste medio del tema 2.
+
+En el tramo de precio las tres clases tienen un tercio de los anuncios cada una y no hay un error más grave que otro: la exactitud es una métrica razonable, y el nulo acierta un tercio. La log-loss sigue sirviendo si queremos las probabilidades de cada tramo.
+:::
+
+## Con pocos anuncios, el Gamma sobreajusta {.fig-side}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Barras agrupadas con el RMSE de entrenamiento y de validación del GLM Gamma sin penalización. Con 300 anuncios, el RMSE de validación es mucho mayor que el de entrenamiento y queda cerca del modelo nulo, marcado con una línea discontinua. Con todo el conjunto de entrenamiento, las dos barras tienen casi la misma altura."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+grupos = ["300 anuncios", f"{es(len(entreno))} anuncios"]
+posiciones = np.arange(len(grupos))
+ax.bar(posiciones - 0.2, [rmse_ent_300, rmse_ent_todo], width=0.38, color=AZUL, label="entrenamiento")
+ax.bar(posiciones + 0.2, [rmse_val_300, rmse_val_todo], width=0.38, color=TERRACOTA, label="validación")
+ax.hlines(rmse_nulo_300, -0.45, 0.45, color=GRIS, lw=2, ls="--")
+ax.text(0, rmse_nulo_300 + 1.5, "modelo nulo", color=GRIS, fontsize=15, ha="center")
+ax.set_xticks(posiciones, grupos)
+ax.set(ylabel="RMSE (€)", ylim=(0, 80))
+ax.legend(frameon=False, loc="upper right")
+ax.grid(axis="x", visible=False)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- GLM Gamma del precio sin penalización, estimado con 300 anuncios (`{python} n_columnas_300` columnas, una por barrio) o con todo el entrenamiento.
+- Con 300 anuncios, el RMSE es de `{python} es(rmse_ent_300, 1)` € en entrenamiento y de `{python} es(rmse_val_300, 1)` € en validación, cerca del nulo (`{python} es(rmse_nulo_300, 1)` €).
+- Con `{python} es(len(entreno))` anuncios, los dos RMSE quedan cerca (`{python} es(rmse_ent_todo, 1)` y `{python} es(rmse_val_todo, 1)` €).
+- **Sobreajuste**: error de entrenamiento muy por debajo del de validación.
+:::
+:::
+
+::: {.caption-line}
+RMSE medio de las 5 particiones de validación cruzada: el de entrenamiento con los anuncios que estiman cada modelo y el de validación con la partición que queda fuera.
+:::
+
+:::{.notes}
+3 min. Repetimos el modelo Gamma del precio con solo 300 anuncios, como en el tema 1, y con una columna para cada barrio: muchas columnas para pocos anuncios. Las barras comparan el error de entrenamiento (azul) con el de validación (terracota).
+
+Con 300 anuncios, el error de entrenamiento es de `{python} es(rmse_ent_300, 1)` € y el de validación sube a `{python} es(rmse_val_300, 1)` €, cerca del modelo nulo. Eso es sobreajuste. Con todo el conjunto de entrenamiento, los dos errores quedan cerca y no hay sobreajuste. Es la situación que motivó la regularización en el tema 1, ahora con otra familia.
+:::
+
+## Solución: verosimilitud penalizada {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+
+$$\max_{\beta}\; \ell(\beta) - \lambda \cdot \text{penalización}(\beta)$$
+
+- Penalización Ridge o L2 $\big(\sum_j \beta_j^2\big)$ y Lasso o L1 $\big(\sum_j |\beta_j|\big)$.
+- Con distribución normal equivale a minimizar RSS + λ·penalización (regresión lineal regularizada).
+- La constante (*intercept*) no se penaliza y los predictores se estandarizan antes.
+- λ se elige por validación cruzada con la métrica del problema.
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.callout-note title="λ en scikit-learn"}
+- `GammaRegressor` y `PoissonRegressor`: λ se llama `alpha` (solo Ridge).
+- `LogisticRegression`: `C` = 1/λ (a mayor `C`, menos penalización) y `l1_ratio` fija la mezcla (1 = Lasso).
+:::
+:::
+:::
+
+:::{.notes}
+3 min. La corrección es la misma que en el tema 1: penalizar los coeficientes grandes. En un GLM, la penalización se resta de la log-verosimilitud que maximizamos, y con la distribución normal volvemos a la regresión lineal regularizada. Las penalizaciones son las conocidas, Ridge y Lasso, y λ se elige por validación cruzada.
+
+Como la penalización trata igual a todos los coeficientes, los predictores se estandarizan antes. En scikit-learn, el callout indica cómo se llama λ en cada estimador: `alpha` en Gamma y Poisson, y su inversa `C` en el logit.
+:::
+
+## ¿Cuándo necesita penalización un GLM? {.fig-side}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Dos curvas del RMSE de validación cruzada frente a la penalización alpha, en escala logarítmica. La curva del GLM Gamma estimado con 300 anuncios empieza alta, baja hasta un mínimo en alpha igual a 0,1 y sube después; una línea discontinua por encima marca ese modelo sin penalización. La curva del mismo modelo con todo el conjunto de entrenamiento es plana a la izquierda y sube cuando la penalización crece."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+ax.plot(ALPHAS, rmse_curva_todo, color=AZUL, lw=3, marker="o", label=f"{es(len(entreno))} anuncios")
+ax.plot(ALPHAS, rmse_curva_300, color=TERRACOTA, lw=3, marker="o", label="300 anuncios")
+ax.axhline(rmse_val_300, color=TERRACOTA, lw=1.5, ls="--")
+ax.text(ALPHAS[0], rmse_val_300 + 0.6, "300 anuncios, sin penalización", color=TERRACOTA, fontsize=15)
+ax.scatter([alpha_300], [rmse_300_pen], s=260, facecolor="none", edgecolor=MARINO, lw=2.5, zorder=4)
+ax.set_xscale("log")
+ax.set(xlabel="penalización alpha (escala log)", ylabel="RMSE de validación cruzada (€)")
+eje_coma(ax.yaxis, 0)
+ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: es(v, max(0, int(-np.floor(np.log10(v)))))))
+ax.legend(frameon=False, loc="upper left", bbox_to_anchor=(0.02, 0.9))
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Con 300 anuncios, el RMSE de validación baja de `{python} es(rmse_val_300, 1)` € sin penalización a `{python} es(rmse_300_pen, 1)` € con alpha = `{python} es(alpha_300, 1)` (círculo).
+- Con `{python} es(len(entreno))` anuncios, la curva es casi plana hasta alpha = `{python} es(plana_hasta, 2)`: la penalización no mejora la predicción.
+- Con penalización fuerte, el RMSE en ambos casos sube (los coeficientes se acercan a cero).
+:::
+:::
+
+::: {.caption-line}
+Cada punto es el RMSE medio de las 5 particiones de validación cruzada del conjunto con el que se estima el modelo. RMSE del nulo: `{python} es(rmse_nulo_300, 1)` € con 300 anuncios y `{python} es(rmse_precio["nulo"], 1)` € con `{python} es(len(entreno))`.
+:::
+
+:::{.notes}
+4 min. La figura muestra el error de validación para distintos valores de la penalización, en escala logarítmica. Con 300 anuncios (terracota), penalizar un poco baja mucho el error respecto al modelo sin penalización (la línea discontinua), y el mínimo está en el círculo. Con todo el conjunto de entrenamiento (azul), la curva es plana al principio: la penalización no mejora la predicción porque no había sobreajuste.
+
+En las dos curvas, una penalización muy fuerte lleva los coeficientes hacia cero y el error sube. La conclusión es práctica: la penalización ayuda cuando hay pocas observaciones para muchas columnas, y la validación cruzada nos dice cuánto penalizar.
+:::
+
+## Selección de predictores con Lasso (en el modelo logit) {.fig-side}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="52%"}
+```{python}
+#| fig-alt: "Log-loss media de validación cruzada del logit con penalización de Lasso frente a C, en escala logarítmica, con barras de error típico. Encima de cada punto, el número de coeficientes distintos de cero, de 0 a 46. La log-loss es alta con C muy pequeño, baja rápidamente y queda casi plana desde C igual a 0,03. Dos líneas verticales marcan el mínimo y la elección de la regla del error típico."
+fig, ax = plt.subplots(figsize=(9, 6.8))
+ax.errorbar(CS, logloss_media, yerr=logloss_ee, color=AZUL, lw=3, marker="o", capsize=4)
+ax.axvline(CS[k_min], color=MARINO, lw=2, ls="--")
+ax.axvline(CS[k_1ee], color=TERRACOTA, lw=2, ls="--")
+for c_valor, perdida, error, n_activos in zip(CS, logloss_media, logloss_ee, activos):
+    ax.annotate(str(n_activos), (c_valor, perdida + error), textcoords="offset points", xytext=(0, 8),
+                ha="center", fontsize=15, color=MARINO)
+ax.set_xscale("log")
+ax.set(xlabel="C = 1/λ (escala log)", ylabel="log-loss de validación cruzada")
+eje_coma(ax.yaxis, 2)
+ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: es(v, max(0, int(-np.floor(np.log10(v)))))))
+ax.set_ylim(logloss_media.min() - 0.02, logloss_media.max() + 0.03)
+fig.tight_layout()
+plt.show()
+```
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="44%"}
+
+&nbsp;
+
+- Logit de superanfitrión con penalización de Lasso. Encima de cada punto, los coeficientes distintos de cero (de `{python} n_coef_logit`).
+- El mínimo de la log-loss (C = `{python} es(CS[k_min], 2)`, línea azul marino) conserva `{python} es(activos[k_min])` coeficientes.
+- La regla del error típico (C = `{python} es(CS[k_1ee], 2)`, línea terracota) conserva `{python} es(activos[k_1ee])`, con una log-loss `{python} es(1000 * (logloss_media[k_1ee] - logloss_media[k_min]), 1)` milésimas mayor.
+:::
+:::
+
+::: {.caption-line}
+Log-loss media de las 5 particiones de validación cruzada del conjunto de entrenamiento. Las barras son su error típico.
+:::
+
+:::{.notes}
+4 min. Volvemos al logit del superanfitrión, ahora con penalización Lasso. La figura muestra la log-loss de validación para distintos valores de C (recordad que C es la inversa de λ: a la izquierda, más penalización). Encima de cada punto está el número de coeficientes que no son cero. Con mucha penalización, Lasso deja casi todos en cero y el modelo predice mal; al relajarla, entran predictores y la log-loss baja hasta quedar casi plana.
+
+El mínimo conserva `{python} es(activos[k_min])` coeficientes. La regla del error típico del tema 2 elige un modelo más sencillo, con `{python} es(activos[k_1ee])`, y una log-loss prácticamente igual. Lasso, por tanto, también selecciona predictores en un GLM.
+:::
+
+## ¿Qué dice un coeficiente igual a cero? {.body-callout}
+
+&nbsp;
+
+:::{.columns}
+:::{.column width="48%"}
+- Con la regla del error típico, Lasso conserva `{python} es(activos[k_1ee])` de los `{python} n_coef_logit` coeficientes del logit.
+- `{python} texto_ceros`
+:::
+:::{.column width="4%"}
+:::
+:::{.column width="48%"}
+::: {.panel-tabset}
+
+### Para pensar
+
+¿Significa que la capacidad y el barrio no están asociados con ser superanfitrión?
+
+### Respuesta
+
+- Un coeficiente en cero indica que, con los demás predictores en el modelo, ese predictor apenas mejora la log-loss de validación.
+- La capacidad está correlacionada con los dormitorios y el tipo de alojamiento, que sí entran: entre predictores correlacionados, Lasso conserva pocos.
+- Para describir la asociación de cada predictor con la respuesta se usan los datos y el modelo sin penalización.
+
+:::
+:::
+:::
+
+:::{.notes}
+3 min. Pregunta abierta a la clase. Lo que busco es que distingan «no hace falta para predecir, dados los demás predictores» de «no tiene relación con la respuesta». La capacidad está correlacionada con los dormitorios (`{python} es(corr_capacidad, 2)`) y con el tipo de alojamiento, que sí entran: entre predictores parecidos, Lasso se queda con pocos. Con otra muestra de anuncios, la lista de predictores podría cambiar. Y en ningún caso hablamos de causas: los coeficientes miden asociaciones.
+:::
+
+## Recapitulación: tres respuestas {.body-callout}
+
+&nbsp;
+
+1. **¿Qué tienen en común la regresión lineal y el logit?** Su construcción. Ambos son GLMs y combinan una distribución para la respuesta, un predictor lineal y una función de enlace. Sus coeficientes maximizan la log-verosimilitud.
+2. **¿Qué familia elegimos para cada respuesta?** En función de su rango: Bernoulli para sí/no, multinomial para K clases, Gamma para variables positivas y asimétricas (p. ej., precios) y Poisson para recuentos.
+3. **¿Cómo evaluamos un GLM?** Con la métrica que corresponde al problema (y diciendo por qué), calculada por validación cruzada y frente al modelo nulo. En caso de sobreajuste, introducir una penalización λ (Ridge o Lasso) mejora la predicción fuera de muestra.
+
+:::{.notes}
+2 min. Una frase por pregunta. Un GLM combina una distribución, un predictor lineal y un enlace, y se estima por máxima verosimilitud. La familia se elige según el rango de la respuesta. Y entre modelos se elige con la métrica que pide el problema (el RMSE para el precio, la log-loss para superanfitrión, la exactitud para el tramo) en validación cruzada, añadiendo penalización cuando hay sobreajuste. En la práctica del jueves haremos el mismo recorrido con los salarios de la EES 2022.
+:::
+
+## Actividad final {.table-slide .dense}
+
+&nbsp;
+
+::: {.panel-tabset}
+
+### Pregunta
+
+En parejas (4 min): ¿qué distribución, qué enlace y qué métrica usaríais para cada respuesta?
+
+::: {tbl-colwidths="[32,17,12,39]"}
+| Respuesta de la gestora | Distribución | Enlace | Métrica |
+|:--|:--|:--|:--|
+| ¿Cancelará el huésped la reserva? | | | |
+| Ingresos mensuales del anuncio (positivos) | | | |
+| Número de huéspedes de la próxima reserva | | | |
+| Canal de reserva (web, aplicación, agencia) | | | |
+:::
+
+### Respuesta
+
+::: {tbl-colwidths="[32,17,12,39]"}
+| Respuesta de la gestora | Distribución | Enlace | Métrica |
+|:--|:--|:--|:--|
+| ¿Cancelará el huésped la reserva? | Bernoulli | logit | Pocas cancelaciones: AP o sensibilidad (log-loss si se usan las probabilidades) |
+| Ingresos mensuales del anuncio (positivos) | Gamma | log | RMSE (MAE si interesa la mediana) |
+| Número de huéspedes de la próxima reserva | Poisson (empieza en 1) | log | RMSE o MAE |
+| Canal de reserva (web, aplicación, agencia) | multinomial | softmax | log-loss (exactitud si las clases tienen tamaños parecidos) |
+:::
+
+:::
+
+:::{.notes}
+5 min. Cuatro minutos en parejas y uno de puesta en común. Para la distribución y el enlace, la pregunta es la misma de toda la sesión: ¿qué valores puede tomar la respuesta? Cancelar es un sí o un no; los ingresos son positivos; el número de huéspedes es un recuento; el canal es una de tres clases sin orden. Para la métrica, la pregunta es otra: ¿cómo es el problema? Las cancelaciones son pocas, así que la exactitud dejaría de informar y hay que mirar la AP o la sensibilidad. En los ingresos, los errores grandes son los caros (RMSE). Errores habituales: elegir la normal para los ingresos, tratar el canal como un número y proponer la exactitud para las cancelaciones. Esta columna comprueba los objetivos 3 y 4 del README. Si no hay tiempo, la actividad pasa a la práctica.
+:::
+
+## Glosario (1/4): componentes y estimación {.table-slide .dense}
+
+&nbsp;
+
+::: {tbl-colwidths="[24,52,24]"}
+| Concepto | Significado | scikit-learn |
+|:--|:--|:--|
+| Modelo lineal generalizado (GLM) | Distribución de la respuesta + predictor lineal + función de enlace | `sklearn.linear_model` |
+| Predictor lineal $\nu_i$ | $\beta_0 + \beta_1 x_{1i} + \dots + \beta_p x_{pi}$, que puede tomar cualquier valor real | `decision_function` |
+| Función de enlace $g$ | Conecta la media con el predictor lineal: $g(\mu_i) = \nu_i$ | `link` en `TweedieRegressor` |
+| Enlace identidad, log, logit, softmax | $\mu=\nu$, $\mu=e^\nu$, $\mu=1/(1+e^{-\nu})$ y una probabilidad por clase que suman 1 | — |
+| Verosimilitud $L(\beta)$ | Probabilidad (o densidad) de los datos observados según los coeficientes. $\ell(\beta) = \log L(\beta)$ | — |
+| Máxima verosimilitud | Los coeficientes estimados maximizan $\ell(\beta)$ | `fit` |
+:::
+
+:::{.notes}
+Referencia para el estudio; no se presenta en clase.
+:::
+
+## Glosario (2/4): familias {.table-slide .dense}
+
+&nbsp;
+
+::: {tbl-colwidths="[24,52,24]"}
+| Concepto | Significado | scikit-learn |
+|:--|:--|:--|
+| Modelo de probabilidad lineal | Regresión lineal con respuesta 0/1 | `LinearRegression` |
+| Bernoulli (logit) | Respuesta 0/1 que vale 1 con probabilidad $\mu$ | `LogisticRegression` |
+| Multinomial | Respuesta con K clases y un predictor lineal por clase | `LogisticRegression` |
+| Gamma | Respuesta positiva, varianza proporcional a $\mu^2$ | `GammaRegressor` |
+| Poisson | Recuento 0, 1, 2… con media $\mu = e^{\nu}$ | `PoissonRegressor` |
+:::
+
+:::{.notes}
+Referencia para el estudio; no se presenta en clase.
+:::
+
+## Glosario (3/4): elección y penalización {.table-slide .dense}
+
+&nbsp;
+
+::: {tbl-colwidths="[24,52,24]"}
+| Concepto | Significado | scikit-learn |
+|:--|:--|:--|
+| Modelo nulo | Predice la media o la proporción de cada clase, sin predictores | `DummyRegressor`, `DummyClassifier` |
+| Sobreajuste | Error de entrenamiento muy por debajo del de validación | `cross_validate(..., return_train_score=True)` |
+| GLM con regularización | Maximiza $\ell(\beta) - \lambda \cdot$ penalización (Ridge o Lasso) | `alpha` en `GammaRegressor` y `PoissonRegressor` (solo Ridge) |
+| `C` | Inversa de la penalización en el logit: $C = 1/\lambda$ | `LogisticRegression(C=...)` |
+| `l1_ratio` | Mezcla de las penalizaciones: 0 = Ridge, 1 = Lasso | `LogisticRegression(l1_ratio=...)` |
+| Curva de validación | Error de validación cruzada para cada valor de la penalización | `GridSearchCV`, `LogisticRegressionCV` |
+| Regla del error típico | La penalización más fuerte cuyo error de validación queda a menos de un error típico del mínimo | `scores_`, `cv_results_` |
+:::
+
+:::{.notes}
+Referencia para el estudio; no se presenta en clase.
+:::
+
+## Glosario (4/4): métricas {.table-slide .dense}
+
+&nbsp;
+
+::: {tbl-colwidths="[24,52,24]"}
+| Concepto | Significado | scikit-learn |
+|:--|:--|:--|
+| RMSE | Raíz del error cuadrático medio, en las unidades de la respuesta. Pesa más los errores grandes | `scoring="neg_root_mean_squared_error"` |
+| MAE | Error absoluto medio, en las unidades de la respuesta. Lo minimiza la mediana | `scoring="neg_mean_absolute_error"` |
+| R² | Proporción de la varianza de la respuesta que reproduce el modelo. El nulo da 0 | `scoring="r2"` |
+| Log-loss | Pérdida de las probabilidades predichas. Crece con la seguridad del error | `scoring="neg_log_loss"` |
+| Exactitud | Proporción de aciertos. Útil con clases equilibradas y errores de coste similar | `scoring="accuracy"` |
+| AUC | Probabilidad de que un positivo elegido al azar reciba una puntuación mayor que un negativo | `scoring="roc_auc"` |
+| AP | Precisión media al recorrer la lista ordenada por probabilidad. El nulo da la proporción de positivos | `scoring="average_precision"` |
+:::
+
+:::{.notes}
+Referencia para el estudio; no se presenta en clase.
+:::
+
+:::{.content-hidden}
+## Lo que viene {.body-callout}
+
+&nbsp;
+
+- **Jueves 22-10, práctica.** GLM sobre la EES 2022, con y sin penalización.
+- **Tema 4.** Árboles y ensambles.
+
+:::{.notes}
+1 min. Oculta, como en el tema 2.
+:::
+:::
+
+## {background-color="#447099"}
+
+:::{.closing}
+```{python}
+#| fig-alt: "Ilustración de cierre: sobre fondo azul, la curva logística y la curva exponencial en blanco y terracota claro, con el texto el enlace lleva el predictor lineal a la escala de la respuesta."
+#| fig-align: center
+fig, ax = plt.subplots(figsize=(12, 6.75), facecolor="#447099")
+ax.set_facecolor("#447099")
+x_curva = np.linspace(0.6, 4, 300)
+ax.plot(x_curva, 1 / (1 + np.exp(-(x_curva - 2.3) * 3)), color="white", lw=4)       # enlace logit
+ax.plot(x_curva, np.exp((x_curva - 4) * 1.6), color="#F2B8A2", lw=4)                  # enlace log
+ax.text(-3.9, 0.62, "El enlace lleva el predictor lineal", color="white", fontsize=28, va="top")
+ax.text(-3.9, 0.5, "a la escala de la respuesta", color="#F2B8A2", fontsize=28, va="top")
+ax.text(-3.9, 1.0, "Tema 3 · modelos lineales generalizados", color="white", fontsize=22, alpha=0.7, va="top")
+ax.set_xlim(-4, 4.1)
+ax.set_ylim(-0.02, 1.02)
+for lado in ax.spines.values():
+    lado.set_visible(False)
+ax.set_xticks([])
+ax.set_yticks([])
+ax.grid(False)
+fig.tight_layout()
+plt.show()
+```
+:::
