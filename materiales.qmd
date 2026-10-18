@@ -1,0 +1,84 @@
+---
+title: "Materiales"
+subtitle: "Presentaciones y cuadernos de prácticas, por tema"
+toc: true
+toc-title: "Temas"
+---
+
+Las **presentaciones** se abren en el navegador (pantalla completa con la tecla `F`; índice de diapositivas con `M`). Los **cuadernos** se publican sin resultados: descárgalos para trabajar en tu entorno `tap` o ábrelos en Google Colab. La **versión resuelta**, con soluciones y resultados, se publica una semana después de la sesión. Las entregas evaluables no se publican; su versión resuelta aparece una semana después de la fecha de entrega.
+
+## Presentación del curso {#presentacion}
+
+| Presentación | Sesión | |
+|:--|:--|:--|
+| Presentación de la asignatura | 15 sep | <a class="tap-btn" href="slides/0_presentacion/presentacion_2627_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+
+## Tema 1. Fundamentos y regresión regularizada {#tema-1}
+
+### Presentaciones
+
+| Presentación | Sesión | |
+|:--|:--|:--|
+| Fundamentos del aprendizaje automático | 22 sep (T1) | <a class="tap-btn" href="slides/01/semana_1/01_intro_2ML_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+| Laboratorio: de la teoría a los datos | 24 sep (P1) | <a class="tap-btn" href="slides/01/semana_1_clab/01_clab_resumen_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+| Regresión lineal regularizada | 29 sep (T1) | <a class="tap-btn" href="slides/01/semana_2/02_regression_plus_regularization_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+
+### Cuadernos
+
+| Cuaderno | Sin resultados | Versión resuelta |
+|:--|:--|:--|
+| Introducción a Python para predicción: de los datos a la regresión lineal | <a class="tap-btn" href="clabs/01/tema_01_intro_python.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/01/tema_01_intro_python.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/01/tema_01_intro_python.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
+| Regresión lineal penalizada: Ridge, Lasso y Elastic Net | <a class="tap-btn" href="clabs/01/tema_01_regresion_penalizada.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/01/tema_01_regresion_penalizada.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/01/tema_01_regresion_penalizada.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
+
+## Tema 2. Evaluación y selección de modelos {#tema-2}
+
+### Presentaciones
+
+| Presentación | Sesión | |
+|:--|:--|:--|
+| Evaluación y selección de modelos | 6 y 13 oct (T2) | <a class="tap-btn" href="slides/02/02_evaluacion_seleccion_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+| El código esencial de un proyecto con datos (con código ejecutable) | 15 oct | <a class="tap-btn" href="slides/02/semana_2/02_codigo_esencial_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+
+### Cuadernos
+
+| Cuaderno | Sin resultados | Versión resuelta |
+|:--|:--|:--|
+| Evaluación y selección de modelos (práctica) | <a class="tap-btn" href="clabs/02/tema_02_evaluacion_seleccion.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/02/tema_02_evaluacion_seleccion.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/02/tema_02_evaluacion_seleccion.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
+| El código de las diapositivas del tema 2 | <a class="tap-btn" href="clabs/02/tema_02_evaluacion_codigo.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/02/tema_02_evaluacion_codigo.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/02/tema_02_evaluacion_codigo.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
+| El código esencial de un proyecto con datos | <a class="tap-btn" href="clabs/02/02_codigo_esencial.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/02/02_codigo_esencial.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <span class="tap-pendiente">A partir del 22 oct</span> |
+
+## Tema 3. Modelos lineales generalizados {#tema-3}
+
+### Presentaciones
+
+| Presentación | Sesión | |
+|:--|:--|:--|
+| Modelos lineales generalizados con regularización | 20 oct (T3) | <a class="tap-btn" href="slides/03/03_glm_familias_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+
+### Cuadernos
+
+| Cuaderno | Sin resultados | Versión resuelta |
+|:--|:--|:--|
+| El código de las diapositivas del tema 3 | <a class="tap-btn" href="clabs/03/tema_03_glm_codigo.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/03/tema_03_glm_codigo.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <span class="tap-pendiente">A partir del 27 oct</span> |
+
+Entrega **E1** (22 oct): el enunciado se distribuye en el Aula Virtual; la versión resuelta se publicará aquí a partir del 29 oct.
+
+## Entorno y Python {#python}
+
+| Recurso | |
+|:--|:--|
+| Guía de instalación del entorno (Python, conda y VS Code) | <a class="tap-btn" href="python/instalacion/guia_instalacion_2627.html" target="_blank"><i class="bi bi-book"></i> Abrir</a> |
+| Definición del entorno `tap` para conda | <a class="tap-btn" href="python/entorno/tap.yml" download><i class="bi bi-download"></i> tap.yml</a> |
+| Cuaderno para comprobar que el entorno funciona | <a class="tap-btn" href="python/entorno/comprobar_entorno.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/python/entorno/comprobar_entorno.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> |
+| Introducción a Python (tutorial) | <a class="tap-btn" href="python/tutorial/introduccion_python.html" target="_blank"><i class="bi bi-book"></i> Abrir</a> |
+| Uso de GitHub Copilot en la asignatura | <a class="tap-btn" href="python/copilot-estudiantes.html" target="_blank"><i class="bi bi-book"></i> Abrir</a> |
+
+### Trabajar en Google Colab
+
+Colab trae sus propias versiones de los paquetes. Los cuadernos del curso incluyen al principio una celda que, solo en Colab, instala las mismas versiones que el entorno `tap`. Si abres en Colab otro cuaderno, puedes usar la misma línea:
+
+```python
+%pip install -q -r https://raw.githubusercontent.com/juanDmontoro/tap/main/requirements.txt
+```
+
+Si Colab pide **reiniciar la sesión** después de instalar (ocurre cuando cambia `numpy`), acepta y vuelve a ejecutar el cuaderno desde el principio.

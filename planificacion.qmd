@@ -1,0 +1,77 @@
+---
+title: "Planificación de las sesiones"
+subtitle: "Curso 2026-27"
+toc: true
+toc-title: "Meses"
+---
+
+::: {.callout-warning title="Planificación sujeta a cambios"}
+Las fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 18-10-2026. La hora límite de cada entrega se comunica en el Aula Virtual.
+:::
+
+**Teoría:** martes, 12:30-13:30. **Prácticas:** jueves, 8:30-11:30 y 11:30-14:30 (mismo contenido en los dos grupos).
+
+T y P con número: sesión de teoría o de prácticas de ese tema. **H1-H5:** hitos del proyecto. **E1-E5:** entregas individuales.
+
+## Septiembre
+
+| Fecha | Sesión | Contenido | Materiales |
+|:--|:--|:--|:--|
+| lunes 14 | | *Inicio del cuatrimestre* | |
+| martes 15 | **Presentación de la asignatura** | Organización del curso. |  |
+| jueves 17 | **P1 · Instalación del entorno** | En línea por alerta roja: Python, entorno conda, VS Code y extensiones. | [Tema 1](materiales.qmd#tema-1) |
+| martes 22 | **T1 · Introducción** | Tema 1, parte 1: introducción al aprendizaje automático. | [Tema 1](materiales.qmd#tema-1) |
+| jueves 24 | **P1 · Cancelada (concurso)** | Trabajo autónomo: primer clab con la EES 2022. **H1 · Proyecto: grupos, pregunta de negocio y datos.** | [Tema 1](materiales.qmd#tema-1) |
+| martes 29 | **T1 · Regularización** | Tema 1, parte 2: regularización en el modelo lineal y selección en modelos de regresión. | [Tema 1](materiales.qmd#tema-1) |
+
+*Sesiones reales: 17 sep, en línea por alerta roja (instalación de Python, entorno y VS Code); 24 sep, práctica cancelada (concurso), trabajo autónomo con el primer clab de la EES 2022; H1 no presencial.*
+
+## Octubre
+
+| Fecha | Sesión | Contenido | Materiales |
+|:--|:--|:--|:--|
+| jueves 1 | **P1 · Regresión regularizada** | Clab 2 solo con el grupo 1. Grupo 2: cancelada por alerta roja (lluvias). | [Tema 1](materiales.qmd#tema-1) |
+| martes 6 | **T2 · Evaluación y clasificación** | Tema 2, partes 1 y 2: evaluación y selección; evaluación de clasificadores. | [Tema 2](materiales.qmd#tema-2) |
+| jueves 8 | **P2 · Evaluación y selección** | Cuaderno del tema 2: sección 0 y bloque 1 (de 3). | [Tema 2](materiales.qmd#tema-2) |
+| viernes 9 | | *Festivo* | |
+| lunes 12 | | *Festivo* | |
+| martes 13 | **T2 · Clases desequilibradas** | Tema 2, parte 3: clasificación con clases desequilibradas. | [Tema 2](materiales.qmd#tema-2) |
+| jueves 15 | **Proyecto · Hito 2** | 30 min: código esencial de un proyecto (deck del tema 2). **H2 · análisis exploratorio del proyecto (EDA).** | [Tema 2](materiales.qmd#tema-2) |
+| martes 20 | **T3 · GLM** | Componentes, familias, evaluación y penalización (deck único, 60 min). | [Tema 3](materiales.qmd#tema-3) |
+| jueves 22 | **P3 · GLM** | GLM sobre la EES 2022. **Entrega E1 · GLM (T3).** | [Tema 3](materiales.qmd#tema-3) |
+| martes 27 | **T4 · Árboles y bosques** | Árboles, bootstrap, bagging y random forests. |  |
+| jueves 29 | **P4 · Bosques aleatorios** | 90 min: mejorar el modelo base. **H3 · 90 min: modelo base del proyecto.** |  |
+
+*1 oct: clab 2 solo con el grupo 1. 6 y 13 oct: tema 2. 15 oct: H2. 20 oct: tema 3. E1: 22 oct. H3: 29 oct. Desde el 27 oct todo se desplaza una semana (reajuste del 14-10).*
+
+## Noviembre
+
+| Fecha | Sesión | Contenido | Materiales |
+|:--|:--|:--|:--|
+| martes 3 | **T4 · Boosting** | Gradient boosting y XGBoost. |  |
+| jueves 5 | **P4 · XGBoost** | Ajuste y validación de XGBoost; comparación con random forest. **Entrega E2 · Ensambles (T4).** |  |
+| martes 10 | **T4 · Ensambles** | Voting y stacking; importancias y valores de Shapley. |  |
+| jueves 12 | **P4 · Interpretación** | 90 min: stacking y SHAP guiados. **H4 · 90 min: ensambles del proyecto.** |  |
+| martes 17 | **T5 · SVM** | Clasificación y regresión con vectores de soporte; núcleos. |  |
+| jueves 19 | **P5 · Comparar modelos** | SVM: escalado, ajuste y comparación transversal de modelos. **Entrega E3 · SVM (T5).** |  |
+| martes 24 | **T6 · Redes neuronales** | Perceptrón multicapa (MLP). |  |
+| jueves 26 | **P6 · Keras** | 90 min: MLP guiado en Keras. **H5 · 90 min: revisión intermedia; todos los modelos + SVM y feedback.** |  |
+
+*E2: 5 nov, ensambles vistos hasta esa fecha. H4: 12 nov. E3: 19 nov, exclusivamente SVM. H5: 26 nov, revisión de todos los modelos + SVM y feedback.*
+
+## Diciembre
+
+| Fecha | Sesión | Contenido | Materiales |
+|:--|:--|:--|:--|
+| martes 1 | **T6 · Aprendizaje** | Backpropagation y regularización de redes neuronales. |  |
+| jueves 3 | **P6 · Regularización** | Regularización y búsqueda de arquitecturas en Keras. **Entrega E4 · Redes neuronales (T6).** |  |
+| lunes 7 | | *Fiesta de centro* | |
+| martes 8 | | *Festivo: sin teoría* | |
+| jueves 10 | **P7 · Predicción y causalidad** | DAG y sesgos; simulación guiada, ortogonalización y cross-fitting. **Entrega E5 · Simulación de sesgos (T7).** |  |
+| domingo 13 | | ***Límite de entrega del proyecto*** | |
+| martes 15 | **T7 · DoubleML** | Caso Hillstrom: demostración, interpretación y discusión de supuestos. |  |
+| jueves 17 | **Proyecto · Defensa oral** | Presentación y defensa oral del proyecto (sesión completa). |  |
+| martes 22 | **Repaso del examen escrito** | Síntesis de contenidos, preguntas y resolución de dudas. |  |
+| miércoles 23 | | *Fin del cuatrimestre* | |
+
+*E4: 3 dic. Por el reajuste del 14-10 se suprimen RNN/CNN y LLMs. 13 dic: fecha límite del proyecto (repositorio, memoria y registro de IA). Defensa oral: 17 dic. Repaso: 22 dic.*

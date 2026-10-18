@@ -1,0 +1,30 @@
+---
+title: "Técnicas Avanzadas de Predicción en Negocios"
+subtitle: "Curso 2026-27 · Universitat de València · Prof. Juan D. Montoro-Pons"
+---
+
+Esta web reúne los materiales de la asignatura: las presentaciones de cada tema, los cuadernos de prácticas y la información del proyecto. Las entregas, las calificaciones y los avisos se gestionan en el **Aula Virtual**.
+
+::: {.tap-cards}
+::: {.tap-card}
+### [Planificación](planificacion.qmd)
+Sesión a sesión: qué se ve cada semana, hitos del proyecto y entregas. Sujeta a cambios.
+:::
+
+::: {.tap-card}
+### [Materiales](materiales.qmd)
+Presentaciones y cuadernos por tema, con descarga, enlace a Colab y versión resuelta.
+:::
+
+::: {.tap-card}
+### [Proyecto](proyecto.qmd)
+Normas, hitos, uso de la IA y rúbrica del proyecto en grupo (35 % de la nota).
+:::
+:::
+
+## Cómo usar los materiales
+
+1. **Antes de la sesión**, consulta la [planificación](planificacion.qmd) para saber qué se verá.
+2. **Las presentaciones** se abren en el navegador. Algunas incluyen celdas de código que se ejecutan en la propia diapositiva.
+3. **Los cuadernos** se publican sin resultados. Trabájalos en tu entorno `tap` (véase la [guía de instalación](python/instalacion/guia_instalacion_2627.html)) o en Google Colab.
+4. **Una semana después** de cada sesión se publica la versión resuelta del cuaderno, con soluciones y resultados, para que compruebes tu trabajo.

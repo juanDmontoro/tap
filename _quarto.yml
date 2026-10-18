@@ -1,0 +1,54 @@
+project:
+  type: website
+  output-dir: _site
+  # Lista explícita: solo se renderizan estas páginas. Todo lo demás (decks ya renderizados,
+  # cuadernos sin resultados, datos) se copia tal cual como recurso.
+  render:
+    - index.qmd
+    - planificacion.qmd
+    - materiales.qmd
+    - proyecto.qmd
+    - resueltos/**/*.ipynb
+  resources:
+    - slides/**
+    - clabs/**
+    - data/**
+    - python/**
+    - proyecto2627/**
+    - requirements.txt
+
+lang: es
+
+execute:
+  enabled: false          # los cuadernos resueltos se publican con sus resultados; nunca se ejecutan aquí
+
+website:
+  title: "Técnicas Avanzadas de Predicción"
+  site-url: https://juandmontoro.github.io/tap/
+  repo-url: https://github.com/juanDmontoro/tap
+  search: true
+  navbar:
+    background: "#447099"
+    left:
+      - text: Inicio
+        href: index.qmd
+      - text: Planificación
+        href: planificacion.qmd
+      - text: Materiales
+        href: materiales.qmd
+      - text: Proyecto
+        href: proyecto.qmd
+    right:
+      - icon: github
+        href: https://github.com/juanDmontoro/tap
+        aria-label: Repositorio en GitHub
+  page-footer:
+    left: "Técnicas Avanzadas de Predicción en Negocios · Universitat de València · Curso 2026-27"
+    right: "Juan D. Montoro-Pons"
+
+format:
+  html:
+    theme: [cosmo, tap_web.scss]
+    toc: false
+    link-external-newwindow: true
+    notebook-links: false
