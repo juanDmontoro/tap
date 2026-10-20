@@ -2,34 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://juandmontoro.github.io/tap/resueltos/02/tema_02_evaluacion_seleccion.html</loc>
-    <lastmod>2026-10-18T13:32:42.018Z</lastmod>
-  </url>
-  <url>
-    <loc>https://juandmontoro.github.io/tap/resueltos/01/tema_01_regresion_penalizada.html</loc>
-    <lastmod>2026-10-18T13:32:42.015Z</lastmod>
-  </url>
-  <url>
-    <loc>https://juandmontoro.github.io/tap/proyecto.html</loc>
-    <lastmod>2026-10-18T13:32:41.961Z</lastmod>
-  </url>
-  <url>
-    <loc>https://juandmontoro.github.io/tap/planificacion.html</loc>
-    <lastmod>2026-10-18T13:32:41.961Z</lastmod>
-  </url>
-  <url>
-    <loc>https://juandmontoro.github.io/tap/index.html</loc>
-    <lastmod>2026-10-18T13:32:41.961Z</lastmod>
-  </url>
-  <url>
-    <loc>https://juandmontoro.github.io/tap/materiales.html</loc>
-    <lastmod>2026-10-18T13:32:41.961Z</lastmod>
+    <lastmod>2026-10-20T12:19:25.230Z</lastmod>
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/resueltos/01/tema_01_intro_python.html</loc>
-    <lastmod>2026-10-18T13:32:42.013Z</lastmod>
+    <lastmod>2026-10-18T12:52:50.901Z</lastmod>
   </url>
   <url>
-    <loc>https://juandmontoro.github.io/tap/resueltos/02/tema_02_evaluacion_codigo.html</loc>
-    <lastmod>2026-10-18T13:32:42.017Z</lastmod>
+    <loc>https://juandmontoro.github.io/tap/materiales.html</loc>
+    <lastmod>2026-10-20T17:54:50.594Z</lastmod>
+  </url>
+  <url>
+    <loc>https://juandmontoro.github.io/tap/index.html</loc>
+    <lastmod>2026-10-18T12:50:46.026Z</lastmod>
+  </url>
+  <url>
+    <loc>https://juandmontoro.github.io/tap/planificacion.html</loc>
+    <lastmod>2026-10-20T17:39:28.293Z</lastmod>
+  </url>
+  <url>
+    <loc>https://juandmontoro.github.io/tap/proyecto.html</loc>
+    <lastmod>2026-10-20T17:39:28.293Z</lastmod>
+  </url>
+  <url>
+    <loc>https://juandmontoro.github.io/tap/resueltos/01/tema_01_regresion_penalizada.html</loc>
+    <lastmod>2026-10-18T12:52:50.938Z</lastmod>
   </url>
 </urlset>
