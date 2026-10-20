@@ -20,8 +20,8 @@ Las **presentaciones** se abren en el navegador (pantalla completa con la tecla 
 | Presentación | Sesión | |
 |:--|:--|:--|
 | Fundamentos del aprendizaje automático | 22 sep (T1) | <a class="tap-btn" href="slides/01/semana_1/01_intro_2ML_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
-| Laboratorio: de la teoría a los datos | 24 sep (P1) | <a class="tap-btn" href="slides/01/semana_1_clab/01_clab_resumen_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
 | Regresión lineal regularizada | 29 sep (T1) | <a class="tap-btn" href="slides/01/semana_2/02_regression_plus_regularization_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+| Laboratorio: de la teoría a los datos | 29 sep | <a class="tap-btn" href="slides/01/semana_1_clab/01_clab_resumen_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
 
 ### Cuadernos
 
@@ -44,8 +44,6 @@ Las **presentaciones** se abren en el navegador (pantalla completa con la tecla 
 | Cuaderno | Sin resultados | Versión resuelta |
 |:--|:--|:--|
 | Evaluación y selección de modelos (práctica) | <a class="tap-btn" href="clabs/02/tema_02_evaluacion_seleccion.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/02/tema_02_evaluacion_seleccion.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/02/tema_02_evaluacion_seleccion.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
-| El código de las diapositivas del tema 2 | <a class="tap-btn" href="clabs/02/tema_02_evaluacion_codigo.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/02/tema_02_evaluacion_codigo.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/02/tema_02_evaluacion_codigo.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
-| El código esencial de un proyecto con datos | <a class="tap-btn" href="clabs/02/02_codigo_esencial.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/02/02_codigo_esencial.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <span class="tap-pendiente">A partir del 22 oct</span> |
 
 ## Tema 3. Modelos lineales generalizados {#tema-3}
 
@@ -54,12 +52,6 @@ Las **presentaciones** se abren en el navegador (pantalla completa con la tecla 
 | Presentación | Sesión | |
 |:--|:--|:--|
 | Modelos lineales generalizados con regularización | 20 oct (T3) | <a class="tap-btn" href="slides/03/03_glm_familias_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
-
-### Cuadernos
-
-| Cuaderno | Sin resultados | Versión resuelta |
-|:--|:--|:--|
-| El código de las diapositivas del tema 3 | <a class="tap-btn" href="clabs/03/tema_03_glm_codigo.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/03/tema_03_glm_codigo.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <span class="tap-pendiente">A partir del 27 oct</span> |
 
 Entrega **E1** (22 oct): el enunciado se distribuye en el Aula Virtual; la versión resuelta se publicará aquí a partir del 29 oct.
 

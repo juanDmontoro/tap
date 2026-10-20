@@ -6,8 +6,8 @@
 <script src="03_glm_familias_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="03_glm_familias_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="03_glm_familias_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="03_glm_familias_files/libs/quarto-html/quarto-syntax-highlighting-9ea0a49c779b6fc496fdb60b6bf00fef.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.39">
+<link href="03_glm_familias_files/libs/quarto-html/quarto-syntax-highlighting-cd1b40cbd4bf9107593907cf68b8f144.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
 
   <meta name="author" content="Prof.&nbsp;Juan D. Montoro-Pons | 2026/27">
   <title>Tema 3. Modelos lineales generalizados con regularización</title>
@@ -29,7 +29,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="03_glm_familias_files/libs/revealjs/dist/theme/quarto-6d94bf87a2d82c7f747dfca088b87086.css">
+  <link rel="stylesheet" href="03_glm_familias_files/libs/revealjs/dist/theme/quarto-05139a7457aef9cb37242b52ca1d7e65.css">
   <link href="03_glm_familias_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="03_glm_familias_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="03_glm_familias_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -145,7 +145,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <div class="columns">
 <div class="column" style="width:56%;">
-<div id="124dc32c" class="cell" data-execution_count="2">
+<div id="02762129" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -202,11 +202,11 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="2c7cf60b" class="cell" data-execution_count="3">
+<div id="e8776570" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img data-src="03_glm_familias_files/figure-revealjs/cell-4-output-1.png" alt="Predicciones de dos modelos para los mismos anuncios, ordenados en el eje horizontal de menor a mayor predicción de la regresión lineal. Los puntos terracota, la regresión lineal, forman una curva creciente que empieza por debajo de 0 y termina por encima de 1. Los puntos azules, el logit, crecen en el mismo sentido y quedan siempre entre 0 y 1. Dos líneas discontinuas marcan 0 y 1."></p>
+<p><img data-src="03_glm_familias_files/figure-revealjs/cell-4-output-1.png" alt="Predicciones de dos modelos para los mismos anuncios, ordenados en el eje horizontal de menor a mayor predicción de la regresión lineal. Los puntos naranja, la regresión lineal, forman una curva creciente que empieza por debajo de 0 y termina por encima de 1. Los puntos azules, el logit, crecen en el mismo sentido y quedan siempre entre 0 y 1. Dos líneas discontinuas marcan 0 y 1."></p>
 </figure>
 </div>
 </div>
@@ -309,7 +309,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="9518c754" class="cell" data-execution_count="4">
+<div id="4c2fbcc5" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -334,7 +334,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="ea81ec19" class="cell" data-execution_count="5">
+<div id="89ed239e" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -359,7 +359,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="34a858c0" class="cell" data-execution_count="6">
+<div id="f8180844" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -390,7 +390,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="0d27feda" class="cell" data-execution_count="7">
+<div id="7894e5dc" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -597,7 +597,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </div>
 <p>(—: el AUC y la AP se definen para dos clases.)</p>
 <ul>
-<li><strong>Superanfitrión</strong>: lo es el 30&nbsp;% de los anuncios, así que el nulo ya acierta el 70&nbsp;%. Priorizamos la log-loss porque queremos probabilidades bien calibradas. El AUC y la AP dicen si el logit ordena bien a los superanfitriones.</li>
+<li><strong>Superanfitrión</strong>: lo es el 30&nbsp;% de los anuncios, así que el nulo ya acierta el 70&nbsp;%. Priorizamos la log-loss porque queremos probabilidades bien calibradas. El AUC y la AP miden en qué grado el logit coloca a los superanfitriones por delante del resto de anuncios cuando los ordenamos por probabilidad.</li>
 <li><strong>Tramo de precio</strong>: tres clases del mismo tamaño, sin un error más costoso que otro. Aquí la exactitud sirve, y el multinomial acierta el doble que el nulo.</li>
 </ul>
 <div class="caption-line">
@@ -609,7 +609,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="14a5aa8d" class="cell" data-execution_count="8">
+<div id="bf6e80ef" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -624,7 +624,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <ul>
 <li>GLM Gamma del precio sin penalización, estimado con 300 anuncios (73 columnas, una por barrio) o con todo el entrenamiento.</li>
-<li>Con 300 anuncios, el RMSE es de 45,0 € en entrenamiento y de 64,3 € en validación, cerca del nulo (67,6 €).</li>
+<li>Con 300 anuncios, el RMSE es de 45,0 € en entrenamiento y de 64,0 € en validación, cerca del nulo (67,6 €).</li>
 <li>Con 5324 anuncios, los dos RMSE quedan cerca (47,2 y 48,0 €).</li>
 <li><strong>Sobreajuste</strong>: error de entrenamiento muy por debajo del de validación.</li>
 </ul>
@@ -673,7 +673,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="345ef8ff" class="cell" data-execution_count="9">
+<div id="f17362a2" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -687,7 +687,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 </div><div class="column" style="width:44%;">
 <p>&nbsp;</p>
 <ul>
-<li>Con 300 anuncios, el RMSE de validación baja de 64,3 € sin penalización a 54,7 € con alpha = 0,1 (círculo).</li>
+<li>Con 300 anuncios, el RMSE de validación baja de 64,0 € sin penalización a 54,7 € con alpha = 0,1 (círculo).</li>
 <li>Con 5324 anuncios, la curva es casi plana hasta alpha = 0,01: la penalización no mejora la predicción.</li>
 <li>Con penalización fuerte, el RMSE en ambos casos sube (los coeficientes se acercan a cero).</li>
 </ul>
@@ -701,7 +701,7 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <div class="columns">
 <div class="column" style="width:52%;">
-<div id="0cd1a103" class="cell" data-execution_count="10">
+<div id="2dea3b9c" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -716,8 +716,8 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <p>&nbsp;</p>
 <ul>
 <li>Logit de superanfitrión con penalización de Lasso. Encima de cada punto, los coeficientes distintos de cero (de 46).</li>
-<li>El mínimo de la log-loss (C = 0,32, línea azul marino) conserva 30 coeficientes.</li>
-<li>La regla del error típico (C = 0,03, línea terracota) conserva 10, con una log-loss 4,6 milésimas mayor.</li>
+<li>El mínimo de la log-loss (C = 0,32, línea azul oscuro) conserva 30 coeficientes.</li>
+<li>La regla del error típico (C = 0,03, línea naranja) conserva 10, con una log-loss 4,6 milésimas mayor.</li>
 </ul>
 </div></div>
 <div class="caption-line">
@@ -1080,11 +1080,11 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
 <section id="section" class="slide level2" data-background-color="#447099">
 <h2></h2>
 <div class="closing">
-<div id="84e7dec0" class="cell" data-execution_count="11">
+<div id="b7dbc325" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03_glm_familias_files/figure-revealjs/cell-12-output-1.png" class="quarto-figure quarto-figure-center" alt="Ilustración de cierre: sobre fondo azul, la curva logística y la curva exponencial en blanco y terracota claro, con el texto el enlace lleva el predictor lineal a la escala de la respuesta."></p>
+<p><img data-src="03_glm_familias_files/figure-revealjs/cell-12-output-1.png" class="quarto-figure quarto-figure-center" alt="Ilustración de cierre: sobre fondo azul, la curva logística y la curva exponencial en blanco y naranja claro, con el texto el enlace lleva el predictor lineal a la escala de la respuesta."></p>
 </figure>
 </div>
 </div>
@@ -1308,190 +1308,173 @@ Prof.&nbsp;Juan D. Montoro-Pons | 2026/27
       });
     </script>
     <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-      const toggleBodyColorMode = (bsSheetEl) => {
-        const mode = bsSheetEl.getAttribute("data-mode");
-        const bodyEl = window.document.querySelector("body");
-        if (mode === "dark") {
-          bodyEl.classList.add("quarto-dark");
-          bodyEl.classList.remove("quarto-light");
-        } else {
-          bodyEl.classList.add("quarto-light");
-          bodyEl.classList.remove("quarto-dark");
-        }
-      }
-      const toggleBodyColorPrimary = () => {
-        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-        if (bsSheetEl) {
-          toggleBodyColorMode(bsSheetEl);
-        }
-      }
-      toggleBodyColorPrimary();  
-      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-      tabsets.forEach(function(tabset) {
-        const tabby = new Tabby('#' + tabset.id);
-      });
-      const isCodeAnnotation = (el) => {
-        for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {                     
-            return true;
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
           }
+          return false;
         }
-        return false;
-      }
-      const onCopySuccess = function(e) {
-        // button target
-        const button = e.trigger;
-        // don't keep focus
-        button.blur();
-        // flash "checked"
-        button.classList.add('code-copy-button-checked');
-        var currentTitle = button.getAttribute("title");
-        button.setAttribute("title", "Copiado");
-        let tooltip;
-        if (window.bootstrap) {
-          button.setAttribute("data-bs-toggle", "tooltip");
-          button.setAttribute("data-bs-placement", "left");
-          button.setAttribute("data-bs-title", "Copiado");
-          tooltip = new bootstrap.Tooltip(button, 
-            { trigger: "manual", 
-              customClass: "code-copy-button-tooltip",
-              offset: [0, -8]});
-          tooltip.show();    
-        }
-        setTimeout(function() {
-          if (tooltip) {
-            tooltip.hide();
-            button.removeAttribute("data-bs-title");
-            button.removeAttribute("data-bs-toggle");
-            button.removeAttribute("data-bs-placement");
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copiado");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copiado");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
           }
-          button.setAttribute("title", currentTitle);
-          button.classList.remove('code-copy-button-checked');
-        }, 1000);
-        // clear code selection
-        e.clearSelection();
-      }
-      const getTextToCopy = function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
           for (const childEl of codeEl.children) {
             if (isCodeAnnotation(childEl)) {
               childEl.remove();
             }
           }
           return codeEl.innerText;
-      }
-      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-        text: getTextToCopy
-      });
-      clipboard.on('success', onCopySuccess);
-      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-          text: getTextToCopy,
-          container: window.document.getElementById('quarto-embedded-source-code-modal')
-        });
-        clipboardModal.on('success', onCopySuccess);
-      }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp('/' + window.location.host + '/');
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
             }
           }
-        }
-      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-        const config = {
-          allowHTML: true,
-          maxWidth: 500,
-          delay: 100,
-          arrow: false,
-          appendTo: function(el) {
-              return el.closest('section.slide') || el.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'light-border',
-          placement: 'bottom-start',
-        };
-        if (contentFn) {
-          config.content = contentFn;
-        }
-        if (onTriggerFn) {
-          config.onTrigger = onTriggerFn;
-        }
-        if (onUntriggerFn) {
-          config.onUntrigger = onUntriggerFn;
-        }
-          config['offset'] = [0,0];
-          config['maxWidth'] = 700;
-        window.tippy(el, config); 
-      }
-      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-      for (var i=0; i<noterefs.length; i++) {
-        const ref = noterefs[i];
-        tippyHover(ref, function() {
-          // use id or data attribute instead here
-          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-          try { href = new URL(href).hash; } catch {}
-          const id = href.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
           }
-        });
-      }
-      const findCites = (el) => {
-        const parentEl = el.parentElement;
-        if (parentEl) {
-          const cites = parentEl.dataset.cites;
-          if (cites) {
-            return {
-              el,
-              cites: cites.split(' ')
-            };
-          } else {
-            return findCites(el.parentElement)
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
           }
-        } else {
-          return undefined;
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
         }
-      };
-      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-      for (var i=0; i<bibliorefs.length; i++) {
-        const ref = bibliorefs[i];
-        const citeInfo = findCites(ref);
-        if (citeInfo) {
-          tippyHover(citeInfo.el, function() {
-            var popup = window.document.createElement('div');
-            citeInfo.cites.forEach(function(cite) {
-              var citeDiv = window.document.createElement('div');
-              citeDiv.classList.add('hanging-indent');
-              citeDiv.classList.add('csl-entry');
-              var biblioDiv = window.document.getElementById('ref-' + cite);
-              if (biblioDiv) {
-                citeDiv.innerHTML = biblioDiv.innerHTML;
-              }
-              popup.appendChild(citeDiv);
-            });
-            return popup.innerHTML;
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
           });
         }
-      }
-    });
-    </script>
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
     
 
 </body></html>

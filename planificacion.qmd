@@ -6,7 +6,7 @@ toc-title: "Meses"
 ---
 
 ::: {.callout-warning title="Planificación sujeta a cambios"}
-Las fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 18-10-2026. La hora límite de cada entrega se comunica en el Aula Virtual.
+Las fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 20-10-2026. La hora límite de cada entrega se comunica en el Aula Virtual.
 :::
 
 **Teoría:** martes, 12:30-13:30. **Prácticas:** jueves, 8:30-11:30 y 11:30-14:30 (mismo contenido en los dos grupos).
