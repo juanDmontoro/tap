@@ -52,6 +52,7 @@ Las **presentaciones** se abren en el navegador (pantalla completa con la tecla 
 | Presentación | Sesión | |
 |:--|:--|:--|
 | Modelos lineales generalizados con regularización | 20 oct (T3) | <a class="tap-btn" href="slides/03/03_glm_familias_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+| Instrucciones de la entrega E1 | 22 oct | <a class="tap-btn" href="slides/03/entrega_E1/03_entrega_E1_instrucciones_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a><a class="tap-btn" href="slides/03/entrega_E1/tema_03_entrega_E1_instrucciones.pdf" target="_blank"><i class="bi bi-file-earmark-pdf"></i> Hoja PDF</a> |
 
 Entrega **E1** (22 oct): el enunciado se distribuye en el Aula Virtual; la versión resuelta se publicará aquí a partir del 29 oct.
 
