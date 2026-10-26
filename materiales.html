@@ -178,6 +178,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#presentaciones-2" id="toc-presentaciones-2" class="nav-link" data-scroll-target="#presentaciones-2">Presentaciones</a></li>
   </ul></li>
+  <li><a href="#tema-4" id="toc-tema-4" class="nav-link" data-scroll-target="#tema-4">Tema 4. Ensambles</a>
+  <ul class="collapse">
+  <li><a href="#presentaciones-3" id="toc-presentaciones-3" class="nav-link" data-scroll-target="#presentaciones-3">Presentaciones</a></li>
+  <li><a href="#cuadernos-2" id="toc-cuadernos-2" class="nav-link" data-scroll-target="#cuadernos-2">Cuadernos</a></li>
+  </ul></li>
   <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Entorno y Python</a>
   <ul class="collapse">
   <li><a href="#trabajar-en-google-colab" id="toc-trabajar-en-google-colab" class="nav-link" data-scroll-target="#trabajar-en-google-colab">Trabajar en Google Colab</a></li>
@@ -388,6 +393,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Entrega <strong>E1</strong> (22 oct): el enunciado se distribuye en el Aula Virtual; la versión resuelta se publicará aquí a partir del 29 oct.</p>
 </section>
 </section>
+<section id="tema-4" class="level2">
+<h2 class="anchored" data-anchor-id="tema-4">Tema 4. Ensambles</h2>
+<section id="presentaciones-3" class="level3">
+<h3 class="anchored" data-anchor-id="presentaciones-3">Presentaciones</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Presentación</th>
+<th style="text-align: left;">Sesión</th>
+<th style="text-align: left;"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Árboles, bagging y random forest</td>
+<td style="text-align: left;">27 oct (T4)</td>
+<td style="text-align: left;"><a class="tap-btn" href="slides/04/04_arboles_bosques_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="cuadernos-2" class="level3">
+<h3 class="anchored" data-anchor-id="cuadernos-2">Cuadernos</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Cuaderno</th>
+<th style="text-align: left;">Sin resultados</th>
+<th style="text-align: left;">Versión resuelta</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Introducción a los árboles de decisión (práctica, 29 oct)</td>
+<td style="text-align: left;"><a class="tap-btn" href="clabs/04/tema_04_arboles.ipynb" download=""><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_arboles.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a></td>
+<td style="text-align: left;">A partir del 5 nov</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="python" class="level2">
 <h2 class="anchored" data-anchor-id="python">Entorno y Python</h2>
 <table class="caption-top table">
@@ -426,9 +482,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 <section id="trabajar-en-google-colab" class="level3">
 <h3 class="anchored" data-anchor-id="trabajar-en-google-colab">Trabajar en Google Colab</h3>
-<p>Colab trae sus propias versiones de los paquetes. Los cuadernos del curso incluyen al principio una celda que, solo en Colab, instala las mismas versiones que el entorno <code>tap</code>. Si abres en Colab otro cuaderno, puedes usar la misma línea:</p>
+<p>Colab trae sus propias versiones de los paquetes. Los cuadernos del curso incluyen al principio una celda que, solo en Colab, instala la versión de scikit-learn del entorno <code>tap</code>. Las demás librerías (numpy, pandas, matplotlib) se usan en la versión que trae Colab. Si abres en Colab otro cuaderno, puedes usar la misma línea:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>pip install <span class="op">-</span>q <span class="op">-</span>r https:<span class="op">//</span>raw.githubusercontent.com<span class="op">/</span>juanDmontoro<span class="op">/</span>tap<span class="op">/</span>main<span class="op">/</span>requirements.txt</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Si Colab pide <strong>reiniciar la sesión</strong> después de instalar (ocurre cuando cambia <code>numpy</code>), acepta y vuelve a ejecutar el cuaderno desde el principio.</p>
+<p>Si Colab pide <strong>reiniciar la sesión</strong> después de instalar, acepta y vuelve a ejecutar el cuaderno desde el principio.</p>
 
 
 </section>

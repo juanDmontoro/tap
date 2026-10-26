@@ -245,11 +245,18 @@
     "text": "Tema 3. Modelos lineales generalizados\n\nPresentaciones\n\n\n\n\n\n\n\n\nPresentación\nSesión\n\n\n\n\n\nModelos lineales generalizados con regularización\n20 oct (T3)\n Abrir\n\n\nInstrucciones de la entrega E1\n22 oct\n Abrir Hoja PDF\n\n\n\nEntrega E1 (22 oct): el enunciado se distribuye en el Aula Virtual; la versión resuelta se publicará aquí a partir del 29 oct."
   },
   {
+    "objectID": "materiales.html#tema-4",
+    "href": "materiales.html#tema-4",
+    "title": "Materiales",
+    "section": "Tema 4. Ensambles",
+    "text": "Tema 4. Ensambles\n\nPresentaciones\n\n\n\n\n\n\n\n\nPresentación\nSesión\n\n\n\n\n\nÁrboles, bagging y random forest\n27 oct (T4)\n Abrir\n\n\n\n\n\nCuadernos\n\n\n\n\n\n\n\n\nCuaderno\nSin resultados\nVersión resuelta\n\n\n\n\nIntroducción a los árboles de decisión (práctica, 29 oct)\n Descargar Abrir en Colab\nA partir del 5 nov"
+  },
+  {
     "objectID": "materiales.html#python",
     "href": "materiales.html#python",
     "title": "Materiales",
     "section": "Entorno y Python",
-    "text": "Entorno y Python\n\n\n\n\n\n\n\nRecurso\n\n\n\n\n\nGuía de instalación del entorno (Python, conda y VS Code)\n Abrir\n\n\nDefinición del entorno tap para conda\n tap.yml\n\n\nCuaderno para comprobar que el entorno funciona\n Descargar Abrir en Colab\n\n\nIntroducción a Python (tutorial)\n Abrir\n\n\nUso de GitHub Copilot en la asignatura\n Abrir\n\n\n\n\nTrabajar en Google Colab\nColab trae sus propias versiones de los paquetes. Los cuadernos del curso incluyen al principio una celda que, solo en Colab, instala las mismas versiones que el entorno tap. Si abres en Colab otro cuaderno, puedes usar la misma línea:\n%pip install -q -r https://raw.githubusercontent.com/juanDmontoro/tap/main/requirements.txt\nSi Colab pide reiniciar la sesión después de instalar (ocurre cuando cambia numpy), acepta y vuelve a ejecutar el cuaderno desde el principio."
+    "text": "Entorno y Python\n\n\n\n\n\n\n\nRecurso\n\n\n\n\n\nGuía de instalación del entorno (Python, conda y VS Code)\n Abrir\n\n\nDefinición del entorno tap para conda\n tap.yml\n\n\nCuaderno para comprobar que el entorno funciona\n Descargar Abrir en Colab\n\n\nIntroducción a Python (tutorial)\n Abrir\n\n\nUso de GitHub Copilot en la asignatura\n Abrir\n\n\n\n\nTrabajar en Google Colab\nColab trae sus propias versiones de los paquetes. Los cuadernos del curso incluyen al principio una celda que, solo en Colab, instala la versión de scikit-learn del entorno tap. Las demás librerías (numpy, pandas, matplotlib) se usan en la versión que trae Colab. Si abres en Colab otro cuaderno, puedes usar la misma línea:\n%pip install -q -r https://raw.githubusercontent.com/juanDmontoro/tap/main/requirements.txt\nSi Colab pide reiniciar la sesión después de instalar, acepta y vuelve a ejecutar el cuaderno desde el principio."
   },
   {
     "objectID": "index.html",
@@ -270,7 +277,7 @@
     "href": "planificacion.html",
     "title": "Planificación de las sesiones",
     "section": "",
-    "text": "AdvertenciaPlanificación sujeta a cambios\n\n\n\nLas fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 20-10-2026. La hora límite de cada entrega se comunica en el Aula Virtual.\nTeoría: martes, 12:30-13:30. Prácticas: jueves, 8:30-11:30 y 11:30-14:30 (mismo contenido en los dos grupos).\nT y P con número: sesión de teoría o de prácticas de ese tema. H1-H5: hitos del proyecto. E1-E5: entregas individuales."
+    "text": "AdvertenciaPlanificación sujeta a cambios\n\n\n\nLas fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 26-10-2026. La hora límite de cada entrega se comunica en el Aula Virtual.\nTeoría: martes, 12:30-13:30. Prácticas: jueves, 8:30-11:30 y 11:30-14:30 (mismo contenido en los dos grupos).\nT y P con número: sesión de teoría o de prácticas de ese tema. H1-H5: hitos del proyecto. E1-E5: entregas individuales."
   },
   {
     "objectID": "planificacion.html#septiembre",
@@ -284,14 +291,14 @@
     "href": "planificacion.html#octubre",
     "title": "Planificación de las sesiones",
     "section": "Octubre",
-    "text": "Octubre\n\n\n\nFecha\nSesión\nContenido\nMateriales\n\n\n\n\njueves 1\nP1 · Regresión regularizada\nClab 2 solo con el grupo 1. Grupo 2: cancelada por alerta roja (lluvias).\nTema 1\n\n\nmartes 6\nT2 · Evaluación y clasificación\nTema 2, partes 1 y 2: evaluación y selección; evaluación de clasificadores.\nTema 2\n\n\njueves 8\nP2 · Evaluación y selección\nCuaderno del tema 2: sección 0 y bloque 1 (de 3).\nTema 2\n\n\nviernes 9\n\nFestivo\n\n\n\nlunes 12\n\nFestivo\n\n\n\nmartes 13\nT2 · Clases desequilibradas\nTema 2, parte 3: clasificación con clases desequilibradas.\nTema 2\n\n\njueves 15\nProyecto · Hito 2\n30 min: código esencial de un proyecto (deck del tema 2). H2 · análisis exploratorio del proyecto (EDA).\nTema 2\n\n\nmartes 20\nT3 · GLM\nComponentes, familias, evaluación y penalización (deck único, 60 min).\nTema 3\n\n\njueves 22\nP3 · GLM\nGLM sobre la EES 2022. Entrega E1 · GLM (T3).\nTema 3\n\n\nmartes 27\nT4 · Árboles y bosques\nÁrboles, bootstrap, bagging y random forests.\n\n\n\njueves 29\nP4 · Bosques aleatorios\n90 min: mejorar el modelo base. H3 · 90 min: modelo base del proyecto.\n\n\n\n\n1 oct: clab 2 solo con el grupo 1. 6 y 13 oct: tema 2. 15 oct: H2. 20 oct: tema 3. E1: 22 oct. H3: 29 oct. Desde el 27 oct todo se desplaza una semana (reajuste del 14-10)."
+    "text": "Octubre\n\n\n\nFecha\nSesión\nContenido\nMateriales\n\n\n\n\njueves 1\nP1 · Regresión regularizada\nClab 2 solo con el grupo 1. Grupo 2: cancelada por alerta roja (lluvias).\nTema 1\n\n\nmartes 6\nT2 · Evaluación y clasificación\nTema 2, partes 1 y 2: evaluación y selección; evaluación de clasificadores.\nTema 2\n\n\njueves 8\nP2 · Evaluación y selección\nCuaderno del tema 2: sección 0 y bloque 1 (de 3).\nTema 2\n\n\nviernes 9\n\nFestivo\n\n\n\nlunes 12\n\nFestivo\n\n\n\nmartes 13\nT2 · Clases desequilibradas\nTema 2, parte 3: clasificación con clases desequilibradas.\nTema 2\n\n\njueves 15\nProyecto · Hito 2\n30 min: código esencial de un proyecto (deck del tema 2). H2 · análisis exploratorio del proyecto (EDA).\nTema 2\n\n\nmartes 20\nT3 · GLM\nComponentes, familias, evaluación y penalización (deck único, 60 min).\nTema 3\n\n\njueves 22\nP3 · GLM\nGLM sobre la EES 2022. Entrega E1 · GLM (T3).\nTema 3\n\n\nmartes 27\nT4 · Árboles y bosques\nÁrboles, bootstrap, bagging y random forests.\nTema 4\n\n\njueves 29\nP4 · Bosques aleatorios\n90 min: mejorar el modelo base. H3 · 90 min: modelo base del proyecto.\nTema 4\n\n\n\n1 oct: clab 2 solo con el grupo 1. 6 y 13 oct: tema 2. 15 oct: H2. 20 oct: tema 3. E1: 22 oct. H3: 29 oct. Desde el 27 oct todo se desplaza una semana (reajuste del 14-10)."
   },
   {
     "objectID": "planificacion.html#noviembre",
     "href": "planificacion.html#noviembre",
     "title": "Planificación de las sesiones",
     "section": "Noviembre",
-    "text": "Noviembre\n\n\n\n\n\n\n\n\n\nFecha\nSesión\nContenido\nMateriales\n\n\n\n\nmartes 3\nT4 · Boosting\nGradient boosting y XGBoost.\n\n\n\njueves 5\nP4 · XGBoost\nAjuste y validación de XGBoost; comparación con random forest. Entrega E2 · Ensambles (T4).\n\n\n\nmartes 10\nT4 · Ensambles\nVoting y stacking; importancias y valores de Shapley.\n\n\n\njueves 12\nP4 · Interpretación\n90 min: stacking y SHAP guiados. H4 · 90 min: ensambles del proyecto.\n\n\n\nmartes 17\nT5 · SVM\nClasificación y regresión con vectores de soporte; núcleos.\n\n\n\njueves 19\nP5 · Comparar modelos\nSVM: escalado, ajuste y comparación transversal de modelos. Entrega E3 · SVM (T5).\n\n\n\nmartes 24\nT6 · Redes neuronales\nPerceptrón multicapa (MLP).\n\n\n\njueves 26\nP6 · Keras\n90 min: MLP guiado en Keras. H5 · 90 min: revisión intermedia; todos los modelos + SVM y feedback.\n\n\n\n\nE2: 5 nov, ensambles vistos hasta esa fecha. H4: 12 nov. E3: 19 nov, exclusivamente SVM. H5: 26 nov, revisión de todos los modelos + SVM y feedback."
+    "text": "Noviembre\n\n\n\nFecha\nSesión\nContenido\nMateriales\n\n\n\n\nmartes 3\nT4 · Boosting\nGradient boosting y XGBoost.\nTema 4\n\n\njueves 5\nP4 · XGBoost\nAjuste y validación de XGBoost; comparación con random forest. Entrega E2 · Ensambles (T4).\nTema 4\n\n\nmartes 10\nT4 · Ensambles\nVoting y stacking; importancias y valores de Shapley.\nTema 4\n\n\njueves 12\nP4 · Interpretación\n90 min: stacking y SHAP guiados. H4 · 90 min: ensambles del proyecto.\nTema 4\n\n\nmartes 17\nT5 · SVM\nClasificación y regresión con vectores de soporte; núcleos.\n\n\n\njueves 19\nP5 · Comparar modelos\nSVM: escalado, ajuste y comparación transversal de modelos. Entrega E3 · SVM (T5).\n\n\n\nmartes 24\nT6 · Redes neuronales\nPerceptrón multicapa (MLP).\n\n\n\njueves 26\nP6 · Keras\n90 min: MLP guiado en Keras. H5 · 90 min: revisión intermedia; todos los modelos + SVM y feedback.\n\n\n\n\nE2: 5 nov, ensambles vistos hasta esa fecha. H4: 12 nov. E3: 19 nov, exclusivamente SVM. H5: 26 nov, revisión de todos los modelos + SVM y feedback."
   },
   {
     "objectID": "planificacion.html#diciembre",
