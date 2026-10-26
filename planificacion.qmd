@@ -6,7 +6,7 @@ toc-title: "Meses"
 ---
 
 ::: {.callout-warning title="Planificación sujeta a cambios"}
-Las fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 20-10-2026. La hora límite de cada entrega se comunica en el Aula Virtual.
+Las fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 26-10-2026. La hora límite de cada entrega se comunica en el Aula Virtual.
 :::
 
 **Teoría:** martes, 12:30-13:30. **Prácticas:** jueves, 8:30-11:30 y 11:30-14:30 (mismo contenido en los dos grupos).
@@ -39,8 +39,8 @@ T y P con número: sesión de teoría o de prácticas de ese tema. **H1-H5:** hi
 | jueves 15 | **Proyecto · Hito 2** | 30 min: código esencial de un proyecto (deck del tema 2). **H2 · análisis exploratorio del proyecto (EDA).** | [Tema 2](materiales.qmd#tema-2) |
 | martes 20 | **T3 · GLM** | Componentes, familias, evaluación y penalización (deck único, 60 min). | [Tema 3](materiales.qmd#tema-3) |
 | jueves 22 | **P3 · GLM** | GLM sobre la EES 2022. **Entrega E1 · GLM (T3).** | [Tema 3](materiales.qmd#tema-3) |
-| martes 27 | **T4 · Árboles y bosques** | Árboles, bootstrap, bagging y random forests. |  |
-| jueves 29 | **P4 · Bosques aleatorios** | 90 min: mejorar el modelo base. **H3 · 90 min: modelo base del proyecto.** |  |
+| martes 27 | **T4 · Árboles y bosques** | Árboles, bootstrap, bagging y random forests. | [Tema 4](materiales.qmd#tema-4) |
+| jueves 29 | **P4 · Bosques aleatorios** | 90 min: mejorar el modelo base. **H3 · 90 min: modelo base del proyecto.** | [Tema 4](materiales.qmd#tema-4) |
 
 *1 oct: clab 2 solo con el grupo 1. 6 y 13 oct: tema 2. 15 oct: H2. 20 oct: tema 3. E1: 22 oct. H3: 29 oct. Desde el 27 oct todo se desplaza una semana (reajuste del 14-10).*
 
@@ -48,10 +48,10 @@ T y P con número: sesión de teoría o de prácticas de ese tema. **H1-H5:** hi
 
 | Fecha | Sesión | Contenido | Materiales |
 |:--|:--|:--|:--|
-| martes 3 | **T4 · Boosting** | Gradient boosting y XGBoost. |  |
-| jueves 5 | **P4 · XGBoost** | Ajuste y validación de XGBoost; comparación con random forest. **Entrega E2 · Ensambles (T4).** |  |
-| martes 10 | **T4 · Ensambles** | Voting y stacking; importancias y valores de Shapley. |  |
-| jueves 12 | **P4 · Interpretación** | 90 min: stacking y SHAP guiados. **H4 · 90 min: ensambles del proyecto.** |  |
+| martes 3 | **T4 · Boosting** | Gradient boosting y XGBoost. | [Tema 4](materiales.qmd#tema-4) |
+| jueves 5 | **P4 · XGBoost** | Ajuste y validación de XGBoost; comparación con random forest. **Entrega E2 · Ensambles (T4).** | [Tema 4](materiales.qmd#tema-4) |
+| martes 10 | **T4 · Ensambles** | Voting y stacking; importancias y valores de Shapley. | [Tema 4](materiales.qmd#tema-4) |
+| jueves 12 | **P4 · Interpretación** | 90 min: stacking y SHAP guiados. **H4 · 90 min: ensambles del proyecto.** | [Tema 4](materiales.qmd#tema-4) |
 | martes 17 | **T5 · SVM** | Clasificación y regresión con vectores de soporte; núcleos. |  |
 | jueves 19 | **P5 · Comparar modelos** | SVM: escalado, ajuste y comparación transversal de modelos. **Entrega E3 · SVM (T5).** |  |
 | martes 24 | **T6 · Redes neuronales** | Perceptrón multicapa (MLP). |  |

@@ -56,6 +56,20 @@ Las **presentaciones** se abren en el navegador (pantalla completa con la tecla 
 
 Entrega **E1** (22 oct): el enunciado se distribuye en el Aula Virtual; la versión resuelta se publicará aquí a partir del 29 oct.
 
+## Tema 4. Ensambles {#tema-4}
+
+### Presentaciones
+
+| Presentación | Sesión | |
+|:--|:--|:--|
+| Árboles, bagging y random forest | 27 oct (T4) | <a class="tap-btn" href="slides/04/04_arboles_bosques_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+
+### Cuadernos
+
+| Cuaderno | Sin resultados | Versión resuelta |
+|:--|:--|:--|
+| Introducción a los árboles de decisión (práctica, 29 oct) | <a class="tap-btn" href="clabs/04/tema_04_arboles.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_arboles.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | A partir del 5 nov |
+
 ## Entorno y Python {#python}
 
 | Recurso | |
@@ -68,10 +82,10 @@ Entrega **E1** (22 oct): el enunciado se distribuye en el Aula Virtual; la versi
 
 ### Trabajar en Google Colab
 
-Colab trae sus propias versiones de los paquetes. Los cuadernos del curso incluyen al principio una celda que, solo en Colab, instala las mismas versiones que el entorno `tap`. Si abres en Colab otro cuaderno, puedes usar la misma línea:
+Colab trae sus propias versiones de los paquetes. Los cuadernos del curso incluyen al principio una celda que, solo en Colab, instala la versión de scikit-learn del entorno `tap`. Las demás librerías (numpy, pandas, matplotlib) se usan en la versión que trae Colab. Si abres en Colab otro cuaderno, puedes usar la misma línea:
 
 ```python
 %pip install -q -r https://raw.githubusercontent.com/juanDmontoro/tap/main/requirements.txt
 ```
 
-Si Colab pide **reiniciar la sesión** después de instalar (ocurre cuando cambia `numpy`), acepta y vuelve a ejecutar el cuaderno desde el principio.
+Si Colab pide **reiniciar la sesión** después de instalar, acepta y vuelve a ejecutar el cuaderno desde el principio.

@@ -1,10 +1,5 @@
-# Requisitos de los cuadernos publicados (temas 1-3) para Colab y para la web.
-# Versiones tomadas del entorno conda `tap` (conda list -n tap --export, 18-10-2026; Python 3.11.16).
-# Solo los paquetes que importan los cuadernos de los temas 1-3; se ampliará al publicar los siguientes temas.
-# BORRADOR: pendiente de probar en Colab (su versión de Python no coincide necesariamente con la 3.11).
-numpy==2.4.6
-pandas==2.3.3
-scipy==1.17.1
+# Requisitos de los cuadernos publicados para Google Colab.
+# Solo se fija scikit-learn (la versión del entorno `tap` de referencia, Mac).
+# numpy, pandas, scipy, matplotlib y seaborn se usan en la versión que trae Colab:
+# google-colab exige su pandas y numba exige numpy<2.3; fijarlos rompe el entorno.
 scikit-learn==1.9.1
-matplotlib==3.11.1
-seaborn==0.13.2

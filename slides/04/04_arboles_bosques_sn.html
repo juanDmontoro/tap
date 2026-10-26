@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<script src="04_arboles_bosques_files/libs/clipboard/clipboard.min.js"></script>
+<script src="04_arboles_bosques_files/libs/quarto-html/tabby.min.js"></script>
+<script src="04_arboles_bosques_files/libs/quarto-html/popper.min.js"></script>
+<script src="04_arboles_bosques_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="04_arboles_bosques_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="04_arboles_bosques_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="04_arboles_bosques_files/libs/quarto-html/quarto-syntax-highlighting-9ea0a49c779b6fc496fdb60b6bf00fef.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.39">
+
+  <meta name="author" content="Prof.&nbsp;Juan D. Montoro-Pons | 2026/27">
+  <title>Tema 4. Ensambles (1): árboles, bagging y random forest</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="04_arboles_bosques_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="04_arboles_bosques_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="04_arboles_bosques_files/libs/revealjs/dist/theme/quarto-869b480fdc62ff205cd046392035cc1e.css">
+  <link href="04_arboles_bosques_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="04_arboles_bosques_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="04_arboles_bosques_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="04_arboles_bosques_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+<script src="_extensions/grantmcdermott/clean/mathjax-config.js"></script>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-color="#447099" class="quarto-title-block center">
+  <h1 class="title">Tema 4. Ensambles (1): árboles, bagging y random forest</h1>
+  <p class="subtitle">Técnicas Avanzadas de Predicción en Negocios</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Prof.&nbsp;Juan D. Montoro-Pons | 2026/27 
+</div>
+</div>
+</div>
+
+</section>
+<section id="qué-precio-sugiere-un-árbol-para-este-piso" class="slide level2 fig-side">
+<h2>¿Qué precio sugiere un árbol para este piso?</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div id="1c96cc56" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-3-output-1.png" alt="Árbol de regresión de profundidad dos dibujado con plot_tree de scikit-learn. La raíz corta por la columna room_type_Entire home/apt; los dos nodos siguientes cortan por accommodates. Cada caja muestra el corte, el error cuadrático medio, el número de anuncios y el valor medio de log(precio)."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:2%;">
+
+</div><div class="column" style="width:38%;">
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Pregunta</a></li><li><a href="#tabset-1-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<p>Se pone en alquiler un alojamiento entero de 4 plazas en Ruzafa.</p>
+<ul>
+<li>Seguid el árbol desde arriba (<code>True</code>: se cumple la condición): ¿qué precio por noche predice?</li>
+<li>En cada caja: <code>samples</code>, anuncios del nodo, y <code>value</code>, media de log(precio). La columna <code>room_type_Entire home/apt</code> vale 1 para alojamientos enteros.</li>
+</ul>
+</div>
+<div id="tabset-1-2">
+<ul>
+<li>Alojamiento entero y 4 plazas: hoja con <code>value</code> = 4,686, es decir, unos 108 € por noche.</li>
+<li>El árbol usa solo dos predictores. Un anuncio de Ruzafa con esas características anuncia 144 €.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+<div class="source">
+<p>Fuente: Inside Airbnb, Valencia (<code>listados.csv</code>). Misma población y división que los temas 2 y 3, con 5324 anuncios de entrenamiento.</p>
+</div>
+</section>
+<section id="tres-preguntas" class="slide level2 body-callout">
+<h2>Tres preguntas</h2>
+<p>&nbsp;</p>
+<p>Un árbol de decisión parte el espacio de predictores en regiones y da la misma predicción a todas las observaciones de una región. Un ensamble combina las predicciones de muchos árboles.</p>
+<ol type="1">
+<li><strong>¿Cómo predice un árbol?</strong> Elige cortes que separan las observaciones en grupos cada vez más homogéneos y predice la media (o la proporción de cada clase) de cada grupo.</li>
+<li><strong>¿Por qué promediar muchos árboles?</strong> Un árbol cambia mucho si cambian los datos con los que se ajusta. La media de muchos árboles cambia menos.</li>
+<li><strong>¿Por qué introducir aleatoriedad en la elección de predictores?</strong> Árboles ajustados sobre los mismos datos se parecen entre sí. En ese caso promediar árboles parecidos ayuda poco.</li>
+</ol>
+</section>
+<section>
+<section id="cómo-predice-un-árbol" class="title-slide slide level1 center" data-background-color="#447099">
+<h1>¿Cómo predice un árbol?</h1>
+
+</section>
+<section id="un-árbol-segmenta-el-espacio-de-predictores-en-regiones" class="slide level2 fig-side">
+<h2>Un árbol segmenta el espacio de predictores en regiones</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="7954ac18" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-4-output-1.png" alt="Plano con las plazas en el eje horizontal y el tipo de alojamiento en el vertical (habitación abajo, alojamiento entero arriba). Los anuncios aparecen como puntos grises. El árbol del gancho divide el plano en cuatro rectángulos coloreados según el precio predicho, con el precio escrito en cada uno: dos para habitaciones (hasta 1 plaza y más de 1) y dos para alojamientos enteros (hasta 4 plazas y más de 4)."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
+<ul>
+<li>Plazas y tipo de alojamiento (los dos predictores del árbol de profundidad 2).</li>
+<li>Cada corte <span class="math inline">\(x_j \le s\)</span> es una línea vertical u horizontal.</li>
+<li>Cada hoja es un rectángulo <span class="math inline">\(R_m\)</span>. El árbol predice la media de la respuesta, aquí log(precio), de las observaciones de entrenamiento que caen en él.</li>
+<li>El corte de plazas es distinto en cada tipo de alojamiento: el árbol recoge esa <strong>interacción</strong> sin añadir el producto de los predictores.</li>
+</ul>
+</div></div>
+</section>
+<section id="por-qué-el-primer-corte-es-el-tipo-de-alojamiento" class="slide level2 fig-side">
+<h2>¿Por qué el primer corte es el tipo de alojamiento?</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="b1ba8328" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-5-output-1.png" alt="Barras horizontales con la reducción porcentual de la RSS que consigue el mejor corte de cada predictor por separado, para los ocho predictores con más reducción. El tipo de alojamiento queda primero, seguido de plazas, dormitorios, camas y baños."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
+<ul>
+<li>El árbol prueba cada predictor <span class="math inline">\(j\)</span> y cada punto de corte <span class="math inline">\(s\)</span>, y elige el par <span class="math inline">\((j,s)\)</span> que minimiza <span class="math display">\[\sum_{i \in R_1} (y_i - \bar y_{R_1})^2 + \sum_{i \in R_2} (y_i - \bar y_{R_2})^2\]</span></li>
+<li>El procedimiento de búsqueda se repite dentro de cada región: <strong>particionamiento binario recursivo</strong>.</li>
+<li>Cada corte es el mejor en ese paso, sin mirar los siguientes: <strong>algoritmo voraz</strong>.</li>
+</ul>
+</div></div>
+<div class="caption-line">
+<p>Cada barra muestra la reducción de la RSS de log(precio) que logra el mejor corte de ese predictor, probado solo.</p>
+</div>
+</section>
+<section id="un-árbol-profundo-memoriza-el-conjunto-de-entrenamiento" class="slide level2 fig-side">
+<h2>Un árbol profundo memoriza el conjunto de entrenamiento</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="0cf248bb" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-6-output-1.png" alt="RMSE de entrenamiento y de validación cruzada frente a la profundidad máxima del árbol, de 1 a 20. El de entrenamiento baja sin parar hacia cero; el de validación baja hasta un mínimo cerca de la profundidad 6 y sube después. Una línea discontinua marca el RMSE de la regresión lineal."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
+<ul>
+<li>Con más profundidad, el error de entrenamiento baja hacia cero.</li>
+<li>El de validación cruzada es mínimo con profundidad 6 (círculo) y sube después.</li>
+<li>Sin límite, el árbol llega a 4994 hojas para 5324 anuncios y su RMSE de validación (0,447) supera al de la regresión lineal (0,368).</li>
+</ul>
+</div></div>
+</section>
+<section id="la-poda-penaliza-el-número-de-hojas" class="slide level2 fig-side">
+<h2>La poda penaliza el número de hojas</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="fbf3398e" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-7-output-1.png" alt="RMSE de validación cruzada del árbol podado frente a la penalización alfa, en escala logarítmica. Encima de algunos puntos, el número de hojas del árbol. El error es alto con alfa muy pequeño (árbol casi completo), baja hasta un mínimo y sube cuando la poda deja muy pocas hojas."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
+<p><span class="math display">\[\text{RSS}(T) + \alpha \cdot |T|\]</span></p>
+<ul>
+<li><span class="math inline">\(|T|\)</span> es el número de hojas del árbol <span class="math inline">\(T\)</span>. Para cada <span class="math inline">\(\alpha\)</span>, la poda sustituye por una hoja los subárboles cuyo aumento de la RSS es menor que la penalización que ahorran (<span class="math inline">\(\alpha\)</span> por cada hoja que desaparece).</li>
+<li><span class="math inline">\(\alpha\)</span> se elige por validación cruzada: el mínimo (círculo) deja 24 hojas.</li>
+<li><strong>Poda previa</strong>: limitar el crecimiento antes del ajuste, con la profundidad máxima, el número máximo de hojas o las observaciones mínimas por hoja.</li>
+</ul>
+</div></div>
+<div class="caption-line">
+<p>Cada punto es el RMSE medio de las 5 particiones de validación cruzada del conjunto de entrenamiento. Encima, el número de hojas del árbol ajustado con todo el entrenamiento. El mínimo de la curva queda a 2 milésimas de la regresión lineal (RMSE 0,366 y 0,368).</p>
+</div>
+</section>
+<section id="árbol-de-clasificación-es-superanfitrión-el-anfitrión" class="slide level2 fig-side">
+<h2>Árbol de clasificación: ¿es superanfitrión el anfitrión?</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:56%;">
+<div id="da96bc29" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-8-output-1.png" alt="Árbol de clasificación de profundidad dos dibujado con plot_tree de scikit-learn para la respuesta superanfitrión. Cada caja muestra el corte, la impureza de Gini, el número de anuncios, el reparto entre las dos clases y la clase predicha."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:2%;">
+
+</div><div class="column" style="width:42%;">
+<p>&nbsp;</p>
+<ul>
+<li>Cada corte minimiza la <strong>impureza de Gini</strong> de los dos nodos que crea, ponderada por sus observaciones. La impureza de un nodo es <span class="math display">\[G = \sum_k p_k(1-p_k)\]</span> con <span class="math inline">\(p_k\)</span> la proporción de la clase <span class="math inline">\(k\)</span> en el nodo (<span class="math inline">\(G = 0\)</span> si todas sus observaciones son de una clase).</li>
+<li>La hoja predice la proporción de cada clase (la probabilidad) y la clase mayoritaria.</li>
+<li>La complejidad se controla igual: profundidad, hojas o poda.</li>
+</ul>
+</div></div>
+</section>
+<section id="qué-cambia-si-transformamos-un-predictor" class="slide level2 body-callout">
+<h2>¿Qué cambia si transformamos un predictor?</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<ul>
+<li>Un corte <span class="math inline">\(x_j \le s\)</span> solo depende del <strong>orden</strong> de los valores de <span class="math inline">\(x_j\)</span>.</li>
+<li>El árbol recoge interacciones sin añadir productos de predictores: cada corte depende de la rama en la que está, como el de plazas dentro de cada tipo de alojamiento.</li>
+</ul>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:48%;">
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Para pensar</a></li><li><a href="#tabset-2-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<p>En el modelo lineal estandarizábamos los predictores. ¿Cambiaría el árbol si lo hiciéramos?</p>
+</div>
+<div id="tabset-2-2">
+<ul>
+<li>Las regiones y las predicciones son las mismas: estandarizar conserva el orden de los valores, y el corte solo depende de ese orden. Cambia solo el valor del umbral <span class="math inline">\(s\)</span>, que se reescala con los datos y marca la misma frontera.</li>
+<li>Por eso el preprocesado de los árboles no estandariza.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="hiperparámetros-de-un-árbol" class="slide level2 table-slide">
+<h2>Hiperparámetros de un árbol</h2>
+<p>&nbsp;</p>
+<p><code>DecisionTreeRegressor</code> y <code>DecisionTreeClassifier</code> (<code>sklearn.tree</code>):</p>
+<div data-tbl-colwidths="[24,50,26]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 50%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Hiperparámetro</th>
+<th style="text-align: left;">Qué controla</th>
+<th style="text-align: left;">Efecto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>criterion</code></td>
+<td style="text-align: left;">Medida que minimiza cada corte: <code>squared_error</code> en regresión, <code>gini</code> o <code>entropy</code> en clasificación</td>
+<td style="text-align: left;">Cambia los cortes elegidos</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>max_depth</code></td>
+<td style="text-align: left;">Número máximo de cortes seguidos</td>
+<td style="text-align: left;">Más profundidad, árbol más complejo</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>max_leaf_nodes</code></td>
+<td style="text-align: left;">Número máximo de hojas</td>
+<td style="text-align: left;">Más hojas, árbol más complejo</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>min_samples_leaf</code></td>
+<td style="text-align: left;">Observaciones mínimas en cada hoja</td>
+<td style="text-align: left;">Más observaciones, árbol más simple</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>ccp_alpha</code></td>
+<td style="text-align: left;">Penalización <span class="math inline">\(\alpha\)</span> de la poda</td>
+<td style="text-align: left;">Más <span class="math inline">\(\alpha\)</span>, árbol más simple</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>&nbsp;</p>
+<p>Valores por defecto: <code>max_depth</code>=None, <code>min_samples_leaf</code>=1, <code>ccp_alpha</code>=0 (el árbol crece sin límite).</p>
+</section></section>
+<section>
+<section id="por-qué-promediar-muchos-árboles" class="title-slide slide level1 center" data-background-color="#447099">
+<h1>¿Por qué promediar muchos árboles?</h1>
+
+</section>
+<section id="bootstrap-remuestrear-con-reemplazamiento" class="slide level2 body-callout">
+<h2>Bootstrap: remuestrear con reemplazamiento</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div title="Remuestreo bootstrap">
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Remuestreo bootstrap</strong></p>
+</div>
+<div class="callout-content">
+<p>Se eligen <span class="math inline">\(n\)</span> observaciones al azar <strong>con reemplazamiento</strong> entre las <span class="math inline">\(n\)</span> del conjunto de entrenamiento. Una observación puede aparecer varias veces o ninguna.</p>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:48%;">
+<ul>
+<li>Cada observación queda fuera de un remuestreo con probabilidad <span class="math inline">\((1 - 1/n)^n \approx e^{-1} \approx 0{,}37\)</span>.</li>
+<li>En un remuestreo de los 5324 anuncios de entrenamiento aparecen 62,7 % de anuncios distintos.</li>
+<li>Cada remuestreo reutiliza observaciones del conjunto de entrenamiento: unas se repiten y otras faltan, y cuáles faltan cambia de un remuestreo a otro.</li>
+</ul>
+</div></div>
+</section>
+<section id="un-árbol-cambia-mucho-de-un-remuestreo-a-otro" class="slide level2 fig-side">
+<h2>Un árbol cambia mucho de un remuestreo a otro</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="4d20d173" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-9-output-1.png" alt="Para tres anuncios, una habitación de dos plazas, un piso de cuatro plazas y un piso de ocho plazas, cien puntos grises con el precio que predice cada uno de cien árboles ajustados a remuestreos distintos. Los puntos de cada anuncio se extienden por un rango amplio. Un punto naranja marca la media de las cien predicciones, calculada en log y pasada a euros, y un rombo azul el precio observado."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
+<ul>
+<li>100 remuestreos bootstrap de los mismos anuncios. Con cada uno se ajusta un árbol sin poda.</li>
+<li>Cada punto gris es la predicción de uno de esos árboles para un anuncio que ninguno ha visto.</li>
+<li>En cada anuncio, la predicción más alta es entre 3 y 12 veces la más baja: con otros datos de ajuste, el árbol da otra predicción.</li>
+<li>El punto naranja promedia las 100 predicciones en log(precio) y pasa la media a euros.</li>
+</ul>
+</div></div>
+</section>
+<section id="bagging-la-media-de-b-estimadores" class="slide level2 body-callout">
+<h2>Bagging: la media de B estimadores</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><span class="math display">\[\hat f_{\text{bag}}(x) = \frac{1}{B}\sum_{b=1}^{B} \hat f^{*b}(x)\]</span></p>
+<ul>
+<li><span class="math inline">\(\hat f^{*b}\)</span> es el estimador ajustado con el remuestreo bootstrap <span class="math inline">\(b\)</span>. Sirve cualquier estimador. Lo habitual es un árbol sin poda (poco sesgo y mucha varianza).</li>
+<li><strong><em>Bagging</em></strong> (<em>bootstrap aggregation</em>): promediar las predicciones de los B estimadores.</li>
+<li>En clasificación se promedian las probabilidades de cada clase (o se vota la clase).</li>
+</ul>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:48%;">
+<div title="Varianza de la media de B árboles">
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Varianza de la media de B árboles</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li><span class="math inline">\(\sigma^2\)</span>: varianza de la predicción de un árbol en un punto <span class="math inline">\(x\)</span> fijo, al repetir la obtención del conjunto de entrenamiento y su remuestreo.</li>
+<li><span class="math inline">\(\bar\rho\)</span>: correlación media entre las predicciones de los <span class="math inline">\(B(B-1)/2\)</span> pares de árboles bajo esa misma repetición. <span class="math display">\[\operatorname{Var}\big(\hat f_{\text{bag}}(x)\big) = \bar\rho\,\sigma^2 + \frac{1-\bar\rho}{B}\,\sigma^2\]</span> Al aumentar B baja el segundo término. El primero depende de cuánto se parecen los árboles.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="cuántos-árboles-necesita-el-bagging" class="slide level2 fig-side">
+<h2>¿Cuántos árboles necesita el bagging?</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="ee9b3a60" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-10-output-1.png" alt="RMSE de validación cruzada del bagging frente al número de árboles, en escala logarítmica de 1 a 500. Con un árbol el error es mayor que el de la regresión lineal y el árbol podado; baja con rapidez hasta unos 25 árboles y queda casi plano después, por debajo de las dos líneas de referencia."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Para pensar</a></li><li><a href="#tabset-3-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1">
+<p>Al añadir árboles, ¿qué término de la varianza baja? ¿Puede el <em>bagging</em> sobreajustar por tener más árboles? ¿Qué se gana al pasar de 100 a 500?</p>
+</div>
+<div id="tabset-3-2">
+<ul>
+<li>B solo divide el segundo término de la fórmula, y la varianza de la media se estabiliza en <span class="math inline">\(\bar\rho\sigma^2\)</span>. El término que tiende a cero: <span class="math display">\[\frac{1-\bar\rho}{B}\,\sigma^2\]</span></li>
+<li>Cada árbol conserva su profundidad, y añadir árboles solo acerca el promedio a su límite: eso no es sobreajuste. El error de validación puede fluctuar, y una subida aislada no lo demuestra.</li>
+<li>En el ejemplo, entre 100 y 500 árboles el RMSE cambia en 1,5 milésimas y hay cinco veces más árboles que ajustar: los árboles de más dan estabilidad al promedio.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+<div class="caption-line">
+<p>RMSE medio de las 5 particiones de validación cruzada del conjunto de entrenamiento, para el <em>bagging</em> de árboles sin poda.</p>
+</div>
+</section>
+<section id="error-fuera-de-la-bolsa-oob" class="slide level2 fig-side">
+<h2>Error fuera de la bolsa (OOB)</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="e031e42a" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-11-output-1.png" alt="RMSE fuera de la bolsa del bagging frente al número de árboles, de 25 a 500. Baja con los primeros árboles y se estabiliza. Una línea discontinua marca el RMSE de validación cruzada del bagging con 500 árboles, muy cerca de la curva."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<p>&nbsp;</p>
+<ul>
+<li>Cada árbol deja fuera de su remuestreo aproximadamente un 37 % de las observaciones: son sus observaciones <strong>fuera de la bolsa</strong> (<em>out-of-bag</em>, OOB).</li>
+<li>La predicción OOB de una observación promedia solo los árboles que no la usaron.</li>
+<li>Con 500 árboles, el RMSE OOB del <em>bagging</em> (0,318) y el de validación cruzada (0,319) casi coinciden, con un único ajuste.</li>
+</ul>
+</div></div>
+</section>
+<section id="hiperparámetros-del-bagging" class="slide level2 table-slide">
+<h2>Hiperparámetros del bagging</h2>
+<p>&nbsp;</p>
+<p><code>BaggingRegressor</code> y <code>BaggingClassifier</code> (<code>sklearn.ensemble</code>):</p>
+<div data-tbl-colwidths="[22,46,32]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 46%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Hiperparámetro</th>
+<th style="text-align: left;">Qué controla</th>
+<th style="text-align: left;">Efecto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>estimator</code></td>
+<td style="text-align: left;">Estimador que se promedia (por defecto, un árbol de decisión sin límite)</td>
+<td style="text-align: left;">Su complejidad es la de cada término de la media</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>n_estimators</code></td>
+<td style="text-align: left;">Número B de estimadores</td>
+<td style="text-align: left;">Más estimadores, menos varianza hasta estabilizarse</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>max_samples</code></td>
+<td style="text-align: left;">Tamaño de cada remuestreo (fracción de n)</td>
+<td style="text-align: left;">Remuestreos menores, estimadores menos parecidos</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>bootstrap</code></td>
+<td style="text-align: left;">Remuestreo con reemplazamiento (<code>True</code>) o sin él (<code>False</code>)</td>
+<td style="text-align: left;">En scikit-learn, el error OOB requiere <code>True</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>oob_score</code></td>
+<td style="text-align: left;">Calcular el error fuera de la bolsa</td>
+<td style="text-align: left;">Guarda <code>oob_prediction_</code> (regresión) u <code>oob_decision_function_</code> (clasificación)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>&nbsp;</p>
+<p>Valores por defecto: <code>n_estimators</code>=10, <code>max_samples</code>=1,0, <code>bootstrap</code>=True, <code>oob_score</code>=False.</p>
+</section></section>
+<section>
+<section id="por-qué-introducir-aleatoriedad-en-la-elección-de-predictores" class="title-slide slide level1 center" data-background-color="#447099">
+<h1>¿Por qué introducir aleatoriedad en la elección de predictores?</h1>
+
+</section>
+<section id="random-forest-cada-corte-elige-entre-m-predictores" class="slide level2 body-callout">
+<h2>Random forest: cada corte elige entre m predictores</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<ul>
+<li><strong><em>Random forest</em></strong>: <em>bagging</em> de árboles en el que cada corte se busca entre <span class="math inline">\(m\)</span> columnas elegidas al azar, de las <span class="math inline">\(p\)</span> disponibles. Con <span class="math inline">\(m = p\)</span> es el <em>bagging</em>.</li>
+<li>Objetivo: que las predicciones de los árboles se parezcan menos, porque un predictor que domina (el tipo de alojamiento) deja de estar disponible en todos los cortes. Al bajar <span class="math inline">\(\bar\rho\)</span> baja el término <span class="math inline">\(\bar\rho\,\sigma^2\)</span>, que el número de árboles no reduce.</li>
+<li>En clasificación, el bosque promedia las probabilidades de los árboles.</li>
+</ul>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:48%;">
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Para pensar</a></li><li><a href="#tabset-4-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1">
+<p>En el ejemplo hay 46 columnas. Si cada corte solo puede mirar 4 de ellas, ¿qué le pasa a cada árbol? ¿Y a la media de 500?</p>
+</div>
+<div id="tabset-4-2">
+<ul>
+<li>Muchos cortes se buscan sin el tipo de alojamiento ni las plazas: cada árbol puede perder capacidad predictiva.</li>
+<li>Los árboles se parecen menos, y la media aprovecha mejor cada uno.</li>
+<li>La media mejora solo si lo segundo compensa lo primero: <span class="math inline">\(m\)</span> se elige por validación cruzada.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="menos-predictores-por-corte-árboles-menos-parecidos" class="slide level2 fig-wide">
+<h2>Menos predictores por corte, árboles menos parecidos</h2>
+<p>&nbsp;</p>
+
+<img data-src="04_arboles_bosques_files/figure-revealjs/cell-12-output-1.png" alt="Dos paneles frente a la fracción de columnas que se prueban en cada corte, de 0,1 a 1. A la izquierda, la correlación media entre los errores de dos árboles sube con la fracción. A la derecha, el RMSE de validación cruzada del bosque, con un mínimo en fracciones bajas y algo mayor con la fracción 1, que es el bagging." class="r-stretch"><div class="caption-line">
+<p>Izquierda: correlación media entre los errores de dos árboles del bosque (100 árboles, una partición), una ilustración de cuánto se parecen. Derecha: RMSE de validación cruzada con 500 árboles. El mínimo (0,314, frente a 0,319 del <em>bagging</em>) está en el 33 % de las columnas (15 de 46).</p>
+</div>
+</section>
+<section id="hiperparámetros-de-un-random-forest" class="slide level2 table-slide">
+<h2>Hiperparámetros de un random forest</h2>
+<p>&nbsp;</p>
+<p><code>RandomForestRegressor</code> y <code>RandomForestClassifier</code> (<code>sklearn.ensemble</code>):</p>
+<div data-tbl-colwidths="[24,44,32]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 44%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Hiperparámetro</th>
+<th style="text-align: left;">Qué controla</th>
+<th style="text-align: left;">Efecto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>n_estimators</code></td>
+<td style="text-align: left;">Número de árboles</td>
+<td style="text-align: left;">Más árboles, menos varianza hasta estabilizarse</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>max_features</code></td>
+<td style="text-align: left;">m: columnas que se sortean en cada corte</td>
+<td style="text-align: left;">Más columnas, árboles más parecidos (con 1,0, bagging)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>max_depth</code></td>
+<td style="text-align: left;">Cortes seguidos de cada árbol</td>
+<td style="text-align: left;">Más profundidad, árboles más complejos</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>min_samples_leaf</code></td>
+<td style="text-align: left;">Observaciones mínimas en cada hoja</td>
+<td style="text-align: left;">Más observaciones, árboles más simples</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>oob_score</code></td>
+<td style="text-align: left;">Calcular el error fuera de la bolsa</td>
+<td style="text-align: left;">Guarda <code>oob_prediction_</code> (regresión) u <code>oob_decision_function_</code> (clasificación)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>class_weight</code> (solo Classifier)</td>
+<td style="text-align: left;">Peso de cada clase en la impureza</td>
+<td style="text-align: left;">Cambia los cortes de todos los árboles</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>&nbsp;</p>
+<p>Valores por defecto: <code>n_estimators</code>=100, <code>max_features</code>=1,0 en regresión y <code>"sqrt"</code> en clasificación, <code>max_depth</code>=None, <code>oob_score</code>=False.</p>
+</section>
+<section id="recapitulación-tres-respuestas" class="slide level2 body-callout">
+<h2>Recapitulación: tres respuestas</h2>
+<p>&nbsp;</p>
+<ol type="1">
+<li><strong>¿Cómo predice un árbol?</strong> Parte el espacio de predictores con un algoritmo voraz y predice la media de cada hoja (en clasificación, la proporción de cada clase), con un tamaño elegido por validación cruzada.</li>
+<li><strong>¿Por qué promediar muchos árboles?</strong> La media de árboles ajustados con remuestreos bootstrap varía menos que un árbol sin poda, y el error OOB la evalúa con un solo ajuste.</li>
+<li><strong>¿Por qué introducir aleatoriedad en la elección de predictores?</strong> Sortear las columnas de cada corte hace los árboles menos parecidos, a costa de que cada uno pueda predecir algo peor, y cuántas columnas conviene se decide por validación cruzada.</li>
+</ol>
+</section>
+<section id="actividad-final" class="slide level2 table-slide">
+<h2>Actividad final</h2>
+<p>&nbsp;</p>
+<div class="panel-tabset">
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Pregunta</a></li><li><a href="#tabset-5-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1">
+<p>Se quiere estimar el precio anunciado de alojamientos comparables (entre 30 y 400 € por noche) y explicar de dónde sale la estimación. En parejas (3 min): elegid un modelo, señalad la evidencia de la tabla que lo apoya y una limitación de esa elección.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Modelo</th>
+<th style="text-align: left;">Hiperparámetro elegido</th>
+<th style="text-align: left;">RMSE de validación cruzada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Modelo nulo (media de log(precio))</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">0,533</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Regresión lineal</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">0,368</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Árbol podado</td>
+<td style="text-align: left;">24 hojas</td>
+<td style="text-align: left;">0,366</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bagging</td>
+<td style="text-align: left;">500 árboles</td>
+<td style="text-align: left;">0,319</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Random forest</td>
+<td style="text-align: left;">500 árboles, m = 15</td>
+<td style="text-align: left;">0,314</td>
+</tr>
+</tbody>
+</table>
+<p>RMSE de validación cruzada de log(precio): errores relativos, con más peso a los grandes. El hiperparámetro de cada modelo se eligió con las mismas particiones.</p>
+</div>
+<div id="tabset-5-2">
+<p>Más de una elección se puede defender:</p>
+<ul>
+<li>Por error, el <em>random forest</em>: un 15 % por debajo de la regresión lineal y un 41 % por debajo del modelo nulo. Su limitación: 500 árboles no se leen directamente.</li>
+<li>Por explicación, el árbol podado o la regresión lineal: más error (0,366 y 0,368) y se pueden mostrar, aunque un árbol de 24 hojas tampoco se comunica entero.</li>
+<li><em>Bagging</em> y <em>random forest</em> se diferencian en 5 milésimas a favor del bosque: una diferencia pequeña, y entre ellos pesan también el tiempo de ajuste y la simplicidad.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="glosario-13-árboles" class="slide level2 table-slide dense">
+<h2>Glosario (1/3): árboles</h2>
+<p>&nbsp;</p>
+<div data-tbl-colwidths="[24,52,24]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 52%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Concepto</th>
+<th style="text-align: left;">Significado</th>
+<th style="text-align: left;">scikit-learn</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Árbol de regresión</td>
+<td style="text-align: left;">Corta el espacio de predictores en regiones y predice la media de la respuesta en cada una</td>
+<td style="text-align: left;"><code>DecisionTreeRegressor</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Árbol de clasificación</td>
+<td style="text-align: left;">Igual, con la proporción de cada clase en la hoja como probabilidad y la clase mayoritaria como etiqueta</td>
+<td style="text-align: left;"><code>DecisionTreeClassifier</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Corte</td>
+<td style="text-align: left;">Pregunta <span class="math inline">\(x_j \le s\)</span> que separa las observaciones de un nodo en dos</td>
+<td style="text-align: left;"><code>tree_.feature</code>, <code>tree_.threshold</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hoja</td>
+<td style="text-align: left;">Región final del árbol. Todas sus observaciones reciben la misma predicción</td>
+<td style="text-align: left;"><code>get_n_leaves()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Particionamiento binario recursivo</td>
+<td style="text-align: left;">Repite la búsqueda del mejor corte dentro de cada una de las dos regiones que crea el corte anterior</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Algoritmo voraz</td>
+<td style="text-align: left;">Elige en cada paso el corte que más reduce la RSS (o la impureza), sin mirar los siguientes</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Impureza de Gini</td>
+<td style="text-align: left;"><span class="math inline">\(\sum_k p_k(1-p_k)\)</span>, con <span class="math inline">\(p_k\)</span> la proporción de la clase <span class="math inline">\(k\)</span> en el nodo</td>
+<td style="text-align: left;"><code>criterion="gini"</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="glosario-23-control-de-la-complejidad" class="slide level2 table-slide dense">
+<h2>Glosario (2/3): control de la complejidad</h2>
+<p>&nbsp;</p>
+<div data-tbl-colwidths="[24,52,24]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 52%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Concepto</th>
+<th style="text-align: left;">Significado</th>
+<th style="text-align: left;">scikit-learn</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Profundidad</td>
+<td style="text-align: left;">Número máximo de cortes seguidos desde la raíz hasta una hoja</td>
+<td style="text-align: left;"><code>max_depth</code>, <code>get_depth()</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Poda previa</td>
+<td style="text-align: left;">Limitar el crecimiento del árbol antes del ajuste</td>
+<td style="text-align: left;"><code>max_depth</code>, <code>max_leaf_nodes</code>, <code>min_samples_leaf</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Poda por coste-complejidad</td>
+<td style="text-align: left;">Elige el subárbol del árbol completo que minimiza RSS + <span class="math inline">\(\alpha\)</span>·(número de hojas)</td>
+<td style="text-align: left;"><code>ccp_alpha</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Observaciones por hoja</td>
+<td style="text-align: left;">Mínimo de observaciones en cada hoja</td>
+<td style="text-align: left;"><code>min_samples_leaf</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RMSE</td>
+<td style="text-align: left;">Raíz del error cuadrático medio (en este tema, de log(precio))</td>
+<td style="text-align: left;"><code>root_mean_squared_error</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="glosario-33-bootstrap-y-bosques" class="slide level2 table-slide dense">
+<h2>Glosario (3/3): bootstrap y bosques</h2>
+<p>&nbsp;</p>
+<div data-tbl-colwidths="[24,52,24]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 52%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Concepto</th>
+<th style="text-align: left;">Significado</th>
+<th style="text-align: left;">scikit-learn</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Remuestreo bootstrap</td>
+<td style="text-align: left;">n observaciones elegidas al azar con reemplazamiento entre las n disponibles</td>
+<td style="text-align: left;"><code>bootstrap=True</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bagging</td>
+<td style="text-align: left;">Media de las predicciones de B estimadores ajustados con remuestreos bootstrap (en clasificación, media de las probabilidades o voto)</td>
+<td style="text-align: left;"><code>BaggingRegressor</code>, <code>BaggingClassifier</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Correlación media <span class="math inline">\(\bar\rho\)</span></td>
+<td style="text-align: left;">Media de las correlaciones entre las predicciones de cada par de árboles en un punto fijo, al repetir la obtención del conjunto de entrenamiento</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Random forest</td>
+<td style="text-align: left;">Bagging de árboles en el que cada corte se busca entre m columnas elegidas al azar</td>
+<td style="text-align: left;"><code>RandomForestRegressor</code>, <code>RandomForestClassifier</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">m</td>
+<td style="text-align: left;">Número de columnas que se prueban en cada corte (<code>max_features</code> lo fija como número o como fracción)</td>
+<td style="text-align: left;"><code>max_features</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Número de árboles</td>
+<td style="text-align: left;">Cuántos árboles se promedian</td>
+<td style="text-align: left;"><code>n_estimators</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Observaciones fuera de la bolsa (OOB)</td>
+<td style="text-align: left;">Las que no entran en el remuestreo de un árbol (aproximadamente un 37 %)</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Error OOB</td>
+<td style="text-align: left;">Error de las predicciones que promedian solo los árboles que no usaron cada observación</td>
+<td style="text-align: left;"><code>oob_score=True</code>, <code>oob_prediction_</code> (regresión) u <code>oob_decision_function_</code> (clasificación)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="section" class="slide level2" data-background-color="#447099">
+<h2></h2>
+<div class="closing">
+<div id="d5fcfc9a" class="cell" data-execution_count="12">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="04_arboles_bosques_files/figure-revealjs/cell-13-output-1.png" class="quarto-figure quarto-figure-center" alt="Ilustración de cierre: sobre fondo azul, 25 funciones escalonadas finas en blanco semitransparente y, encima, su media en naranja claro. Una línea vertical discontinua marca un punto fijo del eje horizontal, con los 25 valores que los árboles predicen en él como puntos blancos y el de su media como un punto naranja. Texto: en cada punto, la media de muchos árboles varía menos que cada árbol."></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="04_arboles_bosques_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="04_arboles_bosques_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="04_arboles_bosques_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="04_arboles_bosques_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="04_arboles_bosques_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="04_arboles_bosques_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="04_arboles_bosques_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="04_arboles_bosques_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="04_arboles_bosques_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="04_arboles_bosques_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1920,
+
+        height: 1080,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copiado");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copiado");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>
