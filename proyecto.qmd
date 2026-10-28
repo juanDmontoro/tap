@@ -97,7 +97,7 @@ Cinco hitos previos a la entrega final, ligados al tema en curso. Cada hito se a
 |:--:|:--|:--|:--|:--|
 | 2 | 21–25 sep | **Grupos, pregunta de negocio y datos** | Ficha breve de viabilidad, sin código ni EDA (una página por grupo) | 1. Fundamentos |
 | 5 | 15 oct | **Análisis exploratorio (EDA)** | Cuaderno: descripción de variables, valores faltantes, distribuciones, relación con la respuesta; partición entrenamiento/prueba definida y congelada | 2. Selección y evaluación |
-| 7 | 29 oct | **Modelo base** | *Pipeline* con preprocesado y GLM (con regularización si procede); métrica elegida y justificada; resultado por validación cruzada y en prueba | 4. Ensambles |
+| 7 | 29 oct | **Modelo base** | *Pipeline* con preprocesado y GLM (con regularización si procede); métrica elegida y justificada; resultado por validación cruzada en el conjunto de entrenamiento | 4. Ensambles |
 | 9 | 12 nov | **Ensambles** | Bosques aleatorios, *boosting* y/o *stacking* frente al modelo base en el mismo conjunto de prueba; importancias y valores de Shapley | 4. Ensambles |
 | 11 | 26 nov | **Revisión intermedia** | Tabla de comparación de modelos (ensambles o SVM); borrador de la memoria; registro de IA acumulado. **Retroalimentación del profesor** | 5. SVM · 6. Redes neuronales |
 | 14 | 17 dic | **Entrega final y defensa oral** | Repositorio, memoria y registro de IA completo. Defensa el jueves 17 de diciembre | 7. Predicción y efectos causales |
@@ -185,3 +185,4 @@ $$
 - Las fechas límite concretas de cada hito y el medio de entrega se comunican en el Aula Virtual.
 
 - [Ficha de viabilidad de los datos del hito S2](proyecto2627/hitos/S02_datos.html).
+- [Instrucciones del hito 3: modelo base](proyecto2627/hitos/S06_modelo_base.html).

@@ -5,7 +5,7 @@ toc: true
 toc-title: "Temas"
 ---
 
-Las **presentaciones** se abren en el navegador (pantalla completa con la tecla `F`; índice de diapositivas con `M`). Los **cuadernos** se publican sin resultados: descárgalos para trabajar en tu entorno `tap` o ábrelos en Google Colab. La **versión resuelta**, con soluciones y resultados, se publica una semana después de la sesión. Las entregas evaluables no se publican; su versión resuelta aparece una semana después de la fecha de entrega.
+Las **presentaciones** se abren en el navegador (pantalla completa con la tecla `F`; índice de diapositivas con `M`). Los **cuadernos** se publican sin resultados: descárgalos para trabajar en tu entorno `tap` o ábrelos en Google Colab. La **versión resuelta**, con soluciones y resultados, se publica una semana después de la sesión. Las entregas evaluables se publican sin resolver después de la fecha de entrega y no tienen versión resuelta.
 
 ## Presentación del curso {#presentacion}
 
@@ -54,7 +54,11 @@ Las **presentaciones** se abren en el navegador (pantalla completa con la tecla 
 | Modelos lineales generalizados con regularización | 20 oct (T3) | <a class="tap-btn" href="slides/03/03_glm_familias_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
 | Instrucciones de la entrega E1 | 22 oct | <a class="tap-btn" href="slides/03/entrega_E1/03_entrega_E1_instrucciones_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a><a class="tap-btn" href="slides/03/entrega_E1/tema_03_entrega_E1_instrucciones.pdf" target="_blank"><i class="bi bi-file-earmark-pdf"></i> Hoja PDF</a> |
 
-Entrega **E1** (22 oct): el enunciado se distribuye en el Aula Virtual; la versión resuelta se publicará aquí a partir del 29 oct.
+### Cuadernos
+
+| Cuaderno | Sin resultados | Versión resuelta |
+|:--|:--|:--|
+| Entrega E1: GLM para clasificación (22 oct) | <a class="tap-btn" href="clabs/03/tema_03_entrega_E1.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/03/tema_03_entrega_E1.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | Sin versión resuelta |
 
 ## Tema 4. Ensambles {#tema-4}
 
@@ -63,12 +67,14 @@ Entrega **E1** (22 oct): el enunciado se distribuye en el Aula Virtual; la versi
 | Presentación | Sesión | |
 |:--|:--|:--|
 | Árboles, bagging y random forest | 27 oct (T4) | <a class="tap-btn" href="slides/04/04_arboles_bosques_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+| Instrucciones del hito 3 del proyecto: modelo base | 29 oct (H3) | <a class="tap-btn" href="proyecto2627/hitos/S06_modelo_base.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
 
 ### Cuadernos
 
 | Cuaderno | Sin resultados | Versión resuelta |
 |:--|:--|:--|
-| Introducción a los árboles de decisión (práctica, 29 oct) | <a class="tap-btn" href="clabs/04/tema_04_arboles.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_arboles.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | A partir del 5 nov |
+| Introducción a los árboles de decisión (práctica, 29 oct) | <a class="tap-btn" href="clabs/04/tema_04_arboles.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_arboles.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/04/tema_04_arboles.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
+| Bagging y random forest (práctica, 29 oct) | <a class="tap-btn" href="clabs/04/tema_04_bosques.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_bosques.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | A partir del 5 nov |
 
 ## Entorno y Python {#python}
 
