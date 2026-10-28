@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -21,9 +21,8 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -34,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -58,24 +57,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-3a9777ff9cfa416bd97a54f94a068a98.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-702e08239ac3b5eeb6a3c2a3f2bd3066.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -90,7 +87,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No se han encontrado resultados",
+    "search-no-results-text": "Sin resultados",
     "search-matching-documents-text": "documentos encontrados",
     "search-copy-link-title": "Copiar el enlace en la búsqueda",
     "search-hide-matches-text": "Ocultar resultados adicionales",
@@ -103,7 +100,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Buscar"
   }
 }</script>
-<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -121,7 +118,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+      if (mathElements[i].tagName == "SPAN") {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -139,7 +136,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -220,7 +217,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Nota</span>Versión resuelta
+Versión resuelta
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -297,8 +294,8 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<div id="2e746d1e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:06.137563Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:06.137420Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:07.208713Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:07.208314Z&quot;}}" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<div id="2e746d1e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:06.137563Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:06.137420Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:07.208713Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:07.208314Z&quot;}" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)   <span class="co"># oculta avisos que no afectan a los resultados</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -316,7 +313,7 @@ window.Quarto = {
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>SEMILLA <span class="op">=</span> <span class="dv">42</span>   <span class="co"># fija los procesos aleatorios para que todos obtengamos los mismos resultados</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Librerías cargadas"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Librerías cargadas"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Librerías cargadas</code></pre>
 </div>
@@ -325,12 +322,12 @@ window.Quarto = {
 <section id="cargar-los-datos" class="level3">
 <h3 class="anchored" data-anchor-id="cargar-los-datos">0.2 Cargar los datos</h3>
 <p>El fichero <code>EES_2022.tab</code> está publicado en la web del curso. <code>pd.read_csv()</code> es el equivalente de <code>read.csv()</code> o <code>read_delim()</code> en R, y acepta directamente una dirección web. El fichero del INE usa el tabulador como separador de columnas, por eso se indica <code>sep="\t"</code>. El resultado es un <code>DataFrame</code>, la tabla de datos de <code>pandas</code>.</p>
-<div id="be6e867f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:07.209913Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:07.209732Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:12.697428Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:12.697055Z&quot;}}" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> <span class="st">"https://juandmontoro.github.io/tap/data/EES_2022.tab"</span></span>
+<div id="be6e867f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:07.209913Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:07.209732Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:12.697428Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:12.697055Z&quot;}" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> <span class="st">"https://juandmontoro.github.io/tap/data/EES_2022.tab"</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(URL_DATOS, sep <span class="op">=</span> <span class="st">'</span><span class="ch">\t</span><span class="st">'</span>, low_memory<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> [c.replace(<span class="st">'"'</span>, <span class="st">""</span>).strip() <span class="cf">for</span> c <span class="kw">in</span> df.columns]   <span class="co"># algunos nombres vienen entre comillas</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Filas y columnas:"</span>, df.shape)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Filas y columnas:"</span>, df.shape)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Filas y columnas: (240490, 56)</code></pre>
 </div>
@@ -397,13 +394,13 @@ window.Quarto = {
 </tbody>
 </table>
 <p>Una diferencia que conviene tener presente: en Python los índices empiezan en 0, no en 1.</p>
-<div id="5b12002c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:12.698506Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:12.698398Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:12.708527Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:12.708262Z&quot;}}" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="5b12002c" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:12.698506Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:12.698398Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:12.708527Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:12.708262Z&quot;}" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -432,7 +429,7 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
+<td data-quarto-table-cell-role="th">0</td>
 <td>6</td>
 <td>1</td>
 <td>1</td>
@@ -456,7 +453,7 @@ window.Quarto = {
 <td>17.55</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
+<td data-quarto-table-cell-role="th">1</td>
 <td>6</td>
 <td>2</td>
 <td>1</td>
@@ -480,7 +477,7 @@ window.Quarto = {
 <td>17.55</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
+<td data-quarto-table-cell-role="th">2</td>
 <td>6</td>
 <td>3</td>
 <td>1</td>
@@ -504,7 +501,7 @@ window.Quarto = {
 <td>17.55</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
+<td data-quarto-table-cell-role="th">3</td>
 <td>6</td>
 <td>4</td>
 <td>1</td>
@@ -528,7 +525,7 @@ window.Quarto = {
 <td>17.55</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
+<td data-quarto-table-cell-role="th">4</td>
 <td>6</td>
 <td>5</td>
 <td>1</td>
@@ -938,8 +935,8 @@ window.Quarto = {
 <section id="la-variable-respuesta" class="level3">
 <h3 class="anchored" data-anchor-id="la-variable-respuesta">2.1 La variable respuesta</h3>
 <p>La variable que queremos predecir es <code>RETRINOIN</code>: salario bruto anual, en euros, descontando lo cobrado durante bajas por incapacidad temporal. Es una variable continua y positiva.</p>
-<div id="8c07fdf8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:12.734351Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:12.734245Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:12.743258Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:12.743005Z&quot;}}" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"RETRINOIN"</span>].describe()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="8c07fdf8" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:12.734351Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:12.734245Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:12.743258Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:12.743005Z&quot;}" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"RETRINOIN"</span>].describe()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>count    2.404900e+05
 mean     2.827257e+04
@@ -953,12 +950,12 @@ Name: RETRINOIN, dtype: float64</code></pre>
 </div>
 </div>
 <div id="38c912d5" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">'ESTU'</span>)[<span class="st">'RETRINOIN'</span>].describe()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">'ESTU'</span>)[<span class="st">'RETRINOIN'</span>].describe()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="23">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -985,7 +982,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">1</th>
+<td data-quarto-table-cell-role="th">1</td>
 <td>1227.0</td>
 <td>16347.487498</td>
 <td>9746.335983</td>
@@ -996,7 +993,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <td>100503.44</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">2</th>
+<td data-quarto-table-cell-role="th">2</td>
 <td>33539.0</td>
 <td>18131.061920</td>
 <td>11089.934270</td>
@@ -1007,7 +1004,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <td>252724.90</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">3</th>
+<td data-quarto-table-cell-role="th">3</td>
 <td>56296.0</td>
 <td>19586.979169</td>
 <td>14433.391516</td>
@@ -1018,7 +1015,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <td>966824.95</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">4</th>
+<td data-quarto-table-cell-role="th">4</td>
 <td>48903.0</td>
 <td>23834.088031</td>
 <td>24674.217172</td>
@@ -1029,7 +1026,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <td>2788733.09</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">5</th>
+<td data-quarto-table-cell-role="th">5</td>
 <td>24674.0</td>
 <td>27836.996243</td>
 <td>18350.637755</td>
@@ -1040,7 +1037,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <td>774415.00</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">6</th>
+<td data-quarto-table-cell-role="th">6</td>
 <td>35831.0</td>
 <td>34630.349464</td>
 <td>27274.713130</td>
@@ -1051,7 +1048,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <td>981820.00</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">7</th>
+<td data-quarto-table-cell-role="th">7</td>
 <td>40020.0</td>
 <td>49355.228938</td>
 <td>53821.787134</td>
@@ -1067,8 +1064,8 @@ Name: RETRINOIN, dtype: float64</code></pre>
 </div>
 </div>
 </div>
-<div id="0f0e192f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:12.744274Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:12.744174Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.448910Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.448560Z&quot;}}" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
+<div id="0f0e192f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:12.744274Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:12.744174Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.448910Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.448560Z&quot;}" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># A la izquierda limitamos el eje a 150 000 euros: el máximo (2,8 millones) aplastaría el gráfico</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>sns.histplot(df.loc[df[<span class="st">"RETRINOIN"</span>] <span class="op">&lt;</span> <span class="dv">150_000</span>, <span class="st">"RETRINOIN"</span>], bins<span class="op">=</span><span class="dv">80</span>, ax<span class="op">=</span>ejes[<span class="dv">0</span>], color<span class="op">=</span><span class="st">"#2a78d6"</span>)</span>
@@ -1081,7 +1078,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>ejes[<span class="dv">1</span>].set_xlabel(<span class="st">"euros (escala log)"</span>)</span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>ejes[<span class="dv">1</span>].set_ylabel(<span class="st">"número de trabajadores"</span>)</span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1100,15 +1097,15 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <li>Recortamos el 1 por ciento de salarios más altos. Son casos extremos que dominan el error cuadrático y dificultan el aprendizaje. Es una decisión discutible, pero es transparente y reproducible.</li>
 </ol>
 <p>Además, para que las celdas se ejecuten con rapidez, trabajaremos con una muestra aleatoria de 10 000 trabajadores. El fichero completo tiene 240 490, y puede usarse entero si se dispone de tiempo.</p>
-<div id="133722d9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.450287Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.450166Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.480671Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.480310Z&quot;}}" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tope <span class="op">=</span> df[<span class="st">"RETRINOIN"</span>].quantile(<span class="fl">0.99</span>)</span>
+<div id="133722d9" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.450287Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.450166Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.480671Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.480310Z&quot;}" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tope <span class="op">=</span> df[<span class="st">"RETRINOIN"</span>].quantile(<span class="fl">0.99</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>limpio <span class="op">=</span> df[(df[<span class="st">"RETRINOIN"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"RETRINOIN"</span>] <span class="op">&lt;=</span> tope)]</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tope (percentil 99): </span><span class="sc">{</span>tope<span class="sc">:,.0f}</span><span class="ss"> euros"</span>)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Filas tras la limpieza: </span><span class="sc">{</span><span class="bu">len</span>(limpio)<span class="sc">:,}</span><span class="ss"> (descartadas </span><span class="sc">{</span><span class="bu">len</span>(df) <span class="op">-</span> <span class="bu">len</span>(limpio)<span class="sc">:,}</span><span class="ss">)"</span>)</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># sample() extrae filas al azar; random_state fija la semilla, como set.seed() en R</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> limpio.sample(n<span class="op">=</span><span class="dv">10000</span>, random_state<span class="op">=</span>SEMILLA).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Muestra de trabajo:"</span>, datos.shape)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Muestra de trabajo:"</span>, datos.shape)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Tope (percentil 99): 113,801 euros
 Filas tras la limpieza: 237,353 (descartadas 3,137)
@@ -1119,14 +1116,14 @@ Muestra de trabajo: (10000, 56)</code></pre>
 <section id="salario-por-sexo" class="level3">
 <h3 class="anchored" data-anchor-id="salario-por-sexo">2.3 Salario por sexo</h3>
 <p>Un primer cruce descriptivo. En la encuesta, <code>SEXO</code> toma el valor 1 para hombres y 6 para mujeres. Con <code>map()</code> sustituimos los códigos por etiquetas legibles (en R se haría con <code>factor(..., labels = ...)</code>), y con <code>groupby()</code> calculamos resúmenes por grupo (como <code>group_by() + summarise()</code> de <code>dplyr</code>).</p>
-<div id="9e9754a1" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.481830Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.481717Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.487922Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.487638Z&quot;}}" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>datos[<span class="st">"SEXO_etq"</span>] <span class="op">=</span> datos[<span class="st">"SEXO"</span>].<span class="bu">map</span>({<span class="dv">1</span>: <span class="st">"Hombre"</span>, <span class="dv">6</span>: <span class="st">"Mujer"</span>})</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>datos.groupby(<span class="st">"SEXO_etq"</span>)[<span class="st">"RETRINOIN"</span>].agg([<span class="st">"count"</span>, <span class="st">"mean"</span>, <span class="st">"median"</span>]).<span class="bu">round</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="9e9754a1" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.481830Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.481717Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.487922Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.487638Z&quot;}" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>datos[<span class="st">"SEXO_etq"</span>] <span class="op">=</span> datos[<span class="st">"SEXO"</span>].<span class="bu">map</span>({<span class="dv">1</span>: <span class="st">"Hombre"</span>, <span class="dv">6</span>: <span class="st">"Mujer"</span>})</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>datos.groupby(<span class="st">"SEXO_etq"</span>)[<span class="st">"RETRINOIN"</span>].agg([<span class="st">"count"</span>, <span class="st">"mean"</span>, <span class="st">"median"</span>]).<span class="bu">round</span>(<span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1143,13 +1140,13 @@ Muestra de trabajo: (10000, 56)</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Hombre</th>
+<td data-quarto-table-cell-role="th">Hombre</td>
 <td>5490</td>
 <td>28971.0</td>
 <td>24360.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Mujer</th>
+<td data-quarto-table-cell-role="th">Mujer</td>
 <td>4510</td>
 <td>24259.0</td>
 <td>19854.0</td>
@@ -1160,13 +1157,13 @@ Muestra de trabajo: (10000, 56)</code></pre>
 </div>
 </div>
 </div>
-<div id="cc7378ce" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.488940Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.488841Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.567638Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.567311Z&quot;}}" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fig, eje <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<div id="cc7378ce" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.488940Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.488841Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.567638Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.567311Z&quot;}" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fig, eje <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>datos, x<span class="op">=</span><span class="st">"SEXO_etq"</span>, y<span class="op">=</span><span class="st">"RETRINOIN"</span>, ax<span class="op">=</span>eje, showfliers<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">"#9ec5f4"</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>eje.set_title(<span class="st">"Salario anual por sexo"</span>)</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>eje.set_xlabel(<span class="st">""</span>)</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>eje.set_ylabel(<span class="st">"euros"</span>)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1186,13 +1183,13 @@ Muestra de trabajo: (10000, 56)</code></pre>
 <li>Escribe en un comentario qué relación observas entre estudios y salario.</li>
 </ol>
 <p><strong>Solución.</strong> Seguimos paso a paso el mismo esquema que en la sección 2.3 con <code>SEXO</code>: primero etiquetas con <code>map()</code>, después resúmenes con <code>groupby()</code> y por último el diagrama de caja.</p>
-<div id="bb85722e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.568841Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.568732Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.572356Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.572032Z&quot;}}" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Etiquetas legibles para el tipo de jornada, igual que hicimos con SEXO.</span></span>
+<div id="bb85722e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.568841Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.568732Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.572356Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.572032Z&quot;}" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Etiquetas legibles para el tipo de jornada, igual que hicimos con SEXO.</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    map() recibe un diccionario {código: etiqueta} y sustituye cada código por su etiqueta.</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>datos[<span class="st">"JORNADA_etq"</span>] <span class="op">=</span> datos[<span class="st">"TIPOJOR"</span>].<span class="bu">map</span>({<span class="dv">1</span>: <span class="st">"Completa"</span>, <span class="dv">2</span>: <span class="st">"Parcial"</span>})</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Comprobamos que no ha quedado ningún código sin etiqueta</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(datos[<span class="st">"JORNADA_etq"</span>].value_counts())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(datos[<span class="st">"JORNADA_etq"</span>].value_counts())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>JORNADA_etq
 Completa    8212
@@ -1200,16 +1197,16 @@ Parcial     1788
 Name: count, dtype: int64</code></pre>
 </div>
 </div>
-<div id="599441d7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.573329Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.573224Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.578591Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.578213Z&quot;}}" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Salario medio y mediano por jornada.</span></span>
+<div id="599441d7" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.573329Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.573224Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.578591Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.578213Z&quot;}" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Salario medio y mediano por jornada.</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    groupby() agrupa las filas por jornada; agg() calcula varios resúmenes de una vez.</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>resumen_jornada <span class="op">=</span> datos.groupby(<span class="st">"JORNADA_etq"</span>)[<span class="st">"RETRINOIN"</span>].agg([<span class="st">"count"</span>, <span class="st">"mean"</span>, <span class="st">"median"</span>]).<span class="bu">round</span>(<span class="dv">0</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>resumen_jornada</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>resumen_jornada</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1226,13 +1223,13 @@ Name: count, dtype: int64</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Completa</th>
+<td data-quarto-table-cell-role="th">Completa</td>
 <td>8212</td>
 <td>30252.0</td>
 <td>25648.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Parcial</th>
+<td data-quarto-table-cell-role="th">Parcial</td>
 <td>1788</td>
 <td>11202.0</td>
 <td>9881.0</td>
@@ -1243,15 +1240,15 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="aec8fa44" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.579576Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.579470Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.653611Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.653293Z&quot;}}" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Diagrama de caja del salario por jornada.</span></span>
+<div id="aec8fa44" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.579576Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.579470Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.653611Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.653293Z&quot;}" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Diagrama de caja del salario por jornada.</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    showfliers=False oculta los puntos extremos para que la caja se lea mejor.</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>fig, eje <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>datos, x<span class="op">=</span><span class="st">"JORNADA_etq"</span>, y<span class="op">=</span><span class="st">"RETRINOIN"</span>, ax<span class="op">=</span>eje, showfliers<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">"#9ec5f4"</span>)</span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>eje.set_title(<span class="st">"Salario anual por tipo de jornada"</span>)</span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>eje.set_xlabel(<span class="st">""</span>)</span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>eje.set_ylabel(<span class="st">"euros"</span>)</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1260,8 +1257,8 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<div id="2f72f14a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.654771Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.654665Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.799555Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.799221Z&quot;}}" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Diagrama de caja por nivel de estudios.</span></span>
+<div id="2f72f14a" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.654771Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.654665Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.799555Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.799221Z&quot;}" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Diagrama de caja por nivel de estudios.</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    No hace falta crear etiquetas: los códigos 1 a 7 ya están ordenados de menor a mayor nivel,</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    y seaborn los coloca en el eje en ese orden.</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>fig, eje <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
@@ -1272,7 +1269,7 @@ Name: count, dtype: int64</code></pre>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Para apoyar la lectura con números, la mediana por nivel</span></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>datos.groupby(<span class="st">"ESTU"</span>)[<span class="st">"RETRINOIN"</span>].median().<span class="bu">round</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>datos.groupby(<span class="st">"ESTU"</span>)[<span class="st">"RETRINOIN"</span>].median().<span class="bu">round</span>(<span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1292,8 +1289,8 @@ Name: count, dtype: int64</code></pre>
 Name: RETRINOIN, dtype: float64</code></pre>
 </div>
 </div>
-<div id="0835cc5e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.800657Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.800553Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.802194Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.801948Z&quot;}}" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Lectura</span></span>
+<div id="0835cc5e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.800657Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.800553Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.802194Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.801948Z&quot;}" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Lectura</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Jornada: la jornada parcial tiene un salario anual muy inferior al de la completa (menos de la</span></span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># mitad en mediana). Parte de la diferencia es mecánica: se trabajan menos horas al año. Por eso</span></span>
@@ -1301,7 +1298,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Estudios: la mediana del salario sube con el nivel de estudios, y el salto más grande está en los</span></span>
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># dos niveles universitarios (6 y 7). Además la caja se ensancha al subir el nivel: a más estudios,</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co"># más salario, pero también más dispersión entre trabajadores del mismo nivel.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co"># más salario, pero también más dispersión entre trabajadores del mismo nivel.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1352,8 +1349,8 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <section id="predictores-que-sí-usamos" class="level3">
 <h3 class="anchored" data-anchor-id="predictores-que-sí-usamos">Predictores que sí usamos</h3>
 <p>Dos numéricas: <code>ANOANTI</code> (antigüedad en años) y <code>JAP</code> (horas de jornada pactada). El resto son categóricas, aunque estén codificadas con números.</p>
-<div id="e9bed64b" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.803191Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.803095Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.805815Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.805537Z&quot;}}" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>RESPUESTA <span class="op">=</span> <span class="st">"RETRINOIN"</span></span>
+<div id="e9bed64b" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.803191Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.803095Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.805815Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.805537Z&quot;}" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>RESPUESTA <span class="op">=</span> <span class="st">"RETRINOIN"</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Componentes del salario o variables derivadas de él: quedan fuera</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>FUGA_SALARIAL <span class="op">=</span> [<span class="st">"SALBASE"</span>, <span class="st">"COMSAL"</span>, <span class="st">"COMSALTT"</span>, <span class="st">"EXTRAORM"</span>, <span class="st">"PHEXTRA"</span>, <span class="st">"BASE"</span>, <span class="st">"GEXTRA"</span>,</span>
@@ -1368,7 +1365,7 @@ Name: RETRINOIN, dtype: float64</code></pre>
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>PREDICTORES <span class="op">=</span> PRED_CATEGORICOS <span class="op">+</span> PRED_NUMERICOS</span>
 <span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predictores categóricos:"</span>, <span class="bu">len</span>(PRED_CATEGORICOS))</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predictores numéricos:  "</span>, <span class="bu">len</span>(PRED_NUMERICOS))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predictores numéricos:  "</span>, <span class="bu">len</span>(PRED_NUMERICOS))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Predictores categóricos: 14
 Predictores numéricos:   2</code></pre>
@@ -1378,11 +1375,11 @@ Predictores numéricos:   2</code></pre>
 <section id="comprobación-empírica-de-la-fuga" class="level3">
 <h3 class="anchored" data-anchor-id="comprobación-empírica-de-la-fuga">3.1 Comprobación empírica de la fuga</h3>
 <p>Comparemos la correlación con el salario de dos predictores legítimos y de tres componentes salariales.</p>
-<div id="15d4bbf7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.806813Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.806718Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.810188Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.809893Z&quot;}}" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> v <span class="kw">in</span> [<span class="st">"ANOANTI"</span>, <span class="st">"JAP"</span>, <span class="st">"SALBASE"</span>, <span class="st">"COMSAL"</span>, <span class="st">"GEXTRA"</span>]:</span>
+<div id="15d4bbf7" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.806813Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.806718Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.810188Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.809893Z&quot;}" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> v <span class="kw">in</span> [<span class="st">"ANOANTI"</span>, <span class="st">"JAP"</span>, <span class="st">"SALBASE"</span>, <span class="st">"COMSAL"</span>, <span class="st">"GEXTRA"</span>]:</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> datos[v].corr(datos[<span class="st">"RETRINOIN"</span>])</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    grupo <span class="op">=</span> <span class="st">"componente del salario"</span> <span class="cf">if</span> v <span class="kw">in</span> FUGA_SALARIAL <span class="cf">else</span> <span class="st">"predictor legítimo"</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"corr(RETRINOIN, </span><span class="sc">{</span>v<span class="sc">:8s}</span><span class="ss">) = </span><span class="sc">{</span>r<span class="sc">:5.2f}</span><span class="ss">   </span><span class="sc">{</span>grupo<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"corr(RETRINOIN, </span><span class="sc">{</span>v<span class="sc">:8s}</span><span class="ss">) = </span><span class="sc">{</span>r<span class="sc">:5.2f}</span><span class="ss">   </span><span class="sc">{</span>grupo<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>corr(RETRINOIN, ANOANTI ) =  0.37   predictor legítimo
 corr(RETRINOIN, JAP     ) =  0.31   predictor legítimo
@@ -1397,8 +1394,8 @@ corr(RETRINOIN, GEXTRA  ) =  0.60   componente del salario</code></pre>
 <h3 class="anchored" data-anchor-id="construir-la-matriz-de-predictores-y-la-respuesta">3.2 Construir la matriz de predictores y la respuesta</h3>
 <p>En R, <code>lm()</code> recibe una fórmula y un <code>data.frame</code>, y se encarga por dentro de convertir los factores en variables indicadoras. En <code>scikit-learn</code> no hay fórmulas: el modelo recibe por un lado una tabla <code>X</code> con los predictores y por otro un vector <code>y</code> con la respuesta, y la conversión de categóricas la hacemos nosotros en el preprocesamiento (sección 5).</p>
 <p>Convertimos ahora las columnas categóricas al tipo <code>category</code> de <code>pandas</code>, que es el análogo de <code>factor</code> en R.</p>
-<div id="0e8600a0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.811191Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.811096Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.819128Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.818862Z&quot;}}" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> datos[PREDICTORES].copy()</span>
+<div id="0e8600a0" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.811191Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.811096Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.819128Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.818862Z&quot;}" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> datos[PREDICTORES].copy()</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> datos[RESPUESTA]</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> PRED_CATEGORICOS:</span>
@@ -1407,7 +1404,7 @@ corr(RETRINOIN, GEXTRA  ) =  0.60   componente del salario</code></pre>
 <span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Comprobación: ningún componente salarial se ha colado entre los predictores</span></span>
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="kw">not</span> <span class="bu">set</span>(FUGA_SALARIAL) <span class="op">&amp;</span> <span class="bu">set</span>(X.columns)</span>
 <span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"X:"</span>, X.shape, <span class="st">"  y:"</span>, y.shape)</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>X.dtypes</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>X.dtypes</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>X: (10000, 16)   y: (10000,)</code></pre>
 </div>
@@ -1442,9 +1439,9 @@ dtype: object</code></pre>
 </ul>
 <p>El orden importa. Cualquier cálculo que use los datos (medias para escalar, categorías presentes, imputaciones) debe hacerse solo con el conjunto de entrenamiento. Si se hiciera con todos los datos, información del conjunto de prueba se filtraría al modelo y la evaluación sería optimista. Es otra forma de fuga de información, más sutil que la de la sección 3.</p>
 <p><code>train_test_split()</code> devuelve cuatro objetos, en este orden: predictores de entrenamiento, predictores de prueba, respuesta de entrenamiento, respuesta de prueba.</p>
-<div id="d87c71ea" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.820141Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.820045Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.823611Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.823307Z&quot;}}" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.25</span>, random_state<span class="op">=</span>SEMILLA)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento:"</span>, X_train.shape, <span class="st">"  Prueba:"</span>, X_test.shape)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="d87c71ea" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.820141Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.820045Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.823611Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.823307Z&quot;}" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.25</span>, random_state<span class="op">=</span>SEMILLA)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento:"</span>, X_train.shape, <span class="st">"  Prueba:"</span>, X_test.shape)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Entrenamiento: (7500, 16)   Prueba: (2500, 16)</code></pre>
 </div>
@@ -1468,8 +1465,8 @@ dtype: object</code></pre>
 </ul>
 <p>Los modelos siguen el mismo esquema: <code>fit(X_train, y_train)</code> ajusta y <code>predict(X)</code> predice. Esta uniformidad es la razón por la que en Python se puede cambiar de modelo modificando una línea.</p>
 <p>Veámoslo con un escalador sobre las dos variables numéricas.</p>
-<div id="e2eb34d2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.824440Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.824346Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.834538Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.834254Z&quot;}}" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>escalador <span class="op">=</span> StandardScaler()</span>
+<div id="e2eb34d2" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.824440Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.824346Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.834538Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.834254Z&quot;}" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>escalador <span class="op">=</span> StandardScaler()</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>escalador.fit(X_train[PRED_NUMERICOS])            <span class="co"># aprende medias y desviaciones en entrenamiento</span></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Medias aprendidas:      "</span>, escalador.mean_.<span class="bu">round</span>(<span class="dv">2</span>))</span>
@@ -1478,7 +1475,7 @@ dtype: object</code></pre>
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Aplica esas mismas medias y desviaciones al conjunto de prueba</span></span>
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>X_test_num_escalado <span class="op">=</span> escalador.transform(X_test[PRED_NUMERICOS])</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Primeras filas de prueba, escaladas:"</span>)</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X_test_num_escalado[:<span class="dv">3</span>].<span class="bu">round</span>(<span class="dv">2</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X_test_num_escalado[:<span class="dv">3</span>].<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Medias aprendidas:       [  10.93 1606.79]
 Desviaciones aprendidas: [ 10.34 336.53]
@@ -1490,14 +1487,14 @@ Primeras filas de prueba, escaladas:
 </div>
 </div>
 <p>Y ahora un codificador <em>one-hot</em> sobre una categórica. Fíjate en que cada categoría se convierte en una columna.</p>
-<div id="33bf9952" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.835574Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.835472Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.843842Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.843571Z&quot;}}" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>codificador <span class="op">=</span> OneHotEncoder(sparse_output<span class="op">=</span><span class="va">False</span>)</span>
+<div id="33bf9952" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.835574Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.835472Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.843842Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.843571Z&quot;}" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>codificador <span class="op">=</span> OneHotEncoder(sparse_output<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>codificador.fit(X_train[[<span class="st">"TIPOJOR"</span>]])</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Categorías vistas en entrenamiento:"</span>, codificador.categories_[<span class="dv">0</span>])</span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Nombres de las columnas creadas:  "</span>, codificador.get_feature_names_out())</span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Primeras filas de prueba, codificadas:"</span>)</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(codificador.transform(X_test[[<span class="st">"TIPOJOR"</span>]])[:<span class="dv">5</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(codificador.transform(X_test[[<span class="st">"TIPOJOR"</span>]])[:<span class="dv">5</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Categorías vistas en entrenamiento: [1 2]
 Nombres de las columnas creadas:   ['TIPOJOR_1' 'TIPOJOR_2']
@@ -1519,8 +1516,8 @@ Primeras filas de prueba, codificadas:
 <li><code>handle_unknown="ignore"</code>: si en prueba aparece una categoría que no estaba en entrenamiento, se codifica como todo ceros en lugar de dar error.</li>
 <li><code>min_frequency=0.01</code>: las categorías que aparecen en menos del 1 por ciento de las filas se agrupan en una sola columna “infrecuente”. Evita columnas casi vacías en variables con muchos niveles, como el sector (<code>CNACE</code>).</li>
 </ul>
-<div id="5f8daafd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.844880Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.844781Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.880940Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.880550Z&quot;}}" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>preprocesador <span class="op">=</span> ColumnTransformer(</span>
+<div id="5f8daafd" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.844880Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.844781Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.880940Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.880550Z&quot;}" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>preprocesador <span class="op">=</span> ColumnTransformer(</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"numericas"</span>, StandardScaler(), PRED_NUMERICOS),</span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"categoricas"</span>, OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">"ignore"</span>, min_frequency<span class="op">=</span><span class="fl">0.01</span>, sparse_output<span class="op">=</span><span class="va">False</span>),</span>
@@ -1535,7 +1532,7 @@ Primeras filas de prueba, codificadas:
 <span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Antes del preprocesamiento:"</span>, X_train.shape)</span>
 <span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Después:                   "</span>, X_train_prep.shape)</span>
 <span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Algunas columnas resultantes:"</span>)</span>
-<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(preprocesador.get_feature_names_out()[:<span class="dv">12</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(preprocesador.get_feature_names_out()[:<span class="dv">12</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Antes del preprocesamiento: (7500, 16)
 Después:                    (7500, 88)
@@ -1554,12 +1551,12 @@ Algunas columnas resultantes:
 <h3 class="anchored" data-anchor-id="pipeline-encadenar-preprocesamiento-y-modelo">5.3 <code>Pipeline</code>: encadenar preprocesamiento y modelo</h3>
 <p>Un <code>Pipeline</code> es una secuencia de pasos con nombre, donde cada paso recibe la salida del anterior. El último paso es el modelo. La ventaja es que el objeto completo se comporta como un único modelo: <code>fit(X_train, y_train)</code> ajusta el preprocesador con los datos de entrenamiento y a continuación el modelo con los datos ya transformados; <code>predict(X_test)</code> aplica el preprocesador (sin volver a ajustarlo) y luego predice.</p>
 <p>Con esto, la regla “el preprocesamiento se aprende solo en entrenamiento” queda garantizada por construcción y no depende de que nos acordemos.</p>
-<div id="8dabe62f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.881909Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.881805Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.901021Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.900706Z&quot;}}" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>modelo_lineal <span class="op">=</span> Pipeline(steps<span class="op">=</span>[</span>
+<div id="8dabe62f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.881909Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.881805Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.901021Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.900706Z&quot;}" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>modelo_lineal <span class="op">=</span> Pipeline(steps<span class="op">=</span>[</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocesado"</span>, preprocesador),</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"regresion"</span>, LinearRegression()),</span>
 <span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>modelo_lineal</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>modelo_lineal</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
 <style>.sk-global {
   /* Definition of color scheme common for light and dark mode */
@@ -2284,7 +2281,7 @@ a.param-doc-link::before {
             <details>
                 <summary>Parameters</summary>
                 
-<table class="parameters-table caption-top table table-sm table-striped small">
+<table class="parameters-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <colgroup>
 <col style="width: 33%">
 <col style="width: 33%">
@@ -2361,7 +2358,7 @@ is completed.</span></a></td>
             <details>
                 <summary>Parameters</summary>
                 
-<table class="parameters-table caption-top table table-sm table-striped small">
+<table class="parameters-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <colgroup>
 <col style="width: 33%">
 <col style="width: 33%">
@@ -2504,7 +2501,7 @@ from the standard library for more info.<br>
             <details>
                 <summary>Parameters</summary>
                 
-<table class="parameters-table caption-top table table-sm table-striped small">
+<table class="parameters-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <colgroup>
 <col style="width: 33%">
 <col style="width: 33%">
@@ -2556,7 +2553,7 @@ unit standard deviation).</span></a></td>
             <details>
                 <summary>Parameters</summary>
                 
-<table class="parameters-table caption-top table table-sm table-striped small">
+<table class="parameters-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <colgroup>
 <col style="width: 33%">
 <col style="width: 33%">
@@ -2740,7 +2737,7 @@ feature names `X_1, X_6, X_7`.<br>
             <details>
                 <summary>Parameters</summary>
                 
-<table class="parameters-table caption-top table table-sm table-striped small">
+<table class="parameters-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <colgroup>
 <col style="width: 33%">
 <col style="width: 33%">
@@ -2999,9 +2996,9 @@ forceTheme('sk-container-id-1');</script>
 <p>El modelo es el que conocéis: la media del salario se expresa como una combinación lineal de los predictores,</p>
 <p><span class="math display">\[\mathbb{E}[\text{salario} \mid X] = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p.\]</span></p>
 <p>En R escribiríamos <code>lm(RETRINOIN ~ ., data = train)</code>. Aquí ajustamos el <code>Pipeline</code> completo con una llamada a <code>fit</code>.</p>
-<div id="ae1c912a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.902227Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.902120Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.943379Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.940002Z&quot;}}" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>modelo_lineal.fit(X_train, y_train)</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Modelo ajustado"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="ae1c912a" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.902227Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.902120Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.943379Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.940002Z&quot;}" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>modelo_lineal.fit(X_train, y_train)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Modelo ajustado"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Modelo ajustado</code></pre>
 </div>
@@ -3014,12 +3011,12 @@ forceTheme('sk-container-id-1');</script>
 <li><strong>RMSE</strong> (raíz del error cuadrático medio): error típico, en euros. Penaliza mucho los errores grandes.</li>
 <li><strong>MAE</strong> (error absoluto medio): error medio en valor absoluto, en euros. Más fácil de interpretar y menos sensible a casos extremos.</li>
 </ul>
-<div id="f58e989a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.947821Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.947679Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.967366Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.962959Z&quot;}}" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>pred_test <span class="op">=</span> modelo_lineal.predict(X_test)</span>
+<div id="f58e989a" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.947821Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.947679Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:13.967366Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:13.962959Z&quot;}" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>pred_test <span class="op">=</span> modelo_lineal.predict(X_test)</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"R2   : </span><span class="sc">{</span>r2_score(y_test, pred_test)<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RMSE : </span><span class="sc">{</span>root_mean_squared_error(y_test, pred_test)<span class="sc">:,.0f}</span><span class="ss"> euros"</span>)</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"MAE  : </span><span class="sc">{</span>mean_absolute_error(y_test, pred_test)<span class="sc">:,.0f}</span><span class="ss"> euros"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"MAE  : </span><span class="sc">{</span>mean_absolute_error(y_test, pred_test)<span class="sc">:,.0f}</span><span class="ss"> euros"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R2   : 0.576
 RMSE : 11,697 euros
@@ -3030,8 +3027,8 @@ MAE  : 8,240 euros</code></pre>
 <section id="diagnóstico-gráfico" class="level3">
 <h3 class="anchored" data-anchor-id="diagnóstico-gráfico">6.2 Diagnóstico gráfico</h3>
 <p>Dos gráficos habituales: predicción frente a valor real, y residuos (real menos predicción) frente a predicción.</p>
-<div id="853a23ca" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.970910Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.970723Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.138212Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.137892Z&quot;}}" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>residuos <span class="op">=</span> y_test <span class="op">-</span> pred_test</span>
+<div id="853a23ca" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:13.970910Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:13.970723Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.138212Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.137892Z&quot;}" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>residuos <span class="op">=</span> y_test <span class="op">-</span> pred_test</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="fl">4.5</span>))</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -3051,7 +3048,7 @@ MAE  : 8,240 euros</code></pre>
 <span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
 <span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predicciones negativas en prueba:"</span>, <span class="bu">int</span>((pred_test <span class="op">&lt;</span> <span class="dv">0</span>).<span class="bu">sum</span>()))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predicciones negativas en prueba:"</span>, <span class="bu">int</span>((pred_test <span class="op">&lt;</span> <span class="dv">0</span>).<span class="bu">sum</span>()))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -3069,8 +3066,8 @@ MAE  : 8,240 euros</code></pre>
 <h3 class="anchored" data-anchor-id="los-coeficientes">6.3 Los coeficientes</h3>
 <p>En R, <code>summary(lm)</code> muestra los coeficientes con sus errores estándar y contrastes. <code>LinearRegression</code> de <code>scikit-learn</code> está orientado a predecir, no a hacer inferencia: proporciona los coeficientes (<code>coef_</code>) y la constante (<code>intercept_</code>), pero no errores estándar ni p-valores. Para eso existe la librería <code>statsmodels</code>, que no usaremos en este cuaderno.</p>
 <p>Extraemos los coeficientes del paso <code>regresion</code> del <code>Pipeline</code> y los emparejamos con los nombres de columna que genera el preprocesador.</p>
-<div id="823da07b" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.139429Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.139311Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.143805Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.143423Z&quot;}}" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>nombres <span class="op">=</span> modelo_lineal.named_steps[<span class="st">"preprocesado"</span>].get_feature_names_out()</span>
+<div id="823da07b" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.139429Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.139311Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.143805Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.143423Z&quot;}" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>nombres <span class="op">=</span> modelo_lineal.named_steps[<span class="st">"preprocesado"</span>].get_feature_names_out()</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>coeficientes <span class="op">=</span> pd.Series(modelo_lineal.named_steps[<span class="st">"regresion"</span>].coef_, index<span class="op">=</span>nombres)</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Constante: </span><span class="sc">{</span>modelo_lineal<span class="sc">.</span>named_steps[<span class="st">'regresion'</span>]<span class="sc">.</span>intercept_<span class="sc">:,.0f}</span><span class="ss"> euros</span><span class="ch">\n</span><span class="ss">"</span>)</span>
@@ -3078,7 +3075,7 @@ MAE  : 8,240 euros</code></pre>
 <span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coeficientes.<span class="bu">filter</span>(like<span class="op">=</span><span class="st">"numericas"</span>).<span class="bu">round</span>(<span class="dv">0</span>).to_string())</span>
 <span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Coeficientes de mayor valor absoluto:"</span>)</span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coeficientes.reindex(coeficientes.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index).head(<span class="dv">10</span>).<span class="bu">round</span>(<span class="dv">0</span>).to_string())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coeficientes.reindex(coeficientes.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index).head(<span class="dv">10</span>).<span class="bu">round</span>(<span class="dv">0</span>).to_string())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Constante: 26,838 euros
 
@@ -3111,17 +3108,17 @@ categoricas__CNO1_M0                    -4734.0</code></pre>
 <li>Compara el R² en prueba con el del modelo legítimo. Explica en un comentario por qué el aumento es engañoso.</li>
 </ol>
 <p><strong>Solución.</strong> Repetimos exactamente el flujo de las secciones 3.2, 4 y 5 con una única diferencia: <code>SALBASE</code> entra en la lista de predictores numéricos. Como usamos la misma semilla y el mismo número de filas, la partición coincide fila a fila con la del modelo legítimo, así que los dos R² se calculan sobre las mismas personas y son comparables.</p>
-<div id="4a58ca78" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.144872Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.144772Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.146738Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.146450Z&quot;}}" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Lista de predictores numéricos "con fuga": los legítimos más el salario base mensual</span></span>
+<div id="4a58ca78" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.144872Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.144772Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.146738Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.146450Z&quot;}" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Lista de predictores numéricos "con fuga": los legítimos más el salario base mensual</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>PRED_NUMERICOS_FUGA <span class="op">=</span> PRED_NUMERICOS <span class="op">+</span> [<span class="st">"SALBASE"</span>]</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>PREDICTORES_FUGA <span class="op">=</span> PRED_CATEGORICOS <span class="op">+</span> PRED_NUMERICOS_FUGA</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predictores numéricos con fuga:"</span>, PRED_NUMERICOS_FUGA)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predictores numéricos con fuga:"</span>, PRED_NUMERICOS_FUGA)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Predictores numéricos con fuga: ['ANOANTI', 'JAP', 'SALBASE']</code></pre>
 </div>
 </div>
-<div id="6e34f26d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.147723Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.147622Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.156242Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.155957Z&quot;}}" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Matriz de predictores y partición.</span></span>
+<div id="6e34f26d" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.147723Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.147622Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.156242Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.155957Z&quot;}" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Matriz de predictores y partición.</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    La respuesta y es la misma de antes; solo cambia X.</span></span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>X_fuga <span class="op">=</span> datos[PREDICTORES_FUGA].copy()</span>
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> PRED_CATEGORICOS:</span>
@@ -3134,13 +3131,13 @@ categoricas__CNO1_M0                    -4734.0</code></pre>
 <span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Misma semilla y mismas filas: la partición es idéntica a la de la sección 4.</span></span>
 <span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a><span class="co"># assert detiene la ejecución con un error si la condición no se cumple; aquí sirve de comprobación.</span></span>
 <span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (y_fuga_test.index <span class="op">==</span> y_test.index).<span class="bu">all</span>()</span>
-<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento:"</span>, X_fuga_train.shape, <span class="st">"  Prueba:"</span>, X_fuga_test.shape)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento:"</span>, X_fuga_train.shape, <span class="st">"  Prueba:"</span>, X_fuga_test.shape)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Entrenamiento: (7500, 17)   Prueba: (2500, 17)</code></pre>
 </div>
 </div>
-<div id="6cac01a7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.157242Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.157139Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.197360Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.196002Z&quot;}}" data-execution_count="29">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Preprocesador y Pipeline análogos a los de la sección 5.</span></span>
+<div id="6cac01a7" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.157242Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.157139Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.197360Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.196002Z&quot;}" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Preprocesador y Pipeline análogos a los de la sección 5.</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    Lo único que cambia respecto a `preprocesador` es la lista de columnas numéricas.</span></span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>preprocesador_fuga <span class="op">=</span> ColumnTransformer(</span>
 <span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
@@ -3157,13 +3154,13 @@ categoricas__CNO1_M0                    -4734.0</code></pre>
 <span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>])</span>
 <span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>modelo_fuga.fit(X_fuga_train, y_fuga_train)</span>
-<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Modelo con fuga ajustado"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Modelo con fuga ajustado"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Modelo con fuga ajustado</code></pre>
 </div>
 </div>
-<div id="602e7247" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.199990Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.199876Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.215462Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.214975Z&quot;}}" data-execution_count="30">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Comparación del R² en prueba</span></span>
+<div id="602e7247" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.199990Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.199876Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.215462Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.214975Z&quot;}" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Comparación del R² en prueba</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>pred_fuga <span class="op">=</span> modelo_fuga.predict(X_fuga_test)</span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>r2_legitimo <span class="op">=</span> r2_score(y_test, pred_test)        <span class="co"># pred_test viene del modelo de la sección 6</span></span>
@@ -3177,7 +3174,7 @@ categoricas__CNO1_M0                    -4734.0</code></pre>
 <span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>nombres_fuga <span class="op">=</span> modelo_fuga.named_steps[<span class="st">"preprocesado"</span>].get_feature_names_out()</span>
 <span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>coef_fuga <span class="op">=</span> pd.Series(modelo_fuga.named_steps[<span class="st">"regresion"</span>].coef_, index<span class="op">=</span>nombres_fuga)</span>
 <span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Coeficientes de las numéricas (escaladas):"</span>)</span>
-<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coef_fuga.<span class="bu">filter</span>(like<span class="op">=</span><span class="st">"numericas"</span>).<span class="bu">round</span>(<span class="dv">0</span>).to_string())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coef_fuga.<span class="bu">filter</span>(like<span class="op">=</span><span class="st">"numericas"</span>).<span class="bu">round</span>(<span class="dv">0</span>).to_string())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R2 en prueba, modelo legítimo      : 0.576
 R2 en prueba, modelo con SALBASE   : 0.640
@@ -3189,8 +3186,8 @@ numericas__JAP        1293.0
 numericas__SALBASE    5623.0</code></pre>
 </div>
 </div>
-<div id="747b4e4f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.217154Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.216973Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.219035Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.218701Z&quot;}}" data-execution_count="31">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Por qué el aumento es engañoso</span></span>
+<div id="747b4e4f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.217154Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.216973Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.219035Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.218701Z&quot;}" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Por qué el aumento es engañoso</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co"># El R² en prueba pasa de 0,576 a 0,640 y SALBASE recibe el mayor coeficiente de las numéricas,</span></span>
 <span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># pero el modelo no ha aprendido nada nuevo sobre qué determina el salario: SALBASE es una parte</span></span>
@@ -3204,15 +3201,15 @@ numericas__SALBASE    5623.0</code></pre>
 <span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Que el aumento no sea aún mayor tiene explicación: SALBASE es el salario base de un solo mes</span></span>
 <span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a><span class="co"># (octubre) y no recoge complementos, pagas extra ni cuántos meses del año ha trabajado la persona.</span></span>
-<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Con COMSAL o GEXTRA, que tienen correlaciones más altas (sección 3.1), el R² subiría todavía más.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Con COMSAL o GEXTRA, que tienen correlaciones más altas (sección 3.1), el R² subiría todavía más.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="ejercicio-3.-un-modelo-más-sencillo" class="level3">
 <h3 class="anchored" data-anchor-id="ejercicio-3.-un-modelo-más-sencillo">Ejercicio 3. Un modelo más sencillo</h3>
 <p>Ajusta una regresión lineal que use solo tres predictores: <code>ESTU</code>, <code>ANOANTI</code> y <code>TIPOJOR</code>. Necesitarás definir un nuevo <code>ColumnTransformer</code> con las listas de columnas reducidas y un nuevo <code>Pipeline</code>. Compara su R², RMSE y MAE en prueba con los del modelo completo. ¿Cuánta capacidad predictiva se pierde al quitar el resto de variables?</p>
 <p><strong>Solución.</strong> No hace falta crear una nueva <code>X</code> ni volver a partir los datos: un <code>ColumnTransformer</code> solo usa las columnas que se le indican y, con <code>remainder="drop"</code>, descarta el resto. Así podemos ajustar el modelo sencillo sobre las mismas <code>X_train</code> y <code>X_test</code> de antes y comparar en prueba con las mismas filas.</p>
-<div id="2aa93c0f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.220208Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.220101Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.236358Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.234322Z&quot;}}" data-execution_count="32">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Listas reducidas de predictores: dos categóricos y uno numérico</span></span>
+<div id="2aa93c0f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.220208Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.220101Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.236358Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.234322Z&quot;}" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Listas reducidas de predictores: dos categóricos y uno numérico</span></span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>PRED_CAT_SENCILLO <span class="op">=</span> [<span class="st">"ESTU"</span>, <span class="st">"TIPOJOR"</span>]</span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>PRED_NUM_SENCILLO <span class="op">=</span> [<span class="st">"ANOANTI"</span>]</span>
 <span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -3235,14 +3232,14 @@ numericas__SALBASE    5623.0</code></pre>
 <span id="cb54-21"><a href="#cb54-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-22"><a href="#cb54-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Cuántas columnas ve el modelo tras el preprocesamiento (frente a las del modelo completo)</span></span>
 <span id="cb54-23"><a href="#cb54-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Columnas tras preprocesar, modelo sencillo:"</span>, modelo_sencillo.named_steps[<span class="st">"preprocesado"</span>].transform(X_train).shape[<span class="dv">1</span>])</span>
-<span id="cb54-24"><a href="#cb54-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Columnas tras preprocesar, modelo completo:"</span>, X_train_prep.shape[<span class="dv">1</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb54-24"><a href="#cb54-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Columnas tras preprocesar, modelo completo:"</span>, X_train_prep.shape[<span class="dv">1</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Columnas tras preprocesar, modelo sencillo: 10
 Columnas tras preprocesar, modelo completo: 88</code></pre>
 </div>
 </div>
-<div id="310535f0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.238306Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.238186Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.250354Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.248307Z&quot;}}" data-execution_count="33">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predicciones en prueba y comparación de las tres medidas, con el mismo formato de la sección 6.1.</span></span>
+<div id="310535f0" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.238306Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.238186Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.250354Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.248307Z&quot;}" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predicciones en prueba y comparación de las tres medidas, con el mismo formato de la sección 6.1.</span></span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Recorremos una lista de pares (nombre, predicciones) para no repetir las tres líneas de print.</span></span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>pred_sencillo <span class="op">=</span> modelo_sencillo.predict(X_test)</span>
 <span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -3252,7 +3249,7 @@ Columnas tras preprocesar, modelo completo: 88</code></pre>
 <span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  R2   : </span><span class="sc">{</span>r2_score(y_test, pred)<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  RMSE : </span><span class="sc">{</span>root_mean_squared_error(y_test, pred)<span class="sc">:,.0f}</span><span class="ss"> euros"</span>)</span>
 <span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  MAE  : </span><span class="sc">{</span>mean_absolute_error(y_test, pred)<span class="sc">:,.0f}</span><span class="ss"> euros"</span>)</span>
-<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Modelo completo (16 predictores)
   R2   : 0.576
@@ -3266,8 +3263,8 @@ Modelo sencillo (3 predictores)
 </code></pre>
 </div>
 </div>
-<div id="eb918720" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.252289Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.252171Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.257354Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.254911Z&quot;}}" data-execution_count="34">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cuánta capacidad predictiva se pierde</span></span>
+<div id="eb918720" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:17:14.252289Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:17:14.252171Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:17:14.257354Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:17:14.254911Z&quot;}" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cuánta capacidad predictiva se pierde</span></span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Con solo tres variables (estudios, antigüedad y tipo de jornada) y 10 columnas tras el</span></span>
 <span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="co"># preprocesamiento, frente a 88, el modelo conserva una parte considerable de la capacidad del</span></span>
@@ -3280,7 +3277,7 @@ Modelo sencillo (3 predictores)
 <span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a><span class="co"># pero reales: en conjunto explican los 0,15 puntos de R² que separan a los dos modelos.</span></span>
 <span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Es un primer ejemplo de la relación entre complejidad del modelo y ajuste que se retoma en el</span></span>
-<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a><span class="co"># cuaderno de regresión penalizada y en el tema 2.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a><span class="co"># cuaderno de regresión penalizada y en el tema 2.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -3366,248 +3363,241 @@ Modelo sencillo (3 predictores)
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
-    };
-    anchorJS.add('.anchored');
-    const isCodeAnnotation = (el) => {
-      for (const clz of el.classList) {
-        if (clz.startsWith('code-annotation-')) {                     
-          return true;
-        }
-      }
-      return false;
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
     }
-    const onCopySuccess = function(e) {
-      // button target
-      const button = e.trigger;
-      // don't keep focus
-      button.blur();
-      // flash "checked"
-      button.classList.add('code-copy-button-checked');
-      var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copiado");
-      let tooltip;
-      if (window.bootstrap) {
-        button.setAttribute("data-bs-toggle", "tooltip");
-        button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copiado");
-        tooltip = new bootstrap.Tooltip(button, 
-          { trigger: "manual", 
-            customClass: "code-copy-button-tooltip",
-            offset: [0, -8]});
-        tooltip.show();    
-      }
-      setTimeout(function() {
-        if (tooltip) {
-          tooltip.hide();
-          button.removeAttribute("data-bs-title");
-          button.removeAttribute("data-bs-toggle");
-          button.removeAttribute("data-bs-placement");
-        }
-        button.setAttribute("title", currentTitle);
-        button.classList.remove('code-copy-button-checked');
-      }, 1000);
-      // clear code selection
-      e.clearSelection();
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
     }
-    const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-    }
-    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-      text: getTextToCopy
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
     });
-    clipboard.on('success', onCopySuccess);
-    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-        text: getTextToCopy,
-        container: window.document.getElementById('quarto-embedded-source-code-modal')
-      });
-      clipboardModal.on('success', onCopySuccess);
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/juandmontoro\.github\.io\/tap\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
-      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/juandmontoro\.github\.io\/tap\/");
-      var isInternal = (href) => {
-          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-      }
-      // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-      for (var i=0; i<links.length; i++) {
-        const link = links[i];
-        if (!isInternal(link.href)) {
-          // undo the damage that might have been done by quarto-nav.js in the case of
-          // links that we want to consider external
-          if (link.dataset.originalHref !== undefined) {
-            link.href = link.dataset.originalHref;
-          }
-            // target, if specified
-            link.setAttribute("target", "_blank");
-            if (link.getAttribute("rel") === null) {
-              link.setAttribute("rel", "noopener");
-            }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
         }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
       }
-    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-      const config = {
-        allowHTML: true,
-        maxWidth: 500,
-        delay: 100,
-        arrow: false,
-        appendTo: function(el) {
-            return el.parentElement;
-        },
-        interactive: true,
-        interactiveBorder: 10,
-        theme: 'quarto',
-        placement: 'bottom-start',
-      };
-      if (contentFn) {
-        config.content = contentFn;
-      }
-      if (onTriggerFn) {
-        config.onTrigger = onTriggerFn;
-      }
-      if (onUntriggerFn) {
-        config.onUntrigger = onUntriggerFn;
-      }
-      window.tippy(el, config); 
     }
-    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-    for (var i=0; i<noterefs.length; i++) {
-      const ref = noterefs[i];
-      tippyHover(ref, function() {
-        // use id or data attribute instead here
-        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-        try { href = new URL(href).hash; } catch {}
-        const id = href.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note) {
-          return note.innerHTML;
-        } else {
-          return "";
-        }
-      });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
     }
-    const xrefs = window.document.querySelectorAll('a.quarto-xref');
-    const processXRef = (id, note) => {
-      // Strip column container classes
-      const stripColumnClz = (el) => {
-        el.classList.remove("page-full", "page-columns");
-        if (el.children) {
-          for (const child of el.children) {
-            stripColumnClz(child);
-          }
-        }
-      }
-      stripColumnClz(note)
-      if (id === null || id.startsWith('sec-')) {
-        // Special case sections, only their first couple elements
-        const container = document.createElement("div");
-        if (note.children && note.children.length > 2) {
-          container.appendChild(note.children[0].cloneNode(true));
-          for (let i = 1; i < note.children.length; i++) {
-            const child = note.children[i];
-            if (child.tagName === "P" && child.innerText === "") {
-              continue;
-            } else {
-              container.appendChild(child.cloneNode(true));
-              break;
-            }
-          }
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(container);
-          }
-          return container.innerHTML
-        } else {
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(note);
-          }
-          return note.innerHTML;
-        }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
       } else {
-        // Remove any anchor links if they are present
-        const anchorLink = note.querySelector('a.anchorjs-link');
-        if (anchorLink) {
-          anchorLink.remove();
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
         }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        if (note.classList.contains("callout")) {
-          return note.outerHTML;
-        } else {
-          return note.innerHTML;
-        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
       }
     }
-    for (var i=0; i<xrefs.length; i++) {
-      const xref = xrefs[i];
-      tippyHover(xref, undefined, function(instance) {
-        instance.disable();
-        let url = xref.getAttribute('href');
-        let hash = undefined; 
-        if (url.startsWith('#')) {
-          hash = url;
-        } else {
-          try { hash = new URL(url).hash; } catch {}
-        }
-        if (hash) {
-          const id = hash.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note !== null) {
-            try {
-              const html = processXRef(id, note.cloneNode(true));
-              instance.setContent(html);
-            } finally {
-              instance.enable();
-              instance.show();
-            }
-          } else {
-            // See if we can fetch this
-            fetch(url.split('#')[0])
-            .then(res => res.text())
-            .then(html => {
-              const parser = new DOMParser();
-              const htmlDoc = parser.parseFromString(html, "text/html");
-              const note = htmlDoc.getElementById(id);
-              if (note !== null) {
-                const html = processXRef(id, note);
-                instance.setContent(html);
-              } 
-            }).finally(() => {
-              instance.enable();
-              instance.show();
-            });
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
           }
         } else {
-          // See if we can fetch a full url (with no hash to target)
-          // This is a special case and we should probably do some content thinning / targeting
-          fetch(url)
+          // See if we can fetch this
+          fetch(url.split('#')[0])
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.querySelector('main.content');
+            const note = htmlDoc.getElementById(id);
             if (note !== null) {
-              // This should only happen for chapter cross references
-              // (since there is no id in the URL)
-              // remove the first header
-              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-                note.children[0].remove();
-              }
-              const html = processXRef(null, note);
+              const html = processXRef(id, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -3615,161 +3605,185 @@ Modelo sencillo (3 predictores)
             instance.show();
           });
         }
-      }, function(instance) {
-      });
-    }
-        let selectedAnnoteEl;
-        const selectorForAnnotation = ( cell, annotation) => {
-          let cellAttr = 'data-code-cell="' + cell + '"';
-          let lineAttr = 'data-code-annotation="' +  annotation + '"';
-          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-          return selector;
-        }
-        const selectCodeLines = (annoteEl) => {
-          const doc = window.document;
-          const targetCell = annoteEl.getAttribute("data-target-cell");
-          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-          const lineIds = lines.map((line) => {
-            return targetCell + "-" + line;
-          })
-          let top = null;
-          let height = null;
-          let parent = null;
-          if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
-            }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
-            }
-            selectedAnnoteEl = annoteEl;
-          }
-        };
-        const unselectCodeLines = () => {
-          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-          elementsIds.forEach((elId) => {
-            const div = window.document.getElementById(elId);
-            if (div) {
-              div.remove();
-            }
-          });
-          selectedAnnoteEl = undefined;
-        };
-          // Handle positioning of the toggle
-      window.addEventListener(
-        "resize",
-        throttle(() => {
-          elRect = undefined;
-          if (selectedAnnoteEl) {
-            selectCodeLines(selectedAnnoteEl);
-          }
-        }, 10)
-      );
-      function throttle(fn, ms) {
-      let throttle = false;
-      let timer;
-        return (...args) => {
-          if(!throttle) { // first call gets through
-              fn.apply(this, args);
-              throttle = true;
-          } else { // all the others get throttled
-              if(timer) clearTimeout(timer); // cancel #2
-              timer = setTimeout(() => {
-                fn.apply(this, args);
-                timer = throttle = false;
-              }, ms);
-          }
-        };
-      }
-        // Attach click handler to the DT
-        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-        for (const annoteDlNode of annoteDls) {
-          annoteDlNode.addEventListener('click', (event) => {
-            const clickedEl = event.target;
-            if (clickedEl !== selectedAnnoteEl) {
-              unselectCodeLines();
-              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-              if (activeEl) {
-                activeEl.classList.remove('code-annotation-active');
-              }
-              selectCodeLines(clickedEl);
-              clickedEl.classList.add('code-annotation-active');
-            } else {
-              // Unselect the line
-              unselectCodeLines();
-              clickedEl.classList.remove('code-annotation-active');
-            }
-          });
-        }
-    const findCites = (el) => {
-      const parentEl = el.parentElement;
-      if (parentEl) {
-        const cites = parentEl.dataset.cites;
-        if (cites) {
-          return {
-            el,
-            cites: cites.split(' ')
-          };
-        } else {
-          return findCites(el.parentElement)
-        }
       } else {
-        return undefined;
-      }
-    };
-    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-    for (var i=0; i<bibliorefs.length; i++) {
-      const ref = bibliorefs[i];
-      const citeInfo = findCites(ref);
-      if (citeInfo) {
-        tippyHover(citeInfo.el, function() {
-          var popup = window.document.createElement('div');
-          citeInfo.cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
             }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
         });
       }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
     }
-  });
-  </script>
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

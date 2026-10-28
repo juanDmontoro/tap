@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://juandmontoro.github.io/tap/resueltos/02/tema_02_evaluacion_seleccion.html</loc>
-    <lastmod>2026-10-20T12:19:25.230Z</lastmod>
+    <loc>https://juandmontoro.github.io/tap/resueltos/04/tema_04_arboles.html</loc>
+    <lastmod>2026-10-28T14:05:22.171Z</lastmod>
   </url>
   <url>
-    <loc>https://juandmontoro.github.io/tap/resueltos/01/tema_01_intro_python.html</loc>
-    <lastmod>2026-10-18T12:52:50.901Z</lastmod>
+    <loc>https://juandmontoro.github.io/tap/resueltos/01/tema_01_regresion_penalizada.html</loc>
+    <lastmod>2026-10-18T12:52:50.938Z</lastmod>
   </url>
   <url>
-    <loc>https://juandmontoro.github.io/tap/materiales.html</loc>
-    <lastmod>2026-10-26T17:39:18.141Z</lastmod>
+    <loc>https://juandmontoro.github.io/tap/proyecto.html</loc>
+    <lastmod>2026-10-28T14:06:47.584Z</lastmod>
+  </url>
+  <url>
+    <loc>https://juandmontoro.github.io/tap/planificacion.html</loc>
+    <lastmod>2026-10-28T14:06:47.584Z</lastmod>
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/index.html</loc>
     <lastmod>2026-10-18T12:50:46.026Z</lastmod>
   </url>
   <url>
-    <loc>https://juandmontoro.github.io/tap/planificacion.html</loc>
-    <lastmod>2026-10-26T17:39:18.256Z</lastmod>
+    <loc>https://juandmontoro.github.io/tap/materiales.html</loc>
+    <lastmod>2026-10-28T14:06:30.010Z</lastmod>
   </url>
   <url>
-    <loc>https://juandmontoro.github.io/tap/proyecto.html</loc>
-    <lastmod>2026-10-26T17:39:18.257Z</lastmod>
+    <loc>https://juandmontoro.github.io/tap/resueltos/01/tema_01_intro_python.html</loc>
+    <lastmod>2026-10-18T12:52:50.901Z</lastmod>
   </url>
   <url>
-    <loc>https://juandmontoro.github.io/tap/resueltos/01/tema_01_regresion_penalizada.html</loc>
-    <lastmod>2026-10-18T12:52:50.938Z</lastmod>
+    <loc>https://juandmontoro.github.io/tap/resueltos/02/tema_02_evaluacion_seleccion.html</loc>
+    <lastmod>2026-10-20T12:19:25.230Z</lastmod>
   </url>
 </urlset>

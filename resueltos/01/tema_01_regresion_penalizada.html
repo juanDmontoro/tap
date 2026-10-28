@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -21,9 +21,8 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -34,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -58,24 +57,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-3a9777ff9cfa416bd97a54f94a068a98.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-702e08239ac3b5eeb6a3c2a3f2bd3066.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -90,7 +87,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No se han encontrado resultados",
+    "search-no-results-text": "Sin resultados",
     "search-matching-documents-text": "documentos encontrados",
     "search-copy-link-title": "Copiar el enlace en la búsqueda",
     "search-hide-matches-text": "Ocultar resultados adicionales",
@@ -103,7 +100,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Buscar"
   }
 }</script>
-<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -121,7 +118,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+      if (mathElements[i].tagName == "SPAN") {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -139,7 +136,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -220,7 +217,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Nota</span>Versión resuelta
+Versión resuelta
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -254,8 +251,8 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="preparación-lo-que-ya-hicimos-en-el-cuaderno-anterior">0. Preparación: lo que ya hicimos en el cuaderno anterior</h2>
 <p>Repetimos, condensados en pocas celdas, los pasos del cuaderno de introducción: cargar los datos, limpiar la respuesta, fijar los roles de las variables y partir en entrenamiento y prueba. No hay nada nuevo hasta la sección 1; si algo no te resulta familiar, vuelve al cuaderno anterior.</p>
 <p>Las únicas novedades en los <code>import</code> son los modelos penalizados: <code>Ridge</code>, <code>Lasso</code>, <code>ElasticNet</code> y sus versiones con validación cruzada <code>RidgeCV</code>, <code>LassoCV</code>, <code>ElasticNetCV</code>. Todos están en <code>sklearn.linear_model</code>, el mismo módulo que <code>LinearRegression</code>.</p>
-<div id="07223156" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:48.921666Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:48.921560Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:49.929046Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:49.928630Z&quot;}}" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<div id="07223156" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:48.921666Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:48.921560Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:49.929046Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:49.928630Z&quot;}" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)   <span class="co"># oculta avisos que no afectan a los resultados</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -274,13 +271,13 @@ window.Quarto = {
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>SEMILLA <span class="op">=</span> <span class="dv">42</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>AZUL, NARANJA, GRIS <span class="op">=</span> <span class="st">"#2a78d6"</span>, <span class="st">"#e5701a"</span>, <span class="st">"#898781"</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Librerías cargadas"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Librerías cargadas"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Librerías cargadas</code></pre>
 </div>
 </div>
-<div id="f009c90b" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:49.930183Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:49.929996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.395065Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.394694Z&quot;}}" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> <span class="st">"https://juandmontoro.github.io/tap/data/EES_2022.tab"</span></span>
+<div id="f009c90b" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:49.930183Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:49.929996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.395065Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.394694Z&quot;}" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> <span class="st">"https://juandmontoro.github.io/tap/data/EES_2022.tab"</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(URL_DATOS, sep<span class="op">=</span><span class="st">"</span><span class="ch">\t</span><span class="st">"</span>, low_memory<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> [c.replace(<span class="st">'"'</span>, <span class="st">""</span>).strip() <span class="cf">for</span> c <span class="kw">in</span> df.columns]   <span class="co"># algunos nombres vienen entre comillas</span></span>
@@ -289,14 +286,14 @@ window.Quarto = {
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>tope <span class="op">=</span> df[<span class="st">"RETRINOIN"</span>].quantile(<span class="fl">0.99</span>)</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>limpio <span class="op">=</span> df[(df[<span class="st">"RETRINOIN"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"RETRINOIN"</span>] <span class="op">&lt;=</span> tope)]</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> limpio.sample(n<span class="op">=</span><span class="dv">10000</span>, random_state<span class="op">=</span>SEMILLA).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Muestra de trabajo:"</span>, datos.shape)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Muestra de trabajo:"</span>, datos.shape)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Muestra de trabajo: (10000, 56)</code></pre>
 </div>
 </div>
 <p>Los roles de las variables son los mismos: la respuesta es el salario bruto anual <code>RETRINOIN</code>, quedan fuera los componentes del salario (fuga de información), los identificadores y el peso muestral, y usamos como predictores las 14 categóricas y las 2 numéricas del cuaderno anterior.</p>
-<div id="fd0ee169" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.396336Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.396181Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.407046Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.406721Z&quot;}}" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>RESPUESTA <span class="op">=</span> <span class="st">"RETRINOIN"</span></span>
+<div id="fd0ee169" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.396336Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.396181Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.407046Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.406721Z&quot;}" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>RESPUESTA <span class="op">=</span> <span class="st">"RETRINOIN"</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>FUGA_SALARIAL <span class="op">=</span> [<span class="st">"SALBASE"</span>, <span class="st">"COMSAL"</span>, <span class="st">"COMSALTT"</span>, <span class="st">"EXTRAORM"</span>, <span class="st">"PHEXTRA"</span>, <span class="st">"BASE"</span>, <span class="st">"GEXTRA"</span>,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"VESPNOIN"</span>, <span class="st">"VESPIN"</span>, <span class="st">"RETRIIN"</span>, <span class="st">"IRPFMES"</span>, <span class="st">"COTIZA"</span>]</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -312,7 +309,7 @@ window.Quarto = {
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="kw">not</span> <span class="bu">set</span>(FUGA_SALARIAL) <span class="op">&amp;</span> <span class="bu">set</span>(X.columns)</span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.25</span>, random_state<span class="op">=</span>SEMILLA)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento:"</span>, X_train.shape, <span class="st">"  Prueba:"</span>, X_test.shape)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento:"</span>, X_train.shape, <span class="st">"  Prueba:"</span>, X_test.shape)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Entrenamiento: (7500, 16)   Prueba: (2500, 16)</code></pre>
 </div>
@@ -325,8 +322,8 @@ window.Quarto = {
 <li><code>evaluar()</code> ajusta un <code>Pipeline</code> sobre unos datos de entrenamiento y devuelve, en un diccionario, el R² en entrenamiento y en prueba, el RMSE y el MAE en prueba, y cuántos coeficientes son distintos de cero. Ese último número será importante con Lasso.</li>
 </ul>
 <p>Un <strong>diccionario</strong> (<code>dict</code>) es una colección de pares clave-valor, como una <code>list</code> con nombres en R: <code>{"R2_test": 0.58, "RMSE": 11707}</code>.</p>
-<div id="9f3c1ba7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.408152Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.408046Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.411522Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.411255Z&quot;}}" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> crear_preprocesador():</span>
+<div id="9f3c1ba7" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.408152Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.408046Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.411522Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.411255Z&quot;}" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> crear_preprocesador():</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ColumnTransformer(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        transformers<span class="op">=</span>[</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>            (<span class="st">"numericas"</span>, StandardScaler(), PRED_NUMERICOS),</span>
@@ -353,7 +350,7 @@ window.Quarto = {
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"coef_total"</span>: <span class="bu">len</span>(coef),</span>
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Funciones definidas"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Funciones definidas"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Funciones definidas</code></pre>
 </div>
@@ -363,10 +360,10 @@ window.Quarto = {
 <section id="punto-de-partida-la-regresión-lineal" class="level2">
 <h2 class="anchored" data-anchor-id="punto-de-partida-la-regresión-lineal">1. Punto de partida: la regresión lineal</h2>
 <p>Volvemos a ajustar el modelo del cuaderno anterior, ahora con las funciones auxiliares. Fíjate en que el último paso del <code>Pipeline</code> se llama <code>"modelo"</code>; ese nombre es el que usa <code>evaluar()</code> para extraer los coeficientes.</p>
-<div id="4627e288" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.412550Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.412450Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.489344Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.485919Z&quot;}}" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ols <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()), (<span class="st">"modelo"</span>, LinearRegression())])</span>
+<div id="4627e288" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.412550Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.412450Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.489344Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.485919Z&quot;}" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ols <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()), (<span class="st">"modelo"</span>, LinearRegression())])</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>resultado_ols <span class="op">=</span> evaluar(ols, X_train, y_train)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>resultado_ols</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>resultado_ols</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>{'R2_train': 0.58,
  'R2_test': 0.576,
@@ -392,13 +389,13 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="un-experimento-pocos-datos-y-muchas-columnas">2.1 Un experimento: pocos datos y muchas columnas</h3>
 <p>Para ver el problema, tomamos una muestra de solo <strong>200 trabajadores</strong> del conjunto de entrenamiento y ajustamos con ella los mínimos cuadrados. El conjunto de prueba sigue siendo el mismo (2 500 filas), de modo que las comparaciones con la sección 1 son justas.</p>
 <p><code>sample()</code> sobre <code>X_train</code> elige 200 filas al azar; <code>y_train.loc[...]</code> recupera las respuestas de esas mismas filas usando su índice (en R sería <code>y_train[rownames(X_pocos)]</code>).</p>
-<div id="1769f7e3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.492831Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.492692Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.534108Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.529919Z&quot;}}" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>X_pocos <span class="op">=</span> X_train.sample(n<span class="op">=</span><span class="dv">200</span>, random_state<span class="op">=</span>SEMILLA)</span>
+<div id="1769f7e3" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.492831Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.492692Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.534108Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.529919Z&quot;}" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>X_pocos <span class="op">=</span> X_train.sample(n<span class="op">=</span><span class="dv">200</span>, random_state<span class="op">=</span>SEMILLA)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>y_pocos <span class="op">=</span> y_train.loc[X_pocos.index]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>ols_pocos <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()), (<span class="st">"modelo"</span>, LinearRegression())])</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>resultado_ols_pocos <span class="op">=</span> evaluar(ols_pocos, X_pocos, y_pocos)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>resultado_ols_pocos</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>resultado_ols_pocos</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>{'R2_train': 0.727,
  'R2_test': 0.392,
@@ -418,16 +415,16 @@ window.Quarto = {
 <p><span class="math display">\[RSS + \lambda \sum_{j=1}^{k} \beta_j^2, \qquad \lambda \geq 0.\]</span></p>
 <p>El segundo término crece con el cuadrado de los coeficientes, así que el mínimo se alcanza en coeficientes más pequeños que los de mínimos cuadrados. Cuanto mayor es <span class="math inline">\(\lambda\)</span>, más se encogen; con <span class="math inline">\(\lambda = 0\)</span> recuperamos la regresión lineal. La constante <span class="math inline">\(\beta_0\)</span> no se penaliza.</p>
 <p>En <code>scikit-learn</code>, <code>Ridge(alpha=...)</code>. Probemos con <code>alpha=10</code> sobre la muestra pequeña.</p>
-<div id="c81bdbc6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.535776Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.535653Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.573697Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.572916Z&quot;}}" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ridge_pocos <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()), (<span class="st">"modelo"</span>, Ridge(alpha<span class="op">=</span><span class="dv">10</span>))])</span>
+<div id="c81bdbc6" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.535776Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.535653Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:54.573697Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:54.572916Z&quot;}" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ridge_pocos <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()), (<span class="st">"modelo"</span>, Ridge(alpha<span class="op">=</span><span class="dv">10</span>))])</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>resultado_ridge_pocos <span class="op">=</span> evaluar(ridge_pocos, X_pocos, y_pocos)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">"Lineal"</span>: resultado_ols_pocos, <span class="st">"Ridge (alpha=10)"</span>: resultado_ridge_pocos})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">"Lineal"</span>: resultado_ols_pocos, <span class="st">"Ridge (alpha=10)"</span>: resultado_ridge_pocos})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -437,32 +434,32 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">R2_train</th>
+<td data-quarto-table-cell-role="th">R2_train</td>
 <td>0.727</td>
 <td>0.676</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">R2_test</th>
+<td data-quarto-table-cell-role="th">R2_test</td>
 <td>0.392</td>
 <td>0.514</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">RMSE_test</th>
+<td data-quarto-table-cell-role="th">RMSE_test</td>
 <td>14007.000</td>
 <td>12519.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">MAE_test</th>
+<td data-quarto-table-cell-role="th">MAE_test</td>
 <td>10432.000</td>
 <td>8825.000</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">coef_no_nulos</th>
+<td data-quarto-table-cell-role="th">coef_no_nulos</td>
 <td>87.000</td>
 <td>87.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">coef_total</th>
+<td data-quarto-table-cell-role="th">coef_total</td>
 <td>87.000</td>
 <td>87.000</td>
 </tr>
@@ -477,8 +474,8 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="el-camino-de-los-coeficientes">3.1 El camino de los coeficientes</h3>
 <p>Hemos probado un solo valor de <code>alpha</code>. Para entender qué hace la penalización conviene recorrer muchos valores y observar cómo cambian los coeficientes y los errores. El bucle siguiente ajusta Ridge para 30 valores de <code>alpha</code> espaciados en escala logarítmica (<code>np.logspace(-2, 5, 30)</code> va de <span class="math inline">\(10^{-2}\)</span> a <span class="math inline">\(10^{5}\)</span>) y guarda los coeficientes y los R² de cada ajuste.</p>
 <p>En Python, un bucle <code>for</code> recorre una secuencia; dentro, <code>append()</code> añade elementos a una lista. Al terminar convertimos las listas en <code>DataFrame</code> para poder dibujarlas.</p>
-<div id="3e739297" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.575775Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.575644Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:55.318290Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:55.317913Z&quot;}}" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>alphas_ridge <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">30</span>)</span>
+<div id="3e739297" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:54.575775Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:54.575644Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:55.318290Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:55.317913Z&quot;}" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>alphas_ridge <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">30</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>coefs, r2_train, r2_test <span class="op">=</span> [], [], []</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> alphas_ridge:</span>
@@ -493,13 +490,13 @@ window.Quarto = {
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>curva_ridge <span class="op">=</span> pd.DataFrame({<span class="st">"R2_train"</span>: r2_train, <span class="st">"R2_test"</span>: r2_test}, index<span class="op">=</span>alphas_ridge)</span>
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mejor alpha en prueba:"</span>, <span class="bu">round</span>(curva_ridge[<span class="st">"R2_test"</span>].idxmax(), <span class="dv">2</span>),</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">" R2_test:"</span>, curva_ridge[<span class="st">"R2_test"</span>].<span class="bu">max</span>())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">" R2_test:"</span>, curva_ridge[<span class="st">"R2_test"</span>].<span class="bu">max</span>())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Mejor alpha en prueba: 13.74  R2_test: 0.515</code></pre>
 </div>
 </div>
-<div id="9da3e199" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:55.319467Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:55.319365Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:55.962778Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:55.962421Z&quot;}}" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>DESTACADAS <span class="op">=</span> [<span class="st">"numericas__JAP"</span>, <span class="st">"numericas__ANOANTI"</span>, <span class="st">"categoricas__ESTU_7"</span>,</span>
+<div id="9da3e199" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:55.319467Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:55.319365Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:55.962778Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:55.962421Z&quot;}" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>DESTACADAS <span class="op">=</span> [<span class="st">"numericas__JAP"</span>, <span class="st">"numericas__ANOANTI"</span>, <span class="st">"categoricas__ESTU_7"</span>,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">"categoricas__TIPOJOR_2"</span>, <span class="st">"categoricas__CNO1_A0"</span>]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">13</span>, <span class="fl">4.5</span>))</span>
@@ -526,7 +523,7 @@ window.Quarto = {
 <span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>ejes[<span class="dv">1</span>].set_title(<span class="st">"Ridge: R² según la penalización (n = 200)"</span>)</span>
 <span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>ejes[<span class="dv">1</span>].legend()</span>
 <span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -540,8 +537,8 @@ window.Quarto = {
 <section id="la-varianza-de-los-coeficientes-vista" class="level3">
 <h3 class="anchored" data-anchor-id="la-varianza-de-los-coeficientes-vista">3.2 La varianza de los coeficientes, vista</h3>
 <p>La justificación de Ridge es que <strong>reduce la varianza de los estimadores</strong>. Podemos comprobarlo de forma directa: extraemos 30 muestras distintas de 200 trabajadores, ajustamos en cada una la regresión lineal y Ridge, y miramos cuánto varían los coeficientes de una muestra a otra.</p>
-<div id="9eddff62" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:55.963918Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:55.963809Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:56.711923Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:56.711594Z&quot;}}" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>COLUMNAS <span class="op">=</span> [<span class="st">"numericas__JAP"</span>, <span class="st">"numericas__ANOANTI"</span>, <span class="st">"categoricas__SEXO_6"</span>,</span>
+<div id="9eddff62" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:55.963918Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:55.963809Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:56.711923Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:56.711594Z&quot;}" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>COLUMNAS <span class="op">=</span> [<span class="st">"numericas__JAP"</span>, <span class="st">"numericas__ANOANTI"</span>, <span class="st">"categoricas__SEXO_6"</span>,</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>            <span class="st">"categoricas__ESTU_7"</span>, <span class="st">"categoricas__TIPOJOR_2"</span>]</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>registros <span class="op">=</span> []</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -556,12 +553,12 @@ window.Quarto = {
 <span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>            registros.append({<span class="st">"modelo"</span>: nombre, <span class="st">"coeficiente"</span>: col, <span class="st">"valor"</span>: serie.get(col, np.nan)})</span>
 <span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>variabilidad <span class="op">=</span> pd.DataFrame(registros)</span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>variabilidad.groupby([<span class="st">"coeficiente"</span>, <span class="st">"modelo"</span>])[<span class="st">"valor"</span>].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>]).<span class="bu">round</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>variabilidad.groupby([<span class="st">"coeficiente"</span>, <span class="st">"modelo"</span>])[<span class="st">"valor"</span>].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>]).<span class="bu">round</span>(<span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -578,57 +575,57 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<th rowspan="2" data-quarto-table-cell-role="th" data-valign="top">categoricas__ESTU_7</th>
-<th data-quarto-table-cell-role="th">Lineal</th>
+<td rowspan="2" data-quarto-table-cell-role="th" data-valign="top">categoricas__ESTU_7</td>
+<td data-quarto-table-cell-role="th">Lineal</td>
 <td>8929.0</td>
 <td>4478.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Ridge (alpha=30)</th>
+<td data-quarto-table-cell-role="th">Ridge (alpha=30)</td>
 <td>5816.0</td>
 <td>1500.0</td>
 </tr>
 <tr class="odd">
-<th rowspan="2" data-quarto-table-cell-role="th" data-valign="top">categoricas__SEXO_6</th>
-<th data-quarto-table-cell-role="th">Lineal</th>
+<td rowspan="2" data-quarto-table-cell-role="th" data-valign="top">categoricas__SEXO_6</td>
+<td data-quarto-table-cell-role="th">Lineal</td>
 <td>-2110.0</td>
 <td>1137.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Ridge (alpha=30)</th>
+<td data-quarto-table-cell-role="th">Ridge (alpha=30)</td>
 <td>-1662.0</td>
 <td>702.0</td>
 </tr>
 <tr class="odd">
-<th rowspan="2" data-quarto-table-cell-role="th" data-valign="top">categoricas__TIPOJOR_2</th>
-<th data-quarto-table-cell-role="th">Lineal</th>
+<td rowspan="2" data-quarto-table-cell-role="th" data-valign="top">categoricas__TIPOJOR_2</td>
+<td data-quarto-table-cell-role="th">Lineal</td>
 <td>-3246.0</td>
 <td>1852.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Ridge (alpha=30)</th>
+<td data-quarto-table-cell-role="th">Ridge (alpha=30)</td>
 <td>-2417.0</td>
 <td>511.0</td>
 </tr>
 <tr class="odd">
-<th rowspan="2" data-quarto-table-cell-role="th" data-valign="top">numericas__ANOANTI</th>
-<th data-quarto-table-cell-role="th">Lineal</th>
+<td rowspan="2" data-quarto-table-cell-role="th" data-valign="top">numericas__ANOANTI</td>
+<td data-quarto-table-cell-role="th">Lineal</td>
 <td>3330.0</td>
 <td>1273.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Ridge (alpha=30)</th>
+<td data-quarto-table-cell-role="th">Ridge (alpha=30)</td>
 <td>3933.0</td>
 <td>786.0</td>
 </tr>
 <tr class="odd">
-<th rowspan="2" data-quarto-table-cell-role="th" data-valign="top">numericas__JAP</th>
-<th data-quarto-table-cell-role="th">Lineal</th>
+<td rowspan="2" data-quarto-table-cell-role="th" data-valign="top">numericas__JAP</td>
+<td data-quarto-table-cell-role="th">Lineal</td>
 <td>1931.0</td>
 <td>1493.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Ridge (alpha=30)</th>
+<td data-quarto-table-cell-role="th">Ridge (alpha=30)</td>
 <td>2542.0</td>
 <td>631.0</td>
 </tr>
@@ -638,8 +635,8 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div id="29f602f5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:56.713044Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:56.712939Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:56.843231Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:56.842910Z&quot;}}" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, eje <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">11</span>, <span class="fl">4.5</span>))</span>
+<div id="29f602f5" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:56.713044Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:56.712939Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:56.843231Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:56.842910Z&quot;}" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, eje <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">11</span>, <span class="fl">4.5</span>))</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>variabilidad, x<span class="op">=</span><span class="st">"coeficiente"</span>, y<span class="op">=</span><span class="st">"valor"</span>, hue<span class="op">=</span><span class="st">"modelo"</span>, ax<span class="op">=</span>eje,</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>            palette<span class="op">=</span>[NARANJA, AZUL], showfliers<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>eje.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">"black"</span>, lw<span class="op">=</span><span class="fl">0.8</span>)</span>
@@ -648,7 +645,7 @@ window.Quarto = {
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>eje.set_title(<span class="st">"Dispersión de los coeficientes en 30 muestras de 200 trabajadores"</span>)</span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>eje.tick_params(axis<span class="op">=</span><span class="st">"x"</span>, labelsize<span class="op">=</span><span class="dv">8</span>)</span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -668,8 +665,8 @@ window.Quarto = {
 <li>Explica en un comentario, con la idea de sesgo y varianza, por qué la penalización ayuda mucho con 200 filas y casi nada con 7 500.</li>
 </ol>
 <p><strong>Solución.</strong> Es el bucle de la sección 3.1 con dos cambios: ajustamos con <code>X_train</code>, <code>y_train</code> (7 500 filas) y solo guardamos los dos R², no los coeficientes. Para responder a las preguntas comparamos la curva con la de la muestra de 200.</p>
-<div id="f81eec5f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:56.844464Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:56.844336Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.376728Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.376033Z&quot;}}" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bucle de la sección 3.1 con todo el conjunto de entrenamiento.</span></span>
+<div id="f81eec5f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:56.844464Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:56.844336Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.376728Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.376033Z&quot;}" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bucle de la sección 3.1 con todo el conjunto de entrenamiento.</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># No guardamos los coeficientes: solo el R² en entrenamiento y en prueba de cada alpha.</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>r2_train_todo, r2_test_todo <span class="op">=</span> [], []</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -683,14 +680,14 @@ window.Quarto = {
 <span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"R2 en prueba de la regresión lineal (7 500 filas):"</span>, resultado_ols[<span class="st">"R2_test"</span>])</span>
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mejor alpha en prueba:"</span>, <span class="bu">round</span>(curva_ridge_todo[<span class="st">"R2_test"</span>].idxmax(), <span class="dv">2</span>),</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">" R2_test:"</span>, curva_ridge_todo[<span class="st">"R2_test"</span>].<span class="bu">max</span>())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">" R2_test:"</span>, curva_ridge_todo[<span class="st">"R2_test"</span>].<span class="bu">max</span>())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R2 en prueba de la regresión lineal (7 500 filas): 0.576
 Mejor alpha en prueba: 0.01  R2_test: 0.576</code></pre>
 </div>
 </div>
-<div id="efe510d7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.378338Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.377853Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.799088Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.798623Z&quot;}}" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dibujamos las dos curvas de R² lado a lado: la de 200 filas (sección 3.1) y la de 7 500.</span></span>
+<div id="efe510d7" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.378338Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.377853Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.799088Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.798623Z&quot;}" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dibujamos las dos curvas de R² lado a lado: la de 200 filas (sección 3.1) y la de 7 500.</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Fíjate en que los ejes verticales tienen escalas distintas.</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">13</span>, <span class="fl">4.5</span>))</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -708,7 +705,7 @@ Mejor alpha en prueba: 0.01  R2_test: 0.576</code></pre>
 <span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    eje.legend()</span>
 <span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -717,8 +714,8 @@ Mejor alpha en prueba: 0.01  R2_test: 0.576</code></pre>
 </div>
 </div>
 </div>
-<div id="bfbdf989" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.800214Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.800090Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.808027Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.807711Z&quot;}}" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Valores de alpha con los que el R² en prueba no baja del de la regresión lineal.</span></span>
+<div id="bfbdf989" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.800214Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.800090Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.808027Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.807711Z&quot;}" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Valores de alpha con los que el R² en prueba no baja del de la regresión lineal.</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    Con 7 500 filas la curva es plana en casi todo el recorrido: la tabla lo muestra.</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>r2_lineal_todo <span class="op">=</span> resultado_ols[<span class="st">"R2_test"</span>]</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>mantiene <span class="op">=</span> curva_ridge_todo[curva_ridge_todo[<span class="st">"R2_test"</span>] <span class="op">&gt;=</span> r2_lineal_todo]</span>
@@ -737,7 +734,7 @@ Mejor alpha en prueba: 0.01  R2_test: 0.576</code></pre>
 <span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Empieza a empeorar a partir de alpha ≈ </span><span class="sc">{</span>alpha_donde_empeora(curva_ridge)<span class="sc">:,.0f}</span><span class="ss"> con 200 filas"</span>)</span>
 <span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Empieza a empeorar a partir de alpha ≈ </span><span class="sc">{</span>alpha_donde_empeora(curva_ridge_todo)<span class="sc">:,.0f}</span><span class="ss"> con 7 500 filas"</span>)</span>
 <span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>curva_ridge_todo.<span class="bu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>curva_ridge_todo.<span class="bu">round</span>(<span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R2_test &gt;= 0.576 (el de la regresión lineal) para alpha entre 0.01 y 14
 Ganancia máxima en prueba: +0.000
@@ -749,7 +746,7 @@ Empieza a empeorar a partir de alpha ≈ 221 con 7 500 filas</code></pre>
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -759,152 +756,152 @@ Empieza a empeorar a partir de alpha ≈ 221 con 7 500 filas</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">0.010000</th>
+<td data-quarto-table-cell-role="th">0.010000</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">0.017433</th>
+<td data-quarto-table-cell-role="th">0.017433</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">0.030392</th>
+<td data-quarto-table-cell-role="th">0.030392</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">0.052983</th>
+<td data-quarto-table-cell-role="th">0.052983</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">0.092367</th>
+<td data-quarto-table-cell-role="th">0.092367</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">0.161026</th>
+<td data-quarto-table-cell-role="th">0.161026</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">0.280722</th>
+<td data-quarto-table-cell-role="th">0.280722</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">0.489390</th>
+<td data-quarto-table-cell-role="th">0.489390</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">0.853168</th>
+<td data-quarto-table-cell-role="th">0.853168</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">1.487352</th>
+<td data-quarto-table-cell-role="th">1.487352</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">2.592944</th>
+<td data-quarto-table-cell-role="th">2.592944</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">4.520354</th>
+<td data-quarto-table-cell-role="th">4.520354</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">7.880463</th>
+<td data-quarto-table-cell-role="th">7.880463</td>
 <td>0.580</td>
 <td>0.576</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">13.738238</th>
+<td data-quarto-table-cell-role="th">13.738238</td>
 <td>0.579</td>
 <td>0.576</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">23.950266</th>
+<td data-quarto-table-cell-role="th">23.950266</td>
 <td>0.579</td>
 <td>0.575</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">41.753189</th>
+<td data-quarto-table-cell-role="th">41.753189</td>
 <td>0.578</td>
 <td>0.574</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">72.789538</th>
+<td data-quarto-table-cell-role="th">72.789538</td>
 <td>0.576</td>
 <td>0.572</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">126.896100</th>
+<td data-quarto-table-cell-role="th">126.896100</td>
 <td>0.572</td>
 <td>0.568</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">221.221629</th>
+<td data-quarto-table-cell-role="th">221.221629</td>
 <td>0.565</td>
 <td>0.562</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">385.662042</th>
+<td data-quarto-table-cell-role="th">385.662042</td>
 <td>0.555</td>
 <td>0.553</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">672.335754</th>
+<td data-quarto-table-cell-role="th">672.335754</td>
 <td>0.539</td>
 <td>0.538</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">1172.102298</th>
+<td data-quarto-table-cell-role="th">1172.102298</td>
 <td>0.514</td>
 <td>0.514</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">2043.359718</th>
+<td data-quarto-table-cell-role="th">2043.359718</td>
 <td>0.476</td>
 <td>0.478</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">3562.247890</th>
+<td data-quarto-table-cell-role="th">3562.247890</td>
 <td>0.424</td>
 <td>0.427</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">6210.169419</th>
+<td data-quarto-table-cell-role="th">6210.169419</td>
 <td>0.359</td>
 <td>0.363</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">10826.367339</th>
+<td data-quarto-table-cell-role="th">10826.367339</td>
 <td>0.286</td>
 <td>0.289</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">18873.918221</th>
+<td data-quarto-table-cell-role="th">18873.918221</td>
 <td>0.212</td>
 <td>0.215</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">32903.445623</th>
+<td data-quarto-table-cell-role="th">32903.445623</td>
 <td>0.147</td>
 <td>0.149</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">57361.525104</th>
+<td data-quarto-table-cell-role="th">57361.525104</td>
 <td>0.095</td>
 <td>0.096</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">100000.000000</th>
+<td data-quarto-table-cell-role="th">100000.000000</td>
 <td>0.059</td>
 <td>0.059</td>
 </tr>
@@ -914,8 +911,8 @@ Empieza a empeorar a partir de alpha ≈ 221 con 7 500 filas</code></pre>
 </div>
 </div>
 </div>
-<div id="50fdeadf" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.809044Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.808933Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.810888Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.810586Z&quot;}}" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Respuestas</span></span>
+<div id="50fdeadf" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.809044Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.808933Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.810888Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.810586Z&quot;}" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Respuestas</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Con 7 500 filas el R² en prueba es igual al de la regresión lineal (0,576) para todo alpha</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    hasta 14, y en el mejor caso no se gana nada (+0,000). La penalización no aporta nada.</span></span>
@@ -934,7 +931,7 @@ Empieza a empeorar a partir de alpha ≈ 221 con 7 500 filas</code></pre>
 <span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="co">#    coeficientes apenas reduce una varianza que ya era baja, y a partir de cierto alpha solo añade</span></span>
 <span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="co">#    sesgo. Por eso la curva es plana y después cae, y por eso el umbral a partir del que empeora es</span></span>
 <span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="co">#    mucho más alto: hacen falta penalizaciones grandes para que el sesgo se imponga a la información</span></span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="co">#    que contienen 7 500 filas.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="co">#    que contienen 7 500 filas.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -944,18 +941,18 @@ Empieza a empeorar a partir de alpha ≈ 221 con 7 500 filas</code></pre>
 <p><span class="math display">\[RSS + \lambda \sum_{j=1}^{k} |\beta_j|, \qquad \lambda \geq 0.\]</span></p>
 <p>El cambio parece menor, pero tiene una consecuencia importante: para <span class="math inline">\(\lambda\)</span> suficientemente grande, el Lasso hace que algunos coeficientes sean <strong>exactamente cero</strong>. Es decir, además de encoger, <strong>selecciona variables</strong>: las que quedan con coeficiente cero desaparecen del modelo. Ridge nunca hace eso.</p>
 <p>En <code>scikit-learn</code>, <code>Lasso(alpha=...)</code>. El algoritmo que lo resuelve es iterativo, así que a veces necesita más iteraciones de las que trae por defecto; <code>max_iter=20_000</code> evita avisos de falta de convergencia sin efecto apreciable en el tiempo de cálculo. Probemos con <code>alpha=200</code> en la muestra pequeña.</p>
-<div id="515b3bd6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.811985Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.811887Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.842895Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.842544Z&quot;}}" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>lasso_pocos <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()), (<span class="st">"modelo"</span>, Lasso(alpha<span class="op">=</span><span class="dv">200</span>, max_iter<span class="op">=</span><span class="dv">20_000</span>))])</span>
+<div id="515b3bd6" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.811985Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.811887Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.842895Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.842544Z&quot;}" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>lasso_pocos <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()), (<span class="st">"modelo"</span>, Lasso(alpha<span class="op">=</span><span class="dv">200</span>, max_iter<span class="op">=</span><span class="dv">20_000</span>))])</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>resultado_lasso_pocos <span class="op">=</span> evaluar(lasso_pocos, X_pocos, y_pocos)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">"Lineal"</span>: resultado_ols_pocos,</span>
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Ridge (alpha=10)"</span>: resultado_ridge_pocos,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Lasso (alpha=200)"</span>: resultado_lasso_pocos})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Lasso (alpha=200)"</span>: resultado_lasso_pocos})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="16">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -966,37 +963,37 @@ Empieza a empeorar a partir de alpha ≈ 221 con 7 500 filas</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">R2_train</th>
+<td data-quarto-table-cell-role="th">R2_train</td>
 <td>0.727</td>
 <td>0.676</td>
 <td>0.650</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">R2_test</th>
+<td data-quarto-table-cell-role="th">R2_test</td>
 <td>0.392</td>
 <td>0.514</td>
 <td>0.491</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">RMSE_test</th>
+<td data-quarto-table-cell-role="th">RMSE_test</td>
 <td>14007.000</td>
 <td>12519.000</td>
 <td>12811.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">MAE_test</th>
+<td data-quarto-table-cell-role="th">MAE_test</td>
 <td>10432.000</td>
 <td>8825.000</td>
 <td>9014.000</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">coef_no_nulos</th>
+<td data-quarto-table-cell-role="th">coef_no_nulos</td>
 <td>87.000</td>
 <td>87.000</td>
 <td>31.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">coef_total</th>
+<td data-quarto-table-cell-role="th">coef_total</td>
 <td>87.000</td>
 <td>87.000</td>
 <td>87.000</td>
@@ -1009,13 +1006,13 @@ Empieza a empeorar a partir de alpha ≈ 221 con 7 500 filas</code></pre>
 </div>
 <p>El Lasso obtiene en prueba un R² parecido al de Ridge, pero lo hace con <strong>muchos menos coeficientes</strong>: la fila <code>coef_no_nulos</code> muestra que ha anulado más de la mitad de las 87 columnas. Es un modelo más simple y, con estos datos, igual de bueno.</p>
 <p>Veamos qué columnas han sobrevivido. Emparejamos los coeficientes con los nombres de columna del preprocesador y nos quedamos con los distintos de cero, ordenados por valor absoluto. Usamos el mismo umbral que <code>evaluar()</code> (valor absoluto mayor que <span class="math inline">\(10^{-8}\)</span>) porque el algoritmo iterativo deja a veces valores del orden de <span class="math inline">\(10^{-10}\)</span> que son cero a efectos prácticos.</p>
-<div id="9a1d4d71" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.843960Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.843846Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.847751Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.847473Z&quot;}}" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>coef_lasso <span class="op">=</span> pd.Series(lasso_pocos.named_steps[<span class="st">"modelo"</span>].coef_,</span>
+<div id="9a1d4d71" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.843960Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.843846Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:58.847751Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:58.847473Z&quot;}" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>coef_lasso <span class="op">=</span> pd.Series(lasso_pocos.named_steps[<span class="st">"modelo"</span>].coef_,</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                       index<span class="op">=</span>lasso_pocos.named_steps[<span class="st">"preprocesado"</span>].get_feature_names_out())</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>supervivientes <span class="op">=</span> coef_lasso[coef_lasso.<span class="bu">abs</span>() <span class="op">&gt;</span> <span class="fl">1e-8</span>]</span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Columnas con coeficiente distinto de cero: </span><span class="sc">{</span><span class="bu">len</span>(supervivientes)<span class="sc">}</span><span class="ss"> de </span><span class="sc">{</span><span class="bu">len</span>(coef_lasso)<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(supervivientes.reindex(supervivientes.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index).<span class="bu">round</span>(<span class="dv">0</span>).to_string())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(supervivientes.reindex(supervivientes.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index).<span class="bu">round</span>(<span class="dv">0</span>).to_string())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Columnas con coeficiente distinto de cero: 31 de 87
 
@@ -1055,8 +1052,8 @@ categoricas__ANOS2_5           158.0</code></pre>
 <section id="el-camino-de-los-coeficientes-en-lasso" class="level3">
 <h3 class="anchored" data-anchor-id="el-camino-de-los-coeficientes-en-lasso">4.1 El camino de los coeficientes en Lasso</h3>
 <p>Repetimos el recorrido de la sección 3.1, ahora con Lasso y con una rejilla de <code>alpha</code> entre <span class="math inline">\(10^0\)</span> y <span class="math inline">\(10^4\)</span> (la escala útil es distinta de la de Ridge: además de penalizar <span class="math inline">\(|\beta|\)</span> en lugar de <span class="math inline">\(\beta^2\)</span>, <code>scikit-learn</code> divide el error cuadrático entre <span class="math inline">\(2n\)</span> en <code>Lasso</code> y no en <code>Ridge</code>, así que un mismo valor de <code>alpha</code> no significa lo mismo en los dos estimadores y no conviene compararlos). Además del R², guardamos cuántos coeficientes quedan distintos de cero.</p>
-<div id="ec61f57a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.848883Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.848774Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:59.651429Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:59.651033Z&quot;}}" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>alphas_lasso <span class="op">=</span> np.logspace(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">30</span>)</span>
+<div id="ec61f57a" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:58.848883Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:58.848774Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:27:59.651429Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:27:59.651033Z&quot;}" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>alphas_lasso <span class="op">=</span> np.logspace(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">30</span>)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>coefs, r2_train, r2_test, no_nulos <span class="op">=</span> [], [], [], []</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> alphas_lasso:</span>
@@ -1073,13 +1070,13 @@ categoricas__ANOS2_5           158.0</code></pre>
 <span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mejor alpha en prueba:"</span>, <span class="bu">round</span>(curva_lasso[<span class="st">"R2_test"</span>].idxmax(), <span class="dv">1</span>),</span>
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">" R2_test:"</span>, curva_lasso[<span class="st">"R2_test"</span>].<span class="bu">max</span>(),</span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">" coeficientes no nulos:"</span>, curva_lasso.loc[curva_lasso[<span class="st">"R2_test"</span>].idxmax(), <span class="st">"coef_no_nulos"</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">" coeficientes no nulos:"</span>, curva_lasso.loc[curva_lasso[<span class="st">"R2_test"</span>].idxmax(), <span class="st">"coef_no_nulos"</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Mejor alpha en prueba: 161.0  R2_test: 0.492  coeficientes no nulos: 34</code></pre>
 </div>
 </div>
-<div id="aee62088" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:59.652487Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:59.652372Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.312542Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.312131Z&quot;}}" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="fl">4.5</span>))</span>
+<div id="aee62088" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:27:59.652487Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:27:59.652372Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.312542Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.312131Z&quot;}" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="fl">4.5</span>))</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> camino_lasso.columns:</span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    ejes[<span class="dv">0</span>].plot(camino_lasso.index, camino_lasso[col], color<span class="op">=</span>GRIS, lw<span class="op">=</span><span class="fl">0.6</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
@@ -1107,7 +1104,7 @@ categoricas__ANOS2_5           158.0</code></pre>
 <span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>ejes[<span class="dv">2</span>].set_title(<span class="st">"Lasso: R² según la penalización (n = 200)"</span>)</span>
 <span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>ejes[<span class="dv">2</span>].legend()</span>
 <span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1128,8 +1125,8 @@ categoricas__ANOS2_5           158.0</code></pre>
 <li>Ajusta sobre la misma muestra de 200 filas la regresión lineal con solo <code>ESTU</code>, <code>ANOANTI</code> y <code>TIPOJOR</code> (el modelo del ejercicio 3 del cuaderno anterior) y compara su R² en prueba con el del Lasso con <code>alpha=1000</code> y con <code>alpha=160</code>. ¿Qué diferencia hay entre elegir las variables nosotros y dejar que las elija el Lasso?</li>
 </ol>
 <p><strong>Solución.</strong> Reutilizamos el código de la sección 4 con <code>alpha=1000</code>. Para el apartado 2 usamos las operaciones sobre texto de <code>pandas</code> (<code>.str</code>) que sugiere la pista.</p>
-<div id="5bc3e6f6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.313826Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.313707Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.344513Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.344169Z&quot;}}" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Lasso con alpha=1000 en la muestra pequeña, y columnas con coeficiente distinto de cero</span></span>
+<div id="5bc3e6f6" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.313826Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.313707Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.344513Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.344169Z&quot;}" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Lasso con alpha=1000 en la muestra pequeña, y columnas con coeficiente distinto de cero</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>lasso_1000 <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()), (<span class="st">"modelo"</span>, Lasso(alpha<span class="op">=</span><span class="dv">1000</span>, max_iter<span class="op">=</span><span class="dv">20_000</span>))])</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>resultado_lasso_1000 <span class="op">=</span> evaluar(lasso_1000, X_pocos, y_pocos)</span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1141,7 +1138,7 @@ categoricas__ANOS2_5           158.0</code></pre>
 <span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>supervivientes_1000 <span class="op">=</span> supervivientes_1000.reindex(supervivientes_1000.<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).index)</span>
 <span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Columnas con coeficiente distinto de cero: </span><span class="sc">{</span><span class="bu">len</span>(supervivientes_1000)<span class="sc">}</span><span class="ss"> de </span><span class="sc">{</span><span class="bu">len</span>(coef_1000)<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(supervivientes_1000.<span class="bu">round</span>(<span class="dv">0</span>).to_string())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(supervivientes_1000.<span class="bu">round</span>(<span class="dv">0</span>).to_string())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Columnas con coeficiente distinto de cero: 8 de 87
 
@@ -1155,8 +1152,8 @@ categoricas__RESPONSA_0     -198.0
 categoricas__TIPOJOR_1       169.0</code></pre>
 </div>
 </div>
-<div id="b3b0ccdc" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.345570Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.345458Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.348896Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.348618Z&quot;}}" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Variable original de la que procede cada columna superviviente.</span></span>
+<div id="b3b0ccdc" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.345570Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.345458Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.348896Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.348618Z&quot;}" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Variable original de la que procede cada columna superviviente.</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    Un nombre como "categoricas__CNO1_A0" se parte en dos pasos:</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#      .str.split("__").str[1]  -&gt;  "CNO1_A0"   (nos quedamos con lo que hay tras el doble guion bajo)</span></span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#      .str.split("_").str[0]   -&gt;  "CNO1"      (y con lo que hay antes del primer guion bajo)</span></span>
@@ -1170,7 +1167,7 @@ categoricas__TIPOJOR_1       169.0</code></pre>
 <span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Columnas supervivientes por variable original:"</span>)</span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tabla_sup[<span class="st">"variable"</span>].value_counts().to_string())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tabla_sup[<span class="st">"variable"</span>].value_counts().to_string())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Columnas supervivientes por variable original:
 variable
@@ -1182,18 +1179,18 @@ RESPONSA    1
 TIPOJOR     1</code></pre>
 </div>
 </div>
-<div id="d397695e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.349960Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.349854Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.351866Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.351554Z&quot;}}" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Variables originales que han desaparecido por completo del modelo.</span></span>
+<div id="d397695e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.349960Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.349854Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.351866Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.351554Z&quot;}" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Variables originales que han desaparecido por completo del modelo.</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    Un conjunto (set) es una colección sin repeticiones; la resta de conjuntos da los elementos</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    del primero que no están en el segundo (en R: setdiff()).</span></span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>desaparecidas <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">set</span>(PREDICTORES) <span class="op">-</span> <span class="bu">set</span>(tabla_sup[<span class="st">"variable"</span>]))</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Variables sin ninguna columna activa:"</span>, desaparecidas)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Variables sin ninguna columna activa:"</span>, desaparecidas)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Variables sin ninguna columna activa: ['ANOS2', 'CNACE', 'CNO1', 'CONTROL', 'MERCADO', 'NUTS1', 'REGULACION', 'SEXO', 'TIPOCON', 'TIPOPAIS']</code></pre>
 </div>
 </div>
-<div id="ad0eba41" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.352768Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.352666Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.354494Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.354226Z&quot;}}" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Comentario sobre las variables que desaparecen</span></span>
+<div id="ad0eba41" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.352768Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.352666Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.354494Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.354226Z&quot;}" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Comentario sobre las variables que desaparecen</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Con alpha=1000 el Lasso conserva 8 columnas de 87, procedentes de seis variables: estudios</span></span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (ESTU, con tres categorías), antigüedad (ANOANTI), horas pactadas (JAP), empresas de 200 o más</span></span>
@@ -1210,10 +1207,10 @@ TIPOJOR     1</code></pre>
 <span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co"># la muestra, así que cada columna indicadora aporta poca información por separado y una</span></span>
 <span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="co"># penalización fuerte las anula una a una. Con alpha=160 (celda anterior) CNO1 y SEXO sí</span></span>
 <span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co"># sobrevivían. El Lasso selecciona columnas, no variables, y con muestras pequeñas castiga a las</span></span>
-<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="co"># categóricas con muchos niveles.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="co"># categóricas con muchos niveles.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="7ebbe054" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.355521Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.355411Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.398008Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.397638Z&quot;}}" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Regresión lineal con solo ESTU, ANOANTI y TIPOJOR sobre la misma muestra de 200 filas,</span></span>
+<div id="7ebbe054" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.355521Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.355411Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.398008Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.397638Z&quot;}" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Regresión lineal con solo ESTU, ANOANTI y TIPOJOR sobre la misma muestra de 200 filas,</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    frente al Lasso con alpha=1000 y con alpha=160.</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>preprocesador_3 <span class="op">=</span> ColumnTransformer(</span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
@@ -1231,12 +1228,12 @@ TIPOJOR     1</code></pre>
 <span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">"Lineal, 3 variables"</span>: resultado_lineal_3,</span>
 <span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Lasso (alpha=1000)"</span>: resultado_lasso_1000,</span>
-<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Lasso (alpha=160)"</span>: resultado_lasso_160})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Lasso (alpha=160)"</span>: resultado_lasso_160})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="24">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1247,37 +1244,37 @@ TIPOJOR     1</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">R2_train</th>
+<td data-quarto-table-cell-role="th">R2_train</td>
 <td>0.530</td>
 <td>0.475</td>
 <td>0.666</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">R2_test</th>
+<td data-quarto-table-cell-role="th">R2_test</td>
 <td>0.402</td>
 <td>0.400</td>
 <td>0.492</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">RMSE_test</th>
+<td data-quarto-table-cell-role="th">RMSE_test</td>
 <td>13886.000</td>
 <td>13919.000</td>
 <td>12810.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">MAE_test</th>
+<td data-quarto-table-cell-role="th">MAE_test</td>
 <td>9834.000</td>
 <td>9569.000</td>
 <td>9067.000</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">coef_no_nulos</th>
+<td data-quarto-table-cell-role="th">coef_no_nulos</td>
 <td>10.000</td>
 <td>8.000</td>
 <td>34.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">coef_total</th>
+<td data-quarto-table-cell-role="th">coef_total</td>
 <td>10.000</td>
 <td>87.000</td>
 <td>87.000</td>
@@ -1288,8 +1285,8 @@ TIPOJOR     1</code></pre>
 </div>
 </div>
 </div>
-<div id="0893ec05" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.398982Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.398870Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.400761Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.400437Z&quot;}}" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Elegir las variables nosotros o dejar que las elija el Lasso</span></span>
+<div id="0893ec05" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.398982Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.398870Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.400761Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.400437Z&quot;}" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Elegir las variables nosotros o dejar que las elija el Lasso</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co"># El modelo lineal con las tres variables que elegimos "a mano" (10 columnas, R² en prueba 0,402)</span></span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># y el Lasso con alpha=1000 (8 columnas, R² 0,400) son de tamaño parecido y predicen igual: con</span></span>
@@ -1304,7 +1301,7 @@ TIPOJOR     1</code></pre>
 <span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="co"># A cambio, la selección del Lasso depende de la muestra: con otras 200 filas la lista de</span></span>
 <span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a><span class="co"># supervivientes cambiaría. La selección manual, basada en conocimiento del problema, es más</span></span>
 <span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a><span class="co"># estable y más fácil de explicar. En la práctica se combinan: conocimiento para descartar lo que</span></span>
-<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="co"># no tiene sentido (la fuga de información del cuaderno anterior), y penalización para el resto.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="co"># no tiene sentido (la fuga de información del cuaderno anterior), y penalización para el resto.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1319,8 +1316,8 @@ TIPOJOR     1</code></pre>
 <li><code>ElasticNetCV(...)</code>: lo veremos en la sección 6.</li>
 </ul>
 <p>Tras el ajuste, el <code>alpha</code> elegido queda en el atributo <code>alpha_</code> (con guion bajo final, como todo lo que <code>scikit-learn</code> aprende de los datos).</p>
-<div id="59786022" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.401703Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.401602Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.523674Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.523243Z&quot;}}" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>ridge_cv <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()),</span>
+<div id="59786022" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.401703Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.401602Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.523674Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.523243Z&quot;}" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>ridge_cv <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()),</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                     (<span class="st">"modelo"</span>, RidgeCV(alphas<span class="op">=</span>np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">30</span>)))])</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>resultado_ridge_cv <span class="op">=</span> evaluar(ridge_cv, X_pocos, y_pocos)</span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Ridge: alpha elegido por validación cruzada ="</span>, <span class="bu">round</span>(ridge_cv.named_steps[<span class="st">"modelo"</span>].alpha_, <span class="dv">1</span>))</span>
@@ -1330,7 +1327,7 @@ TIPOJOR     1</code></pre>
 <span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>resultado_lasso_cv <span class="op">=</span> evaluar(lasso_cv, X_pocos, y_pocos)</span>
 <span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Lasso: alpha elegido por validación cruzada ="</span>, <span class="bu">round</span>(lasso_cv.named_steps[<span class="st">"modelo"</span>].alpha_, <span class="dv">1</span>))</span>
 <span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">"Lineal"</span>: resultado_ols_pocos, <span class="st">"RidgeCV"</span>: resultado_ridge_cv, <span class="st">"LassoCV"</span>: resultado_lasso_cv})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">"Lineal"</span>: resultado_ols_pocos, <span class="st">"RidgeCV"</span>: resultado_ridge_cv, <span class="st">"LassoCV"</span>: resultado_lasso_cv})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Ridge: alpha elegido por validación cruzada = 13.7
 Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
@@ -1339,7 +1336,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1350,37 +1347,37 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">R2_train</th>
+<td data-quarto-table-cell-role="th">R2_train</td>
 <td>0.727</td>
 <td>0.662</td>
 <td>0.605</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">R2_test</th>
+<td data-quarto-table-cell-role="th">R2_test</td>
 <td>0.392</td>
 <td>0.515</td>
 <td>0.480</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">RMSE_test</th>
+<td data-quarto-table-cell-role="th">RMSE_test</td>
 <td>14007.000</td>
 <td>12508.000</td>
 <td>12951.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">MAE_test</th>
+<td data-quarto-table-cell-role="th">MAE_test</td>
 <td>10432.000</td>
 <td>8753.000</td>
 <td>8996.000</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">coef_no_nulos</th>
+<td data-quarto-table-cell-role="th">coef_no_nulos</td>
 <td>87.000</td>
 <td>87.000</td>
 <td>20.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">coef_total</th>
+<td data-quarto-table-cell-role="th">coef_total</td>
 <td>87.000</td>
 <td>87.000</td>
 <td>87.000</td>
@@ -1393,8 +1390,8 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 </div>
 <p>Sin haber mirado el conjunto de prueba, la validación cruzada ha elegido <code>alpha</code> cerca de 14 para Ridge y cerca de 350 para Lasso. El de Ridge coincide con el máximo de la curva de la sección 3.1; el de Lasso es algo mayor que el máximo de la sección 4.1 (160), pero la curva es plana en esa zona y el R² en prueba apenas cambia. Los R² en prueba (0,51 y 0,48) son casi los mejores alcanzables. Esa es la garantía que buscábamos: elegir bien la penalización con información que sí tendríamos en la práctica.</p>
 <p><code>LassoCV</code> guarda el error de validación de cada <code>alpha</code> en <code>mse_path_</code> (una matriz con una columna por trozo). Su media es la <strong>curva de validación</strong>, y podemos dibujarla para ver qué ha visto el algoritmo.</p>
-<div id="ee1a1fc0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.525493Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.525302Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.648525Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.648135Z&quot;}}" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>modelo_lcv <span class="op">=</span> lasso_cv.named_steps[<span class="st">"modelo"</span>]</span>
+<div id="ee1a1fc0" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.525493Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.525302Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.648525Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.648135Z&quot;}" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>modelo_lcv <span class="op">=</span> lasso_cv.named_steps[<span class="st">"modelo"</span>]</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>error_medio <span class="op">=</span> modelo_lcv.mse_path_.mean(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>fig, eje <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">4</span>))</span>
@@ -1405,7 +1402,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>eje.set_ylabel(<span class="st">"RMSE de validación (euros)"</span>)</span>
 <span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>eje.set_title(<span class="st">"LassoCV: curva de validación (5 trozos, n = 200)"</span>)</span>
 <span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>eje.legend()</span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1445,8 +1442,8 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 </table>
 <p>Es decir, el <code>alpha</code> de <code>scikit-learn</code> es el <span class="math inline">\(\lambda\)</span> de R, y la mezcla se llama <code>l1_ratio</code>. <code>ElasticNet(alpha=..., l1_ratio=...)</code> tiene por tanto dos hiperparámetros, y <code>ElasticNetCV</code> puede buscar los dos a la vez si le damos una lista de valores de <code>l1_ratio</code>.</p>
 <p>Un detalle práctico. <code>ElasticNetCV</code> construye su rejilla de <code>alpha</code> a partir de la parte Lasso de la penalización, y cuando <code>l1_ratio</code> es pequeño esa rejilla puede quedar fuera del rango útil para la parte Ridge. Para evitarlo le pasamos nuestra propia rejilla, amplia y en escala logarítmica, con el argumento <code>alphas</code>.</p>
-<div id="915f197a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.649609Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.649490Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.931709Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.931313Z&quot;}}" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>REJILLA_ALPHA <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">60</span>)</span>
+<div id="915f197a" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.649609Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.649490Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.931709Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.931313Z&quot;}" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>REJILLA_ALPHA <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">60</span>)</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>enet_cv <span class="op">=</span> Pipeline([(<span class="st">"preprocesado"</span>, crear_preprocesador()),</span>
 <span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>                    (<span class="st">"modelo"</span>, ElasticNetCV(l1_ratio<span class="op">=</span>[<span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">1.0</span>], alphas<span class="op">=</span>REJILLA_ALPHA,</span>
@@ -1455,7 +1452,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>modelo_ecv <span class="op">=</span> enet_cv.named_steps[<span class="st">"modelo"</span>]</span>
 <span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Elastic Net: alpha elegido ="</span>, <span class="bu">round</span>(modelo_ecv.alpha_, <span class="dv">2</span>), <span class="st">"  l1_ratio elegido ="</span>, modelo_ecv.l1_ratio_)</span>
 <span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">"RidgeCV"</span>: resultado_ridge_cv, <span class="st">"LassoCV"</span>: resultado_lasso_cv, <span class="st">"ElasticNetCV"</span>: resultado_enet_cv})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">"RidgeCV"</span>: resultado_ridge_cv, <span class="st">"LassoCV"</span>: resultado_lasso_cv, <span class="st">"ElasticNetCV"</span>: resultado_enet_cv})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Elastic Net: alpha elegido = 376.94   l1_ratio elegido = 1.0</code></pre>
 </div>
@@ -1463,7 +1460,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1474,37 +1471,37 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">R2_train</th>
+<td data-quarto-table-cell-role="th">R2_train</td>
 <td>0.662</td>
 <td>0.605</td>
 <td>0.600</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">R2_test</th>
+<td data-quarto-table-cell-role="th">R2_test</td>
 <td>0.515</td>
 <td>0.480</td>
 <td>0.477</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">RMSE_test</th>
+<td data-quarto-table-cell-role="th">RMSE_test</td>
 <td>12508.000</td>
 <td>12951.000</td>
 <td>12986.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">MAE_test</th>
+<td data-quarto-table-cell-role="th">MAE_test</td>
 <td>8753.000</td>
 <td>8996.000</td>
 <td>9011.000</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">coef_no_nulos</th>
+<td data-quarto-table-cell-role="th">coef_no_nulos</td>
 <td>87.000</td>
 <td>20.000</td>
 <td>19.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">coef_total</th>
+<td data-quarto-table-cell-role="th">coef_total</td>
 <td>87.000</td>
 <td>87.000</td>
 <td>87.000</td>
@@ -1517,19 +1514,19 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 </div>
 <p>La validación cruzada ha elegido <code>l1_ratio = 1</code>, es decir, Lasso puro, con un <code>alpha</code> cercano a 380: prácticamente el mismo modelo que <code>LassoCV</code> (19 columnas frente a 20) y el mismo R² en prueba (0,48). Ninguna mezcla con parte Ridge lo mejora en validación, así que aquí Elastic Net coincide con el Lasso; lo relevante es que lo descubre por sí solo.</p>
 <p><code>mse_path_</code> guarda el error de validación de cada combinación (<code>l1_ratio</code>, <code>alpha</code>, trozo). Resumiéndolo vemos qué ha visto el algoritmo: para cada mezcla, el mejor <code>alpha</code> y su error.</p>
-<div id="c2eae03f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.932765Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.932647Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.937999Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.937735Z&quot;}}" data-execution_count="29">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>error_val <span class="op">=</span> np.sqrt(modelo_ecv.mse_path_.mean(axis<span class="op">=</span><span class="dv">2</span>))   <span class="co"># RMSE medio de los 5 trozos: filas = l1_ratio, columnas = alphas_</span></span>
+<div id="c2eae03f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.932765Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.932647Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:00.937999Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:00.937735Z&quot;}" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>error_val <span class="op">=</span> np.sqrt(modelo_ecv.mse_path_.mean(axis<span class="op">=</span><span class="dv">2</span>))   <span class="co"># RMSE medio de los 5 trozos: filas = l1_ratio, columnas = alphas_</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>resumen <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"l1_ratio"</span>: modelo_ecv.l1_ratio,</span>
 <span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mejor_alpha"</span>: [modelo_ecv.alphas_[fila.argmin()] <span class="cf">for</span> fila <span class="kw">in</span> error_val],   <span class="co"># alphas_ va en orden descendente</span></span>
 <span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RMSE_validacion"</span>: [fila.<span class="bu">min</span>() <span class="cf">for</span> fila <span class="kw">in</span> error_val],</span>
 <span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>}).<span class="bu">round</span>({<span class="st">"mejor_alpha"</span>: <span class="dv">2</span>, <span class="st">"RMSE_validacion"</span>: <span class="dv">0</span>})</span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>resumen</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>resumen</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="29">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1540,37 +1537,37 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
+<td data-quarto-table-cell-role="th">0</td>
 <td>0.1</td>
 <td>0.13</td>
 <td>13061.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
+<td data-quarto-table-cell-role="th">1</td>
 <td>0.3</td>
 <td>0.17</td>
 <td>13060.0</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
+<td data-quarto-table-cell-role="th">2</td>
 <td>0.5</td>
 <td>0.21</td>
 <td>13061.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
+<td data-quarto-table-cell-role="th">3</td>
 <td>0.7</td>
 <td>0.34</td>
 <td>13063.0</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
+<td data-quarto-table-cell-role="th">4</td>
 <td>0.9</td>
 <td>1.08</td>
 <td>13059.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">5</th>
+<td data-quarto-table-cell-role="th">5</td>
 <td>1.0</td>
 <td>376.94</td>
 <td>13020.0</td>
@@ -1586,8 +1583,8 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <section id="comparación-final-cuándo-compensa-penalizar" class="level2">
 <h2 class="anchored" data-anchor-id="comparación-final-cuándo-compensa-penalizar">7. Comparación final: ¿cuándo compensa penalizar?</h2>
 <p>Reunimos todo en una función <code>comparar()</code> que, dados unos datos de entrenamiento, ajusta la regresión lineal y los tres modelos penalizados (con <code>alpha</code> elegido por validación cruzada) y devuelve una tabla. Primero con la muestra de 200 filas y después con todo el conjunto de entrenamiento.</p>
-<div id="6c5e28b4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.939160Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.939046Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:01.283191Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:01.282838Z&quot;}}" data-execution_count="30">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> comparar(X_entrena, y_entrena):</span>
+<div id="6c5e28b4" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:00.939160Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:00.939046Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:01.283191Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:01.282838Z&quot;}" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> comparar(X_entrena, y_entrena):</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    modelos <span class="op">=</span> {</span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Lineal"</span>: LinearRegression(),</span>
 <span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"RidgeCV"</span>: RidgeCV(alphas<span class="op">=</span>np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">30</span>)),</span>
@@ -1602,7 +1599,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(filas).T</span>
 <span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento con 200 filas"</span>)</span>
-<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>comparar(X_pocos, y_pocos)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>comparar(X_pocos, y_pocos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Entrenamiento con 200 filas</code></pre>
 </div>
@@ -1610,7 +1607,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1624,7 +1621,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Lineal</th>
+<td data-quarto-table-cell-role="th">Lineal</td>
 <td>0.727</td>
 <td>0.392</td>
 <td>14007.0</td>
@@ -1633,7 +1630,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <td>87.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">RidgeCV</th>
+<td data-quarto-table-cell-role="th">RidgeCV</td>
 <td>0.662</td>
 <td>0.515</td>
 <td>12508.0</td>
@@ -1642,7 +1639,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <td>87.0</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">LassoCV</th>
+<td data-quarto-table-cell-role="th">LassoCV</td>
 <td>0.605</td>
 <td>0.480</td>
 <td>12951.0</td>
@@ -1651,7 +1648,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <td>87.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">ElasticNetCV</th>
+<td data-quarto-table-cell-role="th">ElasticNetCV</td>
 <td>0.600</td>
 <td>0.477</td>
 <td>12986.0</td>
@@ -1665,9 +1662,9 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 </div>
 </div>
 </div>
-<div id="0ef2637e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:01.284350Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:01.284244Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:01.894907Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:01.894551Z&quot;}}" data-execution_count="31">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Entrenamiento con </span><span class="sc">{</span><span class="bu">len</span>(X_train)<span class="sc">:,}</span><span class="ss"> filas"</span>)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>comparar(X_train, y_train)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="0ef2637e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:01.284350Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:01.284244Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:01.894907Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:01.894551Z&quot;}" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Entrenamiento con </span><span class="sc">{</span><span class="bu">len</span>(X_train)<span class="sc">:,}</span><span class="ss"> filas"</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>comparar(X_train, y_train)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Entrenamiento con 7,500 filas</code></pre>
 </div>
@@ -1675,7 +1672,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1689,7 +1686,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Lineal</th>
+<td data-quarto-table-cell-role="th">Lineal</td>
 <td>0.580</td>
 <td>0.576</td>
 <td>11697.0</td>
@@ -1698,7 +1695,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <td>88.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">RidgeCV</th>
+<td data-quarto-table-cell-role="th">RidgeCV</td>
 <td>0.580</td>
 <td>0.576</td>
 <td>11698.0</td>
@@ -1707,7 +1704,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <td>88.0</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">LassoCV</th>
+<td data-quarto-table-cell-role="th">LassoCV</td>
 <td>0.579</td>
 <td>0.576</td>
 <td>11695.0</td>
@@ -1716,7 +1713,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <td>88.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">ElasticNetCV</th>
+<td data-quarto-table-cell-role="th">ElasticNetCV</td>
 <td>0.579</td>
 <td>0.576</td>
 <td>11695.0</td>
@@ -1740,8 +1737,8 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <li>¿Cómo evoluciona el número de coeficientes no nulos del Lasso al crecer la muestra? Explica por qué.</li>
 </ol>
 <p><strong>Solución.</strong> Completamos el esqueleto llamando a <code>comparar()</code> para cada tamaño y guardando la tabla en el diccionario <code>tablas</code>. Después extraemos de cada tabla la columna que nos interesa.</p>
-<div id="c8dd6b10" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:01.896151Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:01.895946Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:03.453662Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:03.453307Z&quot;}}" data-execution_count="32">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>tamanos <span class="op">=</span> [<span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1_000</span>, <span class="dv">5_000</span>]</span>
+<div id="c8dd6b10" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:01.896151Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:01.895946Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:03.453662Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:03.453307Z&quot;}" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>tamanos <span class="op">=</span> [<span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1_000</span>, <span class="dv">5_000</span>]</span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>tablas <span class="op">=</span> {}</span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> tamanos:</span>
 <span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    X_n <span class="op">=</span> X_train.sample(n<span class="op">=</span>n, random_state<span class="op">=</span>SEMILLA)</span>
@@ -1751,7 +1748,7 @@ Lasso: alpha elegido por validación cruzada = 353.5</code></pre>
 <span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="co"># R² en prueba: una fila por modelo, una columna por tamaño de muestra</span></span>
 <span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>r2_por_tamano <span class="op">=</span> pd.DataFrame({n: tablas[n][<span class="st">"R2_test"</span>] <span class="cf">for</span> n <span class="kw">in</span> tamanos})</span>
-<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>r2_por_tamano</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>r2_por_tamano</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Tamaño   200: listo
 Tamaño   500: listo
@@ -1762,7 +1759,7 @@ Tamaño 5,000: listo</code></pre>
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1774,28 +1771,28 @@ Tamaño 5,000: listo</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Lineal</th>
+<td data-quarto-table-cell-role="th">Lineal</td>
 <td>0.392</td>
 <td>0.531</td>
 <td>0.536</td>
 <td>0.574</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">RidgeCV</th>
+<td data-quarto-table-cell-role="th">RidgeCV</td>
 <td>0.515</td>
 <td>0.547</td>
 <td>0.548</td>
 <td>0.574</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">LassoCV</th>
+<td data-quarto-table-cell-role="th">LassoCV</td>
 <td>0.480</td>
 <td>0.542</td>
 <td>0.545</td>
 <td>0.574</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">ElasticNetCV</th>
+<td data-quarto-table-cell-role="th">ElasticNetCV</td>
 <td>0.477</td>
 <td>0.546</td>
 <td>0.548</td>
@@ -1807,8 +1804,8 @@ Tamaño 5,000: listo</code></pre>
 </div>
 </div>
 </div>
-<div id="e9cb78e5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:03.455393Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:03.455186Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:03.630436Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:03.630052Z&quot;}}" data-execution_count="33">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>fig, eje <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">7.5</span>, <span class="fl">4.5</span>))</span>
+<div id="e9cb78e5" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:03.455393Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:03.455186Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:03.630436Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:03.630052Z&quot;}" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>fig, eje <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">7.5</span>, <span class="fl">4.5</span>))</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre_modelo <span class="kw">in</span> r2_por_tamano.index:</span>
 <span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>    eje.plot(tamanos, r2_por_tamano.loc[nombre_modelo], marker<span class="op">=</span><span class="st">"o"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span>nombre_modelo)</span>
@@ -1821,7 +1818,7 @@ Tamaño 5,000: listo</code></pre>
 <span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>eje.set_title(<span class="st">"R² en prueba según el tamaño de la muestra de entrenamiento"</span>)</span>
 <span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>eje.legend()</span>
 <span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1830,8 +1827,8 @@ Tamaño 5,000: listo</code></pre>
 </div>
 </div>
 </div>
-<div id="31e8419e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:03.631403Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:03.631294Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:03.919847Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:03.919513Z&quot;}}" data-execution_count="34">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Número de coeficientes no nulos del Lasso según el tamaño de muestra.</span></span>
+<div id="31e8419e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:03.631403Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:03.631294Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:03.919847Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:03.919513Z&quot;}" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Número de coeficientes no nulos del Lasso según el tamaño de muestra.</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    comparar() no guarda el alpha elegido, así que volvemos a ajustar LassoCV en cada muestra</span></span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    (es rápido) para verlo junto al número de coeficientes.</span></span>
 <span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> []</span>
@@ -1848,12 +1845,12 @@ Tamaño 5,000: listo</code></pre>
 <span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"coef_total"</span>: tablas[n].loc[<span class="st">"LassoCV"</span>, <span class="st">"coef_total"</span>],</span>
 <span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>    })</span>
 <span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(filas).set_index(<span class="st">"filas"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(filas).set_index(<span class="st">"filas"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="34">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1870,25 +1867,25 @@ Tamaño 5,000: listo</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">200</th>
+<td data-quarto-table-cell-role="th">200</td>
 <td>353.5</td>
 <td>20.0</td>
 <td>87.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">500</th>
+<td data-quarto-table-cell-role="th">500</td>
 <td>75.8</td>
 <td>49.0</td>
 <td>89.0</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">1000</th>
+<td data-quarto-table-cell-role="th">1000</td>
 <td>41.6</td>
 <td>57.0</td>
 <td>88.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">5000</th>
+<td data-quarto-table-cell-role="th">5000</td>
 <td>6.9</td>
 <td>69.0</td>
 <td>88.0</td>
@@ -1899,8 +1896,8 @@ Tamaño 5,000: listo</code></pre>
 </div>
 </div>
 </div>
-<div id="0900c906" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:03.923912Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:03.923686Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:03.925861Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:03.925533Z&quot;}}" data-execution_count="35">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lectura</span></span>
+<div id="0900c906" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:03.923912Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:03.923686Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:03.925861Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:03.925533Z&quot;}" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lectura</span></span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. La ventaja de los modelos penalizados es grande con 200 filas (R² en prueba de 0,39 frente a</span></span>
 <span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    0,48-0,52, más de una décima), se reduce mucho con 500 filas (0,531 frente a 0,542-0,547) y</span></span>
@@ -1914,7 +1911,7 @@ Tamaño 5,000: listo</code></pre>
 <span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a><span class="co">#    y la validación cruzada elige un alpha grande. Al crecer la muestra cada coeficiente se estima</span></span>
 <span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a><span class="co">#    con más precisión, la validación cruzada elige un alpha menor y el Lasso deja pasar más</span></span>
 <span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a><span class="co">#    variables. En el límite, con datos de sobra, el Lasso tiende a la regresión lineal (aunque</span></span>
-<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a><span class="co">#    aquí, con 5 000 filas, sigue descartando una veintena de columnas sin perder nada).</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a><span class="co">#    aquí, con 5 000 filas, sigue descartando una veintena de columnas sin perder nada).</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="ejercicio-4-ampliación-opcional.-cambiar-la-escala-de-la-respuesta" class="level3">
@@ -1926,8 +1923,8 @@ Tamaño 5,000: listo</code></pre>
 </ol>
 <p>Este ejercicio anticipa el tema 3, donde la relación entre predictores y respuesta se cambia de forma más sistemática mediante la función de enlace.</p>
 <p><strong>Solución.</strong> <code>evaluar()</code> admite un conjunto de prueba distinto del global en su tercer y cuarto argumento; se lo pasamos con la respuesta en logaritmos. Como el RMSE y el MAE se redondean a enteros, en escala logarítmica solo miramos el R² y el número de coeficientes.</p>
-<div id="9bf2d05e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:03.928823Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:03.928631Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:04.042513Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:04.042111Z&quot;}}" data-execution_count="36">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Regresión lineal y LassoCV con la respuesta en logaritmos (muestra de 200 filas)</span></span>
+<div id="9bf2d05e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:03.928823Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:03.928631Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:04.042513Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:04.042111Z&quot;}" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Regresión lineal y LassoCV con la respuesta en logaritmos (muestra de 200 filas)</span></span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>y_pocos_log <span class="op">=</span> np.log(y_pocos)</span>
 <span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>y_test_log <span class="op">=</span> np.log(y_test)</span>
 <span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1941,7 +1938,7 @@ Tamaño 5,000: listo</code></pre>
 <span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Solo las filas que tienen sentido en escala logarítmica</span></span>
 <span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>tabla_log <span class="op">=</span> pd.DataFrame({<span class="st">"Lineal (log)"</span>: resultado_ols_log, <span class="st">"LassoCV (log)"</span>: resultado_lasso_cv_log})</span>
-<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>tabla_log.loc[[<span class="st">"R2_train"</span>, <span class="st">"R2_test"</span>, <span class="st">"coef_no_nulos"</span>, <span class="st">"coef_total"</span>]]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>tabla_log.loc[[<span class="st">"R2_train"</span>, <span class="st">"R2_test"</span>, <span class="st">"coef_no_nulos"</span>, <span class="st">"coef_total"</span>]]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>LassoCV en escala log: alpha elegido = 0.0149</code></pre>
 </div>
@@ -1949,7 +1946,7 @@ Tamaño 5,000: listo</code></pre>
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1959,22 +1956,22 @@ Tamaño 5,000: listo</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">R2_train</th>
+<td data-quarto-table-cell-role="th">R2_train</td>
 <td>0.738</td>
 <td>0.649</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">R2_test</th>
+<td data-quarto-table-cell-role="th">R2_test</td>
 <td>0.496</td>
 <td>0.548</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">coef_no_nulos</th>
+<td data-quarto-table-cell-role="th">coef_no_nulos</td>
 <td>87.000</td>
 <td>18.000</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">coef_total</th>
+<td data-quarto-table-cell-role="th">coef_total</td>
 <td>87.000</td>
 <td>87.000</td>
 </tr>
@@ -1984,8 +1981,8 @@ Tamaño 5,000: listo</code></pre>
 </div>
 </div>
 </div>
-<div id="102473da" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:04.043616Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:04.043486Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:04.083127Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:04.082795Z&quot;}}" data-execution_count="37">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Volver a euros: np.exp() deshace el logaritmo de las predicciones.</span></span>
+<div id="102473da" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:04.043616Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:04.043486Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:04.083127Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:04.082795Z&quot;}" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Volver a euros: np.exp() deshace el logaritmo de las predicciones.</span></span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    Comparamos con los modelos en escala original ya ajustados sobre las mismas 200 filas</span></span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    (ols_pocos, de la sección 2.1, y lasso_cv, de la sección 5).</span></span>
 <span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>predicciones_euros <span class="op">=</span> {</span>
@@ -2005,12 +2002,12 @@ Tamaño 5,000: listo</code></pre>
 <span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pred_negativas"</span>: <span class="bu">int</span>((pred <span class="op">&lt;</span> <span class="dv">0</span>).<span class="bu">sum</span>()),</span>
 <span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a>    })</span>
 <span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-21"><a href="#cb57-21" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(filas).set_index(<span class="st">"modelo"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb57-21"><a href="#cb57-21" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(filas).set_index(<span class="st">"modelo"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="37">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -2029,28 +2026,28 @@ Tamaño 5,000: listo</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Lineal, escala original</th>
+<td data-quarto-table-cell-role="th">Lineal, escala original</td>
 <td>0.392</td>
 <td>14007</td>
 <td>10432</td>
 <td>93</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">LassoCV, escala original</th>
+<td data-quarto-table-cell-role="th">LassoCV, escala original</td>
 <td>0.480</td>
 <td>12951</td>
 <td>8996</td>
 <td>42</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Lineal, escala log (exp)</th>
+<td data-quarto-table-cell-role="th">Lineal, escala log (exp)</td>
 <td>0.303</td>
 <td>14999</td>
 <td>10036</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">LassoCV, escala log (exp)</th>
+<td data-quarto-table-cell-role="th">LassoCV, escala log (exp)</td>
 <td>0.409</td>
 <td>13816</td>
 <td>9122</td>
@@ -2062,8 +2059,8 @@ Tamaño 5,000: listo</code></pre>
 </div>
 </div>
 </div>
-<div id="d4a80d92" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:04.084349Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:04.084238Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:04.086237Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:04.085944Z&quot;}}" data-execution_count="38">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lectura</span></span>
+<div id="d4a80d92" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-09-22T08:28:04.084349Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-09-22T08:28:04.084238Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-09-22T08:28:04.086237Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-09-22T08:28:04.085944Z&quot;}" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lectura</span></span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. En escala logarítmica el Lasso sigue mejorando a la regresión lineal en prueba (R² 0,548</span></span>
 <span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    frente a 0,496, con 18 columnas de 87), y por la misma razón: con 200 filas los mínimos</span></span>
@@ -2084,7 +2081,7 @@ Tamaño 5,000: listo</code></pre>
 <span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a><span class="co">#    mejor: mejora en el lineal (de 10 432 a 10 036) y empeora poco en el Lasso (de 8 996 a 9 122).</span></span>
 <span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a><span class="co">#    La lección es la que anticipa el tema 3: cambiar la escala de la respuesta cambia lo que el</span></span>
-<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a><span class="co">#    modelo optimiza, y hay que evaluar en la escala en la que se van a usar las predicciones.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a><span class="co">#    modelo optimiza, y hay que evaluar en la escala en la que se van a usar las predicciones.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -2175,248 +2172,241 @@ Tamaño 5,000: listo</code></pre>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
-    };
-    anchorJS.add('.anchored');
-    const isCodeAnnotation = (el) => {
-      for (const clz of el.classList) {
-        if (clz.startsWith('code-annotation-')) {                     
-          return true;
-        }
-      }
-      return false;
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
     }
-    const onCopySuccess = function(e) {
-      // button target
-      const button = e.trigger;
-      // don't keep focus
-      button.blur();
-      // flash "checked"
-      button.classList.add('code-copy-button-checked');
-      var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copiado");
-      let tooltip;
-      if (window.bootstrap) {
-        button.setAttribute("data-bs-toggle", "tooltip");
-        button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copiado");
-        tooltip = new bootstrap.Tooltip(button, 
-          { trigger: "manual", 
-            customClass: "code-copy-button-tooltip",
-            offset: [0, -8]});
-        tooltip.show();    
-      }
-      setTimeout(function() {
-        if (tooltip) {
-          tooltip.hide();
-          button.removeAttribute("data-bs-title");
-          button.removeAttribute("data-bs-toggle");
-          button.removeAttribute("data-bs-placement");
-        }
-        button.setAttribute("title", currentTitle);
-        button.classList.remove('code-copy-button-checked');
-      }, 1000);
-      // clear code selection
-      e.clearSelection();
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
     }
-    const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-    }
-    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-      text: getTextToCopy
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
     });
-    clipboard.on('success', onCopySuccess);
-    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-        text: getTextToCopy,
-        container: window.document.getElementById('quarto-embedded-source-code-modal')
-      });
-      clipboardModal.on('success', onCopySuccess);
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/juandmontoro\.github\.io\/tap\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
-      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/juandmontoro\.github\.io\/tap\/");
-      var isInternal = (href) => {
-          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-      }
-      // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-      for (var i=0; i<links.length; i++) {
-        const link = links[i];
-        if (!isInternal(link.href)) {
-          // undo the damage that might have been done by quarto-nav.js in the case of
-          // links that we want to consider external
-          if (link.dataset.originalHref !== undefined) {
-            link.href = link.dataset.originalHref;
-          }
-            // target, if specified
-            link.setAttribute("target", "_blank");
-            if (link.getAttribute("rel") === null) {
-              link.setAttribute("rel", "noopener");
-            }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
         }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
       }
-    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-      const config = {
-        allowHTML: true,
-        maxWidth: 500,
-        delay: 100,
-        arrow: false,
-        appendTo: function(el) {
-            return el.parentElement;
-        },
-        interactive: true,
-        interactiveBorder: 10,
-        theme: 'quarto',
-        placement: 'bottom-start',
-      };
-      if (contentFn) {
-        config.content = contentFn;
-      }
-      if (onTriggerFn) {
-        config.onTrigger = onTriggerFn;
-      }
-      if (onUntriggerFn) {
-        config.onUntrigger = onUntriggerFn;
-      }
-      window.tippy(el, config); 
     }
-    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-    for (var i=0; i<noterefs.length; i++) {
-      const ref = noterefs[i];
-      tippyHover(ref, function() {
-        // use id or data attribute instead here
-        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-        try { href = new URL(href).hash; } catch {}
-        const id = href.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note) {
-          return note.innerHTML;
-        } else {
-          return "";
-        }
-      });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
     }
-    const xrefs = window.document.querySelectorAll('a.quarto-xref');
-    const processXRef = (id, note) => {
-      // Strip column container classes
-      const stripColumnClz = (el) => {
-        el.classList.remove("page-full", "page-columns");
-        if (el.children) {
-          for (const child of el.children) {
-            stripColumnClz(child);
-          }
-        }
-      }
-      stripColumnClz(note)
-      if (id === null || id.startsWith('sec-')) {
-        // Special case sections, only their first couple elements
-        const container = document.createElement("div");
-        if (note.children && note.children.length > 2) {
-          container.appendChild(note.children[0].cloneNode(true));
-          for (let i = 1; i < note.children.length; i++) {
-            const child = note.children[i];
-            if (child.tagName === "P" && child.innerText === "") {
-              continue;
-            } else {
-              container.appendChild(child.cloneNode(true));
-              break;
-            }
-          }
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(container);
-          }
-          return container.innerHTML
-        } else {
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(note);
-          }
-          return note.innerHTML;
-        }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
       } else {
-        // Remove any anchor links if they are present
-        const anchorLink = note.querySelector('a.anchorjs-link');
-        if (anchorLink) {
-          anchorLink.remove();
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
         }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        if (note.classList.contains("callout")) {
-          return note.outerHTML;
-        } else {
-          return note.innerHTML;
-        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
       }
     }
-    for (var i=0; i<xrefs.length; i++) {
-      const xref = xrefs[i];
-      tippyHover(xref, undefined, function(instance) {
-        instance.disable();
-        let url = xref.getAttribute('href');
-        let hash = undefined; 
-        if (url.startsWith('#')) {
-          hash = url;
-        } else {
-          try { hash = new URL(url).hash; } catch {}
-        }
-        if (hash) {
-          const id = hash.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note !== null) {
-            try {
-              const html = processXRef(id, note.cloneNode(true));
-              instance.setContent(html);
-            } finally {
-              instance.enable();
-              instance.show();
-            }
-          } else {
-            // See if we can fetch this
-            fetch(url.split('#')[0])
-            .then(res => res.text())
-            .then(html => {
-              const parser = new DOMParser();
-              const htmlDoc = parser.parseFromString(html, "text/html");
-              const note = htmlDoc.getElementById(id);
-              if (note !== null) {
-                const html = processXRef(id, note);
-                instance.setContent(html);
-              } 
-            }).finally(() => {
-              instance.enable();
-              instance.show();
-            });
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
           }
         } else {
-          // See if we can fetch a full url (with no hash to target)
-          // This is a special case and we should probably do some content thinning / targeting
-          fetch(url)
+          // See if we can fetch this
+          fetch(url.split('#')[0])
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.querySelector('main.content');
+            const note = htmlDoc.getElementById(id);
             if (note !== null) {
-              // This should only happen for chapter cross references
-              // (since there is no id in the URL)
-              // remove the first header
-              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-                note.children[0].remove();
-              }
-              const html = processXRef(null, note);
+              const html = processXRef(id, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -2424,161 +2414,185 @@ Tamaño 5,000: listo</code></pre>
             instance.show();
           });
         }
-      }, function(instance) {
-      });
-    }
-        let selectedAnnoteEl;
-        const selectorForAnnotation = ( cell, annotation) => {
-          let cellAttr = 'data-code-cell="' + cell + '"';
-          let lineAttr = 'data-code-annotation="' +  annotation + '"';
-          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-          return selector;
-        }
-        const selectCodeLines = (annoteEl) => {
-          const doc = window.document;
-          const targetCell = annoteEl.getAttribute("data-target-cell");
-          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-          const lineIds = lines.map((line) => {
-            return targetCell + "-" + line;
-          })
-          let top = null;
-          let height = null;
-          let parent = null;
-          if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
-            }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
-            }
-            selectedAnnoteEl = annoteEl;
-          }
-        };
-        const unselectCodeLines = () => {
-          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-          elementsIds.forEach((elId) => {
-            const div = window.document.getElementById(elId);
-            if (div) {
-              div.remove();
-            }
-          });
-          selectedAnnoteEl = undefined;
-        };
-          // Handle positioning of the toggle
-      window.addEventListener(
-        "resize",
-        throttle(() => {
-          elRect = undefined;
-          if (selectedAnnoteEl) {
-            selectCodeLines(selectedAnnoteEl);
-          }
-        }, 10)
-      );
-      function throttle(fn, ms) {
-      let throttle = false;
-      let timer;
-        return (...args) => {
-          if(!throttle) { // first call gets through
-              fn.apply(this, args);
-              throttle = true;
-          } else { // all the others get throttled
-              if(timer) clearTimeout(timer); // cancel #2
-              timer = setTimeout(() => {
-                fn.apply(this, args);
-                timer = throttle = false;
-              }, ms);
-          }
-        };
-      }
-        // Attach click handler to the DT
-        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-        for (const annoteDlNode of annoteDls) {
-          annoteDlNode.addEventListener('click', (event) => {
-            const clickedEl = event.target;
-            if (clickedEl !== selectedAnnoteEl) {
-              unselectCodeLines();
-              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-              if (activeEl) {
-                activeEl.classList.remove('code-annotation-active');
-              }
-              selectCodeLines(clickedEl);
-              clickedEl.classList.add('code-annotation-active');
-            } else {
-              // Unselect the line
-              unselectCodeLines();
-              clickedEl.classList.remove('code-annotation-active');
-            }
-          });
-        }
-    const findCites = (el) => {
-      const parentEl = el.parentElement;
-      if (parentEl) {
-        const cites = parentEl.dataset.cites;
-        if (cites) {
-          return {
-            el,
-            cites: cites.split(' ')
-          };
-        } else {
-          return findCites(el.parentElement)
-        }
       } else {
-        return undefined;
-      }
-    };
-    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-    for (var i=0; i<bibliorefs.length; i++) {
-      const ref = bibliorefs[i];
-      const citeInfo = findCites(ref);
-      if (citeInfo) {
-        tippyHover(citeInfo.el, function() {
-          var popup = window.document.createElement('div');
-          citeInfo.cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
             }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
         });
       }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
     }
-  });
-  </script>
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
