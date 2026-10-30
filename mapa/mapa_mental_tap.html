@@ -1,0 +1,1586 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa mental TAP</title>
+<meta name="description" content="Mapa mental interactivo de Técnicas Avanzadas de Predicción en Negocios: estimadores del curso y decisiones de aprendizaje supervisado.">
+<!-- Única dependencia externa (opcional): KaTeX para las fórmulas del panel. Sin ella, las fórmulas se muestran como texto. -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  /* Paleta de tap_web.scss */
+  --tap-blue: #447099;
+  --tap-navy: #1F3A5F;
+  --tap-terracotta: #E07A5F;
+  --tap-sage: #81B29A;
+  --tap-gray: #6C757D;
+  --tap-cream: #F7F3EF;
+  --tap-light: #F2F5F8;
+  --text: #2B2B2B;
+  --bg: var(--tap-light);
+  --surface: #ffffff;
+  --border: #d5dee8;
+  --blue-soft: #e3ebf3;
+  --terra-soft: #fbe9e3;
+  --sage-soft: #e5f1ea;
+  --edge: #9fb2c6;
+  --link-faint: rgba(224, 122, 95, .16);
+  --font: "Source Sans Pro", "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --panel-w: 410px;
+  --header-h: 56px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: var(--font);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+button { font-family: inherit; }
+
+/* ---------- Cabecera ---------- */
+header.bar {
+  position: fixed; inset: 0 0 auto 0; height: var(--header-h);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 14px;
+  background: var(--tap-blue); color: #fff;
+  z-index: 30;
+}
+.bar h1 { font-size: 17px; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+.bar h1 small { font-weight: 400; opacity: .85; margin-left: 6px; }
+.search { position: relative; flex: 1 1 260px; max-width: 360px; margin-left: auto; }
+.search input {
+  width: 100%; height: 34px; border-radius: 6px; border: 1px solid rgba(255,255,255,.5);
+  background: rgba(255,255,255,.96); color: var(--text); padding: 0 10px 0 32px; font: inherit; font-size: 15px;
+}
+.search input:focus { outline: 2px solid var(--tap-terracotta); outline-offset: 1px; }
+.search svg { position: absolute; left: 9px; top: 9px; width: 16px; height: 16px; color: var(--tap-gray); pointer-events: none; }
+.results {
+  position: absolute; top: 40px; left: 0; right: 0; background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 8px 24px rgba(31,58,95,.18);
+  list-style: none; margin: 0; padding: 4px; max-height: 60vh; overflow: auto; display: none;
+}
+.results.show { display: block; }
+.results li button {
+  display: flex; width: 100%; gap: 8px; align-items: baseline; text-align: left; border: 0; background: none;
+  padding: 7px 8px; border-radius: 4px; cursor: pointer; font-size: 14px; color: var(--text);
+}
+.results li button:hover, .results li button.active { background: var(--blue-soft); }
+.results .kind { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--tap-gray); white-space: nowrap; }
+.results .empty { padding: 8px; color: var(--tap-gray); font-size: 14px; }
+.tools { display: flex; gap: 6px; }
+.tbtn {
+  height: 34px; min-width: 34px; padding: 0 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.55);
+  background: transparent; color: #fff; font-size: 14px; cursor: pointer; white-space: nowrap;
+}
+.tbtn:hover { background: rgba(255,255,255,.15); }
+.tbtn[aria-pressed="true"] { background: #fff; color: var(--tap-blue); }
+.tbtn:focus-visible { outline: 2px solid var(--tap-terracotta); outline-offset: 1px; }
+
+/* ---------- Lienzo del mapa ---------- */
+#viewport {
+  position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0;
+  overflow: hidden; touch-action: none; cursor: grab;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(68,112,153,.13) 1px, transparent 0) 0 0 / 22px 22px,
+    var(--bg);
+}
+#viewport.dragging { cursor: grabbing; }
+#stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+#edges { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+#edges path { fill: none; }
+#edges .tree { stroke: var(--edge); stroke-width: 2; }
+#edges .tree.dec { stroke: #e8b3a4; }
+#edges .xlink { stroke: var(--link-faint); stroke-width: 1.4; transition: stroke .15s, stroke-width .15s, opacity .15s; }
+#edges .xlink.agg { stroke-dasharray: 5 4; }
+body.has-focus #edges .xlink { opacity: .25; }
+body.has-focus #edges .xlink.hl { opacity: 1; stroke: var(--tap-terracotta); stroke-width: 2.6; }
+body.has-focus #edges .tree { opacity: .45; }
+
+.node {
+  position: absolute; display: flex; align-items: center; gap: 8px;
+  border-radius: 9px; border: 1.5px solid var(--border); background: var(--surface);
+  padding: 6px 10px; cursor: pointer; user-select: none; -webkit-user-select: none;
+  box-shadow: 0 1px 2px rgba(31,58,95,.08);
+  transition: opacity .15s, box-shadow .15s, border-color .15s, background-color .15s;
+  line-height: 1.2;
+}
+.node:hover { box-shadow: 0 3px 10px rgba(31,58,95,.18); }
+.node:focus-visible { outline: 3px solid var(--tap-terracotta); outline-offset: 2px; }
+.node .txt { flex: 1 1 auto; min-width: 0; }
+.node .lbl { display: block; font-weight: 600; overflow-wrap: anywhere; }
+.node .sub { display: block; font-size: 12.5px; color: var(--tap-gray); margin-top: 2px; }
+.node .tema { font-size: 11.5px; font-weight: 600; padding: 1px 6px; border-radius: 10px; white-space: nowrap; }
+.node .tog {
+  flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid currentColor;
+  background: transparent; color: inherit; font-size: 15px; line-height: 17px; padding: 0; cursor: pointer; font-weight: 700;
+}
+.node .tog:focus-visible { outline: 2px solid var(--tap-terracotta); outline-offset: 1px; }
+.node .sim {
+  flex: 0 0 auto; font-size: 11.5px; padding: 2px 7px; border-radius: 5px;
+  border: 1px dashed var(--tap-gray); background: var(--tap-cream); color: var(--tap-gray);
+}
+.sim:disabled { cursor: not-allowed; opacity: .75; }
+
+/* Tipo 1: objetivo (marino) */
+.node.objetivo { background: var(--tap-navy); border-color: var(--tap-navy); color: #fff; padding: 10px 12px; }
+.node.objetivo .lbl { font-size: 17px; }
+.node.objetivo .sub { color: #dbe5f0; font-size: 14px; }
+/* Tipo 2: familias y estimadores (azul) */
+.node.familia { background: var(--tap-blue); border-color: var(--tap-blue); color: #fff; }
+.node.familia .sub { color: #e3ebf3; }
+.node.estimador { border-color: #b9cbdd; border-left: 5px solid var(--tap-blue); }
+.node.estimador .lbl { color: var(--tap-navy); }
+.node.estimador .tema { background: var(--blue-soft); color: var(--tap-blue); }
+.node.estimador.pendiente { border-style: dashed; border-left-style: solid; background: #fbfcfd; }
+.node.familia.pendiente { background: #6f8fb0; border: 1.5px dashed #ffffff; }
+.node.pendiente .tema { background: var(--tap-cream); color: var(--tap-gray); }
+/* Tipo 3: decisiones transversales (terracota) */
+.node.hub { background: var(--tap-terracotta); border-color: var(--tap-terracotta); color: #fff; }
+.node.hub .sub { color: #fff3ef; }
+.node.decision { border-color: #efc2b5; border-left: 5px solid var(--tap-terracotta); background: #fff; }
+.node.decision .lbl { color: #8f3b25; }
+
+/* Estados */
+.node.sel { box-shadow: 0 0 0 3px var(--tap-sage), 0 6px 16px rgba(31,58,95,.25); }
+.node.rel { box-shadow: 0 0 0 2px var(--tap-terracotta), 0 3px 10px rgba(31,58,95,.15); }
+.node.decision.rel, .node.estimador.rel { background: #fff7f4; }
+body.has-focus .node.dimmed { opacity: .32; }
+body.searching .node:not(.match) { opacity: .28; }
+.node.match { box-shadow: 0 0 0 3px var(--tap-sage); }
+
+/* Leyenda y ayuda */
+.legend {
+  position: fixed; left: 12px; bottom: 12px; z-index: 20; background: rgba(255,255,255,.94);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px;
+  display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; max-width: calc(100vw - 24px);
+}
+.legend span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; }
+.legend .hint { color: var(--tap-gray); }
+.zoom { position: fixed; right: 12px; bottom: 12px; z-index: 20; display: flex; flex-direction: column; gap: 6px; transition: right .2s; }
+.zoom button {
+  width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border); background: #fff;
+  color: var(--tap-navy); font-size: 18px; cursor: pointer; box-shadow: 0 1px 3px rgba(31,58,95,.12);
+}
+.zoom button:hover { background: var(--blue-soft); }
+body.panel-open .zoom { right: calc(var(--panel-w) + 12px); }
+
+/* ---------- Panel lateral ---------- */
+#panel {
+  position: fixed; top: var(--header-h); right: 0; bottom: 0; width: var(--panel-w); max-width: 100vw;
+  background: var(--surface); border-left: 1px solid var(--border); z-index: 25;
+  box-shadow: -8px 0 24px rgba(31,58,95,.12);
+  transform: translateX(105%); transition: transform .22s ease; display: flex; flex-direction: column;
+}
+body.panel-open #panel { transform: none; }
+.p-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); position: relative; }
+.p-kind { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.p-kind.objetivo { color: var(--tap-navy); }
+.p-kind.familia, .p-kind.estimador { color: var(--tap-blue); }
+.p-kind.hub, .p-kind.decision { color: #c4583b; }
+.p-head h2 { margin: 4px 36px 6px 0; font-size: 21px; line-height: 1.2; color: var(--tap-navy); }
+.p-close {
+  position: absolute; right: 10px; top: 10px; width: 32px; height: 32px; border-radius: 6px;
+  border: 1px solid var(--border); background: #fff; font-size: 18px; cursor: pointer; color: var(--tap-navy);
+}
+.badges { display: flex; flex-wrap: wrap; gap: 5px; }
+.badge { font-size: 12px; padding: 2px 8px; border-radius: 10px; background: var(--blue-soft); color: var(--tap-navy); }
+.badge.warn { background: var(--tap-cream); color: #7a5b4a; border: 1px dashed #c9b6a6; }
+.p-body { padding: 4px 16px 24px; overflow-y: auto; flex: 1 1 auto; line-height: 1.45; -webkit-overflow-scrolling: touch; }
+.p-body h3 {
+  font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--tap-blue);
+  margin: 18px 0 6px; padding-bottom: 3px; border-bottom: 2px solid var(--blue-soft);
+}
+.p-body p { margin: 6px 0; }
+.p-body ul { margin: 6px 0; padding-left: 18px; }
+.p-body li { margin: 4px 0; }
+.p-body code { font-family: var(--mono); font-size: .88em; background: var(--tap-cream); color: var(--tap-navy); padding: 0 3px; border-radius: 3px; }
+.idea { font-size: 16px; color: var(--tap-navy); }
+.formula { background: var(--tap-light); border-radius: 6px; padding: 4px 10px; overflow-x: auto; margin: 8px 0; }
+dl.peculiar { margin: 6px 0; }
+dl.peculiar dt { font-weight: 700; color: var(--tap-navy); font-size: 13.5px; margin-top: 8px; }
+dl.peculiar dd { margin: 2px 0 0 0; }
+table.hp { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 6px 0; }
+table.hp th { text-align: left; background: var(--tap-light); color: var(--tap-navy); padding: 5px 6px; font-weight: 600; }
+table.hp td code { overflow-wrap: anywhere; }
+table.hp td { padding: 5px 6px; border-top: 1px solid #e6ecf2; vertical-align: top; }
+table.hp tr:nth-child(even) td { background: #fafbfd; }
+.links { list-style: none; padding: 0 !important; }
+.links li { margin: 7px 0; }
+.chip {
+  display: inline-block; font: inherit; font-size: 13px; font-weight: 600; padding: 2px 9px; border-radius: 12px; cursor: pointer;
+  border: 1px solid #efc2b5; background: var(--terra-soft); color: #8f3b25; margin: 0 4px 2px 0;
+}
+.chip.est { border-color: #b9cbdd; background: var(--blue-soft); color: var(--tap-navy); }
+.chip:hover { filter: brightness(.96); }
+.reason { display: block; font-size: 13.5px; color: #4a4f55; margin-top: 2px; }
+.mat a {
+  display: inline-block; margin: 3px 6px 3px 0; padding: 3px 9px; border: 1px solid #a9bfd5; border-radius: 5px;
+  color: var(--tap-blue); text-decoration: none; font-size: 13.5px;
+}
+.mat a:hover { background: var(--tap-light); }
+.simbox { margin-top: 18px; padding: 10px; border: 1px dashed var(--tap-gray); border-radius: 8px; background: var(--tap-cream); font-size: 13.5px; color: #5a5f64; }
+.simbox button { margin-right: 8px; font-size: 14px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--tap-gray); background: #fff; color: var(--tap-gray); }
+
+/* ---------- Vista en lista ---------- */
+#outline {
+  position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0; overflow-y: auto; display: none;
+  padding: 16px 16px 80px; background: var(--bg);
+}
+body.list-mode #outline { display: block; }
+body.list-mode #viewport, body.list-mode .legend, body.list-mode .zoom { display: none; }
+#outline .wrap { max-width: 860px; margin: 0 auto; }
+#outline details { background: #fff; border: 1px solid var(--border); border-radius: 8px; margin: 8px 0; }
+#outline summary { padding: 10px 12px; cursor: pointer; font-weight: 600; color: #fff; border-radius: 7px; list-style-position: inside; }
+#outline details.familia > summary { background: var(--tap-blue); }
+#outline details.hub > summary { background: var(--tap-terracotta); }
+#outline ul { list-style: none; margin: 0; padding: 6px 8px 8px; }
+#outline li button {
+  width: 100%; text-align: left; border: 0; background: none; padding: 8px 8px; border-radius: 6px; cursor: pointer;
+  font-size: 15px; color: var(--tap-navy); display: flex; justify-content: space-between; gap: 8px;
+}
+#outline li button:hover { background: var(--tap-light); }
+#outline li button small { color: var(--tap-gray); white-space: nowrap; }
+#outline .rootbtn {
+  width: 100%; text-align: left; border: 0; border-radius: 8px; background: var(--tap-navy); color: #fff;
+  padding: 12px 14px; font-size: 17px; font-weight: 600; cursor: pointer;
+}
+#outline .rootbtn small { display: block; font-weight: 400; opacity: .85; font-size: 14px; }
+
+/* ---------- Móvil ---------- */
+@media (max-width: 760px) {
+  :root { --header-h: 96px; --panel-w: 100vw; }
+  header.bar { flex-wrap: wrap; height: var(--header-h); padding: 8px 10px; gap: 8px; align-content: center; }
+  .bar h1 { flex: 1 1 auto; font-size: 16px; }
+  .bar h1 small { display: none; }
+  .search { order: 3; flex: 1 1 100%; max-width: none; margin: 0; }
+  .tools .wide { display: none; }
+  #panel {
+    top: auto; left: 0; right: 0; width: 100%; height: 64vh; border-left: 0; border-top: 1px solid var(--border);
+    border-radius: 14px 14px 0 0; transform: translateY(105%); box-shadow: 0 -8px 24px rgba(31,58,95,.18);
+  }
+  body.panel-open .zoom { right: 12px; bottom: calc(64vh + 10px); }
+  .legend { font-size: 11.5px; padding: 6px 8px; gap: 4px 10px; right: 60px; }
+  .legend .hint { display: none; }
+  body.panel-open .legend { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="bar">
+  <h1>Mapa de la asignatura <small>Técnicas Avanzadas de Predicción en Negocios</small></h1>
+  <div class="search" role="search">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10.5 10.5 15 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <input id="q" type="search" placeholder="Buscar: lasso, AUC, poda, λ…" autocomplete="off" aria-label="Buscar en el mapa" aria-controls="results">
+    <ul id="results" class="results" role="listbox" aria-label="Resultados"></ul>
+  </div>
+  <div class="tools">
+    <button class="tbtn wide" id="expandAll" type="button" title="Desplegar todas las ramas">Desplegar</button>
+    <button class="tbtn wide" id="collapseAll" type="button" title="Plegar las ramas de estimadores">Plegar</button>
+    <button class="tbtn" id="listBtn" type="button" aria-pressed="false" title="Alternar entre mapa y lista">Lista</button>
+  </div>
+</header>
+
+<div id="viewport" aria-label="Mapa mental. Arrastra para desplazarte; Ctrl + rueda o pellizco para acercar.">
+  <div id="stage">
+    <svg id="edges" aria-hidden="true"></svg>
+  </div>
+</div>
+
+<nav id="outline" aria-label="Vista en lista"><div class="wrap"></div></nav>
+
+<div class="legend" aria-hidden="true">
+  <span><i style="background:var(--tap-navy)"></i>Objetivo</span>
+  <span><i style="background:var(--tap-blue)"></i>Estimadores</span>
+  <span><i style="background:var(--tap-terracotta)"></i>Decisiones</span>
+  <span><i style="border:1.5px dashed var(--tap-gray);background:#fff"></i>Tema por publicar</span>
+  <span class="hint">Pulsa un estimador para ver sus vínculos · arrastra para moverte · Ctrl + rueda para acercar</span>
+</div>
+<div class="zoom">
+  <button type="button" id="zin" aria-label="Acercar">+</button>
+  <button type="button" id="zout" aria-label="Alejar">−</button>
+  <button type="button" id="zfit" aria-label="Ajustar a la pantalla" title="Ajustar a la pantalla">⤢</button>
+</div>
+
+<aside id="panel" aria-live="polite" aria-label="Detalle del nodo">
+  <div class="p-head" id="phead"></div>
+  <div class="p-body" id="pbody"></div>
+</aside>
+
+<script>
+"use strict";
+/* =====================================================================
+   CONTENIDO
+   Fuentes: planificacion.qmd, materiales.qmd y los decks de slides/
+   (temas 1 a 4). Los temas 4 (boosting, voting, stacking), 5, 6 y 7
+   aún no tienen deck publicado: su ficha se limita a lo que dicen la
+   planificación, el deck de presentación y la tabla «Controlar la
+   complejidad» del tema 1.
+   ===================================================================== */
+const R = String.raw;
+const BASE = "https://juandmontoro.github.io/tap/";
+const M = {
+  t1a: ["Deck T1 · Fundamentos", "slides/01/semana_1/01_intro_2ML_sn.html"],
+  t1b: ["Deck T1 · Regresión regularizada", "slides/01/semana_2/02_regression_plus_regularization_sn.html"],
+  t1c: ["Deck T1 · Laboratorio", "slides/01/semana_1_clab/01_clab_resumen_sn.html"],
+  t2:  ["Deck T2 · Evaluación y selección", "slides/02/02_evaluacion_seleccion_sn.html"],
+  t2c: ["Deck T2 · Código esencial", "slides/02/semana_2/02_codigo_esencial_sn.html"],
+  t3:  ["Deck T3 · GLM", "slides/03/03_glm_familias_sn.html"],
+  t4:  ["Deck T4 · Árboles y bosques", "slides/04/04_arboles_bosques_sn.html"],
+  m1:  ["Materiales del tema 1", "materiales.html#tema-1"],
+  m2:  ["Materiales del tema 2", "materiales.html#tema-2"],
+  m3:  ["Materiales del tema 3", "materiales.html#tema-3"],
+  m4:  ["Materiales del tema 4", "materiales.html#tema-4"],
+  plan:["Planificación", "planificacion.html"],
+  pres:["Presentación del curso", "slides/0_presentacion/presentacion_2627_sn.html"]
+};
+
+const ROOT = {
+  id: "objetivo", type: "objetivo",
+  label: "Aprender f(X) para predecir y",
+  sub: "y = f(X) + ε · regresión y clasificación",
+  idea: R`Con una muestra de casos con respuesta conocida estimamos una regla \(\hat f\) que prediga bien la respuesta \(y\) en casos nuevos. Es aprendizaje supervisado: aprendemos con respuestas conocidas.`,
+  formula: R`\[y = f(X) + \epsilon\]\[f(X)=E(y\mid X),\qquad E(\epsilon\mid X)=0\]`,
+  puntos: [
+    R`<b>Regresión</b>: respuesta numérica (el precio anunciado de un alojamiento). <b>Clasificación</b>: respuesta categórica (el abandono de un cliente, ser superanfitrión); el modelo predice la probabilidad de cada clase.`,
+    R`\(f(X)\): media de la respuesta para unas características dadas. \(\hat f(X)\): la regla que estimamos con una muestra. \(\epsilon\): la variación que esas características no permiten anticipar.`,
+    R`<b>Error reducible</b>: podemos mejorar la estimación de \(f\). <b>Error irreducible</b>: el ruido que permanece dado \(X\) limita la precisión.`,
+    R`Para un \(x\) nuevo, promediando sobre muestras de entrenamiento y sobre el ruido:\[E[(y-\hat f(x))^2]=\underbrace{\left(E[\hat f(x)]-f(x)\right)^2}_{\text{sesgo}^2}+\underbrace{\mathrm{Var}(\hat f(x))}_{\text{varianza}}+\underbrace{\sigma^2}_{\text{ruido}}\]Sesgo y varianza son reducibles; \(\sigma^2\) no.`,
+    R`Elegir un modelo predictivo exige dos decisiones: la <b>clase de funciones</b> (lineal, árbol, red neuronal…) y <b>cuánta complejidad</b> introducimos en la clase elegida.`,
+    R`Predecir no es estimar un efecto causal: las herramientas pueden coincidir, pero el objetivo causal necesita supuestos que identifiquen el efecto (tema 7).`
+  ],
+  materiales: ["t1a", "pres"]
+};
+
+const HUB = {
+  id: "decisiones", type: "hub",
+  label: "Decisiones de aprendizaje supervisado",
+  sub: "Transversales a todos los estimadores",
+  idea: R`Las reglas para entrenar, comparar y elegir son las mismas en todo el curso; solo cambia el último paso del <code>Pipeline</code>. Pulsa una decisión para ver con qué estimadores se conecta.`,
+  materiales: ["t2", "t2c"]
+};
+
+const FAMILIAS = [
+  { id: "f_ref", label: "Modelo de referencia", sub: "El listón que hay que superar", tema: "T1–T3",
+    idea: R`Un modelo sin predictores. Cualquier modelo se compara con él en las mismas particiones.`, materiales: ["m2", "m3"] },
+  { id: "f_lin", label: "Modelos lineales y regularización", sub: "Tema 1 · una fórmula global", tema: "T1",
+    idea: R`La clase de funciones es lineal en los coeficientes. La regularización restringe la complejidad dentro de esa clase: el modelo sigue siendo lineal, pero al crecer \(\lambda\) se estrecha el conjunto de coeficientes que puede alcanzar.`, materiales: ["t1a", "t1b", "t1c", "m1"] },
+  { id: "f_glm", label: "Modelos lineales generalizados", sub: "Tema 3 · distribución + predictor lineal + enlace", tema: "T2–T3",
+    idea: R`Un GLM combina una distribución de la familia exponencial para la respuesta, un predictor lineal \(\nu_i=\beta_0+\beta_1x_{1i}+\dots+\beta_px_{pi}\) y una función de enlace \(g(\mu_i)=\nu_i\). La distribución y el enlace se eligen según el rango de la respuesta; los coeficientes se estiman por máxima verosimilitud (penalizada si sobreajusta).`, materiales: ["t3", "m3"] },
+  { id: "f_tree", label: "Árboles y ensambles", sub: "Tema 4 · predicción por regiones", tema: "T4",
+    idea: R`Un árbol parte el espacio de predictores en regiones y da la misma predicción a todas las observaciones de una región. Un ensamble combina las predicciones de muchos árboles (o de varios modelos).`, materiales: ["t4", "m4", "plan"] },
+  { id: "f_svm", label: "Máquinas de vectores de soporte", sub: "Tema 5", tema: "T5", pendiente: true,
+    idea: R`Clasificación y regresión con vectores de soporte; núcleos (17 nov). En las prácticas: escalado, ajuste y comparación transversal de modelos (19 nov, entrega E3).`, materiales: ["plan"] },
+  { id: "f_nn", label: "Redes neuronales", sub: "Tema 6 · aprendizaje profundo con Keras", tema: "T6", pendiente: true,
+    idea: R`Perceptrón multicapa (24 nov), backpropagation y regularización (1 dic); prácticas en Keras (26 nov y 3 dic, entrega E4).`, materiales: ["plan"] },
+  { id: "f_causal", label: "Predicción y efectos causales", sub: "Tema 7 · más allá de f(X)", tema: "T7", pendiente: true,
+    idea: R`Explicar una relación o estimar el efecto de una intervención requieren preguntas y supuestos distintos de los de predecir. El aprendizaje automático puede ayudar a estimar efectos causales.`, materiales: ["pres", "plan"] }
+];
+
+/* Decisiones transversales */
+const DECISIONES = [
+  { id: "d_sesgo", label: "Compromiso sesgo-varianza", sub: "Subajuste, sobreajuste, complejidad", tema: "T1",
+    idea: R`Aceptar algo de sesgo puede reducir suficientemente la varianza. La complejidad se mide en relación con los datos disponibles.`,
+    puntos: [
+      R`<b>Subajuste</b>: el método no puede representar \(f\); domina el sesgo. <b>Sobreajuste</b>: el método sigue el ruido de la muestra; domina la varianza.`,
+      R`Un ajuste excelente en entrenamiento puede empeorar las predicciones en datos nuevos: el error de entrenamiento no basta para elegir.`,
+      R`<b>Regularizar</b> es limitar la flexibilidad del ajuste. Más penalización, menos complejidad: más sesgo y menos varianza.`,
+      R`La penalización es un seguro contra la varianza: vale mucho con pocos datos y casi nada cuando sobran.`,
+      R`En un promedio de \(B\) árboles: \(\operatorname{Var}\big(\hat f_{\text{bag}}(x)\big)=\bar\rho\,\sigma^2+\frac{1-\bar\rho}{B}\,\sigma^2\).`
+    ],
+    formula: R`\[E[(y-\hat f(x))^2]=\text{sesgo}^2+\text{varianza}+\sigma^2\]`,
+    materiales: ["t1a", "t1b", "t1c"] },
+  { id: "d_hiper", label: "Seleccionar hiperparámetros", sub: "Se eligen empíricamente, no se estiman", tema: "T1–T2",
+    idea: R`<b>Parámetros</b>: valores que aprende el modelo durante el ajuste. <b>Hiperparámetros</b>: controlan el proceso de ajuste y, en muchos casos, la flexibilidad del estimador. No hay fórmula para fijarlos: se comparan valores candidatos por validación cruzada.`,
+    puntos: [
+      R`<code>GridSearchCV</code> recorre una rejilla (en escala logarítmica para \(\lambda\)); el hiperparámetro se nombra <code>paso__argumento</code>, p. ej. <code>modelo__alpha</code>.`,
+      R`La métrica y la regla de decisión se fijan antes de validar. scikit-learn maximiza la puntuación: los errores se guardan con signo negativo (<code>neg_root_mean_squared_error</code>).`,
+      R`<b>Regla del error típico</b>: entre los modelos cuyo error no supera al mínimo en más de un error típico, el más sencillo («más sencillo» se fija de antemano: más penalización, menos coeficientes no nulos, menos hojas).`,
+      R`El mínimo de la búsqueda (<code>best_score_</code>) mide al ganador con los mismos datos con los que se eligió: con muchas candidatas es optimista.`,
+      R`Cuidado con los nombres: \(\lambda\) es <code>alpha</code> en Ridge, Lasso, ElasticNet, GammaRegressor y PoissonRegressor; en <code>LogisticRegression</code> es <code>C</code> \(=1/\lambda\); la mezcla \(\alpha\) es <code>l1_ratio</code>; en el árbol, la \(\alpha\) de la poda es <code>ccp_alpha</code>.`
+    ],
+    materiales: ["t1a", "t2", "t2c"] },
+  { id: "d_cv", label: "Validación cruzada", sub: "Evalúa el método, no un modelo ajustado", tema: "T2",
+    idea: R`La validación cruzada no evalúa un modelo concreto ya ajustado: evalúa el <b>método</b>, es decir, el procedimiento completo (preprocesado + algoritmo de ajuste + valores de los hiperparámetros) aplicado a datos como los de entrenamiento.`,
+    puntos: [
+      R`Las observaciones se reparten en \(k\) particiones; en cada vuelta se vuelve a ajustar <b>todo</b> el <code>Pipeline</code> con \(k-1\) particiones y se mide el error en la restante. Cada observación valida una vez y se promedian los \(k\) errores.`,
+      R`Hay \(k\) modelos distintos (cinco logit, uno por partición) y ninguno es «el» modelo: sirven para medir el procedimiento y se descartan. El modelo final se reajusta con todo el entrenamiento y los hiperparámetros elegidos.`,
+      R`Por eso el preprocesado va dentro del <code>Pipeline</code>: si se aprendiera fuera, la partición de validación influiría en el ajuste.`,
+      R`Una sola división da un error que depende de la semilla (con 80/20, 7 veces más variable que con 5 particiones). Con \(k=2\) la estimación es pesimista; de \(k=5\) en adelante apenas cambia; LOOCV (\(k=n\)) exige \(n\) ajustes.`,
+      R`<b>Error típico</b>: desviación de los \(k\) errores dividida por \(\sqrt{k}\); orientativo y algo optimista. El ganador puede cambiar con otro reparto.`,
+      R`<b>Validación cruzada anidada</b>: un bucle externo evalúa y otro interno elige los hiperparámetros, <code>cross_val_score(GridSearchCV(...))</code>. Estima el error de <i>elegir y ajustar</i>: el procedimiento completo, elección incluida.`,
+      R`Con un clasificador, las particiones son estratificadas (<code>StratifiedKFold</code>). <code>cross_val_predict</code> da la predicción de cada observación cuando su partición hace de validación.`
+    ],
+    materiales: ["t2", "t2c", "m2"] },
+  { id: "d_part", label: "Entrenamiento, validación y test", sub: "Validar para elegir, probar para evaluar", tema: "T1–T2",
+    idea: R`Entrenamiento: ajustar parámetros. Validación: elegir modelo e hiperparámetros. Prueba (test): evaluar una vez el modelo elegido, fuera de las decisiones.`,
+    puntos: [
+      R`<b>Partir primero</b>: <code>train_test_split</code> antes de cualquier cálculo (con <code>stratify=y</code> en clasificación).`,
+      R`El test se consulta una sola vez, con la decisión tomada, y <b>no reabre la selección</b>. Si cambiamos el modelo después de mirar el test, ya no es una evaluación independiente.`,
+      R`¿Qué error comunicamos? El del test. Sin test, el de la validación cruzada anidada; nunca el mínimo de la búsqueda.`,
+      R`<b>Fuga de información</b>: \(X\) solo contiene lo que conoceríamos en el momento de predecir (ni componentes de la respuesta, ni identificadores, ni pesos muestrales).`
+    ],
+    materiales: ["t1a", "t1c", "t2"] },
+  { id: "d_prep", label: "Preprocesado en el Pipeline", sub: "Escalar, codificar, imputar sin fugas", tema: "T1–T2",
+    idea: R`Las transformaciones (medias, desviaciones, categorías) se aprenden solo con los datos de ajuste: <code>ColumnTransformer</code> + modelo dentro de un <code>Pipeline</code>.`,
+    puntos: [
+      R`Numéricos: <code>StandardScaler()</code> (y <code>SimpleImputer(strategy="median")</code> si hay faltantes). Categóricos: <code>OneHotEncoder(handle_unknown="ignore")</code>.`,
+      R`<b>Estandarizar antes de penalizar</b>: la penalización depende de las unidades; un coeficiente en km y otro en m no se pueden castigar por igual. El intercepto no se penaliza.`,
+      R`En el descenso del gradiente, escalas muy distintas deforman los contornos y frenan la optimización: estandarizar ayuda.`,
+      R`Un árbol no cambia al estandarizar: un corte \(x_j\le s\) solo depende del orden de los valores. Por eso el preprocesado de los árboles no estandariza.`
+    ],
+    materiales: ["t1c", "t2c"] },
+  { id: "d_train", label: "Entrenar: minimizar una pérdida", sub: "Pérdida, gradiente, tasa y lotes", tema: "T1, T3",
+    idea: R`Entrenar es ajustar los parámetros minimizando una pérdida sobre la muestra; regularizar es cambiar la pérdida.`,
+    formula: R`\[\theta^{(t+1)}=\theta^{(t)}-\alpha\,\nabla_\theta L(\theta^{(t)})\]`,
+    puntos: [
+      R`Pérdidas del curso: RSS (regresión lineal), RSS + penalización (Ridge, Lasso, Elastic Net), menos la log-verosimilitud (GLM; con Bernoulli equivale a la log-loss), RSS o impureza por corte (árboles).`,
+      R`\(\alpha\): tasa de aprendizaje (tamaño del paso). Una tasa constante puede mantener oscilaciones; reducirla durante el entrenamiento ayuda a afinar.`,
+      R`Por lotes (todos los datos por paso), estocástico (uno) o por minilotes (\(m\)): un <b>epoch</b> es una pasada completa, con \(\lceil n/m\rceil\) pasos.`,
+      R`Parada: máximo de iteraciones y tolerancia (<code>max_iter</code>); <b>parada temprana</b>: vigilar la pérdida de validación y detener antes de que la generalización empeore.`,
+      R`MCO y Ridge tienen solución directa; Lasso y Elastic Net se resuelven de forma iterativa. Boosting añade árboles que siguen el gradiente de la pérdida; un árbol aislado no se entrena así (algoritmo voraz).`
+    ],
+    materiales: ["t1a", "t1c", "t3"] },
+  { id: "d_mreg", label: "Métricas de regresión", sub: "MSE, RMSE, MAE, R²", tema: "T1–T3",
+    idea: R`La métrica forma parte de la regla de decisión: se elige según el problema de negocio y antes de validar, y se compara siempre con el modelo nulo.`,
+    formula: R`\[\mathrm{MSE}=\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat f(x_i)\right)^2,\qquad \mathrm{RMSE}=\sqrt{\mathrm{MSE}}\]`,
+    puntos: [
+      R`<b>RMSE</b>: en las unidades de la respuesta; pesa más los errores grandes (<code>"neg_root_mean_squared_error"</code>). El MSE se mide en unidades al cuadrado: \((\text{€/noche})^2\).`,
+      R`<b>MAE</b>: error absoluto medio; lo minimiza la mediana (<code>"neg_mean_absolute_error"</code>).`,
+      R`<b>R²</b>: proporción de la varianza de la respuesta que reproduce el modelo; el nulo da 0 (<code>"r2"</code>).`,
+      R`Con la respuesta en logaritmos, el RMSE de \(\log(\text{precio})\) mide errores relativos.`
+    ],
+    materiales: ["t1a", "t3"] },
+  { id: "d_mclas", label: "Métricas de clasificación", sub: "Matriz de confusión, ROC, log-loss", tema: "T2",
+    idea: R`Cada métrica responde a una pregunta distinta. El umbral es una decisión: bajarlo identifica más positivos a costa de más falsos positivos.`,
+    formula: R`\[\text{precisión}=\frac{VP}{VP+FP}\qquad \text{sensibilidad}=\frac{VP}{VP+FN}\]\[\text{especificidad}=\frac{VN}{VN+FP}\qquad \text{exactitud}=\frac{VP+VN}{n}\]`,
+    puntos: [
+      R`<b>Matriz de confusión</b>: VP, VN y dos errores, FP (tipo I) y FN (tipo II). <b>Exactitud</b> \((VP+VN)/n\) los cuenta juntos.`,
+      R`<b>F1</b>: media armónica de precisión y sensibilidad, \(2VP/(2VP+FP+FN)\); solo es alta si lo son las dos.`,
+      R`<b>Curva ROC</b> y <b>AUC</b>: probabilidad de que un positivo al azar reciba una puntuación mayor que un negativo. No depende del umbral; 0,5 es ordenar al azar.`,
+      R`<b>Log-loss</b> (entropía cruzada): evalúa las probabilidades sin umbral; un error cuesta más cuanto mayor es la seguridad.\[-\frac1n\sum_i\big[y_i\log\hat p_i+(1-y_i)\log(1-\hat p_i)\big]\]`,
+      R`Valores de <code>scoring</code>: <code>"accuracy"</code>, <code>"precision"</code>, <code>"recall"</code>, <code>"f1"</code>, <code>"roc_auc"</code>, <code>"neg_log_loss"</code>, <code>"average_precision"</code>.`
+    ],
+    materiales: ["t2", "t3"] },
+  { id: "d_deseq", label: "Clases desequilibradas", sub: "Estratificar, ponderar, mover el umbral", tema: "T2",
+    idea: R`Con una clase rara, la exactitud deja de informar (el nulo acierta el 99 % con un 1 % de positivos) y la probabilidad calibrada casi nunca supera 0,5.`,
+    puntos: [
+      R`<b>Curva PR</b> y <b>precisión media (AP)</b>: su referencia es la prevalencia. Con clases raras sustituyen a la exactitud y a la ROC.`,
+      R`Punto de partida: particiones estratificadas (<code>stratify=y</code>, <code>StratifiedKFold</code>).`,
+      R`<b>Ponderar</b> los errores de la clase rara: <code>class_weight="balanced"</code>, con \(w_1=n/(2n_1)\), \(w_0=n/(2n_0)\). Las probabilidades dejan de estimar la proporción de positivos.`,
+      R`<b>Mover el umbral</b> según los costes: con probabilidades calibradas, el óptimo es \(C_{FP}/(C_{FP}+C_{FN})\); <code>TunedThresholdClassifierCV</code> lo busca por validación cruzada.`,
+      R`Remuestrear (submuestreo o SMOTE) cambia las observaciones de entrenamiento; no lo usamos en el curso.`
+    ],
+    materiales: ["t2"] },
+  { id: "d_interp", label: "Interpretación", sub: "Coeficientes, importancias, SHAP", tema: "T1–T4",
+    idea: R`Predecir bien y explicar de dónde sale la predicción son objetivos distintos: los modelos más flexibles suelen ser los menos legibles.`,
+    puntos: [
+      R`Coeficientes del modelo lineal y del GLM. Un coeficiente nulo de Lasso indica que, con los demás predictores, ese predictor apenas mejora el error de validación: no significa «sin relación» ni «sin efecto causal». La lista cambia con la muestra.`,
+      R`Para describir la asociación de cada predictor con la respuesta se usan el modelo sin penalización y los datos.`,
+      R`Un árbol podado se puede mostrar (aunque uno de 24 hojas tampoco se comunica entero); 500 árboles de un bosque no se leen directamente.`,
+      R`<b>Importancias y valores de Shapley (SHAP)</b>: sesión del 10 nov y práctica guiada del 12 nov (tema 4). Contenido por publicar.`,
+      R`Explicar una relación o estimar el efecto de una intervención pide supuestos propios (tema 7).`
+    ],
+    materiales: ["t1b", "t3", "t4", "plan"] }
+];
+
+/* Estimadores. links: [decisión, por qué se conecta] */
+const ESTIMADORES = [
+  /* ---------- Referencia ---------- */
+  { id: "nulo", fam: "f_ref", label: "Modelo nulo", tema: "T1–T3",
+    sesion: ["T1 29 sep (modelo sin predictores)", "T2 6 oct (DummyClassifier)", "T3 20 oct"],
+    idea: R`Predice siempre la media de la respuesta (o la proporción de cada clase), sin usar ningún predictor.`,
+    peculiar: {
+      supuestos: R`Ninguno sobre la relación entre \(X\) e \(y\): ignora \(X\).`,
+      flexibilidad: R`Nula. Con Ridge y \(\lambda\to\infty\) se llega a él: predice la media de \(y\) en entrenamiento.`,
+      interpretabilidad: R`Total; es el listón. Da R² = 0 y, en clasificación, una AP igual a la prevalencia.`,
+      coste: R`Trivial. Pero acierta mucho con clases desequilibradas: el 70 % en superanfitrión, sin identificar a ninguno.`
+    },
+    hp: [["strategy", "DummyRegressor(strategy=\"mean\"), DummyClassifier(strategy=\"prior\")", "Media, proporción de cada clase o clase más frecuente"]],
+    links: [
+      ["d_mreg", R`Referencia de RMSE, MAE y R²: el modelo base debe mejorarlo en validación.`],
+      ["d_mclas", R`Su exactitud es la proporción de la clase mayoritaria; su AUC, 0,5.`],
+      ["d_deseq", R`Con un 1 % de positivos acierta el 99 %: por eso la exactitud deja de informar.`],
+      ["d_cv", R`Se valida con el mismo objeto <code>cv</code> que el modelo base.`]
+    ],
+    materiales: ["t2", "t3", "t1b"] },
+
+  /* ---------- Tema 1 ---------- */
+  { id: "mco", fam: "f_lin", label: "Regresión lineal (MCO)", tema: "T1",
+    sesion: ["T1 22 sep", "P1 24 sep (clab EES 2022)", "T1 29 sep"],
+    idea: R`Estima \(f\) como una combinación lineal de los predictores eligiendo los coeficientes que minimizan la suma de cuadrados de los residuos (RSS).`,
+    formula: R`\[\operatorname{Var}(\hat\beta_j)=\frac{\sigma^2}{\sum_i (x_{ij}-\bar x_j)^2\,(1-R_j^2)}\]`,
+    peculiar: {
+      supuestos: R`Con los supuestos del modelo lineal es insesgado y \(\operatorname{Var}(\hat\beta\mid X)=\sigma^2(X'X)^{-1}\). Puede predecir fuera del rango de la respuesta (precios negativos, probabilidades mayores que 1).`,
+      flexibilidad: R`Una fórmula global. Su varianza crece con la colinealidad (\(R_j^2=0{,}9\) multiplica la varianza por 10) y con \(p/n\); con \(p+1>n\) la solución no es única.`,
+      interpretabilidad: R`Alta: un coeficiente por columna.`,
+      coste: R`Solución directa, sin iteraciones. Variante: MCO sobre \(\log(\text{precio})\), que predice la mediana del precio.`
+    },
+    hp: [["—", "LinearRegression()", "Sin hiperparámetros: las decisiones son los predictores y sus transformaciones"]],
+    links: [
+      ["d_sesgo", R`Insesgado pero con mucha varianza con pocos datos y columnas correlacionadas: con 200 filas memoriza la muestra.`],
+      ["d_part", R`Su error de ajuste (67 % de la varianza) y de test (35 %) muestran el sobreajuste.`],
+      ["d_prep", R`Codificación de categóricas e imputación dentro del <code>Pipeline</code>.`],
+      ["d_train", R`Minimiza la RSS; ejemplo del descenso del gradiente por lotes, estocástico y por minilotes.`],
+      ["d_mreg", R`R², RMSE y MAE en datos no vistos.`],
+      ["d_interp", R`Coeficientes directamente legibles; base para describir asociaciones.`],
+      ["d_cv", R`Modelo base del proyecto: se valida con las mismas particiones que el nulo.`]
+    ],
+    materiales: ["t1a", "t1b", "t1c", "m1"] },
+  { id: "poli", fam: "f_lin", label: "Regresión polinómica", tema: "T1",
+    sesion: ["T1 22 sep"],
+    idea: R`Una regresión lineal sobre potencias de \(x\): el grado del polinomio fija la flexibilidad de la curva.`,
+    peculiar: {
+      supuestos: R`Los de la regresión lineal sobre las columnas \(x, x^2, \dots, x^d\).`,
+      flexibilidad: R`Control discreto: con 35 observaciones, el grado 1 subajusta y el grado 15 sigue el ruido de la muestra.`,
+      interpretabilidad: R`Buena con grado bajo; los coeficientes de grado alto no se leen.`,
+      coste: R`Bajo; crece el número de columnas con el grado.`
+    },
+    hp: [["Grado \\(d\\)", "—", "Más grado, más flexibilidad (menos sesgo, más varianza)"]],
+    links: [
+      ["d_sesgo", R`Ejemplo canónico: recta frente a polinomio de grado 15; el haz de curvas al cambiar de muestra muestra la varianza.`],
+      ["d_hiper", R`El grado es el hiperparámetro: un control discreto de la complejidad.`],
+      ["d_part", R`El menor error de entrenamiento no basta para elegir el grado: se elige en validación.`],
+      ["d_mreg", R`Se compara por el MSE de entrenamiento y de validación.`]
+    ],
+    materiales: ["t1a"] },
+  { id: "ridge", fam: "f_lin", label: "Ridge", tema: "T1",
+    sesion: ["T1 29 sep", "P1 1 oct (clab 2)"],
+    idea: R`Regresión lineal que penaliza la suma de los coeficientes al cuadrado (L2): contrae todos los coeficientes sin anular ninguno.`,
+    formula: R`\[\min_\beta\ \text{RSS}+\lambda\sum_j\beta_j^2\]\[\text{si } X'X=I:\quad \hat\beta^{R}_j=\frac{\hat\beta_j}{1+\lambda}\]`,
+    peculiar: {
+      supuestos: R`Predictores estandarizados (la penalización depende de las unidades); el intercepto no se penaliza.`,
+      flexibilidad: R`Continua con \(\lambda\): «divide». Introduce sesgo a cambio de mucha menos varianza; con \(\lambda\to\infty\) predice la media de \(y\).`,
+      interpretabilidad: R`Conserva todas las columnas (73 de 73 en Airbnb). Reparte el efecto entre predictores muy correlacionados y evita coeficientes grandes de signo opuesto.`,
+      coste: R`Solución directa. Conviene con muchos efectos pequeños, predictores muy correlacionados o cuando se quiere estabilidad, no selección.`
+    },
+    hp: [["\\(\\lambda\\) (intensidad)", "alpha en Ridge / RidgeCV", "Más \\(\\lambda\\), coeficientes más pequeños: más sesgo, menos varianza"]],
+    links: [
+      ["d_sesgo", R`MCO es insesgado; Ridge cambia algo de sesgo por menos varianza (entre 1,6 y 3,6 veces menor desviación de los coeficientes en el laboratorio).`],
+      ["d_hiper", R`\(\lambda\) (<code>alpha</code>) se elige en una rejilla en escala logarítmica.`],
+      ["d_cv", R`Selección en dos niveles: la mejor \(\lambda\) dentro de la familia y luego entre familias.`],
+      ["d_prep", R`Estandarizar dentro del <code>Pipeline</code> antes de penalizar.`],
+      ["d_train", R`Cambia la pérdida: RSS + penalización L2.`],
+      ["d_mreg", R`RMSE de validación frente a MCO y la media.`],
+      ["d_part", R`Con más datos de entrenamiento, menor ventaja de Ridge (curva de aprendizaje).`]
+    ],
+    materiales: ["t1b", "t1c", "m1"] },
+  { id: "lasso", fam: "f_lin", label: "Lasso", tema: "T1",
+    sesion: ["T1 29 sep", "P1 1 oct (clab 2)"],
+    idea: R`Regresión lineal que penaliza la suma de los valores absolutos de los coeficientes (L1): contrae y deja coeficientes exactamente en cero, es decir, selecciona variables.`,
+    formula: R`\[\min_\beta\ \text{RSS}+\lambda\sum_j\lvert\beta_j\rvert\]\[\text{si } X'X=I:\quad \hat\beta^{L}_j=\operatorname{signo}(\hat\beta_j)\Big(\lvert\hat\beta_j\rvert-\frac{\lambda}{2}\Big)_+\]`,
+    peculiar: {
+      supuestos: R`Predictores estandarizados; intercepto sin penalizar. Conviene con pocos efectos grandes entre muchas columnas.`,
+      flexibilidad: R`«Resta y trunca»: anula todo coeficiente MCO menor que \(\lambda/2\) en valor absoluto. En la geometría, el rombo toca la elipse en una esquina.`,
+      interpretabilidad: R`Da una lista corta (4 de 73 columnas en Airbnb), pero inestable: cambia con la muestra (12 variables distintas en 50 remuestras). Entre predictores correlacionados conserva pocos.`,
+      coste: R`Se resuelve de forma iterativa (un coeficiente cada vez): por eso se fija <code>max_iter</code>.`
+    },
+    hp: [["\\(\\lambda\\) (intensidad)", "alpha en Lasso / LassoCV", "Más \\(\\lambda\\), más coeficientes en cero"]],
+    links: [
+      ["d_sesgo", R`Encoge y selecciona: más sesgo, menos varianza.`],
+      ["d_hiper", R`\(\lambda\) por validación; la regla del error típico elige el modelo con menos coeficientes no nulos.`],
+      ["d_cv", R`El ganador entre Lasso y Elastic Net cambia con la semilla de la partición (19 de 30 repartos).`],
+      ["d_prep", R`Estandarizar antes de penalizar.`],
+      ["d_train", R`RSS + penalización L1, resuelta de forma iterativa.`],
+      ["d_mreg", R`RMSE de validación y de test.`],
+      ["d_interp", R`Un cero de Lasso no significa «sin relación» ni «sin efecto causal».`],
+      ["d_part", R`Elegir \(\lambda\) mirando el test anula la evaluación final.`]
+    ],
+    materiales: ["t1b", "t1c", "m1"] },
+  { id: "enet", fam: "f_lin", label: "Elastic Net", tema: "T1",
+    sesion: ["T1 29 sep", "P1 1 oct (clab 2)", "T2 6 oct"],
+    idea: R`Mezcla las penalizaciones L1 y L2: selecciona variables como Lasso sin perder grupos de predictores correlacionados.`,
+    formula: R`\[\min_\beta\ \text{RSS}+\lambda\Big[\alpha\sum_j\lvert\beta_j\rvert+\tfrac{1-\alpha}{2}\sum_j\beta_j^2\Big]\]`,
+    peculiar: {
+      supuestos: R`Predictores estandarizados; \(\lambda\ge 0\) fija la intensidad y \(\alpha\in[0,1]\) la mezcla. Ceros exactos si \(\alpha>0\).`,
+      flexibilidad: R`Dos controles continuos. Conviene con grupos de predictores correlacionados o \(p>n\).`,
+      interpretabilidad: R`Lista corta (5 de 73 columnas en Airbnb), más estable entre correlacionados que Lasso.`,
+      coste: R`Iterativo; la rejilla tiene dos dimensiones (125 configuraciones en el ejemplo del tema 2).`
+    },
+    hp: [["\\(\\lambda\\) (intensidad)", "alpha en ElasticNet / ElasticNetCV", "Más \\(\\lambda\\), más contracción"],
+         ["\\(\\alpha\\) (mezcla)", "l1_ratio (en glmnet: alpha)", "1 = Lasso, 0 = Ridge"]],
+    links: [
+      ["d_sesgo", R`Intercambio sesgo-varianza controlado por \(\lambda\).`],
+      ["d_hiper", R`Rejilla de \(\lambda\) en escala logarítmica y varias mezclas \(\alpha\).`],
+      ["d_cv", R`Ganó por menos de una milésima: una diferencia menor que la variación que introduce la partición.`],
+      ["d_prep", R`Estandarizar dentro del <code>Pipeline</code>.`],
+      ["d_train", R`RSS + mezcla de penalizaciones, resuelta de forma iterativa.`],
+      ["d_mreg", R`RMSE de validación y de test (0,403 en el test de Airbnb).`],
+      ["d_part", R`Seleccionado por validación; el test no reabre la selección.`]
+    ],
+    materiales: ["t1b", "t2", "m1"] },
+
+  /* ---------- Tema 3 (logit desde el tema 2) ---------- */
+  { id: "mpl", fam: "f_glm", label: "Modelo de probabilidad lineal", tema: "T3",
+    sesion: ["T3 20 oct"],
+    idea: R`Aplica la regresión lineal a una respuesta 0/1 para estimar \(P(y=1\mid X)\).`,
+    peculiar: {
+      supuestos: R`Los de la regresión lineal, aunque la respuesta sea binaria.`,
+      flexibilidad: R`Una recta: sus predicciones pueden salir de [0, 1] (el 3,9 % de los anuncios en superanfitrión).`,
+      interpretabilidad: R`Alta, como MCO.`,
+      coste: R`Directo. Sirve para motivar el enlace logit.`
+    },
+    hp: [["—", "LinearRegression()", "Sin hiperparámetros"]],
+    links: [
+      ["d_mclas", R`Sus «probabilidades» fuera de [0, 1] no son probabilidades: el logit lo corrige.`],
+      ["d_train", R`Minimiza la RSS en lugar de maximizar la verosimilitud de Bernoulli.`]
+    ],
+    materiales: ["t3"] },
+  { id: "logit", fam: "f_glm", label: "Logit (regresión logística)", tema: "T2–T3",
+    sesion: ["T2 6 y 13 oct (clasificación)", "T3 20 oct", "P3 22 oct (entrega E1)"],
+    idea: R`GLM con distribución de Bernoulli y enlace logit: lleva el predictor lineal a una probabilidad entre 0 y 1.`,
+    formula: R`\[\log\frac{\mu_i}{1-\mu_i}=\nu_i\ \Longrightarrow\ \mu_i=\frac{1}{1+e^{-\nu_i}}\]`,
+    peculiar: {
+      supuestos: R`Respuesta 0/1 de Bernoulli; efecto lineal de los predictores en la escala del logit.`,
+      flexibilidad: R`Una frontera lineal en \(\nu_i\). Con pocos datos y muchas columnas sobreajusta: se penaliza (Ridge, Lasso o mezcla).`,
+      interpretabilidad: R`Coeficientes en la escala del logit; con Lasso, selección de predictores (10 de 46 con la regla del error típico).`,
+      coste: R`Máxima verosimilitud, que equivale a minimizar la log-loss; iterativo (<code>max_iter</code>).`
+    },
+    hp: [["C \\(=1/\\lambda\\)", "LogisticRegression(C=...), LogisticRegressionCV", "Mayor C, menos penalización; C=np.inf la quita"],
+         ["l1_ratio", "LogisticRegression(l1_ratio=...)", "Mezcla: 0 = Ridge, 1 = Lasso"],
+         ["class_weight", "class_weight=\"balanced\"", "Pondera la clase rara al estimar"],
+         ["Umbral", "TunedThresholdClassifierCV", "Probabilidad a partir de la que se predice la clase positiva (predict usa 0,5)"]],
+    links: [
+      ["d_mclas", R`Ejemplo central del tema 2: matriz de confusión, ROC/AUC (0,80) y log-loss (0,491).`],
+      ["d_deseq", R`<code>class_weight="balanced"</code> cambia sobre todo el intercepto; en el logit, ponderar equivale casi a bajar el umbral.`],
+      ["d_hiper", R`C (inversa de \(\lambda\)) y <code>l1_ratio</code> por validación con la métrica del problema.`],
+      ["d_cv", R`Particiones estratificadas; <code>cross_val_predict</code> para la matriz de confusión.`],
+      ["d_prep", R`Estandarizar antes de penalizar.`],
+      ["d_train", R`Maximizar la log-verosimilitud de Bernoulli = minimizar la log-loss.`],
+      ["d_sesgo", R`Sin penalizar es el modelo base; si el error de entrenamiento queda muy por debajo del de validación, se penaliza.`],
+      ["d_interp", R`Un coeficiente en cero de Lasso no significa que el predictor no esté asociado con la respuesta.`]
+    ],
+    materiales: ["t2", "t3", "m3"] },
+  { id: "multinomial", fam: "f_glm", label: "Logit multinomial", tema: "T3",
+    sesion: ["T3 20 oct", "P3 22 oct (entrega E1)"],
+    idea: R`Para una respuesta con \(K\) clases: un predictor lineal por clase y enlace softmax; las probabilidades suman 1.`,
+    formula: R`\[P(y_i=k)=\frac{e^{\nu_{ik}}}{\sum_j e^{\nu_{ij}}}\]`,
+    peculiar: {
+      supuestos: R`Una de \(K\) clases. Codificar tramos como 1, 2 y 3 supondría la misma distancia entre ellos; con clases sin orden el número no significa nada.`,
+      flexibilidad: R`Un conjunto de coeficientes por clase: con pocas observaciones sobreajusta y se penaliza.`,
+      interpretabilidad: R`Coeficientes por clase; la matriz de confusión muestra qué tramos vecinos se confunden.`,
+      coste: R`Iterativo; mismo estimador <code>LogisticRegression</code>.`
+    },
+    hp: [["C \\(=1/\\lambda\\)", "LogisticRegression(C=...)", "Mayor C, menos penalización"],
+         ["l1_ratio", "LogisticRegression(l1_ratio=...)", "Mezcla L1/L2"]],
+    links: [
+      ["d_mclas", R`Log-loss (0,80 frente a 1,10 del nulo) y exactitud con clases de tamaño parecido; AUC y AP se definen para dos clases.`],
+      ["d_hiper", R`Penalización elegida con la regla del error típico (entrega E1).`],
+      ["d_cv", R`Validación cruzada estratificada.`],
+      ["d_prep", R`Estandarizar antes de penalizar.`],
+      ["d_train", R`Maximizar la log-verosimilitud multinomial = minimizar la log-loss de \(K\) clases.`],
+      ["d_sesgo", R`Con pocas observaciones, la penalización reduce el sobreajuste.`]
+    ],
+    materiales: ["t3", "m3"] },
+  { id: "gamma", fam: "f_glm", label: "GLM Gamma", tema: "T3",
+    sesion: ["T3 20 oct"],
+    idea: R`Para una respuesta positiva y asimétrica por la derecha (el precio): distribución Gamma y enlace logarítmico.`,
+    formula: R`\[\log\mu_i=\nu_i\ \Rightarrow\ \mu_i=e^{\nu_i}>0\]\[\operatorname{Var}(y_i)\propto\mu_i^2\]`,
+    peculiar: {
+      supuestos: R`Respuesta positiva cuya dispersión crece con la media (35 € frente a 76 € entre el decil más barato y el más caro).`,
+      flexibilidad: R`Lineal en la escala log. Con 300 anuncios y 73 columnas sobreajusta (RMSE 45,0 € en entrenamiento, 64,0 € en validación).`,
+      interpretabilidad: R`Coeficientes multiplicativos sobre la media; estima el precio medio (MCO sobre log estima la mediana).`,
+      coste: R`Iterativo. Nunca predice precios negativos.`
+    },
+    hp: [["\\(\\lambda\\)", "alpha en GammaRegressor (solo Ridge)", "Con 300 anuncios, alpha = 0,1 baja el RMSE de validación de 64,0 a 54,7 €"]],
+    links: [
+      ["d_sesgo", R`Sobreajusta con pocos datos; con 5324 anuncios la penalización apenas cambia nada.`],
+      ["d_hiper", R`alpha por validación cruzada con el RMSE.`],
+      ["d_cv", R`RMSE medio de las 5 particiones de entrenamiento y de validación (<code>return_train_score=True</code>).`],
+      ["d_prep", R`Estandarizar antes de penalizar.`],
+      ["d_train", R`Máxima verosimilitud (penalizada).`],
+      ["d_mreg", R`RMSE como métrica principal; con el MAE gana MCO sobre log(precio).`]
+    ],
+    materiales: ["t3", "m3"] },
+  { id: "poisson", fam: "f_glm", label: "GLM Poisson", tema: "T3",
+    sesion: ["T3 20 oct"],
+    idea: R`Para recuentos (0, 1, 2…), como las reseñas del último año: distribución de Poisson y enlace logarítmico.`,
+    formula: R`\[\log\mu_i=\nu_i\ \Rightarrow\ \mu_i=e^{\nu_i}\]`,
+    peculiar: {
+      supuestos: R`Respuesta de recuento; el modelo predice el número esperado \(\mu_i\).`,
+      flexibilidad: R`Lineal en la escala log.`,
+      interpretabilidad: R`Coeficientes multiplicativos sobre el recuento esperado.`,
+      coste: R`Iterativo. La regresión lineal predecía recuentos negativos (1,1 % de los anuncios).`
+    },
+    hp: [["\\(\\lambda\\)", "alpha en PoissonRegressor (solo Ridge)", "Más alpha, coeficientes más cerca de cero"]],
+    links: [
+      ["d_hiper", R`alpha por validación cruzada.`],
+      ["d_cv", R`Media predicha frente a observada por grupos, con predicciones de validación cruzada.`],
+      ["d_prep", R`Estandarizar antes de penalizar.`],
+      ["d_train", R`Máxima verosimilitud de Poisson.`],
+      ["d_mreg", R`RMSE o MAE del recuento.`]
+    ],
+    materiales: ["t3", "m3"] },
+
+  /* ---------- Tema 4 ---------- */
+  { id: "arbol_reg", fam: "f_tree", label: "Árbol de regresión", tema: "T4",
+    sesion: ["T1 22 sep (primer ejemplo)", "T4 27 oct", "P4 29 oct"],
+    idea: R`Parte el espacio de predictores en rectángulos con cortes \(x_j\le s\) y predice la media de la respuesta en cada hoja.`,
+    formula: R`\[\min_{j,s}\ \sum_{i\in R_1}(y_i-\bar y_{R_1})^2+\sum_{i\in R_2}(y_i-\bar y_{R_2})^2\]\[\text{poda: }\ \text{RSS}(T)+\alpha\,|T|\]`,
+    peculiar: {
+      supuestos: R`Ninguna forma funcional: particionamiento binario recursivo con un algoritmo voraz (cada corte es el mejor en ese paso).`,
+      flexibilidad: R`Muy alta: recoge interacciones sin añadir productos de predictores. Un árbol profundo memoriza (4994 hojas para 5324 anuncios) y cambia mucho de un remuestreo a otro.`,
+      interpretabilidad: R`Se lee siguiendo las ramas si es pequeño. Invariante a transformaciones que conservan el orden: no hace falta estandarizar.`,
+      coste: R`Bajo. No se entrena por descenso del gradiente.`
+    },
+    hp: [["criterion", "squared_error", "Medida que minimiza cada corte"],
+         ["max_depth", "DecisionTreeRegressor(max_depth=...)", "Más profundidad, árbol más complejo"],
+         ["max_leaf_nodes", "max_leaf_nodes", "Más hojas, árbol más complejo"],
+         ["min_samples_leaf", "min_samples_leaf", "Más observaciones por hoja, árbol más simple"],
+         ["\\(\\alpha\\) de la poda", "ccp_alpha", "Más \\(\\alpha\\), árbol más simple"]],
+    links: [
+      ["d_sesgo", R`El error de entrenamiento baja hacia cero con la profundidad; el de validación es mínimo con profundidad 6 y sube después.`],
+      ["d_hiper", R`Profundidad, hojas, observaciones por hoja (poda previa) o \(\alpha\) de la poda por coste-complejidad.`],
+      ["d_cv", R`\(\alpha\) por validación cruzada: el mínimo deja 24 hojas.`],
+      ["d_prep", R`No se estandariza: el corte solo depende del orden de los valores.`],
+      ["d_train", R`Algoritmo voraz que reduce la RSS en cada corte; no minimiza una pérdida global por gradiente.`],
+      ["d_mreg", R`RMSE de \(\log(\text{precio})\): el árbol podado (0,366) iguala a la regresión lineal (0,368).`],
+      ["d_interp", R`Legible si es pequeño; uno de 24 hojas ya no se comunica entero.`]
+    ],
+    materiales: ["t4", "t1a", "m4"] },
+  { id: "arbol_clas", fam: "f_tree", label: "Árbol de clasificación", tema: "T4",
+    sesion: ["T4 27 oct", "P4 29 oct"],
+    idea: R`Como el árbol de regresión, pero cada corte minimiza la impureza de los nodos y la hoja predice la proporción de cada clase.`,
+    formula: R`\[G=\sum_k p_k(1-p_k)\]`,
+    peculiar: {
+      supuestos: R`Ninguna forma funcional; impureza de Gini (o entropía) ponderada por las observaciones de cada nodo.`,
+      flexibilidad: R`Muy alta; la complejidad se controla igual que en regresión: profundidad, hojas o poda.`,
+      interpretabilidad: R`La hoja da una probabilidad (proporción) y la clase mayoritaria.`,
+      coste: R`Bajo.`
+    },
+    hp: [["criterion", "gini o entropy", "Medida de impureza de cada corte"],
+         ["max_depth", "DecisionTreeClassifier(max_depth=...)", "Más profundidad, árbol más complejo"],
+         ["max_leaf_nodes", "max_leaf_nodes", "Más hojas, árbol más complejo"],
+         ["min_samples_leaf", "min_samples_leaf", "Más observaciones por hoja, árbol más simple"],
+         ["\\(\\alpha\\) de la poda", "ccp_alpha", "Más \\(\\alpha\\), árbol más simple"]],
+    links: [
+      ["d_sesgo", R`Un árbol de clasificación profundo también memoriza.`],
+      ["d_hiper", R`Profundidad, hojas o poda.`],
+      ["d_cv", R`Tamaño del árbol por validación cruzada estratificada.`],
+      ["d_mclas", R`Exactitud y matriz de confusión en test (salario alto, superanfitrión).`],
+      ["d_prep", R`No necesita estandarizar.`],
+      ["d_interp", R`Reglas legibles en un árbol poco profundo.`]
+    ],
+    materiales: ["t4", "m4"] },
+  { id: "bagging", fam: "f_tree", label: "Bagging", tema: "T4",
+    sesion: ["T4 27 oct", "P4 29 oct"],
+    idea: R`Bootstrap aggregation: ajusta \(B\) estimadores (habitualmente árboles sin poda) en remuestreos bootstrap y promedia sus predicciones.`,
+    formula: R`\[\hat f_{\text{bag}}(x)=\frac{1}{B}\sum_{b=1}^{B}\hat f^{*b}(x)\]\[\operatorname{Var}\big(\hat f_{\text{bag}}(x)\big)=\bar\rho\,\sigma^2+\frac{1-\bar\rho}{B}\,\sigma^2\]`,
+    peculiar: {
+      supuestos: R`Sirve cualquier estimador; lo habitual es un árbol sin poda (poco sesgo y mucha varianza). En clasificación se promedian las probabilidades (o se vota).`,
+      flexibilidad: R`La de cada árbol; promediar reduce la varianza. Más árboles no sobreajusta: solo acerca el promedio a su límite \(\bar\rho\sigma^2\).`,
+      interpretabilidad: R`Baja: cientos de árboles no se leen.`,
+      coste: R`\(B\) ajustes. El error fuera de la bolsa (OOB) evalúa con un único ajuste: cada árbol deja fuera ≈ 37 % de las observaciones.`
+    },
+    hp: [["Estimador base", "estimator", "Su complejidad es la de cada término de la media"],
+         ["\\(B\\) (nº de estimadores)", "n_estimators", "Más estimadores, menos varianza hasta estabilizarse"],
+         ["Tamaño del remuestreo", "max_samples", "Remuestreos menores, estimadores menos parecidos"],
+         ["Con reemplazamiento", "bootstrap", "El error OOB requiere True"],
+         ["Error OOB", "oob_score", "Guarda oob_prediction_ u oob_decision_function_"]],
+    links: [
+      ["d_sesgo", R`Reduce el término \((1-\bar\rho)\sigma^2/B\); el término \(\bar\rho\sigma^2\) depende de cuánto se parecen los árboles.`],
+      ["d_hiper", R`Número de árboles: entre 100 y 500 el RMSE cambia en 1,5 milésimas.`],
+      ["d_cv", R`El error OOB (0,318) y el de validación cruzada (0,319) casi coinciden.`],
+      ["d_mreg", R`RMSE de validación cruzada: 0,319 frente a 0,366 del árbol podado.`],
+      ["d_mclas", R`En clasificación, media de las probabilidades o voto.`]
+    ],
+    materiales: ["t4", "m4"] },
+  { id: "rf", fam: "f_tree", label: "Random forest", tema: "T4",
+    sesion: ["T4 27 oct", "P4 29 oct (H3)", "P4 5 nov (comparación con XGBoost)"],
+    idea: R`Bagging de árboles en el que cada corte se busca entre \(m\) columnas elegidas al azar de las \(p\) disponibles, para que los árboles se parezcan menos.`,
+    peculiar: {
+      supuestos: R`Los del bagging; con \(m=p\) es el bagging.`,
+      flexibilidad: R`Al bajar \(\bar\rho\) baja el término \(\bar\rho\,\sigma^2\), que el número de árboles no reduce; a cambio, cada árbol puede predecir algo peor.`,
+      interpretabilidad: R`Baja: 500 árboles no se leen directamente (importancias y SHAP, 10 nov).`,
+      coste: R`Muchos ajustes; error OOB disponible. Mejor RMSE del tema 4 (0,314).`
+    },
+    hp: [["Nº de árboles", "n_estimators", "Más árboles, menos varianza hasta estabilizarse"],
+         ["\\(m\\) (mtry en R)", "max_features", "Más columnas, árboles más parecidos (1,0 = bagging); mínimo en el 33 % de las columnas"],
+         ["Profundidad", "max_depth", "Más profundidad, árboles más complejos"],
+         ["Observaciones por hoja", "min_samples_leaf", "Más observaciones, árboles más simples"],
+         ["Error OOB", "oob_score", "Evalúa sin validación cruzada"],
+         ["class_weight (Classifier)", "class_weight", "Peso de cada clase en la impureza"]],
+    links: [
+      ["d_sesgo", R`Sortear columnas reduce la correlación \(\bar\rho\) entre árboles.`],
+      ["d_hiper", R`\(m\) (<code>max_features</code>) y el número de árboles se eligen por validación cruzada.`],
+      ["d_cv", R`Búsqueda de <code>max_features</code> con las mismas particiones que el resto de modelos.`],
+      ["d_mreg", R`RMSE 0,314 frente a 0,319 del bagging y 0,368 de la regresión lineal.`],
+      ["d_mclas", R`El bosque promedia las probabilidades de los árboles.`],
+      ["d_deseq", R`<code>class_weight</code> cambia la impureza y, con ella, los cortes de todos los árboles.`],
+      ["d_interp", R`Más precisión a costa de legibilidad: se interpreta con importancias y valores de Shapley.`]
+    ],
+    materiales: ["t4", "m4"] },
+  { id: "gb", fam: "f_tree", label: "Gradient boosting", tema: "T4", pendiente: true,
+    sesion: ["T1 22 sep (LightGBM, primer ejemplo)", "T4 3 nov"],
+    idea: R`Combina árboles añadiéndolos uno a uno, de modo que cada nuevo árbol sigue el gradiente de la pérdida.`,
+    peculiar: {
+      supuestos: R`Minimiza una pérdida añadiendo árboles que siguen su gradiente (tema 1).`,
+      flexibilidad: R`La complejidad depende de la tasa de aprendizaje y del número de árboles, además de la profundidad y los datos por hoja.`,
+      interpretabilidad: R`Baja (importancias y SHAP).`,
+      coste: R`En el tema 1, un LightGBM de 300 árboles sin ajustar dio el menor MSE de validación en Airbnb (0,111, frente a 0,139 de la regresión lineal).`
+    },
+    hp: [["Tasa de aprendizaje", "learning_rate", "Tamaño de la contribución de cada árbol"],
+         ["Nº de árboles (iteraciones)", "n_estimators", "Más árboles, ajuste más complejo"],
+         ["Profundidad / hojas", "max_depth, num_leaves (LightGBM)", "Complejidad de cada árbol"]],
+    links: [
+      ["d_sesgo", R`Tasa de aprendizaje y número de árboles controlan la complejidad (tabla del tema 1).`],
+      ["d_hiper", R`Tasa de aprendizaje, profundidad y número de iteraciones se eligen empíricamente.`],
+      ["d_cv", R`Ajuste y validación con las mismas particiones que el random forest.`],
+      ["d_train", R`Añade árboles que siguen el gradiente de la pérdida.`],
+      ["d_mreg", R`MSE de entrenamiento 0,078 y de validación 0,111 en el ejemplo de Airbnb.`],
+      ["d_mclas", R`También para clasificación.`],
+      ["d_interp", R`Importancias y valores de Shapley (10 nov).`]
+    ],
+    materiales: ["t1a", "plan"] },
+  { id: "xgb", fam: "f_tree", label: "XGBoost", tema: "T4", pendiente: true,
+    sesion: ["T4 3 nov", "P4 5 nov (entrega E2)"],
+    idea: R`Biblioteca de gradient boosting (<code>xgboost</code>) que usaremos para ajustar, validar y comparar con el random forest.`,
+    peculiar: {
+      supuestos: R`Los del gradient boosting.`,
+      flexibilidad: R`Alta; se controla con la tasa de aprendizaje, la profundidad y el número de iteraciones.`,
+      interpretabilidad: R`Baja (importancias y SHAP con <code>shap</code>).`,
+      coste: R`Varios hiperparámetros que buscar a la vez. Contenido por publicar.`
+    },
+    hp: [["Tasa de aprendizaje", "—", "Contribución de cada árbol"],
+         ["Profundidad", "—", "Complejidad de cada árbol"],
+         ["Nº de iteraciones", "—", "Número de árboles"]],
+    links: [
+      ["d_sesgo", R`Mismo control de la complejidad que el gradient boosting.`],
+      ["d_hiper", R`Tasa de aprendizaje, profundidad y número de iteraciones por validación.`],
+      ["d_cv", R`Ajuste y validación de XGBoost (P4, 5 nov).`],
+      ["d_train", R`Boosting: minimiza una pérdida añadiendo árboles.`],
+      ["d_mreg", R`Comparación con el random forest en la misma métrica.`],
+      ["d_mclas", R`También para clasificación.`],
+      ["d_interp", R`SHAP en la práctica guiada del 12 nov.`]
+    ],
+    materiales: ["plan"] },
+  { id: "voting", fam: "f_tree", label: "Voting", tema: "T4", pendiente: true,
+    sesion: ["T4 10 nov", "P4 12 nov (H4)"],
+    idea: R`Ensamble que combina las predicciones de varios modelos ya definidos (por voto o promedio).`,
+    peculiar: {
+      supuestos: R`Por publicar (sesión del 10 nov).`,
+      flexibilidad: R`Depende de los modelos que se combinan.`,
+      interpretabilidad: R`Menor que la de cada modelo por separado.`,
+      coste: R`La suma de los ajustes de cada modelo.`
+    },
+    hp: [["Modelos combinados", "—", "Qué estimadores entran, con sus propios hiperparámetros"]],
+    links: [
+      ["d_hiper", R`Hereda los hiperparámetros de cada modelo combinado.`],
+      ["d_cv", R`Se compara con los demás modelos con las mismas particiones.`],
+      ["d_mreg", R`Misma métrica que el resto de candidatos.`],
+      ["d_mclas", R`En clasificación, voto de la clase o promedio de probabilidades.`]
+    ],
+    materiales: ["plan"] },
+  { id: "stacking", fam: "f_tree", label: "Stacking", tema: "T4", pendiente: true,
+    sesion: ["T4 10 nov", "P4 12 nov (stacking guiado, H4)"],
+    idea: R`Ensamble que combina las predicciones de varios modelos con un modelo final que aprende a ponderarlas.`,
+    peculiar: {
+      supuestos: R`Por publicar (sesión del 10 nov).`,
+      flexibilidad: R`La de los modelos de base más la del modelo final.`,
+      interpretabilidad: R`Baja.`,
+      coste: R`Ajusta todos los modelos de base y el final.`
+    },
+    hp: [["Modelos de base", "—", "Qué estimadores se combinan"],
+         ["Modelo final", "—", "Cómo se combinan sus predicciones"]],
+    links: [
+      ["d_hiper", R`Hiperparámetros de cada modelo de base y del final.`],
+      ["d_cv", R`Se compara con los demás modelos con las mismas particiones.`],
+      ["d_mreg", R`Misma métrica que el resto de candidatos.`],
+      ["d_mclas", R`También para clasificación.`],
+      ["d_interp", R`Práctica guiada de stacking y SHAP (12 nov).`]
+    ],
+    materiales: ["plan"] },
+
+  /* ---------- Tema 5 ---------- */
+  { id: "svm", fam: "f_svm", label: "SVM (clasificación y regresión)", tema: "T5", pendiente: true,
+    sesion: ["T5 17 nov", "P5 19 nov (entrega E3)"],
+    idea: R`Clasificación y regresión con vectores de soporte y núcleos (contenido del 17 nov, por publicar).`,
+    peculiar: {
+      supuestos: R`Por publicar (17 nov). Requiere escalar los predictores (práctica del 19 nov).`,
+      flexibilidad: R`Se controla con el coste \(C\) de los errores y la anchura del núcleo.`,
+      interpretabilidad: R`Por publicar.`,
+      coste: R`Por publicar.`
+    },
+    hp: [["Coste \\(C\\)", "C", "Coste de los errores"],
+         ["Núcleo y su anchura", "—", "Forma y flexibilidad de la frontera"]],
+    links: [
+      ["d_sesgo", R`\(C\) y la anchura del núcleo controlan la complejidad (tabla del tema 1).`],
+      ["d_hiper", R`\(C\) y la anchura del núcleo se eligen por validación.`],
+      ["d_cv", R`Comparación transversal de modelos con las mismas particiones (P5).`],
+      ["d_prep", R`Escalado dentro del <code>Pipeline</code>.`],
+      ["d_mclas", R`Clasificación con vectores de soporte.`],
+      ["d_mreg", R`Regresión con vectores de soporte.`]
+    ],
+    materiales: ["plan", "t1a"] },
+
+  /* ---------- Tema 6 ---------- */
+  { id: "mlp", fam: "f_nn", label: "Perceptrón multicapa (MLP)", tema: "T6", pendiente: true,
+    sesion: ["T6 24 nov", "P6 26 nov (Keras)", "T6 1 dic (backpropagation y regularización)", "P6 3 dic (entrega E4)"],
+    idea: R`Red neuronal de varias capas cuyos pesos se ajustan minimizando una pérdida por descenso del gradiente (backpropagation).`,
+    peculiar: {
+      supuestos: R`Modelo paramétrico \(f(x;\theta)\) con muchos pesos.`,
+      flexibilidad: R`Muy alta; se controla con penalización, dropout o parada temprana, y con la arquitectura.`,
+      interpretabilidad: R`Baja.`,
+      coste: R`Entrenamiento iterativo por minilotes y epochs; tasa de aprendizaje y tamaño de lote son decisiones de entrenamiento (Keras).`
+    },
+    hp: [["Arquitectura", "Keras", "Capas y neuronas: búsqueda de arquitecturas (3 dic)"],
+         ["Tasa de aprendizaje", "Keras", "Tamaño del paso del gradiente"],
+         ["Tamaño del lote y epochs", "Keras", "Datos por paso y pasadas completas"],
+         ["Penalización", "Keras", "Regularización de los pesos"],
+         ["Dropout", "Keras", "Regularización"],
+         ["Parada temprana", "Keras", "Detener cuando empeora la pérdida de validación"]],
+    links: [
+      ["d_sesgo", R`Penalización, dropout o parada temprana controlan la complejidad.`],
+      ["d_hiper", R`Arquitectura, tasa de aprendizaje, lote y regularización se buscan empíricamente.`],
+      ["d_cv", R`Comparación con los demás modelos con la misma evaluación.`],
+      ["d_part", R`La parada temprana vigila la pérdida de validación.`],
+      ["d_prep", R`Estandarizar ayuda al descenso del gradiente.`],
+      ["d_train", R`Lotes, minilotes, epochs y tasa de aprendizaje vuelven en el tema 6.`],
+      ["d_mreg", R`Regresión con la métrica del problema.`],
+      ["d_mclas", R`Clasificación con la métrica del problema.`]
+    ],
+    materiales: ["plan", "t1a"] },
+
+  /* ---------- Tema 7 ---------- */
+  { id: "doubleml", fam: "f_causal", label: "DoubleML", tema: "T7", pendiente: true,
+    sesion: ["P7 10 dic (DAG, sesgos, entrega E5)", "T7 15 dic (caso Hillstrom)"],
+    idea: R`Usa modelos de aprendizaje automático para estimar el efecto causal de una intervención, con ortogonalización y cross-fitting.`,
+    peculiar: {
+      supuestos: R`Los que identifican el efecto (DAG y sesgos); discusión de supuestos en el caso Hillstrom.`,
+      flexibilidad: R`La de los modelos de aprendizaje automático que usa.`,
+      interpretabilidad: R`El objetivo es un efecto, no \(f(X)\): comparar qué ocurriría con y sin intervención.`,
+      coste: R`Varios ajustes por partición (cross-fitting). Biblioteca <code>DoubleML</code>.`
+    },
+    hp: [["Modelos de aprendizaje automático", "—", "Los que estiman cada paso, con sus hiperparámetros"],
+         ["Particiones del cross-fitting", "—", "Cuántas particiones se usan"]],
+    links: [
+      ["d_cv", R`El cross-fitting reparte los datos en particiones, como la validación cruzada.`],
+      ["d_hiper", R`Los modelos de aprendizaje automático que usa necesitan sus hiperparámetros.`],
+      ["d_interp", R`Predecir no es estimar un efecto: un cero de Lasso no significa «sin efecto causal».`]
+    ],
+    materiales: ["pres", "plan"] }
+];
+
+/* =====================================================================
+   ÍNDICES
+   ===================================================================== */
+const NODES = new Map();
+NODES.set(ROOT.id, ROOT);
+NODES.set(HUB.id, Object.assign(HUB, { parent: ROOT.id }));
+FAMILIAS.forEach(f => { f.type = "familia"; f.parent = ROOT.id; f.children = []; NODES.set(f.id, f); });
+DECISIONES.forEach(d => { d.type = "decision"; d.parent = HUB.id; d.back = []; NODES.set(d.id, d); });
+ESTIMADORES.forEach(e => {
+  e.type = "estimador"; e.parent = e.fam; NODES.set(e.id, e);
+  NODES.get(e.fam).children.push(e.id);
+  e.links.forEach(([d, why]) => {
+    const dec = NODES.get(d);
+    if (!dec) throw new Error("Decisión desconocida: " + d);
+    dec.back.push([e.id, why]);
+  });
+});
+
+/* =====================================================================
+   ESTADO
+   ===================================================================== */
+const state = {
+  open: { [ROOT.id]: true, [HUB.id]: true },
+  sel: null, hover: null,
+  view: { x: 0, y: 0, k: 1 },
+  query: ""
+};
+FAMILIAS.forEach(f => state.open[f.id] = true);
+
+const $ = s => document.querySelector(s);
+const stage = $("#stage"), svg = $("#edges"), viewport = $("#viewport");
+const SVGNS = "http://www.w3.org/2000/svg";
+const isNarrow = () => window.matchMedia("(max-width: 760px)").matches;
+
+/* =====================================================================
+   NODOS (HTML)
+   ===================================================================== */
+const els = new Map();
+function makeNode(n) {
+  const el = document.createElement("div");
+  el.className = "node " + n.type + (n.pendiente ? " pendiente" : "");
+  el.dataset.id = n.id;
+  el.tabIndex = 0;
+  el.setAttribute("role", "button");
+  const label = n.label + (n.pendiente ? " (tema por publicar)" : "");
+  el.setAttribute("aria-label", label);
+  const txt = document.createElement("span");
+  txt.className = "txt";
+  txt.innerHTML = `<span class="lbl">${n.label}</span>` + (n.sub ? `<span class="sub">${n.sub}</span>` : "");
+  el.appendChild(txt);
+  if (n.type === "estimador") {
+    const t = document.createElement("span");
+    t.className = "tema"; t.textContent = n.tema; el.appendChild(t);
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "sim"; b.disabled = true;
+    b.dataset.simulador = n.id;
+    b.textContent = "Simular";
+    b.title = "Simulador: se activará en una fase posterior";
+    b.setAttribute("aria-label", "Simular " + n.label + " (no disponible todavía)");
+    el.appendChild(b);
+  }
+  if (n.type === "objetivo" || n.type === "familia" || n.type === "hub") {
+    const t = document.createElement("button");
+    t.type = "button"; t.className = "tog"; t.dataset.tog = n.id;
+    el.appendChild(t);
+  }
+  stage.appendChild(el);
+  els.set(n.id, el);
+}
+[ROOT, ...FAMILIAS, ...ESTIMADORES, HUB, ...DECISIONES].forEach(makeNode);
+
+/* =====================================================================
+   DISPOSICIÓN
+   Col. 0: objetivo · col. 1: familias · col. 2: estimadores ·
+   col. 3: decisiones (con el nodo «Decisiones» encima y una espina a la derecha).
+   ===================================================================== */
+let G = null; // geometría actual
+function dims() {
+  return isNarrow()
+    ? { root: 190, fam: 190, est: 260, dec: 230, gapA: 36, gapB: 36, gapX: 150, vgap: 8, fgap: 16 }
+    : { root: 230, fam: 230, est: 300, dec: 270, gapA: 50, gapB: 46, gapX: 230, vgap: 10, fgap: 22 };
+}
+function visible(id) {
+  const n = NODES.get(id);
+  if (n.type === "objetivo") return true;
+  if (!state.open[ROOT.id]) return false;
+  if (n.type === "familia" || n.type === "hub") return true;
+  return !!state.open[n.parent];
+}
+function layout() {
+  const D = dims();
+  const x = {};
+  x.root = 0; x.fam = D.root + D.gapA; x.est = x.fam + D.fam + D.gapB; x.dec = x.est + D.est + D.gapX;
+  const pos = new Map();
+  // anchuras y visibilidad
+  for (const [id, n] of NODES) {
+    const el = els.get(id);
+    const w = n.type === "objetivo" ? D.root : n.type === "familia" ? D.fam : n.type === "estimador" ? D.est : D.dec;
+    el.style.width = w + "px";
+    el.style.display = visible(id) ? "flex" : "none";
+    const tog = el.querySelector(".tog");
+    if (tog) {
+      const open = !!state.open[id];
+      tog.textContent = open ? "−" : "+";
+      tog.setAttribute("aria-label", (open ? "Plegar " : "Desplegar ") + n.label);
+      tog.setAttribute("aria-expanded", open);
+    }
+  }
+  const h = id => els.get(id).offsetHeight;
+
+  // Columna de estimadores
+  let y = 0;
+  const famRows = [];
+  if (state.open[ROOT.id]) {
+    FAMILIAS.forEach(f => {
+      if (state.open[f.id]) {
+        const top = y, fh = h(f.id);
+        const kids = f.children.reduce((a, c) => a + h(c) + D.vgap, -D.vgap);
+        y += Math.max(0, (fh - kids) / 2); // si la familia es más alta que sus hijos, los centramos
+        f.children.forEach(cid => { const hh = h(cid); pos.set(cid, { x: x.est, y, w: D.est, h: hh }); y += hh + D.vgap; });
+        y = Math.max(y, top + fh + D.vgap);
+        const bottom = y - D.vgap;
+        pos.set(f.id, { x: x.fam, y: (top + bottom) / 2 - fh / 2, w: D.fam, h: fh });
+        famRows.push([top, bottom]);
+      } else {
+        const fh = h(f.id);
+        pos.set(f.id, { x: x.fam, y, w: D.fam, h: fh });
+        y += fh + D.vgap;
+      }
+      y += D.fgap;
+    });
+    y -= D.fgap + D.vgap;
+  }
+  const spanTop = 0, spanBottom = Math.max(y, 0);
+  const rh = h(ROOT.id);
+  const rootY = state.open[ROOT.id] ? (spanTop + spanBottom) / 2 - rh / 2 : 0;
+  pos.set(ROOT.id, { x: x.root, y: rootY, w: D.root, h: rh });
+
+  // Columna de decisiones
+  if (state.open[ROOT.id]) {
+    const hubH = h(HUB.id);
+    const decIds = DECISIONES.map(d => d.id);
+    if (state.open[HUB.id]) {
+      const hs = decIds.map(h);
+      const need = hs.reduce((a, b) => a + b, 0) + D.vgap * 2 * (decIds.length - 1);
+      const span = Math.max(need, spanBottom - spanTop);
+      const slot = span / decIds.length;
+      let start = (spanTop + spanBottom) / 2 - span / 2;
+      decIds.forEach((id, i) => {
+        const cy = start + slot * (i + 0.5);
+        pos.set(id, { x: x.dec, y: cy - hs[i] / 2, w: D.dec, h: hs[i] });
+      });
+      const firstTop = pos.get(decIds[0]).y;
+      pos.set(HUB.id, { x: x.dec, y: Math.min(spanTop, firstTop) - hubH - 60, w: D.dec, h: hubH });
+    } else {
+      pos.set(HUB.id, { x: x.dec, y: spanTop - hubH - 60, w: D.dec, h: hubH });
+    }
+  }
+
+  // Normalizar a coordenadas positivas
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const [id, p] of pos) { if (!visible(id)) continue; minX = Math.min(minX, p.x); minY = Math.min(minY, p.y); maxX = Math.max(maxX, p.x + p.w); maxY = Math.max(maxY, p.y + p.h); }
+  const PAD = 40, spineX = x.dec + D.dec + 26;
+  maxX = Math.max(maxX, spineX + 4);
+  const ox = PAD - minX, oy = PAD - minY;
+  for (const [id, p] of pos) { p.x += ox; p.y += oy; const el = els.get(id); el.style.left = p.x + "px"; el.style.top = p.y + "px"; }
+  G = { pos, W: maxX - minX + PAD * 2, H: maxY - minY + PAD * 2, spineX: spineX + ox };
+  drawEdges();
+}
+
+function pathH(x1, y1, x2, y2) {
+  const dx = Math.max(30, (x2 - x1) / 2);
+  return `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`;
+}
+function drawEdges() {
+  const { pos, W, H, spineX } = G;
+  svg.setAttribute("width", W); svg.setAttribute("height", H);
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  stage.style.width = W + "px"; stage.style.height = H + "px";
+  const frag = document.createDocumentFragment();
+  const add = (d, cls, data) => {
+    const p = document.createElementNS(SVGNS, "path");
+    p.setAttribute("d", d); p.setAttribute("class", cls);
+    if (data) for (const k in data) p.dataset[k] = data[k];
+    frag.appendChild(p);
+    return p;
+  };
+  const mid = p => p.y + p.h / 2;
+  const r = pos.get(ROOT.id);
+  if (state.open[ROOT.id]) {
+    // objetivo → familias
+    FAMILIAS.forEach(f => { const p = pos.get(f.id); add(pathH(r.x + r.w, mid(r), p.x, mid(p)), "tree"); });
+    // familias → estimadores
+    FAMILIAS.forEach(f => {
+      if (!state.open[f.id]) return;
+      const fp = pos.get(f.id);
+      f.children.forEach(c => { const p = pos.get(c); add(pathH(fp.x + fp.w, mid(fp), p.x, mid(p)), "tree"); });
+    });
+    // objetivo → hub: sube por encima de las columnas
+    const hb = pos.get(HUB.id), hy = mid(hb), rx = r.x + r.w / 2, rad = 18;
+    add(`M${rx},${r.y} V${hy + rad} Q${rx},${hy} ${rx + rad},${hy} H${hb.x}`, "tree dec");
+    // hub → decisiones por una espina a la derecha
+    if (state.open[HUB.id]) {
+      const last = pos.get(DECISIONES[DECISIONES.length - 1].id);
+      add(`M${hb.x + hb.w},${hy} H${spineX - rad} Q${spineX},${hy} ${spineX},${hy + rad} V${mid(last)}`, "tree dec");
+      DECISIONES.forEach(d => { const p = pos.get(d.id); add(`M${spineX},${mid(p)} H${p.x + p.w}`, "tree dec"); });
+      // vínculos estimador → decisión
+      FAMILIAS.forEach(f => {
+        const fp = pos.get(f.id);
+        if (state.open[f.id]) {
+          f.children.forEach(cid => {
+            const e = NODES.get(cid), p = pos.get(cid);
+            e.links.forEach(([did]) => { const q = pos.get(did); add(pathH(p.x + p.w, mid(p), q.x, mid(q)), "xlink", { e: cid, d: did }); });
+          });
+        } else {
+          const seen = new Set();
+          f.children.forEach(cid => NODES.get(cid).links.forEach(([did]) => seen.add(did)));
+          seen.forEach(did => { const q = pos.get(did); add(pathH(fp.x + fp.w, mid(fp), q.x, mid(q)), "xlink agg", { f: f.id, d: did, e: f.children.join(" ") }); });
+        }
+      });
+    }
+  }
+  svg.replaceChildren(frag);
+  applyFocus();
+}
+
+/* =====================================================================
+   RESALTADO
+   ===================================================================== */
+function related(id) {
+  const n = NODES.get(id), set = new Set([id]);
+  if (!n) return set;
+  if (n.type === "estimador") { n.links.forEach(([d]) => set.add(d)); set.add(n.fam); }
+  else if (n.type === "decision") { n.back.forEach(([e]) => { set.add(e); set.add(NODES.get(e).fam); }); }
+  else if (n.type === "familia") { n.children.forEach(c => { set.add(c); NODES.get(c).links.forEach(([d]) => set.add(d)); }); }
+  else if (n.type === "hub") { DECISIONES.forEach(d => set.add(d.id)); }
+  else { NODES.forEach((_, k) => set.add(k)); }
+  return set;
+}
+function applyFocus() {
+  const id = state.hover || state.sel;
+  const focus = id && NODES.get(id).type !== "objetivo";
+  document.body.classList.toggle("has-focus", !!focus);
+  const rel = focus ? related(id) : null;
+  els.forEach((el, k) => {
+    el.classList.toggle("sel", k === state.sel);
+    el.classList.toggle("rel", !!focus && k !== id && rel.has(k) && (NODES.get(k).type === "decision" || NODES.get(k).type === "estimador"));
+    el.classList.toggle("dimmed", !!focus && !rel.has(k));
+  });
+  if (!focus) { svg.querySelectorAll(".xlink.hl").forEach(p => p.classList.remove("hl")); return; }
+  const n = NODES.get(id);
+  svg.querySelectorAll(".xlink").forEach(p => {
+    let on = false;
+    const es = (p.dataset.e || "").split(" ");
+    if (n.type === "estimador") on = es.includes(id);
+    else if (n.type === "decision") on = p.dataset.d === id;
+    else if (n.type === "familia") on = p.dataset.f === id || NODES.get(id).children.includes(p.dataset.e);
+    else if (n.type === "hub") on = true;
+    p.classList.toggle("hl", on);
+  });
+}
+
+/* =====================================================================
+   PANEL
+   ===================================================================== */
+const KIND = { objetivo: "Objetivo", familia: "Familia de estimadores", estimador: "Estimador", hub: "Decisiones transversales", decision: "Decisión transversal" };
+const LAB = { supuestos: "Supuestos", flexibilidad: "Flexibilidad", interpretabilidad: "Interpretabilidad", coste: "Coste" };
+function matLinks(keys) {
+  if (!keys || !keys.length) return "";
+  return `<h3>Materiales</h3><p class="mat">` + keys.map(k => `<a href="${BASE + M[k][1]}" target="_blank" rel="noopener">${M[k][0]} ↗</a>`).join("") + `</p>`;
+}
+// Marca como código los identificadores de scikit-learn y deja el texto en castellano
+const CODE_WORDS = new Set(["alpha", "C", "gini", "entropy", "estimator", "bootstrap", "strategy", "criterion"]);
+function fmtCode(t) {
+  if (t === "—" || t === "Keras") return t;
+  return t.replace(/[A-Za-z_][\w.]*(\([^)]*\))?/g, w => (/[_(=]/.test(w) || /[a-z][A-Z]/.test(w) || CODE_WORDS.has(w)) ? `<code>${w}</code>` : w);
+}
+const chip = (id, cls = "") => `<button type="button" class="chip ${cls}" data-go="${id}">${NODES.get(id).label}</button>`;
+function openPanel(id) {
+  const n = NODES.get(id);
+  let head = `<div class="p-kind ${n.type}">${KIND[n.type]}${n.type === "estimador" ? " · " + NODES.get(n.fam).label : ""}</div>
+    <h2>${n.label}</h2><button type="button" class="p-close" id="pclose" aria-label="Cerrar panel">×</button><div class="badges">`;
+  if (n.sesion) head += n.sesion.map(s => `<span class="badge">${s}</span>`).join("");
+  else if (n.tema) head += `<span class="badge">${n.tema.replace(/^T/, "Tema ")}</span>`;
+  if (n.pendiente) head += `<span class="badge warn">Tema por publicar: ficha provisional</span>`;
+  head += `</div>`;
+  let b = "";
+  if (n.idea) b += `<p class="idea">${n.idea}</p>`;
+  if (n.formula) b += `<div class="formula">${n.formula}</div>`;
+  if (n.type === "estimador") {
+    b += `<h3>Qué lo hace peculiar</h3><dl class="peculiar">` +
+      Object.entries(n.peculiar).map(([k, v]) => `<dt>${LAB[k]}</dt><dd>${v}</dd>`).join("") + `</dl>`;
+    b += `<h3>Hiperparámetros</h3><table class="hp"><thead><tr><th>Hiperparámetro</th><th>scikit-learn / librería</th><th>Efecto</th></tr></thead><tbody>` +
+      n.hp.map(r => `<tr><td>${r[0]}</td><td>${fmtCode(r[1])}</td><td>${r[2]}</td></tr>`).join("") + `</tbody></table>`;
+    b += `<h3>Decisiones vinculadas</h3><ul class="links">` +
+      n.links.map(([d, why]) => `<li>${chip(d)}<span class="reason">${why}</span></li>`).join("") + `</ul>`;
+  }
+  if (n.puntos) b += `<h3>${n.type === "objetivo" ? "Ideas clave" : "Qué decidir y cómo"}</h3><ul>` + n.puntos.map(p => `<li>${p}</li>`).join("") + `</ul>`;
+  if (n.type === "decision") {
+    b += `<h3>Estimadores vinculados (${n.back.length})</h3><ul class="links">` +
+      n.back.map(([e, why]) => `<li>${chip(e, "est")}<span class="reason">${why}</span></li>`).join("") + `</ul>`;
+    if (n.id === "d_hiper") {
+      b += `<h3>Hiperparámetros de cada estimador</h3><table class="hp"><thead><tr><th>Estimador</th><th>Hiperparámetros</th></tr></thead><tbody>` +
+        ESTIMADORES.filter(e => e.hp[0][0] !== "—").map(e => `<tr><td>${chip(e.id, "est")}</td><td>${e.hp.map(r => r[0]).join(" · ")}</td></tr>`).join("") + `</tbody></table>`;
+    }
+  }
+  if (n.type === "familia") b += `<h3>Estimadores</h3><p>` + n.children.map(c => chip(c, "est")).join("") + `</p>`;
+  if (n.type === "hub") b += `<h3>Decisiones</h3><p>` + DECISIONES.map(d => chip(d.id)).join("") + `</p>`;
+  if (n.type === "objetivo") b += `<h3>Ramas</h3><p>` + FAMILIAS.map(f => chip(f.id, "est")).join("") + chip(HUB.id) + `</p>`;
+  b += matLinks(n.materiales);
+  if (n.type === "estimador") {
+    b += `<div class="simbox"><button type="button" disabled data-simulador="${n.id}" aria-label="Simular ${n.label} (no disponible todavía)">Simular</button>El simulador de este estimador se activará en una fase posterior.</div>`;
+  }
+  $("#phead").innerHTML = head;
+  $("#pbody").innerHTML = b;
+  $("#pbody").scrollTop = 0;
+  $("#pclose").addEventListener("click", closePanel);
+  document.body.classList.add("panel-open");
+  renderMath($("#panel"));
+}
+function closePanel() {
+  document.body.classList.remove("panel-open");
+  select(null);
+}
+function renderMath(el) {
+  if (window.renderMathInElement) {
+    try {
+      window.renderMathInElement(el, { delimiters: [{ left: "\\[", right: "\\]", display: true }, { left: "\\(", right: "\\)", display: false }], throwOnError: false });
+    } catch (e) { /* sin KaTeX, se queda el texto */ }
+  }
+}
+function setHash(id) {
+  try { history.replaceState(null, "", id ? "#nodo=" + id : location.pathname + location.search); } catch (e) { /* iframe sandbox */ }
+}
+function select(id, opts = {}) {
+  state.sel = id;
+  if (id) {
+    const n = NODES.get(id);
+    // asegurar que el nodo es visible
+    state.open[ROOT.id] = true;
+    if (n.type === "estimador") state.open[n.fam] = true;
+    if (n.type === "decision") state.open[HUB.id] = true;
+    layout();
+    openPanel(id);
+    if (opts.center || !inView(id)) centerOn(id);
+  } else {
+    applyFocus();
+  }
+  setHash(id);
+}
+
+/* =====================================================================
+   VISTA: desplazar y acercar
+   ===================================================================== */
+function applyView() {
+  const v = state.view;
+  stage.style.transform = `translate(${v.x}px, ${v.y}px) scale(${v.k})`;
+}
+function visibleArea() {
+  const r = viewport.getBoundingClientRect();
+  let w = r.width, h = r.height;
+  if (document.body.classList.contains("panel-open")) {
+    if (isNarrow()) h -= window.innerHeight * 0.64; else w -= $("#panel").offsetWidth;
+  }
+  return { w: Math.max(w, 120), h: Math.max(h, 120) };
+}
+function fit(opts = {}) {
+  const { w } = visibleArea();
+  const h = visibleArea().h - ($(".legend").offsetHeight || 0) - 16;
+  let k = Math.min(w / G.W, h / G.H, 1.1);
+  if (opts.readable && isNarrow() && k < 0.5) {
+    // En móvil, el mapa completo es ilegible: empezamos a escala legible mostrando objetivo, familias y estimadores
+    k = 0.5;
+    const r = G.pos.get(ROOT.id);
+    state.view = { k, x: 4 - 20 * k, y: h / 2 - (r.y + r.h / 2) * k };
+  } else {
+    state.view = { k, x: (w - G.W * k) / 2, y: Math.max(8, (h - G.H * k) / 2) };
+  }
+  applyView();
+}
+function zoomAt(f, cx, cy) {
+  const v = state.view, k = Math.min(2.5, Math.max(0.15, v.k * f));
+  v.x = cx - (cx - v.x) * (k / v.k); v.y = cy - (cy - v.y) * (k / v.k); v.k = k;
+  applyView();
+}
+function inView(id) {
+  const p = G.pos.get(id); if (!p) return false;
+  const { w, h } = visibleArea(), v = state.view;
+  const x1 = p.x * v.k + v.x, y1 = p.y * v.k + v.y, x2 = (p.x + p.w) * v.k + v.x, y2 = (p.y + p.h) * v.k + v.y;
+  return x1 >= 0 && y1 >= 0 && x2 <= w && y2 <= h;
+}
+function centerOn(id) {
+  const p = G.pos.get(id); if (!p) return;
+  const { w, h } = visibleArea();
+  const v = state.view;
+  if (v.k < 0.55) v.k = isNarrow() ? 0.8 : 0.75;
+  v.x = w / 2 - (p.x + p.w / 2) * v.k;
+  v.y = h / 2 - (p.y + p.h / 2) * v.k;
+  applyView();
+}
+
+// Arrastre y pellizco
+const pointers = new Map();
+let drag = null, moved = false, pinch = null;
+viewport.addEventListener("pointerdown", e => {
+  if (e.button !== 0 && e.pointerType === "mouse") return;
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 1) { drag = { x: e.clientX, y: e.clientY, vx: state.view.x, vy: state.view.y }; moved = false; }
+  if (pointers.size === 2) {
+    const [a, b] = [...pointers.values()];
+    pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), k: state.view.k };
+  }
+});
+viewport.addEventListener("pointermove", e => {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  const r = viewport.getBoundingClientRect();
+  if (pointers.size === 2 && pinch) {
+    const [a, b] = [...pointers.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    const cx = (a.x + b.x) / 2 - r.left, cy = (a.y + b.y) / 2 - r.top;
+    zoomAt((pinch.k * d / pinch.d) / state.view.k, cx, cy);
+    moved = true; return;
+  }
+  if (drag) {
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!moved && Math.hypot(dx, dy) > 5) { moved = true; viewport.classList.add("dragging"); try { viewport.setPointerCapture(e.pointerId); } catch (_) {} }
+    if (moved) { state.view.x = drag.vx + dx; state.view.y = drag.vy + dy; applyView(); }
+  }
+});
+function endPointer(e) {
+  pointers.delete(e.pointerId);
+  if (pointers.size < 2) pinch = null;
+  if (pointers.size === 0) { drag = null; viewport.classList.remove("dragging"); }
+  else if (pointers.size === 1) { const [p] = [...pointers.values()]; drag = { x: p.x, y: p.y, vx: state.view.x, vy: state.view.y }; }
+}
+viewport.addEventListener("pointerup", endPointer);
+viewport.addEventListener("pointercancel", endPointer);
+viewport.addEventListener("wheel", e => {
+  e.preventDefault();
+  const r = viewport.getBoundingClientRect();
+  if (e.ctrlKey || e.metaKey) zoomAt(Math.exp(-e.deltaY * 0.01), e.clientX - r.left, e.clientY - r.top);
+  else { state.view.x -= e.deltaX; state.view.y -= e.deltaY; applyView(); }
+}, { passive: false });
+
+// Clics en el mapa
+viewport.addEventListener("click", e => {
+  if (moved) { moved = false; return; }
+  const tog = e.target.closest(".tog");
+  if (tog) { toggle(tog.dataset.tog); return; }
+  if (e.target.closest(".sim")) return;
+  const node = e.target.closest(".node");
+  if (node) { const id = node.dataset.id; if (state.sel === id) closePanel(); else select(id); return; }
+  if (state.sel) closePanel();
+});
+viewport.addEventListener("dblclick", e => {
+  const node = e.target.closest(".node.familia, .node.hub, .node.objetivo");
+  if (node) toggle(node.dataset.id);
+});
+viewport.addEventListener("keydown", e => {
+  const node = e.target.closest(".node");
+  if (!node) return;
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(node.dataset.id); }
+  if ((e.key === "+" || e.key === "-") && state.open[node.dataset.id] !== undefined) toggle(node.dataset.id);
+});
+stage.addEventListener("pointerover", e => {
+  if (e.pointerType !== "mouse") return;
+  const node = e.target.closest(".node.estimador, .node.decision, .node.familia");
+  const id = node ? node.dataset.id : null;
+  if (id !== state.hover) { state.hover = id; applyFocus(); }
+});
+stage.addEventListener("pointerleave", () => { if (state.hover) { state.hover = null; applyFocus(); } });
+
+function toggle(id) {
+  state.open[id] = !state.open[id];
+  const before = G.pos.get(id), bx = before.x, by = before.y;
+  layout();
+  // mantener el nodo plegado/desplegado en el mismo sitio de la pantalla
+  const after = G.pos.get(id);
+  state.view.x += (bx - after.x) * state.view.k;
+  state.view.y += (by - after.y) * state.view.k;
+  applyView();
+}
+
+/* =====================================================================
+   PANEL: navegación entre nodos
+   ===================================================================== */
+$("#panel").addEventListener("click", e => {
+  const go = e.target.closest("[data-go]");
+  if (go) select(go.dataset.go, { center: true });
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { if ($("#results").classList.contains("show")) hideResults(); else if (state.sel) closePanel(); }
+});
+
+/* =====================================================================
+   BUSCADOR
+   ===================================================================== */
+const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const strip = s => (s || "").replace(/<[^>]+>/g, " ").replace(/\\[a-zA-Z]+/g, " ");
+const INDEX = [];
+NODES.forEach(n => {
+  const parts = [n.label, n.sub, n.idea, n.formula, ...(n.puntos || []), ...(n.sesion || [])];
+  if (n.peculiar) parts.push(...Object.values(n.peculiar));
+  if (n.hp) n.hp.forEach(r => parts.push(...r));
+  if (n.links) n.links.forEach(l => parts.push(l[1]));
+  INDEX.push({ id: n.id, label: norm(n.label), text: norm(strip(parts.join(" "))) });
+});
+const qEl = $("#q"), resEl = $("#results");
+let active = -1, current = [];
+function search(q) {
+  const t = norm(q.trim());
+  state.query = t;
+  if (t.length < 2) { document.body.classList.remove("searching"); els.forEach(el => el.classList.remove("match")); hideResults(); return; }
+  const words = t.split(/\s+/);
+  current = INDEX.map(it => {
+    let score = 0;
+    for (const w of words) {
+      if (it.label.includes(w)) score += it.label.startsWith(w) ? 4 : 3;
+      else if (it.text.includes(w)) score += 1;
+      else return null;
+    }
+    return { id: it.id, score };
+  }).filter(Boolean).sort((a, b) => b.score - a.score);
+  const ids = new Set(current.map(r => r.id));
+  // una familia plegada se marca si contiene coincidencias
+  FAMILIAS.forEach(f => { if (!state.open[f.id] && f.children.some(c => ids.has(c))) ids.add(f.id); });
+  if (!state.open[HUB.id] && DECISIONES.some(d => ids.has(d.id))) ids.add(HUB.id);
+  document.body.classList.add("searching");
+  els.forEach((el, k) => el.classList.toggle("match", ids.has(k)));
+  active = current.length ? 0 : -1;
+  showResults();
+}
+function showResults() {
+  resEl.innerHTML = current.length
+    ? current.slice(0, 10).map((r, i) => { const n = NODES.get(r.id); return `<li role="option"><button type="button" data-go="${r.id}" class="${i === active ? "active" : ""}"><span>${n.label}</span><span class="kind">${KIND[n.type]}</span></button></li>`; }).join("")
+    : `<li class="empty">Sin resultados</li>`;
+  resEl.classList.add("show");
+}
+function hideResults() { resEl.classList.remove("show"); }
+qEl.addEventListener("input", () => search(qEl.value));
+qEl.addEventListener("focus", () => { if (state.query.length >= 2) showResults(); });
+qEl.addEventListener("keydown", e => {
+  if (!current.length) return;
+  if (e.key === "ArrowDown") { e.preventDefault(); active = Math.min(active + 1, Math.min(current.length, 10) - 1); showResults(); }
+  if (e.key === "ArrowUp") { e.preventDefault(); active = Math.max(active - 1, 0); showResults(); }
+  if (e.key === "Enter" && active >= 0) { e.preventDefault(); goResult(current[active].id); }
+});
+resEl.addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) goResult(b.dataset.go); });
+document.addEventListener("click", e => { if (!e.target.closest(".search")) hideResults(); });
+function goResult(id) {
+  hideResults(); qEl.blur();
+  qEl.value = ""; search("");
+  if (document.body.classList.contains("list-mode")) toggleList(false);
+  select(id, { center: true });
+}
+
+/* =====================================================================
+   VISTA EN LISTA
+   ===================================================================== */
+function buildOutline() {
+  const w = $("#outline .wrap");
+  let h = `<button type="button" class="rootbtn" data-go="${ROOT.id}">${ROOT.label}<small>${ROOT.sub}</small></button>`;
+  FAMILIAS.forEach(f => {
+    h += `<details class="familia" open><summary>${f.label}</summary><ul>` +
+      f.children.map(c => { const e = NODES.get(c); return `<li><button type="button" data-go="${c}"><span>${e.label}</span><small>${e.tema}${e.pendiente ? " · por publicar" : ""}</small></button></li>`; }).join("") +
+      `</ul></details>`;
+  });
+  h += `<details class="hub" open><summary>${HUB.label}</summary><ul>` +
+    DECISIONES.map(d => `<li><button type="button" data-go="${d.id}"><span>${d.label}</span><small>${d.back.length} estimadores</small></button></li>`).join("") + `</ul></details>`;
+  w.innerHTML = h;
+}
+buildOutline();
+$("#outline").addEventListener("click", e => {
+  const b = e.target.closest("[data-go]");
+  if (!b) return;
+  const n = NODES.get(b.dataset.go);
+  state.sel = n.id; openPanel(n.id); setHash(n.id);
+});
+function toggleList(force) {
+  const on = force !== undefined ? force : !document.body.classList.contains("list-mode");
+  document.body.classList.toggle("list-mode", on);
+  $("#listBtn").setAttribute("aria-pressed", on);
+  $("#listBtn").textContent = on ? "Mapa" : "Lista";
+  if (!on) { layout(); if (state.sel) centerOn(state.sel); else fit(); }
+}
+$("#listBtn").addEventListener("click", () => toggleList());
+
+/* =====================================================================
+   BOTONES
+   ===================================================================== */
+$("#zin").addEventListener("click", () => { const { w, h } = visibleArea(); zoomAt(1.25, w / 2, h / 2); });
+$("#zout").addEventListener("click", () => { const { w, h } = visibleArea(); zoomAt(0.8, w / 2, h / 2); });
+$("#zfit").addEventListener("click", fit);
+$("#expandAll").addEventListener("click", () => { Object.keys(state.open).forEach(k => state.open[k] = true); layout(); fit(); });
+$("#collapseAll").addEventListener("click", () => { FAMILIAS.forEach(f => state.open[f.id] = false); layout(); fit(); });
+
+let rT = null;
+window.addEventListener("resize", () => { clearTimeout(rT); rT = setTimeout(() => { layout(); fit(); }, 120); });
+
+/* =====================================================================
+   INICIO
+   ===================================================================== */
+layout();
+fit({ readable: true });
+(function fromHash() {
+  const m = /nodo=([\w-]+)/.exec(location.hash);
+  if (m && NODES.has(m[1])) select(m[1], { center: true });
+})();
+// KaTeX se carga con defer: si el panel ya estaba abierto, se renderiza al llegar
+window.addEventListener("load", () => { if (document.body.classList.contains("panel-open")) renderMath($("#panel")); });
+</script>
+</body>
+</html>
