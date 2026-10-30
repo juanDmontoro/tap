@@ -303,7 +303,7 @@ body.list-mode #viewport, body.list-mode .legend, body.list-mode .zoom { display
   <span><i style="background:var(--tap-blue)"></i>Estimadores</span>
   <span><i style="background:var(--tap-terracotta)"></i>Decisiones</span>
   <span><i style="border:1.5px dashed var(--tap-gray);background:#fff"></i>Tema por publicar</span>
-  <span class="hint">Pulsa un estimador para ver sus vínculos · arrastra para moverte · Ctrl + rueda para acercar</span>
+  <span class="hint">Pulsa un estimador para ver sus vínculos. Arrastra para moverte y usa Ctrl + rueda para acercar.</span>
 </div>
 <div class="zoom">
   <button type="button" id="zin" aria-label="Acercar">+</button>
@@ -347,16 +347,16 @@ const M = {
 const ROOT = {
   id: "objetivo", type: "objetivo",
   label: "Aprender f(X) para predecir y",
-  sub: "y = f(X) + ε · regresión y clasificación",
-  idea: R`Con una muestra de casos con respuesta conocida estimamos una regla \(\hat f\) que prediga bien la respuesta \(y\) en casos nuevos. Es aprendizaje supervisado: aprendemos con respuestas conocidas.`,
+  sub: "y = f(X) + ε",
+  idea: R`A partir de una muestra de casos con respuesta conocida estimamos una regla \(\hat f\) que prediga bien la respuesta \(y\) de casos nuevos. Por eso hablamos de aprendizaje supervisado.`,
   formula: R`\[y = f(X) + \epsilon\]\[f(X)=E(y\mid X),\qquad E(\epsilon\mid X)=0\]`,
   puntos: [
-    R`<b>Regresión</b>: respuesta numérica (el precio anunciado de un alojamiento). <b>Clasificación</b>: respuesta categórica (el abandono de un cliente, ser superanfitrión); el modelo predice la probabilidad de cada clase.`,
-    R`\(f(X)\): media de la respuesta para unas características dadas. \(\hat f(X)\): la regla que estimamos con una muestra. \(\epsilon\): la variación que esas características no permiten anticipar.`,
-    R`<b>Error reducible</b>: podemos mejorar la estimación de \(f\). <b>Error irreducible</b>: el ruido que permanece dado \(X\) limita la precisión.`,
-    R`Para un \(x\) nuevo, promediando sobre muestras de entrenamiento y sobre el ruido:\[E[(y-\hat f(x))^2]=\underbrace{\left(E[\hat f(x)]-f(x)\right)^2}_{\text{sesgo}^2}+\underbrace{\mathrm{Var}(\hat f(x))}_{\text{varianza}}+\underbrace{\sigma^2}_{\text{ruido}}\]Sesgo y varianza son reducibles; \(\sigma^2\) no.`,
-    R`Elegir un modelo predictivo exige dos decisiones: la <b>clase de funciones</b> (lineal, árbol, red neuronal…) y <b>cuánta complejidad</b> introducimos en la clase elegida.`,
-    R`Predecir no es estimar un efecto causal: las herramientas pueden coincidir, pero el objetivo causal necesita supuestos que identifiquen el efecto (tema 7).`
+    R`En <b>regresión</b> la respuesta es numérica, como las ventas de una tienda o el precio de un producto. En <b>clasificación</b> es una categoría, como si un cliente abandona o si un préstamo resulta impagado, y el modelo predice la probabilidad de cada clase.`,
+    R`\(f(X)\) es la media de la respuesta para unos valores dados de los predictores, y \(\hat f(X)\) es la regla que estimamos con una muestra. El término \(\epsilon\) recoge la variación de \(y\) que los predictores no permiten anticipar.`,
+    R`El error de predicción tiene una parte <b>reducible</b>, que disminuye si estimamos mejor \(f\), y una parte <b>irreducible</b>, el ruido que permanece una vez conocido \(X\) y que limita la precisión de cualquier modelo.`,
+    R`Para un \(x\) nuevo, promediando sobre las muestras de entrenamiento y sobre el ruido, el error esperado se descompone así:\[E[(y-\hat f(x))^2]=\underbrace{\left(E[\hat f(x)]-f(x)\right)^2}_{\text{sesgo}^2}+\underbrace{\mathrm{Var}(\hat f(x))}_{\text{varianza}}+\underbrace{\sigma^2}_{\text{ruido}}\]Mientras el sesgo y la varianza del estimador son reducibles, el ruido no lo es.`,
+    R`Elegir un modelo predictivo exige dos decisiones: la <b>clase de funciones</b> (lineal, árbol, red neuronal…) y la <b>complejidad</b> que permitimos dentro de esa clase.`,
+    R`Predecir y estimar el efecto causal de una intervención son objetivos distintos. Pueden compartir herramientas, pero el objetivo causal requiere además supuestos que identifiquen el efecto (tema 7).`
   ],
   materiales: ["t1a", "pres"]
 };
@@ -364,131 +364,131 @@ const ROOT = {
 const HUB = {
   id: "decisiones", type: "hub",
   label: "Decisiones de aprendizaje supervisado",
-  sub: "Transversales a todos los estimadores",
-  idea: R`Las reglas para entrenar, comparar y elegir son las mismas en todo el curso; solo cambia el último paso del <code>Pipeline</code>. Pulsa una decisión para ver con qué estimadores se conecta.`,
+  sub: "Comunes a todos los estimadores",
+  idea: R`Las reglas con las que entrenamos y comparamos modelos son las mismas a lo largo del curso, y en el código solo cambia el último paso del <code>Pipeline</code>. Al pulsar una decisión se resaltan los estimadores con los que se conecta.`,
   materiales: ["t2", "t2c"]
 };
 
 const FAMILIAS = [
-  { id: "f_ref", label: "Modelo de referencia", sub: "El listón que hay que superar", tema: "T1–T3",
-    idea: R`Un modelo sin predictores. Cualquier modelo se compara con él en las mismas particiones.`, materiales: ["m2", "m3"] },
-  { id: "f_lin", label: "Modelos lineales y regularización", sub: "Tema 1 · una fórmula global", tema: "T1",
-    idea: R`La clase de funciones es lineal en los coeficientes. La regularización restringe la complejidad dentro de esa clase: el modelo sigue siendo lineal, pero al crecer \(\lambda\) se estrecha el conjunto de coeficientes que puede alcanzar.`, materiales: ["t1a", "t1b", "t1c", "m1"] },
-  { id: "f_glm", label: "Modelos lineales generalizados", sub: "Tema 3 · distribución + predictor lineal + enlace", tema: "T2–T3",
-    idea: R`Un GLM combina una distribución de la familia exponencial para la respuesta, un predictor lineal \(\nu_i=\beta_0+\beta_1x_{1i}+\dots+\beta_px_{pi}\) y una función de enlace \(g(\mu_i)=\nu_i\). La distribución y el enlace se eligen según el rango de la respuesta; los coeficientes se estiman por máxima verosimilitud (penalizada si sobreajusta).`, materiales: ["t3", "m3"] },
-  { id: "f_tree", label: "Árboles y ensambles", sub: "Tema 4 · predicción por regiones", tema: "T4",
-    idea: R`Un árbol parte el espacio de predictores en regiones y da la misma predicción a todas las observaciones de una región. Un ensamble combina las predicciones de muchos árboles (o de varios modelos).`, materiales: ["t4", "m4", "plan"] },
+  { id: "f_ref", label: "Modelo de referencia", sub: "Punto de comparación", tema: "T1–T3",
+    idea: R`Un modelo que no usa predictores. Todo modelo candidato se compara con él usando las mismas particiones.`, materiales: ["m2", "m3"] },
+  { id: "f_lin", label: "Modelos lineales y regularización", sub: "Tema 1", tema: "T1",
+    idea: R`Modelos lineales en los coeficientes. La regularización restringe su complejidad: el modelo sigue siendo lineal, pero a medida que crece \(\lambda\) se reduce el conjunto de coeficientes que puede alcanzar.`, materiales: ["t1a", "t1b", "t1c", "m1"] },
+  { id: "f_glm", label: "Modelos lineales generalizados", sub: "Temas 2 y 3", tema: "T2–T3",
+    idea: R`Un GLM combina una distribución de la familia exponencial para la respuesta, un predictor lineal \(\nu_i=\beta_0+\beta_1x_{1i}+\dots+\beta_px_{pi}\) y una función de enlace \(g(\mu_i)=\nu_i\). La distribución y el enlace se eligen según el rango de la respuesta. Los coeficientes se estiman por máxima verosimilitud, que se penaliza cuando el modelo sobreajusta.`, materiales: ["t3", "m3"] },
+  { id: "f_tree", label: "Árboles y ensambles", sub: "Tema 4", tema: "T4",
+    idea: R`Un árbol divide el espacio de predictores en regiones y asigna la misma predicción a todas las observaciones de cada región. Un ensamble combina las predicciones de muchos árboles o de varios modelos.`, materiales: ["t4", "m4", "plan"] },
   { id: "f_svm", label: "Máquinas de vectores de soporte", sub: "Tema 5", tema: "T5", pendiente: true,
-    idea: R`Clasificación y regresión con vectores de soporte; núcleos (17 nov). En las prácticas: escalado, ajuste y comparación transversal de modelos (19 nov, entrega E3).`, materiales: ["plan"] },
-  { id: "f_nn", label: "Redes neuronales", sub: "Tema 6 · aprendizaje profundo con Keras", tema: "T6", pendiente: true,
-    idea: R`Perceptrón multicapa (24 nov), backpropagation y regularización (1 dic); prácticas en Keras (26 nov y 3 dic, entrega E4).`, materiales: ["plan"] },
-  { id: "f_causal", label: "Predicción y efectos causales", sub: "Tema 7 · más allá de f(X)", tema: "T7", pendiente: true,
-    idea: R`Explicar una relación o estimar el efecto de una intervención requieren preguntas y supuestos distintos de los de predecir. El aprendizaje automático puede ayudar a estimar efectos causales.`, materiales: ["pres", "plan"] }
+    idea: R`La sesión del 17 de noviembre trata la clasificación y la regresión con vectores de soporte y el uso de núcleos. En la práctica del 19 de noviembre (entrega E3) se escalan los predictores, se ajustan los modelos y se comparan con los de temas anteriores.`, materiales: ["plan"] },
+  { id: "f_nn", label: "Redes neuronales", sub: "Tema 6", tema: "T6", pendiente: true,
+    idea: R`El tema empieza con el perceptrón multicapa (24 de noviembre) y sigue con backpropagation y la regularización de las redes (1 de diciembre). Las prácticas se hacen con Keras (26 de noviembre y 3 de diciembre, entrega E4).`, materiales: ["plan"] },
+  { id: "f_causal", label: "Predicción y efectos causales", sub: "Tema 7", tema: "T7", pendiente: true,
+    idea: R`Explicar una relación o estimar el efecto de una intervención exige preguntas y supuestos distintos de los de la predicción. El aprendizaje automático puede ayudar en esa estimación.`, materiales: ["pres", "plan"] }
 ];
 
 /* Decisiones transversales */
 const DECISIONES = [
-  { id: "d_sesgo", label: "Compromiso sesgo-varianza", sub: "Subajuste, sobreajuste, complejidad", tema: "T1",
-    idea: R`Aceptar algo de sesgo puede reducir suficientemente la varianza. La complejidad se mide en relación con los datos disponibles.`,
+  { id: "d_sesgo", label: "Compromiso sesgo-varianza", sub: "Complejidad y tamaño muestral", tema: "T1",
+    idea: R`Aceptar algo de sesgo puede compensar si la varianza baja lo suficiente. Qué complejidad resulta excesiva depende de cuántos datos tenemos.`,
     puntos: [
-      R`<b>Subajuste</b>: el método no puede representar \(f\); domina el sesgo. <b>Sobreajuste</b>: el método sigue el ruido de la muestra; domina la varianza.`,
-      R`Un ajuste excelente en entrenamiento puede empeorar las predicciones en datos nuevos: el error de entrenamiento no basta para elegir.`,
-      R`<b>Regularizar</b> es limitar la flexibilidad del ajuste. Más penalización, menos complejidad: más sesgo y menos varianza.`,
-      R`La penalización es un seguro contra la varianza: vale mucho con pocos datos y casi nada cuando sobran.`,
-      R`En un promedio de \(B\) árboles: \(\operatorname{Var}\big(\hat f_{\text{bag}}(x)\big)=\bar\rho\,\sigma^2+\frac{1-\bar\rho}{B}\,\sigma^2\).`
+      R`Hay <b>subajuste</b> cuando el método no puede representar \(f\) y el sesgo domina el error. Hay <b>sobreajuste</b> cuando el método sigue el ruido de la muestra y domina la varianza.`,
+      R`Un ajuste excelente en entrenamiento puede ir acompañado de malas predicciones en datos nuevos, por lo que el error de entrenamiento no sirve para elegir un modelo.`,
+      R`<b>Regularizar</b> consiste en limitar la flexibilidad del ajuste. Al aumentar la penalización, el modelo gana sesgo y pierde varianza.`,
+      R`La penalización funciona como un seguro contra la varianza. Es muy útil con pocos datos y apenas cambia nada cuando los datos abundan.`,
+      R`Al promediar \(B\) árboles, la varianza de la predicción es \(\operatorname{Var}\big(\hat f_{\text{bag}}(x)\big)=\bar\rho\,\sigma^2+\frac{1-\bar\rho}{B}\,\sigma^2\). El número de árboles reduce el segundo término, mientras que el primero depende de cuánto se parecen los árboles entre sí.`
     ],
     formula: R`\[E[(y-\hat f(x))^2]=\text{sesgo}^2+\text{varianza}+\sigma^2\]`,
     materiales: ["t1a", "t1b", "t1c"] },
-  { id: "d_hiper", label: "Seleccionar hiperparámetros", sub: "Se eligen empíricamente, no se estiman", tema: "T1–T2",
-    idea: R`<b>Parámetros</b>: valores que aprende el modelo durante el ajuste. <b>Hiperparámetros</b>: controlan el proceso de ajuste y, en muchos casos, la flexibilidad del estimador. No hay fórmula para fijarlos: se comparan valores candidatos por validación cruzada.`,
+  { id: "d_hiper", label: "Selección de hiperparámetros", sub: "Se eligen con datos de validación", tema: "T1–T2",
+    idea: R`Los <b>parámetros</b> son los valores que el modelo aprende durante el ajuste. Los <b>hiperparámetros</b> controlan ese proceso y, a menudo, la flexibilidad del estimador. Como no hay una fórmula que los fije, se comparan varios valores candidatos mediante validación cruzada.`,
     puntos: [
-      R`<code>GridSearchCV</code> recorre una rejilla (en escala logarítmica para \(\lambda\)); el hiperparámetro se nombra <code>paso__argumento</code>, p. ej. <code>modelo__alpha</code>.`,
-      R`La métrica y la regla de decisión se fijan antes de validar. scikit-learn maximiza la puntuación: los errores se guardan con signo negativo (<code>neg_root_mean_squared_error</code>).`,
-      R`<b>Regla del error típico</b>: entre los modelos cuyo error no supera al mínimo en más de un error típico, el más sencillo («más sencillo» se fija de antemano: más penalización, menos coeficientes no nulos, menos hojas).`,
-      R`El mínimo de la búsqueda (<code>best_score_</code>) mide al ganador con los mismos datos con los que se eligió: con muchas candidatas es optimista.`,
-      R`Cuidado con los nombres: \(\lambda\) es <code>alpha</code> en Ridge, Lasso, ElasticNet, GammaRegressor y PoissonRegressor; en <code>LogisticRegression</code> es <code>C</code> \(=1/\lambda\); la mezcla \(\alpha\) es <code>l1_ratio</code>; en el árbol, la \(\alpha\) de la poda es <code>ccp_alpha</code>.`
+      R`<code>GridSearchCV</code> recorre una rejilla de valores, en escala logarítmica en el caso de \(\lambda\). Dentro de un <code>Pipeline</code>, el hiperparámetro se nombra como <code>paso__argumento</code>, por ejemplo <code>modelo__alpha</code>.`,
+      R`La métrica y la regla de decisión se fijan antes de validar. Como scikit-learn maximiza la puntuación, los errores se guardan con signo negativo (<code>neg_root_mean_squared_error</code>).`,
+      R`La <b>regla del error típico</b> elige, entre los modelos cuyo error no supera al mínimo en más de un error típico, el más sencillo. Qué se entiende por «más sencillo» se decide de antemano: más penalización, menos coeficientes no nulos o menos hojas, según el modelo.`,
+      R`El mejor resultado de la búsqueda (<code>best_score_</code>) evalúa al ganador con los mismos datos que sirvieron para elegirlo. Con muchas candidatas, esa cifra tiende a ser optimista.`,
+      R`Los nombres cambian entre estimadores. \(\lambda\) se llama <code>alpha</code> en Ridge, Lasso, ElasticNet, GammaRegressor y PoissonRegressor, mientras que <code>LogisticRegression</code> usa <code>C</code> \(=1/\lambda\). La mezcla \(\alpha\) se llama <code>l1_ratio</code>, y la \(\alpha\) de la poda de un árbol, <code>ccp_alpha</code>.`
     ],
     materiales: ["t1a", "t2", "t2c"] },
-  { id: "d_cv", label: "Validación cruzada", sub: "Evalúa el método, no un modelo ajustado", tema: "T2",
-    idea: R`La validación cruzada no evalúa un modelo concreto ya ajustado: evalúa el <b>método</b>, es decir, el procedimiento completo (preprocesado + algoritmo de ajuste + valores de los hiperparámetros) aplicado a datos como los de entrenamiento.`,
+  { id: "d_cv", label: "Validación cruzada", sub: "Evalúa el método de ajuste", tema: "T2",
+    idea: R`La validación cruzada evalúa un <b>método</b>: el procedimiento completo de preprocesado y ajuste, con unos valores dados de los hiperparámetros, aplicado a datos como los de entrenamiento. Los modelos que se ajustan en cada partición solo sirven para medir ese procedimiento.`,
     puntos: [
-      R`Las observaciones se reparten en \(k\) particiones; en cada vuelta se vuelve a ajustar <b>todo</b> el <code>Pipeline</code> con \(k-1\) particiones y se mide el error en la restante. Cada observación valida una vez y se promedian los \(k\) errores.`,
-      R`Hay \(k\) modelos distintos (cinco logit, uno por partición) y ninguno es «el» modelo: sirven para medir el procedimiento y se descartan. El modelo final se reajusta con todo el entrenamiento y los hiperparámetros elegidos.`,
-      R`Por eso el preprocesado va dentro del <code>Pipeline</code>: si se aprendiera fuera, la partición de validación influiría en el ajuste.`,
-      R`Una sola división da un error que depende de la semilla (con 80/20, 7 veces más variable que con 5 particiones). Con \(k=2\) la estimación es pesimista; de \(k=5\) en adelante apenas cambia; LOOCV (\(k=n\)) exige \(n\) ajustes.`,
-      R`<b>Error típico</b>: desviación de los \(k\) errores dividida por \(\sqrt{k}\); orientativo y algo optimista. El ganador puede cambiar con otro reparto.`,
-      R`<b>Validación cruzada anidada</b>: un bucle externo evalúa y otro interno elige los hiperparámetros, <code>cross_val_score(GridSearchCV(...))</code>. Estima el error de <i>elegir y ajustar</i>: el procedimiento completo, elección incluida.`,
-      R`Con un clasificador, las particiones son estratificadas (<code>StratifiedKFold</code>). <code>cross_val_predict</code> da la predicción de cada observación cuando su partición hace de validación.`
+      R`Las observaciones se reparten en \(k\) particiones. En cada vuelta se ajusta de nuevo todo el <code>Pipeline</code> con \(k-1\) particiones y se mide el error en la restante. Cada observación valida una vez, y el resultado es la media de los \(k\) errores.`,
+      R`Se obtienen \(k\) modelos distintos, uno por partición, y ninguno de ellos es el modelo final. Una vez elegidos los hiperparámetros, el modelo final se ajusta con todo el conjunto de entrenamiento.`,
+      R`Por esta razón el preprocesado forma parte del <code>Pipeline</code>. Si se aprendiera con todos los datos, la partición de validación influiría en el ajuste que pretende evaluar.`,
+      R`Con una sola división, el error estimado depende mucho de la semilla. Con \(k=2\) cada modelo se entrena con la mitad de los datos y la estimación es pesimista, mientras que a partir de \(k=5\) apenas cambia. LOOCV (\(k=n\)) exige \(n\) ajustes.`,
+      R`El <b>error típico</b> de la validación cruzada es la desviación de los \(k\) errores dividida por \(\sqrt{k}\). Es una referencia orientativa y algo optimista, y el modelo ganador puede cambiar con otro reparto de las observaciones.`,
+      R`En la <b>validación cruzada anidada</b>, un bucle externo evalúa y otro interno elige los hiperparámetros (<code>cross_val_score(GridSearchCV(...))</code>). Así se estima el error del procedimiento completo, incluida la elección.`,
+      R`En clasificación las particiones se estratifican (<code>StratifiedKFold</code>). La función <code>cross_val_predict</code> devuelve, para cada observación, la predicción obtenida cuando su partición hace de validación.`
     ],
     materiales: ["t2", "t2c", "m2"] },
-  { id: "d_part", label: "Entrenamiento, validación y test", sub: "Validar para elegir, probar para evaluar", tema: "T1–T2",
-    idea: R`Entrenamiento: ajustar parámetros. Validación: elegir modelo e hiperparámetros. Prueba (test): evaluar una vez el modelo elegido, fuera de las decisiones.`,
+  { id: "d_part", label: "Partición de los datos", sub: "Entrenamiento, validación y test", tema: "T1–T2",
+    idea: R`Con los datos de entrenamiento se ajustan los parámetros, y con los de validación se eligen el modelo y sus hiperparámetros. El conjunto de prueba (test) se reserva para evaluar una sola vez el modelo elegido.`,
     puntos: [
-      R`<b>Partir primero</b>: <code>train_test_split</code> antes de cualquier cálculo (con <code>stratify=y</code> en clasificación).`,
-      R`El test se consulta una sola vez, con la decisión tomada, y <b>no reabre la selección</b>. Si cambiamos el modelo después de mirar el test, ya no es una evaluación independiente.`,
-      R`¿Qué error comunicamos? El del test. Sin test, el de la validación cruzada anidada; nunca el mínimo de la búsqueda.`,
-      R`<b>Fuga de información</b>: \(X\) solo contiene lo que conoceríamos en el momento de predecir (ni componentes de la respuesta, ni identificadores, ni pesos muestrales).`
+      R`La partición se hace con <code>train_test_split</code> antes de cualquier cálculo, y en clasificación con <code>stratify=y</code>.`,
+      R`El test se consulta una vez, cuando la decisión ya está tomada, y su resultado no reabre la selección. Si se cambia el modelo después de mirar el test, la evaluación deja de ser independiente.`,
+      R`El error que se comunica es el del test. Si no hay test, se usa el de la validación cruzada anidada, y nunca el mejor resultado de la búsqueda.`,
+      R`Hay <b>fuga de información</b> cuando \(X\) contiene algo que no se conocería en el momento de predecir, como componentes de la propia respuesta, identificadores o pesos muestrales.`
     ],
     materiales: ["t1a", "t1c", "t2"] },
-  { id: "d_prep", label: "Preprocesado en el Pipeline", sub: "Escalar, codificar, imputar sin fugas", tema: "T1–T2",
-    idea: R`Las transformaciones (medias, desviaciones, categorías) se aprenden solo con los datos de ajuste: <code>ColumnTransformer</code> + modelo dentro de un <code>Pipeline</code>.`,
+  { id: "d_prep", label: "Preprocesado en el Pipeline", sub: "Transformaciones aprendidas en entrenamiento", tema: "T1–T2",
+    idea: R`Las transformaciones de los predictores (medias, desviaciones típicas, categorías) se aprenden solo con los datos de ajuste. Para ello se combinan un <code>ColumnTransformer</code> y el modelo dentro de un <code>Pipeline</code>.`,
     puntos: [
-      R`Numéricos: <code>StandardScaler()</code> (y <code>SimpleImputer(strategy="median")</code> si hay faltantes). Categóricos: <code>OneHotEncoder(handle_unknown="ignore")</code>.`,
-      R`<b>Estandarizar antes de penalizar</b>: la penalización depende de las unidades; un coeficiente en km y otro en m no se pueden castigar por igual. El intercepto no se penaliza.`,
-      R`En el descenso del gradiente, escalas muy distintas deforman los contornos y frenan la optimización: estandarizar ayuda.`,
-      R`Un árbol no cambia al estandarizar: un corte \(x_j\le s\) solo depende del orden de los valores. Por eso el preprocesado de los árboles no estandariza.`
+      R`Los predictores numéricos se estandarizan con <code>StandardScaler()</code> y, si hay valores faltantes, se imputan con <code>SimpleImputer(strategy="median")</code>. Los categóricos se codifican con <code>OneHotEncoder(handle_unknown="ignore")</code>.`,
+      R`Antes de penalizar hay que estandarizar, porque la penalización depende de las unidades: un coeficiente medido en kilómetros y otro en metros no pueden castigarse por igual. El intercepto no se penaliza.`,
+      R`En el descenso del gradiente, unos predictores con escalas muy distintas deforman los contornos de la pérdida y frenan la optimización, de modo que estandarizar también ayuda.`,
+      R`Un árbol no cambia al estandarizar, porque cada corte \(x_j\le s\) depende solo del orden de los valores. Por eso el preprocesado de los árboles no incluye este paso.`
     ],
     materiales: ["t1c", "t2c"] },
-  { id: "d_train", label: "Entrenar: minimizar una pérdida", sub: "Pérdida, gradiente, tasa y lotes", tema: "T1, T3",
-    idea: R`Entrenar es ajustar los parámetros minimizando una pérdida sobre la muestra; regularizar es cambiar la pérdida.`,
+  { id: "d_train", label: "Minimizar una pérdida", sub: "Gradiente, tasa de aprendizaje y lotes", tema: "T1, T3",
+    idea: R`Entrenar un modelo es ajustar sus parámetros para minimizar una pérdida sobre la muestra, y regularizar equivale a cambiar esa pérdida.`,
     formula: R`\[\theta^{(t+1)}=\theta^{(t)}-\alpha\,\nabla_\theta L(\theta^{(t)})\]`,
     puntos: [
-      R`Pérdidas del curso: RSS (regresión lineal), RSS + penalización (Ridge, Lasso, Elastic Net), menos la log-verosimilitud (GLM; con Bernoulli equivale a la log-loss), RSS o impureza por corte (árboles).`,
-      R`\(\alpha\): tasa de aprendizaje (tamaño del paso). Una tasa constante puede mantener oscilaciones; reducirla durante el entrenamiento ayuda a afinar.`,
-      R`Por lotes (todos los datos por paso), estocástico (uno) o por minilotes (\(m\)): un <b>epoch</b> es una pasada completa, con \(\lceil n/m\rceil\) pasos.`,
-      R`Parada: máximo de iteraciones y tolerancia (<code>max_iter</code>); <b>parada temprana</b>: vigilar la pérdida de validación y detener antes de que la generalización empeore.`,
-      R`MCO y Ridge tienen solución directa; Lasso y Elastic Net se resuelven de forma iterativa. Boosting añade árboles que siguen el gradiente de la pérdida; un árbol aislado no se entrena así (algoritmo voraz).`
+      R`En el curso aparecen varias pérdidas: la RSS en la regresión lineal, la RSS más una penalización en Ridge, Lasso y Elastic Net, y la log-verosimilitud cambiada de signo en los GLM, que con una respuesta de Bernoulli coincide con la log-loss. Los árboles reducen la RSS o la impureza en cada corte.`,
+      R`La tasa de aprendizaje \(\alpha\) fija el tamaño del paso. Una tasa constante puede dejar oscilaciones alrededor del mínimo, y reducirla durante el entrenamiento ayuda a afinar el ajuste.`,
+      R`El gradiente puede calcularse con todos los datos (por lotes), con una observación (estocástico) o con un minilote de \(m\) observaciones. Un <b>epoch</b> es una pasada completa por los datos y contiene \(\lceil n/m\rceil\) pasos.`,
+      R`Para detener el algoritmo se combinan un máximo de iteraciones (<code>max_iter</code>) y una tolerancia. La <b>parada temprana</b> vigila la pérdida de validación y detiene el entrenamiento antes de que la generalización empeore.`,
+      R`MCO y Ridge tienen solución directa, mientras que Lasso y Elastic Net se resuelven de forma iterativa. El boosting añade árboles que siguen el gradiente de la pérdida, pero un árbol aislado se construye con un algoritmo voraz.`
     ],
     materiales: ["t1a", "t1c", "t3"] },
-  { id: "d_mreg", label: "Métricas de regresión", sub: "MSE, RMSE, MAE, R²", tema: "T1–T3",
-    idea: R`La métrica forma parte de la regla de decisión: se elige según el problema de negocio y antes de validar, y se compara siempre con el modelo nulo.`,
+  { id: "d_mreg", label: "Métricas de regresión", sub: "MSE, RMSE, MAE y R²", tema: "T1–T3",
+    idea: R`La métrica forma parte de la regla de decisión. Se elige según el problema de negocio antes de validar, y cada modelo se compara con el modelo nulo.`,
     formula: R`\[\mathrm{MSE}=\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat f(x_i)\right)^2,\qquad \mathrm{RMSE}=\sqrt{\mathrm{MSE}}\]`,
     puntos: [
-      R`<b>RMSE</b>: en las unidades de la respuesta; pesa más los errores grandes (<code>"neg_root_mean_squared_error"</code>). El MSE se mide en unidades al cuadrado: \((\text{€/noche})^2\).`,
-      R`<b>MAE</b>: error absoluto medio; lo minimiza la mediana (<code>"neg_mean_absolute_error"</code>).`,
-      R`<b>R²</b>: proporción de la varianza de la respuesta que reproduce el modelo; el nulo da 0 (<code>"r2"</code>).`,
-      R`Con la respuesta en logaritmos, el RMSE de \(\log(\text{precio})\) mide errores relativos.`
+      R`El <b>RMSE</b> se expresa en las unidades de la respuesta y pesa más los errores grandes (<code>"neg_root_mean_squared_error"</code>). El MSE, en cambio, está en unidades al cuadrado.`,
+      R`El <b>MAE</b> es el error absoluto medio, y la predicción que lo minimiza es la mediana (<code>"neg_mean_absolute_error"</code>).`,
+      R`El <b>R²</b> mide la proporción de la varianza de la respuesta que reproduce el modelo. El modelo nulo obtiene un R² igual a 0 (<code>"r2"</code>).`,
+      R`Si la respuesta está en logaritmos, el RMSE mide errores relativos.`
     ],
     materiales: ["t1a", "t3"] },
-  { id: "d_mclas", label: "Métricas de clasificación", sub: "Matriz de confusión, ROC, log-loss", tema: "T2",
-    idea: R`Cada métrica responde a una pregunta distinta. El umbral es una decisión: bajarlo identifica más positivos a costa de más falsos positivos.`,
+  { id: "d_mclas", label: "Métricas de clasificación", sub: "Matriz de confusión, ROC y log-loss", tema: "T2",
+    idea: R`Cada métrica responde a una pregunta distinta. El umbral de clasificación también es una decisión: al bajarlo se identifican más positivos a costa de más falsos positivos.`,
     formula: R`\[\text{precisión}=\frac{VP}{VP+FP}\qquad \text{sensibilidad}=\frac{VP}{VP+FN}\]\[\text{especificidad}=\frac{VN}{VN+FP}\qquad \text{exactitud}=\frac{VP+VN}{n}\]`,
     puntos: [
-      R`<b>Matriz de confusión</b>: VP, VN y dos errores, FP (tipo I) y FN (tipo II). <b>Exactitud</b> \((VP+VN)/n\) los cuenta juntos.`,
-      R`<b>F1</b>: media armónica de precisión y sensibilidad, \(2VP/(2VP+FP+FN)\); solo es alta si lo son las dos.`,
-      R`<b>Curva ROC</b> y <b>AUC</b>: probabilidad de que un positivo al azar reciba una puntuación mayor que un negativo. No depende del umbral; 0,5 es ordenar al azar.`,
-      R`<b>Log-loss</b> (entropía cruzada): evalúa las probabilidades sin umbral; un error cuesta más cuanto mayor es la seguridad.\[-\frac1n\sum_i\big[y_i\log\hat p_i+(1-y_i)\log(1-\hat p_i)\big]\]`,
-      R`Valores de <code>scoring</code>: <code>"accuracy"</code>, <code>"precision"</code>, <code>"recall"</code>, <code>"f1"</code>, <code>"roc_auc"</code>, <code>"neg_log_loss"</code>, <code>"average_precision"</code>.`
+      R`La <b>matriz de confusión</b> cuenta los aciertos (VP y VN) y los dos tipos de error, los falsos positivos (tipo I) y los falsos negativos (tipo II). La <b>exactitud</b> los suma sin distinguirlos.`,
+      R`<b>F1</b> es la media armónica de precisión y sensibilidad, \(2VP/(2VP+FP+FN)\), y solo es alta cuando ambas lo son.`,
+      R`La <b>curva ROC</b> muestra la sensibilidad frente a la tasa de falsos positivos para todos los umbrales. El <b>AUC</b> es la probabilidad de que un positivo elegido al azar reciba una puntuación mayor que un negativo. No depende del umbral, y un valor de 0,5 equivale a ordenar al azar.`,
+      R`La <b>log-loss</b> (entropía cruzada) evalúa las probabilidades sin fijar un umbral, y un error pesa más cuanto mayor es la seguridad con la que se comete.\[-\frac1n\sum_i\big[y_i\log\hat p_i+(1-y_i)\log(1-\hat p_i)\big]\]`,
+      R`En scikit-learn se eligen con el argumento <code>scoring</code>: <code>"accuracy"</code>, <code>"precision"</code>, <code>"recall"</code>, <code>"f1"</code>, <code>"roc_auc"</code>, <code>"neg_log_loss"</code> o <code>"average_precision"</code>.`
     ],
     materiales: ["t2", "t3"] },
-  { id: "d_deseq", label: "Clases desequilibradas", sub: "Estratificar, ponderar, mover el umbral", tema: "T2",
-    idea: R`Con una clase rara, la exactitud deja de informar (el nulo acierta el 99 % con un 1 % de positivos) y la probabilidad calibrada casi nunca supera 0,5.`,
+  { id: "d_deseq", label: "Clases desequilibradas", sub: "Cuando una clase es rara", tema: "T2",
+    idea: R`Cuando una clase es rara, la exactitud deja de informar (con un 1 % de positivos, el modelo nulo acierta el 99 %), y una probabilidad bien calibrada casi nunca supera 0,5.`,
     puntos: [
-      R`<b>Curva PR</b> y <b>precisión media (AP)</b>: su referencia es la prevalencia. Con clases raras sustituyen a la exactitud y a la ROC.`,
-      R`Punto de partida: particiones estratificadas (<code>stratify=y</code>, <code>StratifiedKFold</code>).`,
-      R`<b>Ponderar</b> los errores de la clase rara: <code>class_weight="balanced"</code>, con \(w_1=n/(2n_1)\), \(w_0=n/(2n_0)\). Las probabilidades dejan de estimar la proporción de positivos.`,
-      R`<b>Mover el umbral</b> según los costes: con probabilidades calibradas, el óptimo es \(C_{FP}/(C_{FP}+C_{FN})\); <code>TunedThresholdClassifierCV</code> lo busca por validación cruzada.`,
-      R`Remuestrear (submuestreo o SMOTE) cambia las observaciones de entrenamiento; no lo usamos en el curso.`
+      R`La <b>curva precisión-sensibilidad (PR)</b> y la <b>precisión media (AP)</b> sustituyen a la exactitud y a la curva ROC. La referencia de la AP es la prevalencia.`,
+      R`El punto de partida son las particiones estratificadas (<code>stratify=y</code>, <code>StratifiedKFold</code>).`,
+      R`Una opción es <b>ponderar</b> los errores de la clase rara al estimar, con <code>class_weight="balanced"</code> y pesos \(w_1=n/(2n_1)\) y \(w_0=n/(2n_0)\). Las probabilidades resultantes dejan de estimar la proporción de positivos.`,
+      R`Otra opción es <b>mover el umbral</b> según el coste de cada error. Con probabilidades calibradas, el umbral óptimo es \(C_{FP}/(C_{FP}+C_{FN})\), y <code>TunedThresholdClassifierCV</code> lo busca por validación cruzada.`,
+      R`El remuestreo (submuestreo o SMOTE) modifica las observaciones de entrenamiento. No lo usamos en el curso.`
     ],
     materiales: ["t2"] },
-  { id: "d_interp", label: "Interpretación", sub: "Coeficientes, importancias, SHAP", tema: "T1–T4",
-    idea: R`Predecir bien y explicar de dónde sale la predicción son objetivos distintos: los modelos más flexibles suelen ser los menos legibles.`,
+  { id: "d_interp", label: "Interpretación", sub: "Coeficientes, importancias y SHAP", tema: "T1–T4",
+    idea: R`Predecir bien y explicar de dónde sale la predicción son objetivos distintos, y los modelos más flexibles suelen ser los más difíciles de leer.`,
     puntos: [
-      R`Coeficientes del modelo lineal y del GLM. Un coeficiente nulo de Lasso indica que, con los demás predictores, ese predictor apenas mejora el error de validación: no significa «sin relación» ni «sin efecto causal». La lista cambia con la muestra.`,
-      R`Para describir la asociación de cada predictor con la respuesta se usan el modelo sin penalización y los datos.`,
-      R`Un árbol podado se puede mostrar (aunque uno de 24 hojas tampoco se comunica entero); 500 árboles de un bosque no se leen directamente.`,
-      R`<b>Importancias y valores de Shapley (SHAP)</b>: sesión del 10 nov y práctica guiada del 12 nov (tema 4). Contenido por publicar.`,
-      R`Explicar una relación o estimar el efecto de una intervención pide supuestos propios (tema 7).`
+      R`En los modelos lineales y los GLM se interpretan los coeficientes. Que Lasso deje un coeficiente en cero indica que, dados los demás predictores, ese predictor apenas mejora el error de validación. Eso no implica que carezca de relación con la respuesta ni de efecto causal, y la lista de variables seleccionadas cambia con la muestra.`,
+      R`Para describir la asociación de cada predictor con la respuesta conviene usar el modelo sin penalizar.`,
+      R`Un árbol pequeño se puede mostrar y leer siguiendo sus ramas. Un bosque de cientos de árboles no se puede leer directamente.`,
+      R`Las <b>importancias</b> de los predictores y los <b>valores de Shapley (SHAP)</b> se tratan en la sesión del 10 de noviembre y en la práctica guiada del 12 de noviembre. Su contenido está pendiente de publicar.`,
+      R`Explicar una relación o estimar el efecto de una intervención requiere supuestos propios, que se estudian en el tema 7.`
     ],
     materiales: ["t1b", "t3", "t4", "plan"] }
 ];
@@ -498,124 +498,124 @@ const ESTIMADORES = [
   /* ---------- Referencia ---------- */
   { id: "nulo", fam: "f_ref", label: "Modelo nulo", tema: "T1–T3",
     sesion: ["T1 29 sep (modelo sin predictores)", "T2 6 oct (DummyClassifier)", "T3 20 oct"],
-    idea: R`Predice siempre la media de la respuesta (o la proporción de cada clase), sin usar ningún predictor.`,
+    idea: R`Predice siempre la media de la respuesta, o la proporción de cada clase, sin usar ningún predictor.`,
     peculiar: {
-      supuestos: R`Ninguno sobre la relación entre \(X\) e \(y\): ignora \(X\).`,
-      flexibilidad: R`Nula. Con Ridge y \(\lambda\to\infty\) se llega a él: predice la media de \(y\) en entrenamiento.`,
-      interpretabilidad: R`Total; es el listón. Da R² = 0 y, en clasificación, una AP igual a la prevalencia.`,
-      coste: R`Trivial. Pero acierta mucho con clases desequilibradas: el 70 % en superanfitrión, sin identificar a ninguno.`
+      supuestos: R`No supone nada sobre la relación entre \(X\) e \(y\), porque ignora los predictores.`,
+      flexibilidad: R`Ninguna. Ridge se acerca a él cuando \(\lambda\to\infty\), ya que entonces predice la media de \(y\) en entrenamiento.`,
+      interpretabilidad: R`Total. Sirve de referencia: su R² es 0 y, en clasificación, su AP coincide con la prevalencia.`,
+      coste: R`Despreciable. Aun así, con clases desequilibradas su exactitud es alta, aunque no identifique ningún positivo.`
     },
-    hp: [["strategy", "DummyRegressor(strategy=\"mean\"), DummyClassifier(strategy=\"prior\")", "Media, proporción de cada clase o clase más frecuente"]],
+    hp: [["strategy", R`DummyRegressor(strategy="mean"), DummyClassifier(strategy="prior")`, R`Indica qué predice: la media, la proporción de cada clase o la clase más frecuente.`]],
     links: [
-      ["d_mreg", R`Referencia de RMSE, MAE y R²: el modelo base debe mejorarlo en validación.`],
-      ["d_mclas", R`Su exactitud es la proporción de la clase mayoritaria; su AUC, 0,5.`],
-      ["d_deseq", R`Con un 1 % de positivos acierta el 99 %: por eso la exactitud deja de informar.`],
-      ["d_cv", R`Se valida con el mismo objeto <code>cv</code> que el modelo base.`]
+      ["d_mreg", R`Es la referencia para el RMSE, el MAE y el R². Un modelo que no lo mejora en validación no aporta nada.`],
+      ["d_mclas", R`Su exactitud coincide con la proporción de la clase mayoritaria y su AUC es 0,5.`],
+      ["d_deseq", R`Con una clase muy rara acierta casi siempre, lo que muestra por qué la exactitud deja de informar.`],
+      ["d_cv", R`Se valida con el mismo objeto <code>cv</code> que el modelo base, para que la comparación use las mismas particiones.`]
     ],
     materiales: ["t2", "t3", "t1b"] },
 
   /* ---------- Tema 1 ---------- */
   { id: "mco", fam: "f_lin", label: "Regresión lineal (MCO)", tema: "T1",
     sesion: ["T1 22 sep", "P1 24 sep (clab EES 2022)", "T1 29 sep"],
-    idea: R`Estima \(f\) como una combinación lineal de los predictores eligiendo los coeficientes que minimizan la suma de cuadrados de los residuos (RSS).`,
+    idea: R`Estima \(f\) como una combinación lineal de los predictores, con los coeficientes que minimizan la suma de los cuadrados de los residuos (RSS).`,
     formula: R`\[\operatorname{Var}(\hat\beta_j)=\frac{\sigma^2}{\sum_i (x_{ij}-\bar x_j)^2\,(1-R_j^2)}\]`,
     peculiar: {
-      supuestos: R`Con los supuestos del modelo lineal es insesgado y \(\operatorname{Var}(\hat\beta\mid X)=\sigma^2(X'X)^{-1}\). Puede predecir fuera del rango de la respuesta (precios negativos, probabilidades mayores que 1).`,
-      flexibilidad: R`Una fórmula global. Su varianza crece con la colinealidad (\(R_j^2=0{,}9\) multiplica la varianza por 10) y con \(p/n\); con \(p+1>n\) la solución no es única.`,
-      interpretabilidad: R`Alta: un coeficiente por columna.`,
-      coste: R`Solución directa, sin iteraciones. Variante: MCO sobre \(\log(\text{precio})\), que predice la mediana del precio.`
+      supuestos: R`Bajo los supuestos del modelo lineal, el estimador es insesgado y \(\operatorname{Var}(\hat\beta\mid X)=\sigma^2(X'X)^{-1}\). Sus predicciones pueden salir del rango de la respuesta, por ejemplo un importe negativo o una probabilidad mayor que 1.`,
+      flexibilidad: R`Ajusta una única fórmula global. La varianza de los coeficientes crece con la colinealidad (con \(R_j^2=0{,}9\) se multiplica por 10) y con el cociente \(p/n\). Si \(p+1>n\), la solución deja de ser única.`,
+      interpretabilidad: R`Alta, porque cada columna tiene un coeficiente que se puede leer directamente.`,
+      coste: R`Bajo, ya que tiene solución directa. Ajustado sobre el logaritmo de la respuesta, predice la mediana de la respuesta original.`
     },
-    hp: [["—", "LinearRegression()", "Sin hiperparámetros: las decisiones son los predictores y sus transformaciones"]],
+    hp: [["—", "LinearRegression()", R`No tiene hiperparámetros. Las decisiones afectan a los predictores y a sus transformaciones.`]],
     links: [
-      ["d_sesgo", R`Insesgado pero con mucha varianza con pocos datos y columnas correlacionadas: con 200 filas memoriza la muestra.`],
-      ["d_part", R`Su error de ajuste (67 % de la varianza) y de test (35 %) muestran el sobreajuste.`],
-      ["d_prep", R`Codificación de categóricas e imputación dentro del <code>Pipeline</code>.`],
-      ["d_train", R`Minimiza la RSS; ejemplo del descenso del gradiente por lotes, estocástico y por minilotes.`],
-      ["d_mreg", R`R², RMSE y MAE en datos no vistos.`],
-      ["d_interp", R`Coeficientes directamente legibles; base para describir asociaciones.`],
-      ["d_cv", R`Modelo base del proyecto: se valida con las mismas particiones que el nulo.`]
+      ["d_sesgo", R`Es insesgado, pero con pocos datos y columnas correlacionadas su varianza es alta y llega a memorizar la muestra.`],
+      ["d_part", R`La diferencia entre su error de entrenamiento y su error de test es la señal habitual de sobreajuste.`],
+      ["d_prep", R`La codificación de las variables categóricas y la imputación se hacen dentro del <code>Pipeline</code>.`],
+      ["d_train", R`Minimiza la RSS. Sirve para ilustrar el descenso del gradiente por lotes, estocástico y por minilotes.`],
+      ["d_mreg", R`Se evalúa con el R², el RMSE y el MAE en datos que no ha visto.`],
+      ["d_interp", R`Sus coeficientes se leen directamente, y es el modelo de referencia para describir asociaciones.`],
+      ["d_cv", R`Como modelo base del proyecto, se valida con las mismas particiones que el modelo nulo.`]
     ],
     materiales: ["t1a", "t1b", "t1c", "m1"] },
   { id: "poli", fam: "f_lin", label: "Regresión polinómica", tema: "T1",
     sesion: ["T1 22 sep"],
-    idea: R`Una regresión lineal sobre potencias de \(x\): el grado del polinomio fija la flexibilidad de la curva.`,
+    idea: R`Es una regresión lineal sobre las potencias de \(x\), en la que el grado del polinomio fija la flexibilidad de la curva.`,
     peculiar: {
-      supuestos: R`Los de la regresión lineal sobre las columnas \(x, x^2, \dots, x^d\).`,
-      flexibilidad: R`Control discreto: con 35 observaciones, el grado 1 subajusta y el grado 15 sigue el ruido de la muestra.`,
-      interpretabilidad: R`Buena con grado bajo; los coeficientes de grado alto no se leen.`,
-      coste: R`Bajo; crece el número de columnas con el grado.`
+      supuestos: R`Los de la regresión lineal, aplicados a las columnas \(x, x^2, \dots, x^d\).`,
+      flexibilidad: R`El grado es un control discreto de la complejidad. Con pocas observaciones, un grado bajo subajusta y un grado alto sigue el ruido de la muestra.`,
+      interpretabilidad: R`Disminuye a medida que crece el grado del polinomio y, con él, la flexibilidad del modelo.`,
+      coste: R`Bajo, aunque el número de columnas aumenta con el grado.`
     },
-    hp: [["Grado \\(d\\)", "—", "Más grado, más flexibilidad (menos sesgo, más varianza)"]],
+    hp: [[R`Grado \(d\)`, "—", R`Al aumentar el grado, el sesgo baja y la varianza sube.`]],
     links: [
-      ["d_sesgo", R`Ejemplo canónico: recta frente a polinomio de grado 15; el haz de curvas al cambiar de muestra muestra la varianza.`],
-      ["d_hiper", R`El grado es el hiperparámetro: un control discreto de la complejidad.`],
-      ["d_part", R`El menor error de entrenamiento no basta para elegir el grado: se elige en validación.`],
-      ["d_mreg", R`Se compara por el MSE de entrenamiento y de validación.`]
+      ["d_sesgo", R`Es el ejemplo de partida del compromiso: una recta frente a un polinomio de grado alto, y el haz de curvas que resulta al cambiar de muestra.`],
+      ["d_hiper", R`El grado es el hiperparámetro que controla la complejidad.`],
+      ["d_part", R`El grado se elige con datos de validación, porque el error de entrenamiento siempre favorece al polinomio más flexible.`],
+      ["d_mreg", R`Los distintos grados se comparan por su MSE de entrenamiento y de validación.`]
     ],
     materiales: ["t1a"] },
   { id: "ridge", fam: "f_lin", label: "Ridge", tema: "T1",
     sesion: ["T1 29 sep", "P1 1 oct (clab 2)"],
-    idea: R`Regresión lineal que penaliza la suma de los coeficientes al cuadrado (L2): contrae todos los coeficientes sin anular ninguno.`,
+    idea: R`Regresión lineal que penaliza la suma de los coeficientes al cuadrado (penalización L2). Contrae todos los coeficientes hacia cero, aunque ninguno llega a anularse.`,
     formula: R`\[\min_\beta\ \text{RSS}+\lambda\sum_j\beta_j^2\]\[\text{si } X'X=I:\quad \hat\beta^{R}_j=\frac{\hat\beta_j}{1+\lambda}\]`,
     peculiar: {
-      supuestos: R`Predictores estandarizados (la penalización depende de las unidades); el intercepto no se penaliza.`,
-      flexibilidad: R`Continua con \(\lambda\): «divide». Introduce sesgo a cambio de mucha menos varianza; con \(\lambda\to\infty\) predice la media de \(y\).`,
-      interpretabilidad: R`Conserva todas las columnas (73 de 73 en Airbnb). Reparte el efecto entre predictores muy correlacionados y evita coeficientes grandes de signo opuesto.`,
-      coste: R`Solución directa. Conviene con muchos efectos pequeños, predictores muy correlacionados o cuando se quiere estabilidad, no selección.`
+      supuestos: R`Los predictores deben estar estandarizados, porque la penalización depende de sus unidades. El intercepto no se penaliza.`,
+      flexibilidad: R`Varía de forma continua con \(\lambda\). Con predictores ortogonales, cada coeficiente de MCO se divide por \(1+\lambda\). El estimador gana sesgo a cambio de una varianza mucho menor, y cuando \(\lambda\to\infty\) predice la media de \(y\).`,
+      interpretabilidad: R`Conserva todas las columnas. Cuando dos predictores están muy correlacionados, reparte el efecto entre ambos y evita coeficientes grandes de signo opuesto.`,
+      coste: R`Bajo, porque tiene solución directa. Suele convenir cuando hay muchos efectos pequeños o predictores muy correlacionados y se busca estabilidad antes que selección de variables.`
     },
-    hp: [["\\(\\lambda\\) (intensidad)", "alpha en Ridge / RidgeCV", "Más \\(\\lambda\\), coeficientes más pequeños: más sesgo, menos varianza"]],
+    hp: [[R`\(\lambda\) (intensidad)`, "alpha en Ridge y RidgeCV", R`Al aumentar \(\lambda\) los coeficientes se reducen, con más sesgo y menos varianza.`]],
     links: [
-      ["d_sesgo", R`MCO es insesgado; Ridge cambia algo de sesgo por menos varianza (entre 1,6 y 3,6 veces menor desviación de los coeficientes en el laboratorio).`],
-      ["d_hiper", R`\(\lambda\) (<code>alpha</code>) se elige en una rejilla en escala logarítmica.`],
-      ["d_cv", R`Selección en dos niveles: la mejor \(\lambda\) dentro de la familia y luego entre familias.`],
-      ["d_prep", R`Estandarizar dentro del <code>Pipeline</code> antes de penalizar.`],
-      ["d_train", R`Cambia la pérdida: RSS + penalización L2.`],
-      ["d_mreg", R`RMSE de validación frente a MCO y la media.`],
-      ["d_part", R`Con más datos de entrenamiento, menor ventaja de Ridge (curva de aprendizaje).`]
+      ["d_sesgo", R`Cambia algo de sesgo por menos varianza: sus coeficientes varían bastante menos de una muestra a otra que los de MCO.`],
+      ["d_hiper", R`La intensidad \(\lambda\) (<code>alpha</code> en scikit-learn) se busca en una rejilla en escala logarítmica.`],
+      ["d_cv", R`La selección se hace en dos niveles: primero la mejor \(\lambda\) dentro de la familia y después la mejor familia.`],
+      ["d_prep", R`Los predictores se estandarizan dentro del <code>Pipeline</code> antes de penalizar.`],
+      ["d_train", R`Modifica la pérdida al sumar a la RSS una penalización L2.`],
+      ["d_mreg", R`Su RMSE de validación se compara con el de MCO y el del modelo nulo.`],
+      ["d_part", R`Su ventaja sobre MCO se reduce a medida que crece el conjunto de entrenamiento.`]
     ],
     materiales: ["t1b", "t1c", "m1"] },
   { id: "lasso", fam: "f_lin", label: "Lasso", tema: "T1",
     sesion: ["T1 29 sep", "P1 1 oct (clab 2)"],
-    idea: R`Regresión lineal que penaliza la suma de los valores absolutos de los coeficientes (L1): contrae y deja coeficientes exactamente en cero, es decir, selecciona variables.`,
+    idea: R`Regresión lineal que penaliza la suma de los valores absolutos de los coeficientes (penalización L1). Además de contraerlos, deja algunos exactamente en cero, de modo que selecciona variables.`,
     formula: R`\[\min_\beta\ \text{RSS}+\lambda\sum_j\lvert\beta_j\rvert\]\[\text{si } X'X=I:\quad \hat\beta^{L}_j=\operatorname{signo}(\hat\beta_j)\Big(\lvert\hat\beta_j\rvert-\frac{\lambda}{2}\Big)_+\]`,
     peculiar: {
-      supuestos: R`Predictores estandarizados; intercepto sin penalizar. Conviene con pocos efectos grandes entre muchas columnas.`,
-      flexibilidad: R`«Resta y trunca»: anula todo coeficiente MCO menor que \(\lambda/2\) en valor absoluto. En la geometría, el rombo toca la elipse en una esquina.`,
-      interpretabilidad: R`Da una lista corta (4 de 73 columnas en Airbnb), pero inestable: cambia con la muestra (12 variables distintas en 50 remuestras). Entre predictores correlacionados conserva pocos.`,
-      coste: R`Se resuelve de forma iterativa (un coeficiente cada vez): por eso se fija <code>max_iter</code>.`
+      supuestos: R`Los predictores deben estar estandarizados y el intercepto no se penaliza. Suele convenir cuando unos pocos efectos grandes se mezclan con muchas columnas irrelevantes.`,
+      flexibilidad: R`Con predictores ortogonales, resta \(\lambda/2\) al valor absoluto de cada coeficiente y trunca en cero, así que anula todo coeficiente de MCO menor que \(\lambda/2\). En la representación geométrica, la región de restricción tiene forma de rombo y la solución cae a menudo en una esquina.`,
+      interpretabilidad: R`Produce una lista corta de variables, pero esa lista es inestable y cambia con la muestra. Entre predictores correlacionados tiende a conservar unos pocos.`,
+      coste: R`Se resuelve de forma iterativa, actualizando un coeficiente cada vez, por lo que hay que fijar <code>max_iter</code>.`
     },
-    hp: [["\\(\\lambda\\) (intensidad)", "alpha en Lasso / LassoCV", "Más \\(\\lambda\\), más coeficientes en cero"]],
+    hp: [[R`\(\lambda\) (intensidad)`, "alpha en Lasso y LassoCV", R`Al aumentar \(\lambda\), más coeficientes quedan en cero.`]],
     links: [
-      ["d_sesgo", R`Encoge y selecciona: más sesgo, menos varianza.`],
-      ["d_hiper", R`\(\lambda\) por validación; la regla del error típico elige el modelo con menos coeficientes no nulos.`],
-      ["d_cv", R`El ganador entre Lasso y Elastic Net cambia con la semilla de la partición (19 de 30 repartos).`],
-      ["d_prep", R`Estandarizar antes de penalizar.`],
-      ["d_train", R`RSS + penalización L1, resuelta de forma iterativa.`],
-      ["d_mreg", R`RMSE de validación y de test.`],
-      ["d_interp", R`Un cero de Lasso no significa «sin relación» ni «sin efecto causal».`],
-      ["d_part", R`Elegir \(\lambda\) mirando el test anula la evaluación final.`]
+      ["d_sesgo", R`Encoge los coeficientes y elimina variables, con más sesgo y menos varianza que MCO.`],
+      ["d_hiper", R`\(\lambda\) se elige por validación cruzada, y la regla del error típico favorece el modelo con menos coeficientes no nulos.`],
+      ["d_cv", R`Cuando Lasso y Elastic Net tienen errores muy parecidos, el ganador puede cambiar con la semilla de la partición.`],
+      ["d_prep", R`Los predictores se estandarizan antes de penalizar.`],
+      ["d_train", R`Minimiza la RSS más una penalización L1 mediante un algoritmo iterativo.`],
+      ["d_mreg", R`Se compara con las demás familias por su RMSE de validación y se evalúa al final en el test.`],
+      ["d_interp", R`Un coeficiente nulo no significa que la variable carezca de relación con la respuesta ni de efecto causal.`],
+      ["d_part", R`Elegir \(\lambda\) mirando el test invalida la evaluación final.`]
     ],
     materiales: ["t1b", "t1c", "m1"] },
   { id: "enet", fam: "f_lin", label: "Elastic Net", tema: "T1",
     sesion: ["T1 29 sep", "P1 1 oct (clab 2)", "T2 6 oct"],
-    idea: R`Mezcla las penalizaciones L1 y L2: selecciona variables como Lasso sin perder grupos de predictores correlacionados.`,
+    idea: R`Combina las penalizaciones L1 y L2. Selecciona variables como Lasso y conserva mejor los grupos de predictores correlacionados.`,
     formula: R`\[\min_\beta\ \text{RSS}+\lambda\Big[\alpha\sum_j\lvert\beta_j\rvert+\tfrac{1-\alpha}{2}\sum_j\beta_j^2\Big]\]`,
     peculiar: {
-      supuestos: R`Predictores estandarizados; \(\lambda\ge 0\) fija la intensidad y \(\alpha\in[0,1]\) la mezcla. Ceros exactos si \(\alpha>0\).`,
-      flexibilidad: R`Dos controles continuos. Conviene con grupos de predictores correlacionados o \(p>n\).`,
-      interpretabilidad: R`Lista corta (5 de 73 columnas en Airbnb), más estable entre correlacionados que Lasso.`,
-      coste: R`Iterativo; la rejilla tiene dos dimensiones (125 configuraciones en el ejemplo del tema 2).`
+      supuestos: R`Los predictores deben estar estandarizados. \(\lambda\ge 0\) fija la intensidad de la penalización y \(\alpha\in[0,1]\) la mezcla entre L1 y L2. Si \(\alpha>0\), algunos coeficientes pueden quedar exactamente en cero.`,
+      flexibilidad: R`Tiene dos controles continuos. Suele convenir con grupos de predictores correlacionados o cuando \(p>n\).`,
+      interpretabilidad: R`Da una lista corta de variables, más estable que la de Lasso cuando hay predictores correlacionados.`,
+      coste: R`Se resuelve de forma iterativa, y la rejilla de búsqueda tiene dos dimensiones (intensidad y mezcla), lo que multiplica el número de configuraciones.`
     },
-    hp: [["\\(\\lambda\\) (intensidad)", "alpha en ElasticNet / ElasticNetCV", "Más \\(\\lambda\\), más contracción"],
-         ["\\(\\alpha\\) (mezcla)", "l1_ratio (en glmnet: alpha)", "1 = Lasso, 0 = Ridge"]],
+    hp: [[R`\(\lambda\) (intensidad)`, "alpha en ElasticNet y ElasticNetCV", R`Al aumentar \(\lambda\) los coeficientes se contraen más.`],
+         [R`\(\alpha\) (mezcla)`, "l1_ratio (alpha en glmnet)", R`Con 1 se obtiene Lasso y con 0, Ridge.`]],
     links: [
-      ["d_sesgo", R`Intercambio sesgo-varianza controlado por \(\lambda\).`],
-      ["d_hiper", R`Rejilla de \(\lambda\) en escala logarítmica y varias mezclas \(\alpha\).`],
-      ["d_cv", R`Ganó por menos de una milésima: una diferencia menor que la variación que introduce la partición.`],
-      ["d_prep", R`Estandarizar dentro del <code>Pipeline</code>.`],
-      ["d_train", R`RSS + mezcla de penalizaciones, resuelta de forma iterativa.`],
-      ["d_mreg", R`RMSE de validación y de test (0,403 en el test de Airbnb).`],
-      ["d_part", R`Seleccionado por validación; el test no reabre la selección.`]
+      ["d_sesgo", R`\(\lambda\) regula el intercambio entre sesgo y varianza, igual que en Ridge y Lasso.`],
+      ["d_hiper", R`Se busca en una rejilla de \(\lambda\) en escala logarítmica combinada con varias mezclas \(\alpha\).`],
+      ["d_cv", R`Una ventaja menor que la variación debida a la partición no basta para preferirlo frente a Lasso.`],
+      ["d_prep", R`Los predictores se estandarizan dentro del <code>Pipeline</code>.`],
+      ["d_train", R`Minimiza la RSS más una mezcla de penalizaciones con un algoritmo iterativo.`],
+      ["d_mreg", R`Se elige por su RMSE de validación y se evalúa una vez en el test.`],
+      ["d_part", R`Una vez elegido por validación, el resultado del test no reabre la selección.`]
     ],
     materiales: ["t1b", "t2", "m1"] },
 
@@ -625,328 +625,328 @@ const ESTIMADORES = [
     idea: R`Aplica la regresión lineal a una respuesta 0/1 para estimar \(P(y=1\mid X)\).`,
     peculiar: {
       supuestos: R`Los de la regresión lineal, aunque la respuesta sea binaria.`,
-      flexibilidad: R`Una recta: sus predicciones pueden salir de [0, 1] (el 3,9 % de los anuncios en superanfitrión).`,
-      interpretabilidad: R`Alta, como MCO.`,
-      coste: R`Directo. Sirve para motivar el enlace logit.`
+      flexibilidad: R`Al ajustar una recta, algunas predicciones pueden caer fuera del intervalo [0, 1].`,
+      interpretabilidad: R`Alta, como en MCO.`,
+      coste: R`Bajo. En el curso sirve para justificar el uso del enlace logit.`
     },
-    hp: [["—", "LinearRegression()", "Sin hiperparámetros"]],
+    hp: [["—", "LinearRegression()", R`No tiene hiperparámetros.`]],
     links: [
-      ["d_mclas", R`Sus «probabilidades» fuera de [0, 1] no son probabilidades: el logit lo corrige.`],
+      ["d_mclas", R`Las predicciones que caen fuera de [0, 1] no pueden leerse como probabilidades, y el logit corrige ese problema.`],
       ["d_train", R`Minimiza la RSS en lugar de maximizar la verosimilitud de Bernoulli.`]
     ],
     materiales: ["t3"] },
   { id: "logit", fam: "f_glm", label: "Logit (regresión logística)", tema: "T2–T3",
     sesion: ["T2 6 y 13 oct (clasificación)", "T3 20 oct", "P3 22 oct (entrega E1)"],
-    idea: R`GLM con distribución de Bernoulli y enlace logit: lleva el predictor lineal a una probabilidad entre 0 y 1.`,
+    idea: R`GLM con distribución de Bernoulli y enlace logit, que transforma el predictor lineal en una probabilidad entre 0 y 1.`,
     formula: R`\[\log\frac{\mu_i}{1-\mu_i}=\nu_i\ \Longrightarrow\ \mu_i=\frac{1}{1+e^{-\nu_i}}\]`,
     peculiar: {
-      supuestos: R`Respuesta 0/1 de Bernoulli; efecto lineal de los predictores en la escala del logit.`,
-      flexibilidad: R`Una frontera lineal en \(\nu_i\). Con pocos datos y muchas columnas sobreajusta: se penaliza (Ridge, Lasso o mezcla).`,
-      interpretabilidad: R`Coeficientes en la escala del logit; con Lasso, selección de predictores (10 de 46 con la regla del error típico).`,
-      coste: R`Máxima verosimilitud, que equivale a minimizar la log-loss; iterativo (<code>max_iter</code>).`
+      supuestos: R`La respuesta es 0/1 y sigue una distribución de Bernoulli. Los predictores actúan de forma lineal sobre el logit de la probabilidad.`,
+      flexibilidad: R`La frontera de decisión es lineal en los predictores. Con pocos datos y muchas columnas sobreajusta, y entonces se penaliza con Ridge, Lasso o una mezcla de ambas.`,
+      interpretabilidad: R`Los coeficientes se leen en la escala del logit. Con penalización Lasso, el modelo selecciona predictores.`,
+      coste: R`Se estima por máxima verosimilitud, que en este caso equivale a minimizar la log-loss, mediante un algoritmo iterativo (<code>max_iter</code>).`
     },
-    hp: [["C \\(=1/\\lambda\\)", "LogisticRegression(C=...), LogisticRegressionCV", "Mayor C, menos penalización; C=np.inf la quita"],
-         ["l1_ratio", "LogisticRegression(l1_ratio=...)", "Mezcla: 0 = Ridge, 1 = Lasso"],
-         ["class_weight", "class_weight=\"balanced\"", "Pondera la clase rara al estimar"],
-         ["Umbral", "TunedThresholdClassifierCV", "Probabilidad a partir de la que se predice la clase positiva (predict usa 0,5)"]],
+    hp: [[R`C \(=1/\lambda\)`, "LogisticRegression(C=...), LogisticRegressionCV", R`Un C mayor implica menos penalización, y C=np.inf la elimina.`],
+         ["l1_ratio", "LogisticRegression(l1_ratio=...)", R`Fija la mezcla: 0 corresponde a Ridge y 1 a Lasso.`],
+         ["class_weight", R`class_weight="balanced"`, R`Da más peso a la clase rara al estimar.`],
+         ["Umbral", "TunedThresholdClassifierCV", R`Probabilidad a partir de la cual se predice la clase positiva (predict usa 0,5).`]],
     links: [
-      ["d_mclas", R`Ejemplo central del tema 2: matriz de confusión, ROC/AUC (0,80) y log-loss (0,491).`],
-      ["d_deseq", R`<code>class_weight="balanced"</code> cambia sobre todo el intercepto; en el logit, ponderar equivale casi a bajar el umbral.`],
-      ["d_hiper", R`C (inversa de \(\lambda\)) y <code>l1_ratio</code> por validación con la métrica del problema.`],
-      ["d_cv", R`Particiones estratificadas; <code>cross_val_predict</code> para la matriz de confusión.`],
-      ["d_prep", R`Estandarizar antes de penalizar.`],
-      ["d_train", R`Maximizar la log-verosimilitud de Bernoulli = minimizar la log-loss.`],
-      ["d_sesgo", R`Sin penalizar es el modelo base; si el error de entrenamiento queda muy por debajo del de validación, se penaliza.`],
-      ["d_interp", R`Un coeficiente en cero de Lasso no significa que el predictor no esté asociado con la respuesta.`]
+      ["d_mclas", R`Es el ejemplo con el que se presentan la matriz de confusión, la curva ROC, el AUC y la log-loss.`],
+      ["d_deseq", R`Con <code>class_weight="balanced"</code> cambia sobre todo el intercepto, de modo que en el logit ponderar equivale casi a bajar el umbral.`],
+      ["d_hiper", R`C (la inversa de \(\lambda\)) y <code>l1_ratio</code> se eligen por validación con la métrica del problema.`],
+      ["d_cv", R`Las particiones se estratifican, y <code>cross_val_predict</code> proporciona las predicciones para construir la matriz de confusión.`],
+      ["d_prep", R`Los predictores se estandarizan antes de penalizar.`],
+      ["d_train", R`Maximizar la log-verosimilitud de Bernoulli equivale a minimizar la log-loss.`],
+      ["d_sesgo", R`Sin penalizar sirve de modelo base. Si el error de entrenamiento queda muy por debajo del de validación, conviene penalizar.`],
+      ["d_interp", R`Que Lasso deje un coeficiente en cero no implica que ese predictor carezca de asociación con la respuesta.`]
     ],
     materiales: ["t2", "t3", "m3"] },
   { id: "multinomial", fam: "f_glm", label: "Logit multinomial", tema: "T3",
     sesion: ["T3 20 oct", "P3 22 oct (entrega E1)"],
-    idea: R`Para una respuesta con \(K\) clases: un predictor lineal por clase y enlace softmax; las probabilidades suman 1.`,
+    idea: R`Generaliza el logit a una respuesta con \(K\) clases. Hay un predictor lineal por clase, y el enlace softmax hace que las probabilidades sumen 1.`,
     formula: R`\[P(y_i=k)=\frac{e^{\nu_{ik}}}{\sum_j e^{\nu_{ij}}}\]`,
     peculiar: {
-      supuestos: R`Una de \(K\) clases. Codificar tramos como 1, 2 y 3 supondría la misma distancia entre ellos; con clases sin orden el número no significa nada.`,
-      flexibilidad: R`Un conjunto de coeficientes por clase: con pocas observaciones sobreajusta y se penaliza.`,
-      interpretabilidad: R`Coeficientes por clase; la matriz de confusión muestra qué tramos vecinos se confunden.`,
-      coste: R`Iterativo; mismo estimador <code>LogisticRegression</code>.`
+      supuestos: R`La respuesta toma una de \(K\) clases. Codificar las clases como 1, 2, 3… supondría distancias iguales entre ellas, y cuando las clases no tienen orden esos números no significan nada.`,
+      flexibilidad: R`Estima un conjunto de coeficientes por clase, por lo que con pocas observaciones sobreajusta y conviene penalizarlo.`,
+      interpretabilidad: R`Los coeficientes se interpretan clase a clase, y la matriz de confusión muestra qué clases se confunden entre sí.`,
+      coste: R`Se estima de forma iterativa con el mismo estimador que el logit, <code>LogisticRegression</code>.`
     },
-    hp: [["C \\(=1/\\lambda\\)", "LogisticRegression(C=...)", "Mayor C, menos penalización"],
-         ["l1_ratio", "LogisticRegression(l1_ratio=...)", "Mezcla L1/L2"]],
+    hp: [[R`C \(=1/\lambda\)`, "LogisticRegression(C=...)", R`Un C mayor implica menos penalización.`],
+         ["l1_ratio", "LogisticRegression(l1_ratio=...)", R`Fija la mezcla entre L1 y L2.`]],
     links: [
-      ["d_mclas", R`Log-loss (0,80 frente a 1,10 del nulo) y exactitud con clases de tamaño parecido; AUC y AP se definen para dos clases.`],
-      ["d_hiper", R`Penalización elegida con la regla del error típico (entrega E1).`],
-      ["d_cv", R`Validación cruzada estratificada.`],
-      ["d_prep", R`Estandarizar antes de penalizar.`],
-      ["d_train", R`Maximizar la log-verosimilitud multinomial = minimizar la log-loss de \(K\) clases.`],
+      ["d_mclas", R`Se evalúa con la log-loss, y también con la exactitud cuando las clases tienen tamaños parecidos. El AUC y la AP se definen para dos clases.`],
+      ["d_hiper", R`La penalización se elige con la regla del error típico.`],
+      ["d_cv", R`Se valida con particiones estratificadas.`],
+      ["d_prep", R`Los predictores se estandarizan antes de penalizar.`],
+      ["d_train", R`Maximizar la log-verosimilitud multinomial equivale a minimizar la log-loss de \(K\) clases.`],
       ["d_sesgo", R`Con pocas observaciones, la penalización reduce el sobreajuste.`]
     ],
     materiales: ["t3", "m3"] },
   { id: "gamma", fam: "f_glm", label: "GLM Gamma", tema: "T3",
     sesion: ["T3 20 oct"],
-    idea: R`Para una respuesta positiva y asimétrica por la derecha (el precio): distribución Gamma y enlace logarítmico.`,
+    idea: R`Modela una respuesta positiva y asimétrica por la derecha, como un importe, un coste o una duración, con una distribución Gamma y un enlace logarítmico.`,
     formula: R`\[\log\mu_i=\nu_i\ \Rightarrow\ \mu_i=e^{\nu_i}>0\]\[\operatorname{Var}(y_i)\propto\mu_i^2\]`,
     peculiar: {
-      supuestos: R`Respuesta positiva cuya dispersión crece con la media (35 € frente a 76 € entre el decil más barato y el más caro).`,
-      flexibilidad: R`Lineal en la escala log. Con 300 anuncios y 73 columnas sobreajusta (RMSE 45,0 € en entrenamiento, 64,0 € en validación).`,
-      interpretabilidad: R`Coeficientes multiplicativos sobre la media; estima el precio medio (MCO sobre log estima la mediana).`,
-      coste: R`Iterativo. Nunca predice precios negativos.`
+      supuestos: R`La respuesta es positiva y su dispersión crece con la media, ya que la varianza es proporcional a \(\mu_i^2\).`,
+      flexibilidad: R`Es lineal en la escala logarítmica. Con pocas observaciones y muchas columnas sobreajusta, y la penalización mejora su error de validación.`,
+      interpretabilidad: R`Los coeficientes actúan de forma multiplicativa sobre la media. El modelo estima la media de la respuesta, mientras que MCO sobre el logaritmo estima la mediana.`,
+      coste: R`Se estima de forma iterativa. El enlace logarítmico impide las predicciones negativas.`
     },
-    hp: [["\\(\\lambda\\)", "alpha en GammaRegressor (solo Ridge)", "Con 300 anuncios, alpha = 0,1 baja el RMSE de validación de 64,0 a 54,7 €"]],
+    hp: [[R`\(\lambda\)`, "alpha en GammaRegressor (solo Ridge)", R`Al aumentar alpha los coeficientes se acercan a cero. Con pocos datos, una penalización moderada reduce el error de validación.`]],
     links: [
-      ["d_sesgo", R`Sobreajusta con pocos datos; con 5324 anuncios la penalización apenas cambia nada.`],
-      ["d_hiper", R`alpha por validación cruzada con el RMSE.`],
-      ["d_cv", R`RMSE medio de las 5 particiones de entrenamiento y de validación (<code>return_train_score=True</code>).`],
-      ["d_prep", R`Estandarizar antes de penalizar.`],
-      ["d_train", R`Máxima verosimilitud (penalizada).`],
-      ["d_mreg", R`RMSE como métrica principal; con el MAE gana MCO sobre log(precio).`]
+      ["d_sesgo", R`Con pocos datos sobreajusta. Con muchos, la penalización apenas cambia las predicciones.`],
+      ["d_hiper", R`<code>alpha</code> se elige por validación cruzada con el RMSE.`],
+      ["d_cv", R`Comparar el RMSE medio de entrenamiento y de validación (<code>return_train_score=True</code>) permite detectar el sobreajuste.`],
+      ["d_prep", R`Los predictores se estandarizan antes de penalizar.`],
+      ["d_train", R`Se estima por máxima verosimilitud, penalizada si es necesario.`],
+      ["d_mreg", R`El RMSE es la métrica principal. Si interesa la mediana, el MAE favorece a MCO sobre el logaritmo de la respuesta.`]
     ],
     materiales: ["t3", "m3"] },
   { id: "poisson", fam: "f_glm", label: "GLM Poisson", tema: "T3",
     sesion: ["T3 20 oct"],
-    idea: R`Para recuentos (0, 1, 2…), como las reseñas del último año: distribución de Poisson y enlace logarítmico.`,
+    idea: R`Modela recuentos (0, 1, 2…), como el número de compras o de visitas, con una distribución de Poisson y un enlace logarítmico.`,
     formula: R`\[\log\mu_i=\nu_i\ \Rightarrow\ \mu_i=e^{\nu_i}\]`,
     peculiar: {
-      supuestos: R`Respuesta de recuento; el modelo predice el número esperado \(\mu_i\).`,
-      flexibilidad: R`Lineal en la escala log.`,
-      interpretabilidad: R`Coeficientes multiplicativos sobre el recuento esperado.`,
-      coste: R`Iterativo. La regresión lineal predecía recuentos negativos (1,1 % de los anuncios).`
+      supuestos: R`La respuesta es un recuento, y el modelo predice su valor esperado \(\mu_i\).`,
+      flexibilidad: R`Es lineal en la escala logarítmica.`,
+      interpretabilidad: R`Los coeficientes actúan de forma multiplicativa sobre el recuento esperado.`,
+      coste: R`Se estima de forma iterativa. A diferencia de la regresión lineal, nunca predice recuentos negativos.`
     },
-    hp: [["\\(\\lambda\\)", "alpha en PoissonRegressor (solo Ridge)", "Más alpha, coeficientes más cerca de cero"]],
+    hp: [[R`\(\lambda\)`, "alpha en PoissonRegressor (solo Ridge)", R`Al aumentar alpha los coeficientes se acercan a cero.`]],
     links: [
-      ["d_hiper", R`alpha por validación cruzada.`],
-      ["d_cv", R`Media predicha frente a observada por grupos, con predicciones de validación cruzada.`],
-      ["d_prep", R`Estandarizar antes de penalizar.`],
-      ["d_train", R`Máxima verosimilitud de Poisson.`],
-      ["d_mreg", R`RMSE o MAE del recuento.`]
+      ["d_hiper", R`<code>alpha</code> se elige por validación cruzada.`],
+      ["d_cv", R`Las predicciones de validación cruzada permiten comparar, por grupos, la media predicha con la observada.`],
+      ["d_prep", R`Los predictores se estandarizan antes de penalizar.`],
+      ["d_train", R`Se estima por máxima verosimilitud de Poisson.`],
+      ["d_mreg", R`Se evalúa con el RMSE o el MAE del recuento.`]
     ],
     materiales: ["t3", "m3"] },
 
   /* ---------- Tema 4 ---------- */
   { id: "arbol_reg", fam: "f_tree", label: "Árbol de regresión", tema: "T4",
     sesion: ["T1 22 sep (primer ejemplo)", "T4 27 oct", "P4 29 oct"],
-    idea: R`Parte el espacio de predictores en rectángulos con cortes \(x_j\le s\) y predice la media de la respuesta en cada hoja.`,
+    idea: R`Divide el espacio de predictores en rectángulos mediante cortes \(x_j\le s\) y predice, en cada hoja, la media de la respuesta.`,
     formula: R`\[\min_{j,s}\ \sum_{i\in R_1}(y_i-\bar y_{R_1})^2+\sum_{i\in R_2}(y_i-\bar y_{R_2})^2\]\[\text{poda: }\ \text{RSS}(T)+\alpha\,|T|\]`,
     peculiar: {
-      supuestos: R`Ninguna forma funcional: particionamiento binario recursivo con un algoritmo voraz (cada corte es el mejor en ese paso).`,
-      flexibilidad: R`Muy alta: recoge interacciones sin añadir productos de predictores. Un árbol profundo memoriza (4994 hojas para 5324 anuncios) y cambia mucho de un remuestreo a otro.`,
-      interpretabilidad: R`Se lee siguiendo las ramas si es pequeño. Invariante a transformaciones que conservan el orden: no hace falta estandarizar.`,
+      supuestos: R`No impone una forma funcional. Construye el árbol por particionamiento binario recursivo con un algoritmo voraz, que elige en cada paso el mejor corte sin anticipar los siguientes.`,
+      flexibilidad: R`Muy alta. Recoge interacciones sin añadir productos de predictores. Un árbol profundo llega a memorizar el conjunto de entrenamiento y cambia mucho de una muestra a otra.`,
+      interpretabilidad: R`Un árbol pequeño se lee siguiendo sus ramas. Además, el resultado no cambia con transformaciones que conservan el orden de los valores, así que no hace falta estandarizar.`,
       coste: R`Bajo. No se entrena por descenso del gradiente.`
     },
-    hp: [["criterion", "squared_error", "Medida que minimiza cada corte"],
-         ["max_depth", "DecisionTreeRegressor(max_depth=...)", "Más profundidad, árbol más complejo"],
-         ["max_leaf_nodes", "max_leaf_nodes", "Más hojas, árbol más complejo"],
-         ["min_samples_leaf", "min_samples_leaf", "Más observaciones por hoja, árbol más simple"],
-         ["\\(\\alpha\\) de la poda", "ccp_alpha", "Más \\(\\alpha\\), árbol más simple"]],
+    hp: [["criterion", "squared_error", R`Medida que minimiza cada corte.`],
+         ["max_depth", "DecisionTreeRegressor(max_depth=...)", R`Cuanto mayor es la profundidad, más complejo es el árbol.`],
+         ["max_leaf_nodes", "max_leaf_nodes", R`Cuantas más hojas se permiten, más complejo es el árbol.`],
+         ["min_samples_leaf", "min_samples_leaf", R`Cuantas más observaciones se exigen por hoja, más simple es el árbol.`],
+         [R`\(\alpha\) de la poda`, "ccp_alpha", R`Cuanto mayor es \(\alpha\), más simple es el árbol.`]],
     links: [
-      ["d_sesgo", R`El error de entrenamiento baja hacia cero con la profundidad; el de validación es mínimo con profundidad 6 y sube después.`],
-      ["d_hiper", R`Profundidad, hojas, observaciones por hoja (poda previa) o \(\alpha\) de la poda por coste-complejidad.`],
-      ["d_cv", R`\(\alpha\) por validación cruzada: el mínimo deja 24 hojas.`],
-      ["d_prep", R`No se estandariza: el corte solo depende del orden de los valores.`],
-      ["d_train", R`Algoritmo voraz que reduce la RSS en cada corte; no minimiza una pérdida global por gradiente.`],
-      ["d_mreg", R`RMSE de \(\log(\text{precio})\): el árbol podado (0,366) iguala a la regresión lineal (0,368).`],
-      ["d_interp", R`Legible si es pequeño; uno de 24 hojas ya no se comunica entero.`]
+      ["d_sesgo", R`Al crecer la profundidad, el error de entrenamiento tiende a cero mientras el de validación alcanza un mínimo y vuelve a subir.`],
+      ["d_hiper", R`La complejidad se controla con la profundidad, el número de hojas o las observaciones por hoja (poda previa), o con la \(\alpha\) de la poda por coste-complejidad.`],
+      ["d_cv", R`La \(\alpha\) de la poda se elige por validación cruzada.`],
+      ["d_prep", R`No se estandariza, porque cada corte depende solo del orden de los valores.`],
+      ["d_train", R`Se construye con un algoritmo voraz que reduce la RSS en cada corte, sin minimizar una pérdida global por gradiente.`],
+      ["d_mreg", R`Bien podado, puede alcanzar un RMSE similar al de la regresión lineal.`],
+      ["d_interp", R`Es legible cuando tiene pocas hojas, y deja de serlo a medida que crece.`]
     ],
     materiales: ["t4", "t1a", "m4"] },
   { id: "arbol_clas", fam: "f_tree", label: "Árbol de clasificación", tema: "T4",
     sesion: ["T4 27 oct", "P4 29 oct"],
-    idea: R`Como el árbol de regresión, pero cada corte minimiza la impureza de los nodos y la hoja predice la proporción de cada clase.`,
+    idea: R`Funciona como el árbol de regresión, pero cada corte minimiza la impureza de los nodos y cada hoja predice la proporción de cada clase.`,
     formula: R`\[G=\sum_k p_k(1-p_k)\]`,
     peculiar: {
-      supuestos: R`Ninguna forma funcional; impureza de Gini (o entropía) ponderada por las observaciones de cada nodo.`,
-      flexibilidad: R`Muy alta; la complejidad se controla igual que en regresión: profundidad, hojas o poda.`,
-      interpretabilidad: R`La hoja da una probabilidad (proporción) y la clase mayoritaria.`,
+      supuestos: R`No impone una forma funcional. Cada corte minimiza la impureza de Gini (o la entropía) de los dos nodos que crea, ponderada por sus observaciones.`,
+      flexibilidad: R`Muy alta. La complejidad se controla igual que en regresión, con la profundidad, el número de hojas o la poda.`,
+      interpretabilidad: R`Cada hoja da una probabilidad (la proporción de cada clase) y la clase mayoritaria.`,
       coste: R`Bajo.`
     },
-    hp: [["criterion", "gini o entropy", "Medida de impureza de cada corte"],
-         ["max_depth", "DecisionTreeClassifier(max_depth=...)", "Más profundidad, árbol más complejo"],
-         ["max_leaf_nodes", "max_leaf_nodes", "Más hojas, árbol más complejo"],
-         ["min_samples_leaf", "min_samples_leaf", "Más observaciones por hoja, árbol más simple"],
-         ["\\(\\alpha\\) de la poda", "ccp_alpha", "Más \\(\\alpha\\), árbol más simple"]],
+    hp: [["criterion", "gini o entropy", R`Medida de impureza que minimiza cada corte.`],
+         ["max_depth", "DecisionTreeClassifier(max_depth=...)", R`Cuanto mayor es la profundidad, más complejo es el árbol.`],
+         ["max_leaf_nodes", "max_leaf_nodes", R`Cuantas más hojas se permiten, más complejo es el árbol.`],
+         ["min_samples_leaf", "min_samples_leaf", R`Cuantas más observaciones se exigen por hoja, más simple es el árbol.`],
+         [R`\(\alpha\) de la poda`, "ccp_alpha", R`Cuanto mayor es \(\alpha\), más simple es el árbol.`]],
     links: [
-      ["d_sesgo", R`Un árbol de clasificación profundo también memoriza.`],
-      ["d_hiper", R`Profundidad, hojas o poda.`],
-      ["d_cv", R`Tamaño del árbol por validación cruzada estratificada.`],
-      ["d_mclas", R`Exactitud y matriz de confusión en test (salario alto, superanfitrión).`],
-      ["d_prep", R`No necesita estandarizar.`],
-      ["d_interp", R`Reglas legibles en un árbol poco profundo.`]
+      ["d_sesgo", R`Un árbol de clasificación profundo también memoriza la muestra.`],
+      ["d_hiper", R`Se eligen la profundidad, el número de hojas o la intensidad de la poda.`],
+      ["d_cv", R`El tamaño del árbol se elige por validación cruzada estratificada.`],
+      ["d_mclas", R`Se evalúa con la exactitud y la matriz de confusión, entre otras métricas.`],
+      ["d_prep", R`No necesita estandarizar los predictores.`],
+      ["d_interp", R`Un árbol poco profundo produce reglas fáciles de leer.`]
     ],
     materiales: ["t4", "m4"] },
   { id: "bagging", fam: "f_tree", label: "Bagging", tema: "T4",
     sesion: ["T4 27 oct", "P4 29 oct"],
-    idea: R`Bootstrap aggregation: ajusta \(B\) estimadores (habitualmente árboles sin poda) en remuestreos bootstrap y promedia sus predicciones.`,
+    idea: R`El bagging (bootstrap aggregation) ajusta \(B\) estimadores, habitualmente árboles sin poda, sobre remuestras bootstrap y promedia sus predicciones.`,
     formula: R`\[\hat f_{\text{bag}}(x)=\frac{1}{B}\sum_{b=1}^{B}\hat f^{*b}(x)\]\[\operatorname{Var}\big(\hat f_{\text{bag}}(x)\big)=\bar\rho\,\sigma^2+\frac{1-\bar\rho}{B}\,\sigma^2\]`,
     peculiar: {
-      supuestos: R`Sirve cualquier estimador; lo habitual es un árbol sin poda (poco sesgo y mucha varianza). En clasificación se promedian las probabilidades (o se vota).`,
-      flexibilidad: R`La de cada árbol; promediar reduce la varianza. Más árboles no sobreajusta: solo acerca el promedio a su límite \(\bar\rho\sigma^2\).`,
-      interpretabilidad: R`Baja: cientos de árboles no se leen.`,
-      coste: R`\(B\) ajustes. El error fuera de la bolsa (OOB) evalúa con un único ajuste: cada árbol deja fuera ≈ 37 % de las observaciones.`
+      supuestos: R`Admite cualquier estimador, aunque lo habitual es un árbol sin poda, con poco sesgo y mucha varianza. En clasificación se promedian las probabilidades o se vota la clase.`,
+      flexibilidad: R`Cada árbol conserva su complejidad, y el promedio reduce la varianza. Añadir árboles no provoca sobreajuste, solo acerca el promedio a su límite \(\bar\rho\sigma^2\).`,
+      interpretabilidad: R`Baja, porque cientos de árboles no se pueden leer.`,
+      coste: R`Requiere \(B\) ajustes. El error fuera de la bolsa (OOB) permite evaluarlo con un único ajuste, ya que cada árbol deja fuera alrededor del 37 % de las observaciones.`
     },
-    hp: [["Estimador base", "estimator", "Su complejidad es la de cada término de la media"],
-         ["\\(B\\) (nº de estimadores)", "n_estimators", "Más estimadores, menos varianza hasta estabilizarse"],
-         ["Tamaño del remuestreo", "max_samples", "Remuestreos menores, estimadores menos parecidos"],
-         ["Con reemplazamiento", "bootstrap", "El error OOB requiere True"],
-         ["Error OOB", "oob_score", "Guarda oob_prediction_ u oob_decision_function_"]],
+    hp: [["Estimador base", "estimator", R`Cada término del promedio tiene la complejidad de este estimador.`],
+         [R`\(B\) (número de estimadores)`, "n_estimators", R`Más estimadores reducen la varianza hasta que el promedio se estabiliza.`],
+         ["Tamaño de la remuestra", "max_samples", R`Remuestras más pequeñas dan estimadores menos parecidos entre sí.`],
+         ["Con reemplazamiento", "bootstrap", R`Para calcular el error OOB en scikit-learn debe valer True.`],
+         ["Error OOB", "oob_score", R`Guarda oob_prediction_ (regresión) u oob_decision_function_ (clasificación).`]],
     links: [
-      ["d_sesgo", R`Reduce el término \((1-\bar\rho)\sigma^2/B\); el término \(\bar\rho\sigma^2\) depende de cuánto se parecen los árboles.`],
-      ["d_hiper", R`Número de árboles: entre 100 y 500 el RMSE cambia en 1,5 milésimas.`],
-      ["d_cv", R`El error OOB (0,318) y el de validación cruzada (0,319) casi coinciden.`],
-      ["d_mreg", R`RMSE de validación cruzada: 0,319 frente a 0,366 del árbol podado.`],
-      ["d_mclas", R`En clasificación, media de las probabilidades o voto.`]
+      ["d_sesgo", R`Reduce el término \((1-\bar\rho)\sigma^2/B\). El término \(\bar\rho\sigma^2\) depende de cuánto se parecen los árboles.`],
+      ["d_hiper", R`A partir de unos cientos de árboles el error apenas cambia, y añadir más solo da estabilidad al promedio.`],
+      ["d_cv", R`El error OOB y el de validación cruzada suelen ser muy parecidos.`],
+      ["d_mreg", R`En regresión suele mejorar claramente el RMSE de un único árbol podado.`],
+      ["d_mclas", R`En clasificación se promedian las probabilidades o se vota la clase.`]
     ],
     materiales: ["t4", "m4"] },
   { id: "rf", fam: "f_tree", label: "Random forest", tema: "T4",
     sesion: ["T4 27 oct", "P4 29 oct (H3)", "P4 5 nov (comparación con XGBoost)"],
-    idea: R`Bagging de árboles en el que cada corte se busca entre \(m\) columnas elegidas al azar de las \(p\) disponibles, para que los árboles se parezcan menos.`,
+    idea: R`Es un bagging de árboles en el que cada corte se busca entre \(m\) columnas elegidas al azar de las \(p\) disponibles, para que los árboles se parezcan menos entre sí.`,
     peculiar: {
-      supuestos: R`Los del bagging; con \(m=p\) es el bagging.`,
-      flexibilidad: R`Al bajar \(\bar\rho\) baja el término \(\bar\rho\,\sigma^2\), que el número de árboles no reduce; a cambio, cada árbol puede predecir algo peor.`,
-      interpretabilidad: R`Baja: 500 árboles no se leen directamente (importancias y SHAP, 10 nov).`,
-      coste: R`Muchos ajustes; error OOB disponible. Mejor RMSE del tema 4 (0,314).`
+      supuestos: R`Los del bagging. Si \(m=p\), el random forest coincide con el bagging.`,
+      flexibilidad: R`Al reducir la correlación \(\bar\rho\) entre árboles baja el término \(\bar\rho\,\sigma^2\), que el número de árboles no puede reducir. A cambio, cada árbol puede predecir algo peor.`,
+      interpretabilidad: R`Baja, porque cientos de árboles no se leen directamente. Se interpreta con importancias y valores de Shapley (10 de noviembre).`,
+      coste: R`Requiere muchos ajustes, y dispone del error OOB para evaluarlo sin validación cruzada.`
     },
-    hp: [["Nº de árboles", "n_estimators", "Más árboles, menos varianza hasta estabilizarse"],
-         ["\\(m\\) (mtry en R)", "max_features", "Más columnas, árboles más parecidos (1,0 = bagging); mínimo en el 33 % de las columnas"],
-         ["Profundidad", "max_depth", "Más profundidad, árboles más complejos"],
-         ["Observaciones por hoja", "min_samples_leaf", "Más observaciones, árboles más simples"],
-         ["Error OOB", "oob_score", "Evalúa sin validación cruzada"],
-         ["class_weight (Classifier)", "class_weight", "Peso de cada clase en la impureza"]],
+    hp: [["Número de árboles", "n_estimators", R`Más árboles reducen la varianza hasta que el promedio se estabiliza.`],
+         [R`\(m\) (mtry en R)`, "max_features", R`Con más columnas por corte, los árboles se parecen más. Con 1,0 se obtiene el bagging.`],
+         ["Profundidad", "max_depth", R`Cuanto mayor es la profundidad, más complejos son los árboles.`],
+         ["Observaciones por hoja", "min_samples_leaf", R`Cuantas más observaciones se exigen por hoja, más simples son los árboles.`],
+         ["Error OOB", "oob_score", R`Permite evaluar el bosque sin validación cruzada.`],
+         ["class_weight (solo Classifier)", "class_weight", R`Pondera cada clase en el cálculo de la impureza.`]],
     links: [
-      ["d_sesgo", R`Sortear columnas reduce la correlación \(\bar\rho\) entre árboles.`],
+      ["d_sesgo", R`Sortear las columnas en cada corte reduce la correlación \(\bar\rho\) entre árboles.`],
       ["d_hiper", R`\(m\) (<code>max_features</code>) y el número de árboles se eligen por validación cruzada.`],
-      ["d_cv", R`Búsqueda de <code>max_features</code> con las mismas particiones que el resto de modelos.`],
-      ["d_mreg", R`RMSE 0,314 frente a 0,319 del bagging y 0,368 de la regresión lineal.`],
-      ["d_mclas", R`El bosque promedia las probabilidades de los árboles.`],
+      ["d_cv", R`La búsqueda de <code>max_features</code> usa las mismas particiones que el resto de modelos.`],
+      ["d_mreg", R`En regresión suele mejorar el error del bagging, aunque a menudo por poco.`],
+      ["d_mclas", R`En clasificación, el bosque promedia las probabilidades de sus árboles.`],
       ["d_deseq", R`<code>class_weight</code> cambia la impureza y, con ella, los cortes de todos los árboles.`],
-      ["d_interp", R`Más precisión a costa de legibilidad: se interpreta con importancias y valores de Shapley.`]
+      ["d_interp", R`Gana precisión a costa de legibilidad, y se interpreta con importancias y valores de Shapley.`]
     ],
     materiales: ["t4", "m4"] },
   { id: "gb", fam: "f_tree", label: "Gradient boosting", tema: "T4", pendiente: true,
-    sesion: ["T1 22 sep (LightGBM, primer ejemplo)", "T4 3 nov"],
-    idea: R`Combina árboles añadiéndolos uno a uno, de modo que cada nuevo árbol sigue el gradiente de la pérdida.`,
+    sesion: ["T1 22 sep (ejemplo con LightGBM)", "T4 3 nov"],
+    idea: R`Construye un ensamble añadiendo árboles uno a uno, de forma que cada nuevo árbol sigue el gradiente de la pérdida.`,
     peculiar: {
       supuestos: R`Minimiza una pérdida añadiendo árboles que siguen su gradiente (tema 1).`,
-      flexibilidad: R`La complejidad depende de la tasa de aprendizaje y del número de árboles, además de la profundidad y los datos por hoja.`,
-      interpretabilidad: R`Baja (importancias y SHAP).`,
-      coste: R`En el tema 1, un LightGBM de 300 árboles sin ajustar dio el menor MSE de validación en Airbnb (0,111, frente a 0,139 de la regresión lineal).`
+      flexibilidad: R`La complejidad depende de la tasa de aprendizaje y del número de árboles, además de la profundidad y del número de observaciones por hoja de cada árbol.`,
+      interpretabilidad: R`Baja. Se interpreta con importancias y valores de Shapley.`,
+      coste: R`En el ejemplo introductorio del tema 1, un modelo de este tipo (LightGBM) sin ajustar hiperparámetros obtuvo el menor error de validación de los modelos comparados.`
     },
-    hp: [["Tasa de aprendizaje", "learning_rate", "Tamaño de la contribución de cada árbol"],
-         ["Nº de árboles (iteraciones)", "n_estimators", "Más árboles, ajuste más complejo"],
-         ["Profundidad / hojas", "max_depth, num_leaves (LightGBM)", "Complejidad de cada árbol"]],
+    hp: [["Tasa de aprendizaje", "learning_rate", R`Fija cuánto contribuye cada árbol al ensamble.`],
+         ["Número de árboles (iteraciones)", "n_estimators", R`Más árboles permiten un ajuste más complejo.`],
+         ["Profundidad u hojas", "max_depth, num_leaves (LightGBM)", R`Fijan la complejidad de cada árbol.`]],
     links: [
-      ["d_sesgo", R`Tasa de aprendizaje y número de árboles controlan la complejidad (tabla del tema 1).`],
-      ["d_hiper", R`Tasa de aprendizaje, profundidad y número de iteraciones se eligen empíricamente.`],
-      ["d_cv", R`Ajuste y validación con las mismas particiones que el random forest.`],
-      ["d_train", R`Añade árboles que siguen el gradiente de la pérdida.`],
-      ["d_mreg", R`MSE de entrenamiento 0,078 y de validación 0,111 en el ejemplo de Airbnb.`],
-      ["d_mclas", R`También para clasificación.`],
-      ["d_interp", R`Importancias y valores de Shapley (10 nov).`]
+      ["d_sesgo", R`La tasa de aprendizaje y el número de árboles controlan la complejidad del ensamble.`],
+      ["d_hiper", R`La tasa de aprendizaje, la profundidad y el número de iteraciones se eligen con datos de validación.`],
+      ["d_cv", R`Se ajusta y valida con las mismas particiones que el random forest.`],
+      ["d_train", R`Cada árbol que se añade sigue el gradiente de la pérdida.`],
+      ["d_mreg", R`En regresión se compara con los demás modelos en la misma métrica.`],
+      ["d_mclas", R`También se aplica a problemas de clasificación.`],
+      ["d_interp", R`Se interpreta con importancias y valores de Shapley (10 de noviembre).`]
     ],
     materiales: ["t1a", "plan"] },
   { id: "xgb", fam: "f_tree", label: "XGBoost", tema: "T4", pendiente: true,
     sesion: ["T4 3 nov", "P4 5 nov (entrega E2)"],
-    idea: R`Biblioteca de gradient boosting (<code>xgboost</code>) que usaremos para ajustar, validar y comparar con el random forest.`,
+    idea: R`Biblioteca de gradient boosting (<code>xgboost</code>) con la que, en las prácticas, se ajusta y valida el boosting y se compara con el random forest.`,
     peculiar: {
       supuestos: R`Los del gradient boosting.`,
-      flexibilidad: R`Alta; se controla con la tasa de aprendizaje, la profundidad y el número de iteraciones.`,
-      interpretabilidad: R`Baja (importancias y SHAP con <code>shap</code>).`,
-      coste: R`Varios hiperparámetros que buscar a la vez. Contenido por publicar.`
+      flexibilidad: R`Alta. Se controla con la tasa de aprendizaje, la profundidad de los árboles y el número de iteraciones.`,
+      interpretabilidad: R`Baja. Se interpreta con importancias y con valores de Shapley (biblioteca <code>shap</code>).`,
+      coste: R`Obliga a buscar varios hiperparámetros a la vez. El contenido está pendiente de publicar.`
     },
-    hp: [["Tasa de aprendizaje", "—", "Contribución de cada árbol"],
-         ["Profundidad", "—", "Complejidad de cada árbol"],
-         ["Nº de iteraciones", "—", "Número de árboles"]],
+    hp: [["Tasa de aprendizaje", "—", R`Fija cuánto contribuye cada árbol.`],
+         ["Profundidad", "—", R`Fija la complejidad de cada árbol.`],
+         ["Número de iteraciones", "—", R`Número de árboles del ensamble.`]],
     links: [
-      ["d_sesgo", R`Mismo control de la complejidad que el gradient boosting.`],
-      ["d_hiper", R`Tasa de aprendizaje, profundidad y número de iteraciones por validación.`],
-      ["d_cv", R`Ajuste y validación de XGBoost (P4, 5 nov).`],
-      ["d_train", R`Boosting: minimiza una pérdida añadiendo árboles.`],
-      ["d_mreg", R`Comparación con el random forest en la misma métrica.`],
-      ["d_mclas", R`También para clasificación.`],
-      ["d_interp", R`SHAP en la práctica guiada del 12 nov.`]
+      ["d_sesgo", R`Controla la complejidad igual que el gradient boosting.`],
+      ["d_hiper", R`La tasa de aprendizaje, la profundidad y el número de iteraciones se eligen por validación.`],
+      ["d_cv", R`La práctica del 5 de noviembre trata su ajuste y validación.`],
+      ["d_train", R`Minimiza una pérdida añadiendo árboles.`],
+      ["d_mreg", R`Se compara con el random forest usando la misma métrica.`],
+      ["d_mclas", R`También se aplica a problemas de clasificación.`],
+      ["d_interp", R`Los valores de Shapley se calculan en la práctica guiada del 12 de noviembre.`]
     ],
     materiales: ["plan"] },
   { id: "voting", fam: "f_tree", label: "Voting", tema: "T4", pendiente: true,
     sesion: ["T4 10 nov", "P4 12 nov (H4)"],
-    idea: R`Ensamble que combina las predicciones de varios modelos ya definidos (por voto o promedio).`,
+    idea: R`Ensamble que combina las predicciones de varios modelos ya definidos, por votación o promediándolas.`,
     peculiar: {
-      supuestos: R`Por publicar (sesión del 10 nov).`,
+      supuestos: R`Se tratan en la sesión del 10 de noviembre, pendiente de publicar.`,
       flexibilidad: R`Depende de los modelos que se combinan.`,
       interpretabilidad: R`Menor que la de cada modelo por separado.`,
-      coste: R`La suma de los ajustes de cada modelo.`
+      coste: R`Es la suma de los ajustes de los modelos que combina.`
     },
-    hp: [["Modelos combinados", "—", "Qué estimadores entran, con sus propios hiperparámetros"]],
+    hp: [["Modelos combinados", "—", R`Qué estimadores se combinan, cada uno con sus hiperparámetros.`]],
     links: [
-      ["d_hiper", R`Hereda los hiperparámetros de cada modelo combinado.`],
-      ["d_cv", R`Se compara con los demás modelos con las mismas particiones.`],
-      ["d_mreg", R`Misma métrica que el resto de candidatos.`],
-      ["d_mclas", R`En clasificación, voto de la clase o promedio de probabilidades.`]
+      ["d_hiper", R`Hereda los hiperparámetros de cada modelo que combina.`],
+      ["d_cv", R`Se compara con los demás modelos usando las mismas particiones.`],
+      ["d_mreg", R`Se evalúa con la misma métrica que el resto de candidatos.`],
+      ["d_mclas", R`En clasificación se vota la clase o se promedian las probabilidades.`]
     ],
     materiales: ["plan"] },
   { id: "stacking", fam: "f_tree", label: "Stacking", tema: "T4", pendiente: true,
     sesion: ["T4 10 nov", "P4 12 nov (stacking guiado, H4)"],
-    idea: R`Ensamble que combina las predicciones de varios modelos con un modelo final que aprende a ponderarlas.`,
+    idea: R`Ensamble que combina las predicciones de varios modelos mediante un modelo final que aprende a ponderarlas.`,
     peculiar: {
-      supuestos: R`Por publicar (sesión del 10 nov).`,
-      flexibilidad: R`La de los modelos de base más la del modelo final.`,
+      supuestos: R`Se tratan en la sesión del 10 de noviembre, pendiente de publicar.`,
+      flexibilidad: R`Suma la de los modelos de base y la del modelo final.`,
       interpretabilidad: R`Baja.`,
-      coste: R`Ajusta todos los modelos de base y el final.`
+      coste: R`Requiere ajustar todos los modelos de base y el modelo final.`
     },
-    hp: [["Modelos de base", "—", "Qué estimadores se combinan"],
-         ["Modelo final", "—", "Cómo se combinan sus predicciones"]],
+    hp: [["Modelos de base", "—", R`Qué estimadores se combinan.`],
+         ["Modelo final", "—", R`Cómo se combinan sus predicciones.`]],
     links: [
-      ["d_hiper", R`Hiperparámetros de cada modelo de base y del final.`],
-      ["d_cv", R`Se compara con los demás modelos con las mismas particiones.`],
-      ["d_mreg", R`Misma métrica que el resto de candidatos.`],
-      ["d_mclas", R`También para clasificación.`],
-      ["d_interp", R`Práctica guiada de stacking y SHAP (12 nov).`]
+      ["d_hiper", R`Cada modelo de base y el modelo final tienen sus propios hiperparámetros.`],
+      ["d_cv", R`Se compara con los demás modelos usando las mismas particiones.`],
+      ["d_mreg", R`Se evalúa con la misma métrica que el resto de candidatos.`],
+      ["d_mclas", R`También se aplica a problemas de clasificación.`],
+      ["d_interp", R`La práctica guiada del 12 de noviembre combina stacking y valores de Shapley.`]
     ],
     materiales: ["plan"] },
 
   /* ---------- Tema 5 ---------- */
   { id: "svm", fam: "f_svm", label: "SVM (clasificación y regresión)", tema: "T5", pendiente: true,
     sesion: ["T5 17 nov", "P5 19 nov (entrega E3)"],
-    idea: R`Clasificación y regresión con vectores de soporte y núcleos (contenido del 17 nov, por publicar).`,
+    idea: R`Clasificación y regresión con vectores de soporte y núcleos (sesión del 17 de noviembre, pendiente de publicar).`,
     peculiar: {
-      supuestos: R`Por publicar (17 nov). Requiere escalar los predictores (práctica del 19 nov).`,
-      flexibilidad: R`Se controla con el coste \(C\) de los errores y la anchura del núcleo.`,
-      interpretabilidad: R`Por publicar.`,
-      coste: R`Por publicar.`
+      supuestos: R`El contenido está pendiente de publicar. En la práctica del 19 de noviembre se escalan los predictores antes de ajustar.`,
+      flexibilidad: R`Se controla con el coste \(C\) de los errores y con la anchura del núcleo.`,
+      interpretabilidad: R`Pendiente de publicar.`,
+      coste: R`Pendiente de publicar.`
     },
-    hp: [["Coste \\(C\\)", "C", "Coste de los errores"],
-         ["Núcleo y su anchura", "—", "Forma y flexibilidad de la frontera"]],
+    hp: [[R`Coste \(C\)`, "C", R`Coste de los errores.`],
+         ["Núcleo y su anchura", "—", R`Junto con C, controla la complejidad del modelo.`]],
     links: [
-      ["d_sesgo", R`\(C\) y la anchura del núcleo controlan la complejidad (tabla del tema 1).`],
+      ["d_sesgo", R`El coste \(C\) y la anchura del núcleo controlan la complejidad.`],
       ["d_hiper", R`\(C\) y la anchura del núcleo se eligen por validación.`],
-      ["d_cv", R`Comparación transversal de modelos con las mismas particiones (P5).`],
-      ["d_prep", R`Escalado dentro del <code>Pipeline</code>.`],
-      ["d_mclas", R`Clasificación con vectores de soporte.`],
-      ["d_mreg", R`Regresión con vectores de soporte.`]
+      ["d_cv", R`La práctica del 19 de noviembre compara los modelos del curso con las mismas particiones.`],
+      ["d_prep", R`Los predictores se escalan dentro del <code>Pipeline</code>.`],
+      ["d_mclas", R`Se usa en problemas de clasificación.`],
+      ["d_mreg", R`Se usa también en problemas de regresión.`]
     ],
     materiales: ["plan", "t1a"] },
 
   /* ---------- Tema 6 ---------- */
   { id: "mlp", fam: "f_nn", label: "Perceptrón multicapa (MLP)", tema: "T6", pendiente: true,
     sesion: ["T6 24 nov", "P6 26 nov (Keras)", "T6 1 dic (backpropagation y regularización)", "P6 3 dic (entrega E4)"],
-    idea: R`Red neuronal de varias capas cuyos pesos se ajustan minimizando una pérdida por descenso del gradiente (backpropagation).`,
+    idea: R`Red neuronal de varias capas cuyos pesos se ajustan minimizando una pérdida por descenso del gradiente, con el gradiente calculado mediante backpropagation.`,
     peculiar: {
-      supuestos: R`Modelo paramétrico \(f(x;\theta)\) con muchos pesos.`,
-      flexibilidad: R`Muy alta; se controla con penalización, dropout o parada temprana, y con la arquitectura.`,
+      supuestos: R`Es un modelo paramétrico \(f(x;\theta)\) con un número elevado de pesos.`,
+      flexibilidad: R`Muy alta. Se controla con la arquitectura y con la penalización, el dropout o la parada temprana.`,
       interpretabilidad: R`Baja.`,
-      coste: R`Entrenamiento iterativo por minilotes y epochs; tasa de aprendizaje y tamaño de lote son decisiones de entrenamiento (Keras).`
+      coste: R`Se entrena de forma iterativa por minilotes y epochs. La tasa de aprendizaje y el tamaño del lote se fijan en Keras.`
     },
-    hp: [["Arquitectura", "Keras", "Capas y neuronas: búsqueda de arquitecturas (3 dic)"],
-         ["Tasa de aprendizaje", "Keras", "Tamaño del paso del gradiente"],
-         ["Tamaño del lote y epochs", "Keras", "Datos por paso y pasadas completas"],
-         ["Penalización", "Keras", "Regularización de los pesos"],
-         ["Dropout", "Keras", "Regularización"],
-         ["Parada temprana", "Keras", "Detener cuando empeora la pérdida de validación"]],
+    hp: [["Arquitectura", "Keras", R`Número de capas y de neuronas, que se buscan en la práctica del 3 de diciembre.`],
+         ["Tasa de aprendizaje", "Keras", R`Tamaño del paso del gradiente.`],
+         ["Tamaño del lote y epochs", "Keras", R`Observaciones por paso y número de pasadas completas por los datos.`],
+         ["Penalización", "Keras", R`Regulariza los pesos.`],
+         ["Dropout", "Keras", R`Regulariza la red.`],
+         ["Parada temprana", "Keras", R`Detiene el entrenamiento cuando empeora la pérdida de validación.`]],
     links: [
-      ["d_sesgo", R`Penalización, dropout o parada temprana controlan la complejidad.`],
-      ["d_hiper", R`Arquitectura, tasa de aprendizaje, lote y regularización se buscan empíricamente.`],
-      ["d_cv", R`Comparación con los demás modelos con la misma evaluación.`],
-      ["d_part", R`La parada temprana vigila la pérdida de validación.`],
-      ["d_prep", R`Estandarizar ayuda al descenso del gradiente.`],
-      ["d_train", R`Lotes, minilotes, epochs y tasa de aprendizaje vuelven en el tema 6.`],
-      ["d_mreg", R`Regresión con la métrica del problema.`],
-      ["d_mclas", R`Clasificación con la métrica del problema.`]
+      ["d_sesgo", R`La penalización, el dropout y la parada temprana controlan la complejidad.`],
+      ["d_hiper", R`La arquitectura, la tasa de aprendizaje, el tamaño del lote y la regularización se buscan con datos de validación.`],
+      ["d_cv", R`Se compara con los demás modelos con el mismo esquema de evaluación.`],
+      ["d_part", R`La parada temprana se basa en la pérdida de validación.`],
+      ["d_prep", R`Estandarizar los predictores facilita el descenso del gradiente.`],
+      ["d_train", R`Los lotes, los epochs y la tasa de aprendizaje del tema 1 reaparecen en este tema.`],
+      ["d_mreg", R`En regresión se evalúa con la métrica del problema.`],
+      ["d_mclas", R`En clasificación se evalúa con la métrica del problema.`]
     ],
     materiales: ["plan", "t1a"] },
 
@@ -955,17 +955,17 @@ const ESTIMADORES = [
     sesion: ["P7 10 dic (DAG, sesgos, entrega E5)", "T7 15 dic (caso Hillstrom)"],
     idea: R`Usa modelos de aprendizaje automático para estimar el efecto causal de una intervención, con ortogonalización y cross-fitting.`,
     peculiar: {
-      supuestos: R`Los que identifican el efecto (DAG y sesgos); discusión de supuestos en el caso Hillstrom.`,
-      flexibilidad: R`La de los modelos de aprendizaje automático que usa.`,
-      interpretabilidad: R`El objetivo es un efecto, no \(f(X)\): comparar qué ocurriría con y sin intervención.`,
-      coste: R`Varios ajustes por partición (cross-fitting). Biblioteca <code>DoubleML</code>.`
+      supuestos: R`Necesita supuestos que identifiquen el efecto. Se discuten con DAG y ejemplos de sesgos y, después, en el caso Hillstrom.`,
+      flexibilidad: R`Hereda la de los modelos de aprendizaje automático que usa.`,
+      interpretabilidad: R`El objetivo es un efecto: comparar qué ocurriría con la intervención y sin ella.`,
+      coste: R`Ajusta varios modelos en cada partición del cross-fitting. Se usa la biblioteca <code>DoubleML</code>.`
     },
-    hp: [["Modelos de aprendizaje automático", "—", "Los que estiman cada paso, con sus hiperparámetros"],
-         ["Particiones del cross-fitting", "—", "Cuántas particiones se usan"]],
+    hp: [["Modelos de aprendizaje automático", "—", R`Los que estiman cada paso, cada uno con sus hiperparámetros.`],
+         ["Particiones del cross-fitting", "—", R`Número de particiones.`]],
     links: [
       ["d_cv", R`El cross-fitting reparte los datos en particiones, como la validación cruzada.`],
-      ["d_hiper", R`Los modelos de aprendizaje automático que usa necesitan sus hiperparámetros.`],
-      ["d_interp", R`Predecir no es estimar un efecto: un cero de Lasso no significa «sin efecto causal».`]
+      ["d_hiper", R`Los modelos de aprendizaje automático que usa necesitan sus propios hiperparámetros.`],
+      ["d_interp", R`Estimar un efecto exige supuestos que la predicción no necesita, y un coeficiente nulo de Lasso no indica ausencia de efecto causal.`]
     ],
     materiales: ["pres", "plan"] }
 ];
@@ -1254,7 +1254,7 @@ function openPanel(id) {
     <h2>${n.label}</h2><button type="button" class="p-close" id="pclose" aria-label="Cerrar panel">×</button><div class="badges">`;
   if (n.sesion) head += n.sesion.map(s => `<span class="badge">${s}</span>`).join("");
   else if (n.tema) head += `<span class="badge">${n.tema.replace(/^T/, "Tema ")}</span>`;
-  if (n.pendiente) head += `<span class="badge warn">Tema por publicar: ficha provisional</span>`;
+  if (n.pendiente) head += `<span class="badge warn">Ficha provisional: tema por publicar</span>`;
   head += `</div>`;
   let b = "";
   if (n.idea) b += `<p class="idea">${n.idea}</p>`;

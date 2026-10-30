@@ -17,7 +17,7 @@ Las **presentaciones** se abren en el navegador (pantalla completa con la tecla 
 
 | Recurso | |
 |:--|:--|
-| Mapa interactivo: el objetivo del aprendizaje supervisado, todos los estimadores del curso y las decisiones transversales (sesgo-varianza, hiperparámetros, validación cruzada, métricas…) que los conectan | <a class="tap-btn" href="mapa/mapa_mental_tap.html" target="_blank"><i class="bi bi-diagram-3"></i> Abrir el mapa</a> |
+| Mapa interactivo con los estimadores del curso y las decisiones de aprendizaje supervisado que comparten, como la validación cruzada o la elección de hiperparámetros | <a class="tap-btn" href="mapa/mapa_mental_tap.html" target="_blank"><i class="bi bi-diagram-3"></i> Abrir el mapa</a> |
 
 ## Tema 1. Fundamentos y regresión regularizada {#tema-1}
 
