@@ -204,6 +204,7 @@ Estas reglas adaptan al castellano las reglas anti-IA del autor:
 - Un color por tipo de nodo: marino para el objetivo, azul para familias y estimadores, y terracota para las decisiones. La salvia marca la selección y las coincidencias del buscador. El borde discontinuo marca las fichas provisionales.
 - El panel lateral ocupa el 40 % del ancho de la ventana, entre 440 px y 760 px. En pantallas de menos de 760 px de ancho, el panel se muestra como una hoja inferior a pantalla completa de ancho. Las tablas del panel no deben partir los nombres de clases ni de argumentos. Si no caben, la tabla se desplaza en horizontal.
 - Interacción: los nodos con hijos se pliegan y despliegan. Al pulsar un estimador se resaltan sus vínculos con las decisiones y se abre el panel. Hay buscador, vista en lista y enlaces directos `#nodo=<id>`.
+- Pantalla completa, como en reveal.js: botón en la cabecera y tecla F; se sale con F o Esc. Los atajos + y − acercan y alejan, y 0 ajusta el mapa a la pantalla. Dentro de un `<iframe>` hace falta el atributo `allowfullscreen`; si el navegador no lo permite, el botón abre el mapa en una pestaña nueva.
 
 ## 10. Implementación
 

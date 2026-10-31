@@ -82,6 +82,10 @@ header.bar {
 }
 .tbtn:hover { background: rgba(255,255,255,.15); }
 .tbtn[aria-pressed="true"] { background: #fff; color: var(--tap-blue); }
+.tbtn.icon { padding: 0; width: 34px; display: inline-flex; align-items: center; justify-content: center; }
+.tbtn.icon svg { width: 16px; height: 16px; }
+.tbtn .fs-off, body.fs .tbtn .fs-on { display: none; }
+body.fs .tbtn .fs-off { display: inline; }
 .tbtn:focus-visible { outline: 2px solid var(--tap-terracotta); outline-offset: 1px; }
 
 /* ---------- Lienzo del mapa ---------- */
@@ -308,6 +312,7 @@ body.list-mode #viewport, body.list-mode .legend, body.list-mode .zoom { display
     <button class="tbtn wide" id="expandAll" type="button" title="Desplegar todas las ramas">Desplegar</button>
     <button class="tbtn wide" id="collapseAll" type="button" title="Plegar las ramas de estimadores">Plegar</button>
     <button class="tbtn" id="listBtn" type="button" aria-pressed="false" title="Alternar entre mapa y lista">Lista</button>
+    <button class="tbtn icon" id="fsBtn" type="button" aria-pressed="false" title="Pantalla completa (F)" aria-label="Pantalla completa"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="fs-on" d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="fs-off" d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
 </header>
 
@@ -324,7 +329,7 @@ body.list-mode #viewport, body.list-mode .legend, body.list-mode .zoom { display
   <span><i style="background:var(--tap-blue)"></i>Estimadores</span>
   <span><i style="background:var(--tap-terracotta)"></i>Decisiones</span>
   <span><i style="border:1.5px dashed var(--tap-gray);background:#fff"></i>Tema por publicar</span>
-  <span class="hint">Pulsa un estimador para ver sus vínculos. Arrastra para moverte y usa Ctrl + rueda para acercar.</span>
+  <span class="hint">Pulsa un estimador para ver sus vínculos. Arrastra para moverte; + y − acercan y alejan; F, pantalla completa.</span>
 </div>
 <div class="zoom">
   <button type="button" id="zin" aria-label="Acercar">+</button>
@@ -1741,7 +1746,6 @@ viewport.addEventListener("keydown", e => {
   const node = e.target.closest(".node");
   if (!node) return;
   if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(node.dataset.id); }
-  if ((e.key === "+" || e.key === "-") && state.open[node.dataset.id] !== undefined) toggle(node.dataset.id);
 });
 stage.addEventListener("pointerover", e => {
   if (e.pointerType !== "mouse") return;
@@ -1768,6 +1772,16 @@ function toggle(id) {
 $("#panel").addEventListener("click", e => {
   const go = e.target.closest("[data-go]");
   if (go) select(go.dataset.go, { center: true });
+});
+// Atajos al estilo de reveal.js: F pantalla completa, + y − acercar y alejar, 0 ajustar.
+document.addEventListener("keydown", e => {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest("input, textarea")) return;
+  if (document.body.classList.contains("list-mode")) { if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); } return; }
+  const { w, h } = visibleArea();
+  if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomAt(1.25, w / 2, h / 2); }
+  else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomAt(0.8, w / 2, h / 2); }
+  else if (e.key === "0") { e.preventDefault(); fit(); }
+  else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
 });
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") { if ($("#results").classList.contains("show")) hideResults(); else if (state.sel) closePanel(); }
@@ -1876,6 +1890,28 @@ $("#listBtn").addEventListener("click", () => toggleList());
 $("#zin").addEventListener("click", () => { const { w, h } = visibleArea(); zoomAt(1.25, w / 2, h / 2); });
 $("#zout").addEventListener("click", () => { const { w, h } = visibleArea(); zoomAt(0.8, w / 2, h / 2); });
 $("#zfit").addEventListener("click", fit);
+
+/* Pantalla completa. Dentro de un iframe sin permiso (allowfullscreen),
+   el botón abre el mapa en una pestaña nueva. */
+const root = document.documentElement;
+const fsElement = () => document.fullscreenElement || document.webkitFullscreenElement;
+const fsEnabled = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled) && !!(root.requestFullscreen || root.webkitRequestFullscreen);
+function toggleFullscreen() {
+  if (!fsEnabled) { window.open(location.href, "_blank", "noopener"); return; }
+  if (fsElement()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  else (root.requestFullscreen || root.webkitRequestFullscreen).call(root).catch?.(() => window.open(location.href, "_blank", "noopener"));
+}
+function onFsChange() {
+  const on = !!fsElement();
+  document.body.classList.toggle("fs", on);
+  $("#fsBtn").setAttribute("aria-pressed", on);
+  $("#fsBtn").title = on ? "Salir de pantalla completa (F o Esc)" : "Pantalla completa (F)";
+  $("#fsBtn").setAttribute("aria-label", on ? "Salir de pantalla completa" : "Pantalla completa");
+}
+if (!fsEnabled) { $("#fsBtn").title = "Abrir el mapa en una pestaña nueva"; $("#fsBtn").setAttribute("aria-label", "Abrir el mapa en una pestaña nueva"); }
+document.addEventListener("fullscreenchange", onFsChange);
+document.addEventListener("webkitfullscreenchange", onFsChange);
+$("#fsBtn").addEventListener("click", toggleFullscreen);
 $("#expandAll").addEventListener("click", () => { Object.keys(state.open).forEach(k => state.open[k] = true); layout(); fit(); });
 $("#collapseAll").addEventListener("click", () => { FAMILIAS.forEach(f => state.open[f.id] = false); layout(); fit(); });
 
