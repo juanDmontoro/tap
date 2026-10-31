@@ -31,6 +31,6 @@ Para abrir el iframe directamente en un nodo, añade el ancla a la URL, por ejem
 
 ## Mantenimiento
 
-Las reglas para elaborar, ampliar o rehacer el mapa están en [`DIRECTRICES.md`](DIRECTRICES.md): fuentes, inventario de estimadores, estructura de cada ficha, redacción, tablas de scikit-learn, enlaces a slides, diseño y verificación. Sirven también para crear el mapa de otra asignatura.
+Las decisiones tomadas, los pendientes y el historial están en [`REGISTRO.md`](REGISTRO.md). Las reglas para elaborar, ampliar o rehacer el mapa están en [`DIRECTRICES.md`](DIRECTRICES.md): fuentes, inventario de estimadores, estructura de cada ficha, redacción, tablas de scikit-learn, enlaces a slides, diseño y verificación. Sirven también para crear el mapa de otra asignatura.
 
 El contenido está en el bloque `CONTENIDO` del `<script>` (`DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES` y `ESTIMADORES`). Cuando se publique un deck que ahora figura como pendiente (boosting, combinar e interpretar, SVM), basta con poner su ruta en `DECKS`: los enlaces a sus slides se activan solos. Las fichas con `pendiente: true` (redes neuronales y DoubleML) se revisan cuando haya deck.

@@ -105,6 +105,7 @@ body.fs .tbtn .fs-off { display: inline; }
 #edges .tree.base { stroke: var(--tap-blue); stroke-width: 1.6; stroke-dasharray: 3 3; }
 #edges .xlink { stroke: var(--link-faint); stroke-width: 1.4; transition: stroke .15s, stroke-width .15s, opacity .15s; }
 #edges .xlink.agg { stroke-dasharray: 5 4; }
+#edges .xlink.univ { stroke: transparent; }
 body.has-focus #edges .xlink { opacity: .25; }
 body.has-focus #edges .xlink.hl { opacity: 1; stroke: var(--tap-terracotta); stroke-width: 2.6; }
 body.has-focus #edges .tree { opacity: .45; }
@@ -235,6 +236,9 @@ a.slide.inl { font-size: 13px; white-space: nowrap; }
 dl.vocab dt { font-weight: 700; color: var(--tap-navy); font-size: 13.5px; margin-top: 8px; }
 dl.vocab dd { margin: 2px 0 0; font-size: 14px; }
 .node.derivado { border-left-width: 3px; }
+.univ-tag { display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 600; color: #8f3b25; background: var(--terra-soft); border-radius: 8px; padding: 1px 7px; }
+.tag-com { font-size: 11.5px; color: var(--tap-gray); margin-left: 4px; }
+.univ-note { background: var(--terra-soft); border-radius: 6px; padding: 8px 10px; font-size: 14px; margin-top: 12px; }
 .nw { white-space: nowrap; }
 table.hp td { padding: 5px 6px; border-top: 1px solid #e6ecf2; vertical-align: top; }
 table.hp tr:nth-child(even) td { background: #fafbfd; }
@@ -485,6 +489,7 @@ const DECISIONES = [
     vocab: ["hiperparametro"],
     materiales: ["t1a", "t2", "t2c"] },
   { id: "d_cv", label: "Validación cruzada", sub: "Evalúa el método de ajuste", tema: "T2",
+    alcance: "todos", generico: R`Como cualquier modelo predictivo, se compara con los demás mediante validación cruzada, con las mismas particiones y la misma métrica.`,
     idea: R`La validación cruzada estima el error que cometerá un <b>método</b> en datos nuevos. Por método entendemos el procedimiento completo: el preprocesado, el algoritmo de ajuste y unos valores concretos de los hiperparámetros. Los modelos que se ajustan durante la validación cruzada solo sirven para medir ese procedimiento, y después se descartan.`,
     puntos: [
       R`Las observaciones se reparten en \(k\) particiones. En cada vuelta se ajusta de nuevo todo el <code>Pipeline</code> con \(k-1\) particiones y se mide el error en la restante. Cada observación valida una vez, y el resultado es la media de los \(k\) errores.`,
@@ -500,6 +505,7 @@ const DECISIONES = [
     vocab: ["predcv", "oob"],
     materiales: ["t2", "t2c", "m2"] },
   { id: "d_part", label: "Partición de los datos", sub: "Entrenamiento, validación y test", tema: "T1–T2",
+    alcance: "todos", generico: R`Como cualquier modelo predictivo, se ajusta con los datos de entrenamiento, se elige con datos de validación y se evalúa una sola vez en el test.`,
     idea: R`Con los datos de entrenamiento se ajustan los parámetros, y con los de validación se eligen el modelo y sus hiperparámetros. El conjunto de prueba (test) se reserva para evaluar una sola vez el modelo elegido.`,
     puntos: [
       R`La partición se hace con <code>train_test_split</code> antes de cualquier cálculo. En clasificación se añade <code>stratify=y</code> para conservar la proporción de cada clase.`,
@@ -534,6 +540,7 @@ const DECISIONES = [
     vocab: ["tasa", "epoch", "minilote", "paradatemprana"],
     materiales: ["t1a", "t1c", "t3"] },
   { id: "d_mreg", label: "Métricas de regresión", sub: "MSE, RMSE, MAE y R²", tema: "T1–T3",
+    alcance: "regresion", generico: R`Como modelo de regresión, se evalúa con la métrica elegida para el problema (RMSE, MAE o R²) y se compara con el modelo nulo.`,
     idea: R`La métrica forma parte de la regla de decisión. Se elige según el problema de negocio antes de validar, y cada modelo se compara con el modelo nulo.`,
     formula: R`\[\mathrm{MSE}=\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat f(x_i)\right)^2,\qquad \mathrm{RMSE}=\sqrt{\mathrm{MSE}}\]`,
     puntos: [
@@ -545,6 +552,7 @@ const DECISIONES = [
     slides: [["t1a", "qué-error-medimos", "¿Qué error medimos?"], ["t3", "qué-modelo-elegimos-para-el-precio", "Elegir un modelo con RMSE y MAE"]],
     materiales: ["t1a", "t3"] },
   { id: "d_mclas", label: "Métricas de clasificación", sub: "Matriz de confusión, ROC y log-loss", tema: "T2",
+    alcance: "clasificacion", generico: R`Como modelo de clasificación, se evalúa con la métrica elegida para el problema y se compara con el clasificador nulo.`,
     idea: R`Cada métrica responde a una pregunta distinta. El umbral de clasificación, la probabilidad a partir de la cual se predice la clase positiva, también es una decisión: al bajarlo se identifican más positivos a costa de más falsos positivos.`,
     formula: R`\[\text{precisión}=\frac{VP}{VP+FP}\qquad \text{sensibilidad}=\frac{VP}{VP+FN}\]\[\text{especificidad}=\frac{VN}{VN+FP}\qquad \text{exactitud}=\frac{VP+VN}{n}\]`,
     puntos: [
@@ -585,13 +593,14 @@ const DECISIONES = [
 ];
 
 /* Estimadores.
+   tarea: "reg" (regresión) y/o "clas" (clasificación); vacía si el estimador no predice (DoubleML).
    hp: [hiperparámetro en castellano, argumento(s), efecto al aumentarlo]
    args: [argumento, valores, para qué sirve]
    sklearn: [clase, módulo, uso]
    links: [decisión, motivo, slide opcional [deck, id, texto]] */
 const ESTIMADORES = [
   /* ---------- Referencia ---------- */
-  { id: "nulo", fam: "f_ref", label: "Modelo nulo", tema: "T1–T3",
+  { id: "nulo", tarea: ["reg", "clas"], fam: "f_ref", label: "Modelo nulo", tema: "T1–T3",
     sesion: ["T1 29 sep", "T2 6 oct", "T3 20 oct"],
     porque: R`Sirve de punto de comparación. Antes de valorar un modelo hay que saber cuánto se acierta sin usar ningún predictor, y el modelo nulo da esa cifra.`,
     idea: R`Predice siempre la media de la respuesta en regresión, y la proporción de cada clase (o la clase más frecuente) en clasificación.`,
@@ -617,7 +626,7 @@ const ESTIMADORES = [
     materiales: ["t2", "t3"] },
 
   /* ---------- Tema 1 ---------- */
-  { id: "mco", fam: "f_lin", label: "Regresión lineal (MCO)", tema: "T1",
+  { id: "mco", tarea: ["reg"], fam: "f_lin", label: "Regresión lineal (MCO)", tema: "T1",
     sesion: ["T1 22 sep", "P1 24 sep", "T1 29 sep"],
     porque: R`Es el punto de partida de la predicción con predictores. Propone una relación sencilla, en la que cada predictor suma un efecto constante a la predicción, y permite interpretar ese efecto. Los demás modelos del curso se entienden mejor por comparación con él.`,
     idea: R`Supone que la respuesta es una combinación lineal de los predictores más un error, y elige los coeficientes que minimizan la suma de los cuadrados de los residuos (RSS). MCO significa mínimos cuadrados ordinarios.`,
@@ -645,7 +654,7 @@ const ESTIMADORES = [
     slides: [["t1a", "una-recta-y-un-árbol-sobre-los-mismos-datos", "Una recta y un árbol sobre los mismos datos"], ["t1b", "con-más-coeficientes-que-datos-tenemos-infinitas-soluciones", "Con más coeficientes que datos, infinitas soluciones"]],
     vocab: ["rss", "residuo", "insesgado", "colinealidad"],
     materiales: ["t1a", "t1b", "t1c", "m1"] },
-  { id: "poli", fam: "f_lin", base: "mco", label: "Regresión polinómica", tema: "T1",
+  { id: "poli", tarea: ["reg"], fam: "f_lin", base: "mco", label: "Regresión polinómica", tema: "T1",
     sesion: ["T1 22 sep"],
     porque: R`Permite capturar relaciones no lineales entre un predictor y la respuesta, por ejemplo una respuesta que crece y después se estabiliza, sin abandonar el marco de la regresión lineal. Si se incluyen productos de predictores, recoge también interacciones.`,
     idea: R`Añade como nuevos predictores las potencias de \(x\) (\(x^2\), \(x^3\), …) y ajusta una regresión lineal sobre ellos. El grado del polinomio fija lo flexible que es la curva.`,
@@ -669,7 +678,7 @@ const ESTIMADORES = [
     slides: [],
     vocab: ["subajuste", "interaccion"],
     materiales: ["t1a"] },
-  { id: "ridge", fam: "f_lin", base: "mco", label: "Ridge", tema: "T1",
+  { id: "ridge", tarea: ["reg"], fam: "f_lin", base: "mco", label: "Ridge", tema: "T1",
     sesion: ["T1 29 sep", "P1 1 oct"],
     porque: R`Mejora las predicciones de MCO cuando hay pocos datos, muchos predictores o predictores muy correlacionados. En esas situaciones los coeficientes de MCO varían mucho de una muestra a otra, y Ridge los estabiliza.`,
     idea: R`Es una regresión lineal que, además de la RSS, penaliza la suma de los coeficientes al cuadrado (penalización L2). Así contrae todos los coeficientes hacia cero, aunque ninguno llega a anularse.`,
@@ -696,7 +705,7 @@ const ESTIMADORES = [
     slides: [["t1b", "tres-variantes-sobre-el-mismo-rss", "Tres variantes sobre el mismo RSS"], ["t1b", "ridge-divide-lasso-resta-y-trunca", "Cómo contraen Ridge y Lasso"]],
     vocab: ["penalizacion", "estandarizar"],
     materiales: ["t1b", "t1c", "m1"] },
-  { id: "lasso", fam: "f_lin", base: "mco", label: "Lasso", tema: "T1",
+  { id: "lasso", tarea: ["reg"], fam: "f_lin", base: "mco", label: "Lasso", tema: "T1",
     sesion: ["T1 29 sep", "P1 1 oct"],
     porque: R`Además de estabilizar los coeficientes como Ridge, selecciona predictores: deja exactamente en cero los coeficientes de los predictores que apenas mejoran la predicción. Es útil cuando se espera que solo unos pocos predictores importen y se quiere un modelo más sencillo de comunicar.`,
     idea: R`Es una regresión lineal que penaliza la suma de los valores absolutos de los coeficientes (penalización L1). Esa penalización contrae los coeficientes y anula algunos.`,
@@ -724,7 +733,7 @@ const ESTIMADORES = [
     slides: [["t1b", "ridge-divide-lasso-resta-y-trunca", "Cómo contraen Ridge y Lasso"], ["t1b", "geometría-de-la-penalización", "Geometría de la penalización"], ["t1b", "ridge-encoge-lasso-anula", "Trayectorias de los coeficientes"]],
     vocab: ["penalizacion", "estandarizar"],
     materiales: ["t1b", "t1c", "m1"] },
-  { id: "enet", fam: "f_lin", base: "mco", label: "Elastic Net", tema: "T1",
+  { id: "enet", tarea: ["reg"], fam: "f_lin", base: "mco", label: "Elastic Net", tema: "T1",
     sesion: ["T1 29 sep", "P1 1 oct", "T2 6 oct"],
     porque: R`Combina las ventajas de Ridge y de Lasso: selecciona predictores, pero conserva mejor que Lasso los grupos de predictores correlacionados. Es útil cuando hay grupos de predictores parecidos o más predictores que observaciones.`,
     idea: R`Es una regresión lineal con una mezcla de las penalizaciones L1 (la de Lasso) y L2 (la de Ridge).`,
@@ -754,7 +763,7 @@ const ESTIMADORES = [
     materiales: ["t1b", "t2", "m1"] },
 
   /* ---------- GLM ---------- */
-  { id: "mpl", fam: "f_glm", label: "Modelo de probabilidad lineal", tema: "T3",
+  { id: "mpl", tarea: ["clas"], fam: "f_glm", label: "Modelo de probabilidad lineal", tema: "T3",
     sesion: ["T3 20 oct"],
     porque: R`Muestra por qué la regresión lineal no es adecuada para una respuesta binaria, y así motiva el uso del logit.`,
     idea: R`Aplica la regresión lineal a una respuesta que vale 0 o 1 e interpreta la predicción como la probabilidad de que valga 1.`,
@@ -773,7 +782,7 @@ const ESTIMADORES = [
       ["d_train", R`Minimiza la RSS en lugar de maximizar la verosimilitud de una respuesta binaria.`]
     ],
     slides: [], vocab: [], materiales: ["t3"] },
-  { id: "logit", fam: "f_glm", label: "Logit (regresión logística)", tema: "T2–T3",
+  { id: "logit", tarea: ["clas"], fam: "f_glm", label: "Logit (regresión logística)", tema: "T2–T3",
     sesion: ["T2 6 y 13 oct", "T3 20 oct", "P3 22 oct (E1)"],
     porque: R`Es el modelo de referencia para clasificar en dos clases. A diferencia del modelo de probabilidad lineal, predice siempre probabilidades entre 0 y 1, y sus coeficientes siguen siendo interpretables.`,
     idea: R`Calcula una combinación lineal de los predictores y la transforma en una probabilidad con la función logística, que lleva cualquier número real al intervalo (0, 1).`,
@@ -802,7 +811,7 @@ const ESTIMADORES = [
     slides: [["t3", "componentes-de-un-glm", "Componentes de un GLM"], ["t3", "superanfitrión-distribución-de-bernoulli-y-enlace-logit", "Distribución de Bernoulli y enlace logit"]],
     vocab: ["logodds", "enlace", "verosimilitud"],
     materiales: ["t2", "t3", "m3"] },
-  { id: "multinomial", fam: "f_glm", base: "logit", label: "Logit multinomial", tema: "T3",
+  { id: "multinomial", tarea: ["clas"], fam: "f_glm", base: "logit", label: "Logit multinomial", tema: "T3",
     sesion: ["T3 20 oct", "P3 22 oct (E1)"],
     porque: R`Extiende el logit a respuestas con más de dos clases sin orden, como el canal de compra de un cliente. Asignar los números 1, 2 y 3 a las clases y usar una regresión lineal supondría un orden y unas distancias entre clases que no existen.`,
     idea: R`Calcula una combinación lineal de los predictores para cada clase y convierte esas puntuaciones en probabilidades con la función softmax.`,
@@ -829,7 +838,7 @@ const ESTIMADORES = [
     slides: [["t3", "tramo-de-precio-el-logit-multinomial", "El logit multinomial"]],
     vocab: ["softmax"],
     materiales: ["t3", "m3"] },
-  { id: "gamma", fam: "f_glm", label: "GLM Gamma", tema: "T3",
+  { id: "gamma", tarea: ["reg"], fam: "f_glm", label: "GLM Gamma", tema: "T3",
     sesion: ["T3 20 oct"],
     porque: R`Está pensado para respuestas positivas y asimétricas, como importes, costes o duraciones, en las que la dispersión crece con la media. A diferencia de la regresión lineal, nunca predice valores negativos.`,
     idea: R`Supone una distribución Gamma para la respuesta y relaciona el logaritmo de su media con una combinación lineal de los predictores.`,
@@ -855,7 +864,7 @@ const ESTIMADORES = [
     slides: [["t3", "cada-respuesta-tiene-su-familia-y-su-enlace", "Cada respuesta tiene su familia y su enlace"]],
     vocab: ["enlace", "verosimilitud"],
     materiales: ["t3", "m3"] },
-  { id: "poisson", fam: "f_glm", label: "GLM Poisson", tema: "T3",
+  { id: "poisson", tarea: ["reg"], fam: "f_glm", label: "GLM Poisson", tema: "T3",
     sesion: ["T3 20 oct"],
     porque: R`Está pensado para recuentos (0, 1, 2, …), como el número de compras o de visitas de un cliente. Predice siempre valores no negativos, algo que la regresión lineal no garantiza.`,
     idea: R`Supone una distribución de Poisson para la respuesta y relaciona el logaritmo del recuento esperado con una combinación lineal de los predictores.`,
@@ -882,7 +891,7 @@ const ESTIMADORES = [
     materiales: ["t3", "m3"] },
 
   /* ---------- Tema 4: árboles ---------- */
-  { id: "arbol_reg", fam: "f_tree", label: "Árbol de regresión", tema: "T4",
+  { id: "arbol_reg", tarea: ["reg"], fam: "f_tree", label: "Árbol de regresión", tema: "T4",
     sesion: ["T1 22 sep", "T4 27 oct", "P4 29 oct"],
     porque: R`Captura relaciones no lineales e interacciones entre predictores sin que haya que especificarlas, y produce reglas del tipo «si … entonces …» fáciles de comunicar cuando el árbol es pequeño. Además es la pieza básica del bagging, del random forest y del boosting.`,
     idea: R`Divide los datos en grupos mediante preguntas sucesivas sobre los predictores, por ejemplo «¿\(x_1\le 4\)?», y predice en cada grupo final (hoja) la media de la respuesta.`,
@@ -912,7 +921,7 @@ const ESTIMADORES = [
     slides: [["t4a", "un-árbol-segmenta-el-espacio-de-predictores-en-regiones", "Un árbol segmenta el espacio de predictores"], ["t1a", "una-recta-y-un-árbol-sobre-los-mismos-datos", "Una recta y un árbol sobre los mismos datos"]],
     vocab: ["voraz", "hoja", "poda", "interaccion"],
     materiales: ["t4a", "m4"] },
-  { id: "arbol_clas", fam: "f_tree", base: "arbol_reg", label: "Árbol de clasificación", tema: "T4",
+  { id: "arbol_clas", tarea: ["clas"], fam: "f_tree", base: "arbol_reg", label: "Árbol de clasificación", tema: "T4",
     sesion: ["T4 27 oct", "P4 29 oct"],
     porque: R`Lleva las ventajas del árbol de regresión a los problemas de clasificación: recoge relaciones no lineales e interacciones y da reglas fáciles de comunicar si es pequeño.`,
     idea: R`Divide los datos con preguntas sucesivas sobre los predictores, como el árbol de regresión, y en cada hoja predice la proporción de cada clase.`,
@@ -941,7 +950,7 @@ const ESTIMADORES = [
     slides: [],
     vocab: ["impureza", "hoja"],
     materiales: ["t4a", "m4"] },
-  { id: "bagging", fam: "f_tree", base: "arbol_reg", label: "Bagging", tema: "T4",
+  { id: "bagging", tarea: ["reg", "clas"], fam: "f_tree", base: "arbol_reg", label: "Bagging", tema: "T4",
     sesion: ["T4 27 oct", "P4 29 oct"],
     porque: R`Reduce la varianza de los árboles. Un árbol profundo cambia mucho si cambian los datos de entrenamiento, y la media de muchos árboles ajustados con muestras distintas cambia mucho menos.`,
     idea: R`Ajusta muchos árboles, cada uno con una remuestra bootstrap de los datos de entrenamiento, y promedia sus predicciones. En clasificación promedia las probabilidades o vota la clase. El nombre viene de bootstrap aggregation.`,
@@ -967,7 +976,7 @@ const ESTIMADORES = [
     slides: [["t4a", "bootstrap-remuestrear-con-reemplazamiento", "Bootstrap: remuestrear con reemplazamiento"], ["t4a", "un-árbol-cambia-mucho-de-un-remuestreo-a-otro", "Un árbol cambia mucho de un remuestreo a otro"]],
     vocab: ["bootstrap", "oob"],
     materiales: ["t4a", "m4"] },
-  { id: "rf", fam: "f_tree", base: "bagging", label: "Random forest", tema: "T4",
+  { id: "rf", tarea: ["reg", "clas"], fam: "f_tree", base: "bagging", label: "Random forest", tema: "T4",
     sesion: ["T4 27 oct", "P4 29 oct (H3)", "P4 5 nov"],
     porque: R`Mejora el bagging haciendo que los árboles se parezcan menos entre sí. Si un predictor domina, todos los árboles del bagging empiezan con el mismo corte y sus errores se parecen, así que promediarlos ayuda poco.`,
     idea: R`Es un bagging de árboles en el que cada corte se busca solo entre \(m\) predictores elegidos al azar de los \(p\) disponibles.`,
@@ -997,7 +1006,7 @@ const ESTIMADORES = [
     slides: [["t4a", "random-forest-cada-corte-elige-entre-m-predictores", "Random forest: cada corte elige entre m predictores"]],
     vocab: ["bootstrap", "oob"],
     materiales: ["t4a", "m4"] },
-  { id: "gb", fam: "f_tree", base: "arbol_reg", label: "Gradient boosting", tema: "T4",
+  { id: "gb", tarea: ["reg", "clas"], fam: "f_tree", base: "arbol_reg", label: "Gradient boosting", tema: "T4",
     sesion: ["T1 22 sep", "T4 3 nov", "P4 5 nov (E2)"],
     porque: R`Construye un modelo muy flexible a partir de árboles pequeños. En lugar de promediar árboles independientes, como el bagging, cada árbol nuevo corrige los errores que dejan los anteriores, de modo que el sesgo se reduce paso a paso.`,
     idea: R`Empieza prediciendo la media, ajusta un árbol pequeño a los residuos, suma una fracción de su predicción y repite el proceso muchas veces.`,
@@ -1027,7 +1036,7 @@ const ESTIMADORES = [
     slides: [["t4b", "la-predicción-se-construye-árbol-a-árbol", "La predicción se construye árbol a árbol"], ["t4b", "el-algoritmo-del-boosting-con-pérdida-cuadrática", "El algoritmo del boosting"], ["t4b", "qué-profundidad-necesita-cada-árbol", "¿Qué profundidad necesita cada árbol?"], ["t4b", "otras-implementaciones-del-boosting", "Otras implementaciones del boosting"]],
     vocab: ["residuo", "tasa", "interaccion", "paradatemprana"],
     materiales: ["t1a", "plan"] },
-  { id: "xgb", fam: "f_tree", base: "gb", label: "XGBoost", tema: "T4",
+  { id: "xgb", tarea: ["reg", "clas"], fam: "f_tree", base: "gb", label: "XGBoost", tema: "T4",
     sesion: ["T4 3 nov", "P4 5 nov (E2)"],
     porque: R`Añade al gradient boosting un control de la complejidad de cada árbol y una forma más rápida de buscar los cortes. Contrae las hojas con pocas observaciones, cuya corrección es poco fiable, y evita los cortes que mejoran poco la pérdida.`,
     idea: R`Sigue el mismo proceso que el gradient boosting, pero cada árbol se construye minimizando la pérdida más una penalización de su complejidad.`,
@@ -1060,7 +1069,7 @@ const ESTIMADORES = [
     slides: [["t4b", "otras-implementaciones-del-boosting", "Otras implementaciones del boosting"]],
     vocab: ["tasa", "hoja"],
     materiales: ["plan"] },
-  { id: "voting", fam: "f_tree", label: "Voting", tema: "T4",
+  { id: "voting", tarea: ["reg", "clas"], fam: "f_tree", label: "Voting", tema: "T4",
     sesion: ["T4 10 nov", "P4 12 nov (H4)"],
     porque: R`Combina varios modelos ya ajustados para aprovechar que sus errores se compensan en parte. Si dos modelos se equivocan en observaciones distintas, la media de sus predicciones puede acertar más que cada uno por separado.`,
     idea: R`Promedia las predicciones de varios modelos, con pesos iguales o fijados de antemano. En clasificación vota la clase o promedia las probabilidades.`,
@@ -1084,7 +1093,7 @@ const ESTIMADORES = [
     slides: [["t4c", "los-errores-de-random-forest-y-xgboost-están-correlacionados", "Errores correlacionados entre modelos"]],
     vocab: [],
     materiales: ["plan"] },
-  { id: "stacking", fam: "f_tree", label: "Stacking", tema: "T4",
+  { id: "stacking", tarea: ["reg", "clas"], fam: "f_tree", label: "Stacking", tema: "T4",
     sesion: ["T4 10 nov", "P4 12 nov (H4)"],
     porque: R`Combina varios modelos aprendiendo de los datos cuánto debe pesar cada uno, en lugar de fijar los pesos de antemano como en el voting.`,
     idea: R`Ajusta un segundo modelo, el metamodelo, que usa como predictores las predicciones de los modelos base.`,
@@ -1112,7 +1121,7 @@ const ESTIMADORES = [
     materiales: ["plan"] },
 
   /* ---------- Tema 5 ---------- */
-  { id: "svr", fam: "f_svm", label: "SVR (regresión)", tema: "T5",
+  { id: "svr", tarea: ["reg"], fam: "f_svm", label: "SVR (regresión)", tema: "T5",
     sesion: ["T5 17 nov", "P5 19 nov (E3)"],
     porque: R`Ajusta una función ignorando los errores pequeños, los que quedan dentro de una tolerancia elegida, y con un núcleo puede ajustar relaciones no lineales sin construir nuevos predictores.`,
     idea: R`Busca la función más plana posible que deje la mayoría de las observaciones dentro de un tubo de anchura \(\pm\varepsilon\) alrededor de ella. Solo cuentan los errores que salen del tubo.`,
@@ -1141,7 +1150,7 @@ const ESTIMADORES = [
     slides: [["t5", "una-recta-no-basta", "Una recta no basta"], ["t5", "predicción-con-núcleo-rbf", "Predicción con núcleo RBF"], ["t5", "el-truco-del-núcleo", "El truco del núcleo"]],
     vocab: ["vectores", "nucleo", "estandarizar"],
     materiales: ["plan"] },
-  { id: "svc", fam: "f_svm", label: "SVC (clasificación)", tema: "T5",
+  { id: "svc", tarea: ["clas"], fam: "f_svm", label: "SVC (clasificación)", tema: "T5",
     sesion: ["T5 17 nov", "P5 19 nov (E3)"],
     porque: R`Clasifica fijándose solo en las observaciones difíciles, las que quedan cerca de la frontera o en el lado equivocado, y con un núcleo puede trazar fronteras curvas.`,
     idea: R`Calcula una puntuación \(f(x)\) y asigna la clase positiva si \(f(x)>0\). Busca la frontera con el margen más ancho, y admite con un coste algunas observaciones dentro del margen o en el lado equivocado.`,
@@ -1172,7 +1181,7 @@ const ESTIMADORES = [
     materiales: ["plan"] },
 
   /* ---------- Tema 6 ---------- */
-  { id: "mlp", fam: "f_nn", label: "Perceptrón multicapa (MLP)", tema: "T6", pendiente: true,
+  { id: "mlp", tarea: ["reg", "clas"], fam: "f_nn", label: "Perceptrón multicapa (MLP)", tema: "T6", pendiente: true,
     sesion: ["T6 24 nov", "P6 26 nov", "T6 1 dic", "P6 3 dic (E4)"],
     porque: R`Aprende por sí mismo transformaciones no lineales de los predictores. Encadena capas de funciones sencillas y, con suficientes neuronas, puede representar relaciones muy complejas. Es la base del aprendizaje profundo.`,
     idea: R`Cada neurona calcula una combinación lineal de sus entradas y le aplica una función de activación no lineal. Las neuronas se organizan en capas, y la salida de una capa es la entrada de la siguiente.`,
@@ -1206,7 +1215,7 @@ const ESTIMADORES = [
     materiales: ["plan"] },
 
   /* ---------- Tema 7 ---------- */
-  { id: "doubleml", fam: "f_causal", label: "DoubleML", tema: "T7", pendiente: true,
+  { id: "doubleml", tarea: [], fam: "f_causal", label: "DoubleML", tema: "T7", pendiente: true,
     sesion: ["P7 10 dic (E5)", "T7 15 dic"],
     porque: R`Responde a una pregunta distinta de la predicción: cuánto cambia la respuesta por efecto de una intervención, como una campaña de retención. Usa modelos de aprendizaje automático como herramienta dentro de esa estimación.`,
     idea: R`Estima el efecto causal de una intervención combinando modelos de aprendizaje automático con dos técnicas, la ortogonalización y el cross-fitting.`,
@@ -1245,7 +1254,21 @@ ESTIMADORES.forEach(e => {
 });
 // Profundidad de cada estimador según la relación «extiende» (base)
 ESTIMADORES.forEach(e => { let d = 0, b = e.base; while (b) { d++; b = NODES.get(b).base; } e.depth = d; e.variants = ESTIMADORES.filter(o => o.base === e.id).map(o => o.id); });
-ESTIMADORES.forEach(e => e.links.forEach(([d, why, sl]) => NODES.get(d).back.push([e.id, why, sl])));
+// Decisiones universales: se vinculan a todos los estimadores de su alcance.
+// Si el estimador ya tiene un vínculo específico con esa decisión, se conserva el específico.
+const ALCANCE = {
+  todos: { test: e => e.tarea.length > 0, etiqueta: "Todos los modelos predictivos" },
+  regresion: { test: e => e.tarea.includes("reg"), etiqueta: "Todos los modelos de regresión" },
+  clasificacion: { test: e => e.tarea.includes("clas"), etiqueta: "Todos los modelos de clasificación" }
+};
+const ORDEN_DEC = Object.fromEntries(DECISIONES.map((d, i) => [d.id, i]));
+ESTIMADORES.forEach(e => {
+  DECISIONES.filter(d => d.alcance && ALCANCE[d.alcance] && ALCANCE[d.alcance].test(e)).forEach(d => {
+    if (!e.links.some(l => l[0] === d.id)) e.links.push([d.id, d.generico, null, true]);
+  });
+  e.links.sort((a, b) => ORDEN_DEC[a[0]] - ORDEN_DEC[b[0]]);
+});
+ESTIMADORES.forEach(e => e.links.forEach(([d, why, sl, gen]) => NODES.get(d).back.push([e.id, why, sl, !!gen])));
 // Comprobación de referencias: escribe un error en la consola si falta alguna
 (function validar() {
   const err = m => console.error("Mapa TAP: " + m);
@@ -1258,7 +1281,10 @@ ESTIMADORES.forEach(e => e.links.forEach(([d, why, sl]) => NODES.get(d).back.pus
   ESTIMADORES.forEach(e => {
     if (e.base && (!NODES.has(e.base) || NODES.get(e.base).fam !== e.fam)) err(`base «${e.base}» no válida en ${e.id}`);
     e.links.forEach(([d, , sl]) => { if (!NODES.has(d)) err(`decisión «${d}» desconocida en ${e.id}`); if (sl) slide(sl, e.id); });
-    ["porque", "idea", "modelo", "peculiar", "sklearn", "hp", "links"].forEach(k => { if (e[k] === undefined) err(`falta «${k}» en ${e.id}`); });
+    ["tarea", "porque", "idea", "modelo", "peculiar", "sklearn", "hp", "links"].forEach(k => { if (e[k] === undefined) err(`falta «${k}» en ${e.id}`); });
+  });
+  DECISIONES.forEach(d => {
+    if (d.alcance && (!ALCANCE[d.alcance] || !d.generico)) err(`alcance o motivo genérico no válido en ${d.id}`);
   });
 })();
 
@@ -1292,7 +1318,8 @@ function makeNode(n) {
   el.setAttribute("aria-label", label);
   const txt = document.createElement("span");
   txt.className = "txt";
-  txt.innerHTML = `<span class="lbl">${n.label}</span>` + (n.sub ? `<span class="sub">${n.sub}</span>` : "");
+  txt.innerHTML = `<span class="lbl">${n.label}</span>` + (n.sub ? `<span class="sub">${n.sub}</span>` : "") +
+    (n.alcance ? `<span class="univ-tag">${ALCANCE[n.alcance].etiqueta}</span>` : "");
   el.appendChild(txt);
   if (n.type === "estimador") {
     const t = document.createElement("span");
@@ -1462,12 +1489,12 @@ function drawEdges() {
         if (state.open[f.id]) {
           f.children.forEach(cid => {
             const e = NODES.get(cid), p = pos.get(cid);
-            e.links.forEach(([did]) => { const q = pos.get(did); add(pathH(p.x + p.w, mid(p), q.x, mid(q)), "xlink", { e: cid, d: did }); });
+            e.links.forEach(([did, , , gen]) => { const q = pos.get(did); add(pathH(p.x + p.w, mid(p), q.x, mid(q)), gen ? "xlink univ" : "xlink", { e: cid, d: did }); });
           });
         } else {
-          const seen = new Set();
-          f.children.forEach(cid => NODES.get(cid).links.forEach(([did]) => seen.add(did)));
-          seen.forEach(did => { const q = pos.get(did); add(pathH(fp.x + fp.w, mid(fp), q.x, mid(q)), "xlink agg", { f: f.id, d: did, e: f.children.join(" ") }); });
+          const seen = new Map(); // decisión → ¿todos sus vínculos son genéricos?
+          f.children.forEach(cid => NODES.get(cid).links.forEach(([did, , , gen]) => seen.set(did, (seen.has(did) ? seen.get(did) : true) && !!gen)));
+          seen.forEach((allGen, did) => { const q = pos.get(did); add(pathH(fp.x + fp.w, mid(fp), q.x, mid(q)), allGen ? "xlink agg univ" : "xlink agg", { f: f.id, d: did, e: f.children.join(" ") }); });
         }
       });
     }
@@ -1565,12 +1592,15 @@ function openPanel(id) {
         n.args.map(r => `<tr><td class="arg"><code class="nw">${r[0]}</code></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>`;
     }
     b += `<h3>Decisiones vinculadas</h3><ul class="links">` +
-      n.links.map(([d, why, sl]) => `<li>${chip(d)}<span class="reason">${why}${sl ? " " + slideLink(sl, "inl") : ""}</span></li>`).join("") + `</ul>`;
+      n.links.map(([d, why, sl, gen]) => `<li>${chip(d)}${gen ? `<span class="tag-com">común a todos</span>` : ""}<span class="reason">${why}${sl ? " " + slideLink(sl, "inl") : ""}</span></li>`).join("") + `</ul>`;
   }
   if (n.puntos) b += `<h3>${n.type === "objetivo" ? "Ideas clave" : "Qué decidir y cómo"}</h3><ul>` + n.puntos.map(p => `<li>${p}</li>`).join("") + `</ul>`;
   if (n.type === "decision") {
+    const esp = n.back.filter(r => !r[3]), gen = n.back.filter(r => r[3]);
+    if (n.alcance) b += `<p class="univ-note"><b>${ALCANCE[n.alcance].etiqueta}.</b> Esta decisión se aplica a todos los estimadores de su alcance (${n.back.length}). Abajo se detallan los que tienen un motivo específico.</p>`;
     b += `<h3>Estimadores vinculados (${n.back.length})</h3><ul class="links">` +
-      n.back.map(([e, why, sl]) => `<li>${chip(e, "est")}<span class="reason">${why}${sl ? " " + slideLink(sl, "inl") : ""}</span></li>`).join("") + `</ul>`;
+      esp.map(([e, why, sl]) => `<li>${chip(e, "est")}<span class="reason">${why}${sl ? " " + slideLink(sl, "inl") : ""}</span></li>`).join("") + `</ul>`;
+    if (gen.length) b += `<p class="reason">${n.generico}</p><p>` + gen.map(([e]) => chip(e, "est")).join("") + `</p>`;
     if (n.id === "d_hiper") {
       b += `<h3>Hiperparámetros de cada estimador</h3><div class="tw"><table class="hp"><thead><tr><th>Estimador</th><th>Hiperparámetros (argumento)</th></tr></thead><tbody>` +
         ESTIMADORES.filter(e => e.hp.length).map(e => `<tr><td>${chip(e.id, "est")}</td><td>${e.hp.map(r => `${r[0]} (${r[1]})`).join("<br>")}</td></tr>`).join("") + `</tbody></table></div>`;

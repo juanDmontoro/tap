@@ -46,7 +46,8 @@ Al final se recogen los errores detectados en la primera versión, como ejemplos
 ### 2.3 Qué no se sube al repositorio
 
 - Los `.qmd` no publicados, sus textos extraídos y cualquier archivo de trabajo deben guardarse fuera del repositorio, en un directorio temporal. No deben añadirse a ningún commit.
-- En `mapa/` solo viven `mapa_mental_tap.html`, `README.md` y este documento.
+- En `mapa/` solo viven `mapa_mental_tap.html`, `README.md`, este documento y `REGISTRO.md`.
+- `REGISTRO.md` recoge las decisiones tomadas en este mapa con su motivo, los pendientes y el historial de versiones. Antes de cambiar algo, hay que leerlo para no deshacer una decisión deliberada, y al terminar una iteración hay que actualizarlo.
 
 ## 3. Inventario: qué es un nodo
 
@@ -97,6 +98,7 @@ Cada estimador debe tener estos campos, que el panel muestra en este orden:
 | `links` | «Decisiones vinculadas» | Vínculos con las decisiones transversales (sección 5). |
 | `slides` | «Para verlo en las slides» | Enlaces a las slides que muestran las figuras o ejemplos clave (sección 8). |
 | `vocab` | «Vocabulario» | Términos técnicos que usa la ficha y que un estudiante nuevo puede no conocer. Cada término se define una vez en el diccionario `VOCAB`. |
+| `tarea` | (no se muestra) | `["reg"]`, `["clas"]` o ambas, según el estimador se use en regresión, en clasificación o en las dos. Vacía si el estimador no predice (en TAP, DoubleML). Decide a qué decisiones universales se vincula (5.3). |
 | `sesion`, `tema` | Cabecera | Sesiones de teoría y práctica donde se ve el estimador, tomadas de la planificación. |
 | `materiales` | «Materiales del tema» | Enlaces a los decks y a la página de materiales. |
 
@@ -132,7 +134,16 @@ El nodo «Decisiones de aprendizaje supervisado» debe incluir al menos estas de
 - Cada vínculo es `[id de la decisión, motivo, slide opcional]`.
 - El motivo debe explicar en qué afecta esa decisión a ese estimador concreto. No vale una frase genérica que serviría para cualquier estimador.
 - Si el motivo se refiere a una figura, una simulación o un ejemplo de las slides, el vínculo debe llevar el enlace a esa slide. No se describe la figura con palabras que solo entiende quien la vio («el haz de curvas», «el rombo»).
-- Un estimador se vincula a una decisión solo si los materiales tratan esa relación.
+- En las decisiones específicas, un estimador se vincula a una decisión solo si los materiales tratan esa relación.
+- En las decisiones universales (5.3), el vínculo existe siempre. Solo se escribe a mano cuando los materiales dan un motivo específico para ese estimador.
+
+### 5.3 Decisiones universales y específicas
+
+- Una decisión es **universal** si se aplica a todo estimador de su alcance, aunque los materiales no lo digan para cada uno. Si no se vinculara a todos, el mapa sugeriría que algunos estimadores no la necesitan. En TAP son universales la partición de los datos y la validación cruzada (alcance `"todos"`: todos los modelos predictivos), las métricas de regresión (alcance `"regresion"`) y las métricas de clasificación (alcance `"clasificacion"`).
+- Una decisión universal declara `alcance` y `generico`, que es el motivo que se muestra en los estimadores sin vínculo específico. El código crea esos vínculos a partir del campo `tarea` de cada estimador. Si el estimador ya tiene un vínculo escrito a mano con esa decisión, se conserva el escrito a mano.
+- Los vínculos genéricos no se dibujan con el mapa en reposo, para no llenarlo de líneas. Aparecen al seleccionar o señalar el estimador o la decisión. El nodo de la decisión lleva una etiqueta con su alcance («Todos los modelos predictivos»).
+- Una decisión es **específica** si solo afecta a algunos estimadores: preprocesado, clases desequilibradas, interpretación, minimizar una pérdida, equilibrio sesgo-varianza y selección de hiperparámetros. Sus vínculos se escriben a mano, siempre con un motivo concreto.
+- Para decidir si una decisión nueva es universal hay que preguntarse si un estudiante podría aplicar correctamente cualquier estimador del alcance sin tenerla en cuenta. Si la respuesta es no, es universal.
 
 ## 6. Redacción
 
@@ -252,3 +263,4 @@ Estos errores se corrigieron y sirven como ejemplos de lo que hay que evitar:
 | No se indicaba la clase ni el módulo | Faltaba `from sklearn.linear_model import LinearRegression` | 7.1 |
 | Panel demasiado estrecho | `LinearRegression()` partido en tres líneas | 9 |
 | Variantes presentadas como modelos independientes | La regresión polinómica aparecía al mismo nivel que MCO | 3.4 |
+| Decisión universal con vínculos incompletos | La partición en entrenamiento, validación y test solo se unía a 6 de 22 modelos predictivos | 5.3 |
