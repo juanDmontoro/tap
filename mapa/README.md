@@ -26,9 +26,11 @@ Para abrir el iframe directamente en un nodo, añade el ancla a la URL, por ejem
 | Tipo | Identificadores |
 |:--|:--|
 | Objetivo | `objetivo` |
-| Estimadores | `nulo`, `mco`, `poli`, `ridge`, `lasso`, `enet`, `mpl`, `logit`, `multinomial`, `gamma`, `poisson`, `arbol_reg`, `arbol_clas`, `bagging`, `rf`, `gb`, `xgb`, `voting`, `stacking`, `svm`, `mlp`, `doubleml` |
+| Estimadores | `nulo`, `mco`, `poli`, `ridge`, `lasso`, `enet`, `mpl`, `logit`, `multinomial`, `gamma`, `poisson`, `arbol_reg`, `arbol_clas`, `bagging`, `rf`, `gb`, `xgb`, `voting`, `stacking`, `svr`, `svc`, `mlp`, `doubleml` |
 | Decisiones | `decisiones`, `d_sesgo`, `d_hiper`, `d_cv`, `d_part`, `d_prep`, `d_train`, `d_mreg`, `d_mclas`, `d_deseq`, `d_interp` |
 
 ## Mantenimiento
 
-El contenido está en el bloque `CONTENIDO` del `<script>`: `ROOT`, `FAMILIAS`, `DECISIONES` y `ESTIMADORES`. Cada estimador declara sus vínculos con las decisiones en `links` (`[id de la decisión, motivo]`); el mapa, los resaltados y los paneles de las decisiones se generan a partir de ahí. Las fichas marcadas con `pendiente: true` corresponden a temas sin deck publicado y deben revisarse cuando se publiquen (boosting, XGBoost, voting y stacking del tema 4; temas 5, 6 y 7).
+Las reglas para elaborar, ampliar o rehacer el mapa están en [`DIRECTRICES.md`](DIRECTRICES.md): fuentes, inventario de estimadores, estructura de cada ficha, redacción, tablas de scikit-learn, enlaces a slides, diseño y verificación. Sirven también para crear el mapa de otra asignatura.
+
+El contenido está en el bloque `CONTENIDO` del `<script>` (`DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES` y `ESTIMADORES`). Cuando se publique un deck que ahora figura como pendiente (boosting, combinar e interpretar, SVM), basta con poner su ruta en `DECKS`: los enlaces a sus slides se activan solos. Las fichas con `pendiente: true` (redes neuronales y DoubleML) se revisan cuando haya deck.
