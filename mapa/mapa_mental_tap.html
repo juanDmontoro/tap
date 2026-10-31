@@ -259,6 +259,59 @@ table.hp tr:nth-child(even) td { background: #fafbfd; }
 .simbox { margin-top: 18px; padding: 10px; border: 1px dashed var(--tap-gray); border-radius: 8px; background: var(--tap-cream); font-size: 13.5px; color: #5a5f64; }
 .simbox button { margin-right: 8px; font-size: 14px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--tap-gray); background: #fff; color: var(--tap-gray); }
 
+/* ---------- Comparador ---------- */
+:root { --cmp-a: var(--tap-navy); --cmp-b: #3f7a5e; --cmp-b-soft: var(--sage-soft); --cmp-a-soft: var(--blue-soft); }
+body.cmp-open { --panel-w: clamp(600px, 55vw, 1040px); }
+.legend .cmp-hint, body.cmp-mode .legend .hint:not(.cmp-hint) { display: none; }
+body.panel-open .legend { max-width: calc(100vw - var(--panel-w) - 84px); }
+body.cmp-mode .legend .cmp-hint { display: inline-flex; white-space: normal; }
+.node .ck {
+  display: none; position: absolute; left: -12px; top: 50%; margin-top: -11px; width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--tap-gray); background: #fff; color: #fff; font-size: 12px; font-weight: 700; line-height: 18px; text-align: center;
+}
+body.cmp-mode .node .ck { display: block; }
+body.cmp-mode .node.cmpA .ck { background: var(--cmp-a); border-color: var(--cmp-a); }
+body.cmp-mode .node.cmpB .ck { background: var(--cmp-b); border-color: var(--cmp-b); }
+.node.cmpA .ck::after { content: "A"; }
+.node.cmpB .ck::after { content: "B"; }
+body.cmp-mode .node.cmpA { box-shadow: 0 0 0 3px var(--cmp-a), 0 6px 16px rgba(31,58,95,.25); }
+body.cmp-mode .node.cmpB { box-shadow: 0 0 0 3px var(--cmp-b), 0 6px 16px rgba(31,58,95,.25); }
+body.cmp-mode .node.nocmp { opacity: .4; cursor: not-allowed; }
+.cmp-go { margin-top: 8px; font: inherit; font-size: 13.5px; padding: 4px 11px; border-radius: 6px; border: 1px solid var(--tap-blue); background: #fff; color: var(--tap-blue); cursor: pointer; }
+.cmp-go:hover { background: var(--blue-soft); }
+.cmp-sel { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+.cmp-sel label { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; min-width: 0; }
+.cmp-sel select { flex: 1 1 auto; min-width: 0; height: 32px; font: inherit; font-size: 14px; border-radius: 6px; border: 1px solid var(--border); background: #fff; color: var(--text); padding: 0 6px; }
+.dot { flex: 0 0 auto; display: inline-block; width: 20px; height: 20px; border-radius: 50%; color: #fff; font-size: 11.5px; font-weight: 700; line-height: 20px; text-align: center; }
+.dot.a { background: var(--cmp-a); } .dot.b { background: var(--cmp-b); }
+.cmp-intro { font-size: 14.5px; }
+.resumen { background: var(--tap-light); border-radius: 8px; padding: 2px 14px 8px; margin: 12px 0; }
+.resumen h3 { border-bottom: 0; margin-top: 10px; }
+.resumen ul { padding-left: 18px; }
+.cmp-head {
+  position: sticky; top: 0; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  background: var(--surface); padding: 8px 0 6px; margin-top: 10px; border-bottom: 1px solid var(--border);
+}
+.cmp-head div { display: flex; gap: 6px; align-items: center; font-weight: 700; color: var(--tap-navy); font-size: 14px; min-width: 0; }
+.cmp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cmp-row .cell { min-width: 0; font-size: 14px; border-top: 3px solid var(--cmp-a-soft); padding-top: 4px; }
+.cmp-row .cell.b { border-top-color: var(--cmp-b-soft); }
+.cmp-row .cell p { margin: 4px 0; }
+.cmp-row .cell ul { padding-left: 16px; margin: 4px 0; }
+.cmp-row .who { display: none; }
+.cmp-row .vacio { color: var(--tap-gray); font-style: italic; }
+table.niv { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 6px 0; }
+table.niv th, table.niv td { text-align: left; padding: 6px 6px; border-top: 1px solid #e6ecf2; vertical-align: middle; }
+table.niv thead th { border-top: 0; color: var(--tap-navy); }
+table.niv td.d { font-weight: 600; color: var(--tap-navy); white-space: nowrap; }
+.meter { display: inline-flex; gap: 2px; vertical-align: middle; margin-right: 6px; }
+.meter i { display: inline-block; width: 13px; height: 10px; border-radius: 2px; background: #e3e8ee; }
+.meter.a i.on { background: var(--cmp-a); } .meter.b i.on { background: var(--cmp-b); }
+.niv-txt { font-size: 13px; color: #4a4f55; }
+.cmp-dec h4 { font-size: 13.5px; margin: 10px 0 4px; color: var(--tap-navy); }
+#outline li button.cmpA { box-shadow: inset 4px 0 0 var(--cmp-a); background: var(--cmp-a-soft); }
+#outline li button.cmpB { box-shadow: inset 4px 0 0 var(--cmp-b); background: var(--cmp-b-soft); }
+
 /* ---------- Vista en lista ---------- */
 #outline {
   position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0; overflow-y: auto; display: none;
@@ -266,6 +319,7 @@ table.hp tr:nth-child(even) td { background: #fafbfd; }
 }
 body.list-mode #outline { display: block; }
 body.list-mode #viewport, body.list-mode .legend, body.list-mode .zoom { display: none; }
+body.panel-open #outline { right: var(--panel-w); }
 #outline .wrap { max-width: 860px; margin: 0 auto; }
 #outline details { background: #fff; border: 1px solid var(--border); border-radius: 8px; margin: 8px 0; }
 #outline summary { padding: 10px 12px; cursor: pointer; font-weight: 600; color: #fff; border-radius: 7px; list-style-position: inside; }
@@ -297,6 +351,12 @@ body.list-mode #viewport, body.list-mode .legend, body.list-mode .zoom { display
     border-radius: 14px 14px 0 0; transform: translateY(105%); box-shadow: 0 -8px 24px rgba(31,58,95,.18);
   }
   body.panel-open .zoom { right: 12px; bottom: calc(64vh + 10px); }
+  body.cmp-open { --panel-w: 100vw; }
+  body.panel-open #outline { right: 0; padding-bottom: calc(64vh + 20px); }
+  .cmp-sel { grid-template-columns: 1fr; }
+  .cmp-head { display: none; }
+  .cmp-row { grid-template-columns: 1fr; gap: 6px; }
+  .cmp-row .who { display: flex; gap: 6px; align-items: center; font-weight: 700; font-size: 13px; color: var(--tap-navy); margin-bottom: 2px; }
   .legend { font-size: 11.5px; padding: 6px 8px; gap: 4px 10px; right: 60px; }
   .legend .hint { display: none; }
   body.panel-open .legend { display: none; }
@@ -315,6 +375,7 @@ body.list-mode #viewport, body.list-mode .legend, body.list-mode .zoom { display
   <div class="tools">
     <button class="tbtn wide" id="expandAll" type="button" title="Desplegar todas las ramas">Desplegar</button>
     <button class="tbtn wide" id="collapseAll" type="button" title="Plegar las ramas de estimadores">Plegar</button>
+    <button class="tbtn" id="cmpBtn" type="button" aria-pressed="false" title="Comparar dos estimadores (C)">Comparar</button>
     <button class="tbtn" id="listBtn" type="button" aria-pressed="false" title="Alternar entre mapa y lista">Lista</button>
     <button class="tbtn icon" id="fsBtn" type="button" aria-pressed="false" title="Pantalla completa (F)" aria-label="Pantalla completa"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="fs-on" d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="fs-off" d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
@@ -334,6 +395,7 @@ body.list-mode #viewport, body.list-mode .legend, body.list-mode .zoom { display
   <span><i style="background:var(--tap-terracotta)"></i>Decisiones</span>
   <span><i style="border:1.5px dashed var(--tap-gray);background:#fff"></i>Tema por publicar</span>
   <span class="hint">Pulsa un estimador para ver sus vínculos. Arrastra para moverte; + y − acercan y alejan; F, pantalla completa.</span>
+  <span class="hint cmp-hint">Comparación: pulsa dos estimadores. Si ya hay dos, el nuevo sustituye al B.</span>
 </div>
 <div class="zoom">
   <button type="button" id="zin" aria-label="Acercar">+</button>
@@ -1240,6 +1302,41 @@ const ESTIMADORES = [
     materiales: ["pres", "plan"] }
 ];
 
+/* Niveles para el comparador. Resumen orientativo de la sección «Qué lo hace peculiar»
+   de cada ficha, en una escala de 0 a 4 (ver ESCALAS). Cada valor es [mínimo, máximo]:
+   un intervalo indica que el nivel depende de los hiperparámetros, y null, que depende de
+   los modelos que se combinan. Si cambia el texto de una ficha, hay que revisar su nivel.
+   DoubleML no se compara porque estima un efecto y no es un modelo predictivo. */
+const NIVELES = {
+  nulo:        { flex: [0, 0], interp: [4, 4], coste: [0, 0] },
+  mco:         { flex: [1, 1], interp: [3, 3], coste: [0, 0] },
+  poli:        { flex: [1, 4], interp: [1, 3], coste: [1, 1] },
+  ridge:       { flex: [0, 1], interp: [3, 3], coste: [1, 1] },
+  lasso:       { flex: [0, 1], interp: [3, 3], coste: [1, 1] },
+  enet:        { flex: [0, 1], interp: [3, 3], coste: [1, 1] },
+  mpl:         { flex: [1, 1], interp: [3, 3], coste: [0, 0] },
+  logit:       { flex: [1, 1], interp: [3, 3], coste: [1, 1] },
+  multinomial: { flex: [2, 2], interp: [2, 2], coste: [1, 1] },
+  gamma:       { flex: [1, 1], interp: [3, 3], coste: [1, 1] },
+  poisson:     { flex: [1, 1], interp: [3, 3], coste: [1, 1] },
+  arbol_reg:   { flex: [1, 4], interp: [1, 3], coste: [1, 1] },
+  arbol_clas:  { flex: [1, 4], interp: [1, 3], coste: [1, 1] },
+  bagging:     { flex: [3, 4], interp: [1, 1], coste: [2, 2] },
+  rf:          { flex: [3, 3], interp: [1, 1], coste: [2, 2] },
+  gb:          { flex: [3, 4], interp: [1, 1], coste: [3, 3] },
+  xgb:         { flex: [3, 4], interp: [1, 1], coste: [2, 2] },
+  voting:      { flex: null, interp: null, coste: null },
+  stacking:    { flex: null, interp: [1, 1], coste: null },
+  svr:         { flex: [1, 4], interp: [1, 3], coste: [1, 4] },
+  svc:         { flex: [1, 4], interp: [1, 3], coste: [1, 4] },
+  mlp:         { flex: [1, 4], interp: [1, 1], coste: [3, 3] }
+};
+const ESCALAS = {
+  flex: { titulo: "Flexibilidad", adj: "flexible", una: "una flexibilidad", la: "la flexibilidad", niv: ["ninguna", "baja", "media", "alta", "muy alta"] },
+  interp: { titulo: "Interpretabilidad", adj: "interpretable", una: "una interpretabilidad", la: "la interpretabilidad", niv: ["muy baja", "baja", "media", "alta", "muy alta"] },
+  coste: { titulo: "Coste computacional", adj: "costoso de ajustar", una: "un coste computacional", la: "el coste computacional", niv: ["muy bajo", "bajo", "medio", "alto", "muy alto"] }
+};
+
 /* =====================================================================
    ÍNDICES
    ===================================================================== */
@@ -1286,20 +1383,31 @@ ESTIMADORES.forEach(e => e.links.forEach(([d, why, sl, gen]) => NODES.get(d).bac
   DECISIONES.forEach(d => {
     if (d.alcance && (!ALCANCE[d.alcance] || !d.generico)) err(`alcance o motivo genérico no válido en ${d.id}`);
   });
+  ESTIMADORES.filter(e => e.tarea.length).forEach(e => {
+    const n = NIVELES[e.id];
+    if (!n) { err(`faltan los niveles del comparador en ${e.id}`); return; }
+    Object.keys(ESCALAS).forEach(k => {
+      const v = n[k];
+      if (v !== null && !(Array.isArray(v) && v.length === 2 && v[0] >= 0 && v[1] <= 4 && v[0] <= v[1])) err(`nivel «${k}» no válido en ${e.id}`);
+    });
+  });
 })();
 
 /* =====================================================================
    ESTADO
    ===================================================================== */
+const comparable = id => { const n = NODES.get(id); return !!n && n.type === "estimador" && n.tarea.length > 0; };
 const state = {
   open: { [ROOT.id]: true, [HUB.id]: true },
   sel: null, hover: null,
+  cmpMode: false, cmp: [null, null],
   view: { x: 0, y: 0, k: 1 },
   query: ""
 };
 FAMILIAS.forEach(f => state.open[f.id] = true);
 
 const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 const stage = $("#stage"), svg = $("#edges"), viewport = $("#viewport");
 const SVGNS = "http://www.w3.org/2000/svg";
 const isNarrow = () => window.matchMedia("(max-width: 760px)").matches;
@@ -1322,6 +1430,8 @@ function makeNode(n) {
     (n.alcance ? `<span class="univ-tag">${ALCANCE[n.alcance].etiqueta}</span>` : "");
   el.appendChild(txt);
   if (n.type === "estimador") {
+    if (comparable(n.id)) { const c = document.createElement("span"); c.className = "ck"; c.setAttribute("aria-hidden", "true"); el.appendChild(c); }
+    else el.classList.add("nocmp");
     const t = document.createElement("span");
     t.className = "tema"; t.textContent = n.tema; el.appendChild(t);
     const b = document.createElement("button");
@@ -1516,25 +1626,34 @@ function related(id) {
   else { NODES.forEach((_, k) => set.add(k)); }
   return set;
 }
-function applyFocus() {
+// Nodos que fijan el resaltado: el seleccionado (o el señalado) o, al comparar, los dos marcados.
+function focusIds() {
+  if (state.cmpMode) return state.cmp.filter(Boolean);
   const id = state.hover || state.sel;
-  const focus = id && NODES.get(id).type !== "objetivo";
-  document.body.classList.toggle("has-focus", !!focus);
-  const rel = focus ? related(id) : null;
+  return id && NODES.get(id).type !== "objetivo" ? [id] : [];
+}
+function applyFocus() {
+  const ids = focusIds(), focus = ids.length > 0;
+  document.body.classList.toggle("has-focus", focus);
+  const rel = new Set();
+  ids.forEach(id => related(id).forEach(k => rel.add(k)));
   els.forEach((el, k) => {
-    el.classList.toggle("sel", k === state.sel);
-    el.classList.toggle("rel", !!focus && k !== id && rel.has(k) && (NODES.get(k).type === "decision" || NODES.get(k).type === "estimador"));
-    el.classList.toggle("dimmed", !!focus && !rel.has(k));
+    el.classList.toggle("sel", !state.cmpMode && k === state.sel);
+    el.classList.toggle("cmpA", state.cmpMode && k === state.cmp[0]);
+    el.classList.toggle("cmpB", state.cmpMode && k === state.cmp[1]);
+    el.classList.toggle("rel", focus && !ids.includes(k) && rel.has(k) && (NODES.get(k).type === "decision" || NODES.get(k).type === "estimador"));
+    el.classList.toggle("dimmed", focus && !rel.has(k));
   });
   if (!focus) { svg.querySelectorAll(".xlink.hl").forEach(p => p.classList.remove("hl")); return; }
-  const n = NODES.get(id);
   svg.querySelectorAll(".xlink").forEach(p => {
-    let on = false;
     const es = (p.dataset.e || "").split(" ");
-    if (n.type === "estimador") on = es.includes(id);
-    else if (n.type === "decision") on = p.dataset.d === id;
-    else if (n.type === "familia") on = p.dataset.f === id || NODES.get(id).children.includes(p.dataset.e);
-    else if (n.type === "hub") on = true;
+    const on = ids.some(id => {
+      const n = NODES.get(id);
+      if (n.type === "estimador") return es.includes(id);
+      if (n.type === "decision") return p.dataset.d === id;
+      if (n.type === "familia") return p.dataset.f === id || n.children.includes(p.dataset.e);
+      return n.type === "hub";
+    });
     p.classList.toggle("hl", on);
   });
 }
@@ -1565,6 +1684,7 @@ function openPanel(id) {
   else if (n.tema) head += `<span class="badge">${n.tema.replace(/^T/, "Tema ")}</span>`;
   if (n.pendiente) head += `<span class="badge warn">Ficha provisional: tema por publicar</span>`;
   head += `</div>`;
+  if (comparable(id)) head += `<button type="button" class="cmp-go" data-cmp="${id}">Comparar con otro estimador</button>`;
   let b = "";
   if (n.type === "estimador") {
     if (n.base || n.variants.length) {
@@ -1619,12 +1739,198 @@ function openPanel(id) {
   $("#pbody").innerHTML = b;
   $("#pbody").scrollTop = 0;
   $("#pclose").addEventListener("click", closePanel);
+  document.body.classList.remove("cmp-open");
   document.body.classList.add("panel-open");
   renderMath($("#panel"));
 }
 function closePanel() {
-  document.body.classList.remove("panel-open");
+  if (state.cmpMode) leaveCompare();
+  document.body.classList.remove("panel-open", "cmp-open");
   select(null);
+}
+
+/* =====================================================================
+   COMPARADOR
+   Compara dos estimadores con los campos comunes de sus fichas. El resumen
+   se genera a partir de la relación «extiende», la tarea, los niveles de
+   NIVELES, los hiperparámetros y las decisiones vinculadas.
+   ===================================================================== */
+const TAREA = { reg: "regresión", clas: "clasificación" };
+const b_ = e => `<b>${e.label}</b>`;
+const plural = (k, uno, varios) => k === 1 ? `un ${uno}` : `${k} ${varios}`;
+function cadena(e) { const c = []; let x = e; while (x.base) { x = NODES.get(x.base); c.push(x); } return c; }
+function fraseRelacion(A, B) {
+  const ca = cadena(A), cb = cadena(B);
+  if (cb.includes(A)) return B.base === A.id ? `${b_(B)} es una variante de ${b_(A)}.` : `${b_(B)} deriva de ${b_(A)} a través de ${cb.slice(0, cb.indexOf(A)).map(b_).join(" y ")}.`;
+  if (ca.includes(B)) return A.base === B.id ? `${b_(A)} es una variante de ${b_(B)}.` : `${b_(A)} deriva de ${b_(B)} a través de ${ca.slice(0, ca.indexOf(B)).map(b_).join(" y ")}.`;
+  const comun = ca.find(x => cb.includes(x));
+  if (comun) return A.base === comun.id && B.base === comun.id ? `Los dos son variantes de ${b_(comun)}.` : `Los dos derivan de ${b_(comun)}.`;
+  if (A.fam === B.fam) return `Los dos pertenecen a la familia «${NODES.get(A.fam).label}».`;
+  return `Pertenecen a familias distintas: ${b_(A)} a «${NODES.get(A.fam).label}» y ${b_(B)} a «${NODES.get(B.fam).label}».`;
+}
+function fraseTarea(A, B) {
+  const t = e => e.tarea.map(k => TAREA[k]).join(" y ");
+  if (t(A) === t(B)) return `Los dos se usan en ${t(A)}.`;
+  const sinComun = !A.tarea.some(k => B.tarea.includes(k));
+  return `${b_(A)} se usa en ${t(A)}, y ${b_(B)}, en ${t(B)}.` + (sinComun ? ` Por eso se evalúan con métricas distintas.` : "");
+}
+const nivTxt = (k, v) => v === null ? "depende de los modelos que combina" : v[0] === v[1] ? ESCALAS[k].niv[v[0]] : `de ${ESCALAS[k].niv[v[0]]} a ${ESCALAS[k].niv[v[1]]}`;
+function fraseNivel(k, A, B) {
+  const s = ESCALAS[k], a = NIVELES[A.id][k], b = NIVELES[B.id][k];
+  if (a === null || b === null) {
+    if (a === null && b === null) return `En los dos, ${s.la} depende de los modelos que combinan.`;
+    return `En ${b_(a === null ? A : B)}, ${s.la} depende de los modelos que combina, así que en este punto no se compara.`;
+  }
+  if (a[0] === b[0] && a[1] === b[1]) return a[0] === a[1] ? `Los dos tienen ${s.una} ${s.niv[a[0]]}.` : `En los dos, ${s.la} va de ${s.niv[a[0]]} a ${s.niv[a[1]]}, según los hiperparámetros.`;
+  if (a[1] < b[0]) return `${b_(B)} es más ${s.adj} que ${b_(A)}.`;
+  if (b[1] < a[0]) return `${b_(A)} es más ${s.adj} que ${b_(B)}.`;
+  // Uno puede igualar al otro o superarlo. Si solo uno tiene intervalo, la frase lo toma como sujeto.
+  const masOMenos = (alto, bajo, va, vb) => {
+    if (va[0] < va[1] && vb[0] === vb[1]) return `Según sus hiperparámetros, ${b_(alto)} puede ser igual de ${s.adj} que ${b_(bajo)} o más.`;
+    if (vb[0] < vb[1] && va[0] === va[1]) return `Según sus hiperparámetros, ${b_(bajo)} puede ser igual de ${s.adj} que ${b_(alto)} o menos.`;
+    return `${b_(alto)} es igual de ${s.adj} que ${b_(bajo)} o más, según los hiperparámetros.`;
+  };
+  if (a[0] <= b[0] && a[1] <= b[1]) return masOMenos(B, A, b, a);
+  if (b[0] <= a[0] && b[1] <= a[1]) return masOMenos(A, B, a, b);
+  const [ancho, estrecho] = a[1] - a[0] > b[1] - b[0] ? [A, B] : [B, A];
+  return `Según sus hiperparámetros, ${b_(ancho)} puede ser más ${s.adj} que ${b_(estrecho)} o menos.`;
+}
+const minus = s => s.charAt(0).toLowerCase() + s.slice(1);
+const lista = xs => xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " y " + xs[xs.length - 1];
+function fraseHp(A, B) {
+  const n = e => e.hp.length ? `tiene ${plural(e.hp.length, "hiperparámetro", "hiperparámetros")}` : "no tiene hiperparámetros";
+  let f = A.hp.length === B.hp.length
+    ? (A.hp.length ? `Los dos tienen ${plural(A.hp.length, "hiperparámetro", "hiperparámetros")}.` : `Ninguno de los dos tiene hiperparámetros.`)
+    : `${b_(A)} ${n(A)}, y ${b_(B)} ${n(B)}.`;
+  const raiz = h => h.replace(/\s*\(.*\)\s*$/, "");
+  const comunes = A.hp.map(r => r[0]).filter(h => B.hp.some(r => raiz(r[0]) === raiz(h)));
+  if (comunes.length) f += comunes.length === 1 ? ` Comparten este hiperparámetro: ${minus(comunes[0])}.` : ` Comparten estos hiperparámetros: ${lista(comunes.map(minus))}.`;
+  return f;
+}
+function meter(cls, v) {
+  if (v === null) return "";
+  return `<span class="meter ${cls}" aria-hidden="true">` + [0, 1, 2, 3, 4].map(i => `<i class="${i >= v[0] && i <= v[1] ? "on" : ""}"></i>`).join("") + `</span>`;
+}
+function selector(slot) {
+  const cur = state.cmp[slot];
+  let h = `<label><span class="dot ${slot ? "b" : "a"}">${slot ? "B" : "A"}</span><select data-slot="${slot}" aria-label="Estimador ${slot ? "B" : "A"}"><option value="">Elige un estimador</option>`;
+  FAMILIAS.forEach(f => {
+    const ops = f.children.filter(comparable);
+    if (ops.length) h += `<optgroup label="${f.label}">` + ops.map(c => `<option value="${c}"${c === cur ? " selected" : ""}>${NODES.get(c).label}</option>`).join("") + `</optgroup>`;
+  });
+  return h + `</select></label>`;
+}
+function fila(titulo, A, B, f) {
+  const cell = (e, cls) => `<div class="cell ${cls}"><span class="who"><span class="dot ${cls}">${cls.toUpperCase()}</span>${e ? e.label : ""}</span>${e ? f(e) : `<p class="vacio">Elige un estimador.</p>`}</div>`;
+  return `<h3>${titulo}</h3><div class="cmp-row">${cell(A, "a")}${cell(B, "b")}</div>`;
+}
+function renderCompare() {
+  const [A, B] = state.cmp.map(id => id ? NODES.get(id) : null);
+  let head = `<div class="p-kind estimador">Comparación de estimadores</div>
+    <h2>${A && B ? `${A.label} y ${B.label}` : "Comparar dos estimadores"}</h2><button type="button" class="p-close" id="pclose" aria-label="Cerrar la comparación">×</button>
+    <div class="cmp-sel">${selector(0)}${selector(1)}</div>`;
+  let b = "";
+  if (!A || !B) {
+    b += `<p class="cmp-intro">Marca dos estimadores en el mapa o elígelos en las listas. Mientras la comparación está abierta, cada estimador que pulses en el mapa ocupa el hueco libre. Si ya hay dos, sustituye al B. Para quitar uno, vuelve a pulsarlo.</p>
+      <p class="note">El resumen compara la relación entre los dos modelos, la tarea, la flexibilidad, la interpretabilidad, el coste computacional, los hiperparámetros y las decisiones vinculadas. Debajo aparecen, en paralelo, las secciones comunes de sus fichas.</p>`;
+  }
+  if (A && B && A === B) b += `<p class="cmp-intro">Has elegido el mismo estimador en los dos huecos. Elige otro en B.</p>`;
+  if (A && B && A !== B) {
+    const pend = [A, B].filter(e => e.pendiente);
+    b += `<div class="resumen"><h3>Resumen</h3><ul>` +
+      [fraseRelacion(A, B), fraseTarea(A, B), ...Object.keys(ESCALAS).map(k => fraseNivel(k, A, B)), fraseHp(A, B)].map(f => `<li>${f}</li>`).join("") + `</ul>` +
+      (pend.length ? `<p class="note">La ficha de ${pend.map(b_).join(" y de ")} es provisional porque su tema está por publicar.</p>` : "") + `</div>`;
+    b += `<h3>Escala orientativa</h3><div class="tw"><table class="niv"><thead><tr><th></th><th><span class="dot a">A</span></th><th><span class="dot b">B</span></th></tr></thead><tbody>` +
+      Object.keys(ESCALAS).map(k => `<tr><td class="d">${ESCALAS[k].titulo}</td>` + [[A, "a"], [B, "b"]].map(([e, c]) => `<td>${meter(c, NIVELES[e.id][k])}<span class="niv-txt">${nivTxt(k, NIVELES[e.id][k])}</span></td>`).join("") + `</tr>`).join("") +
+      `</tbody></table></div><p class="note">Resume, en cinco niveles, la sección «Qué lo hace peculiar» de cada ficha. Un intervalo indica que el nivel depende de los hiperparámetros. El texto completo aparece más abajo.</p>`;
+  }
+  if (A || B) {
+    if (A && B && A !== B) b += `<div class="cmp-head"><div><span class="dot a">A</span>${A.label}</div><div><span class="dot b">B</span>${B.label}</div></div>`;
+    const X = A, Y = A === B ? null : B;
+    b += fila("Por qué este modelo", X, Y, e => `<p>${e.porque}</p>`);
+    b += fila("Idea", X, Y, e => `<p>${e.idea}</p>`);
+    b += fila("Especificación", X, Y, e => (e.modelo.formula ? `<div class="formula">${e.modelo.formula}</div>` : "") + `<p>${e.modelo.texto}</p>`);
+    Object.keys(LAB).forEach(k => { b += fila(LAB[k], X, Y, e => `<p>${e.peculiar[k] || "—"}</p>`); });
+    b += fila("Hiperparámetros", X, Y, e => e.hp.length ? `<ul>` + e.hp.map(r => `<li>${r[0]}: ${r[1]}</li>`).join("") + `</ul>` : `<p>${e.sinHp || "No tiene hiperparámetros."}</p>`);
+    b += fila("En scikit-learn", X, Y, e => `<ul>` + e.sklearn.map(r => `<li><code>${r[0]}</code> <span class="note">(${r[1]})</span></li>`).join("") + `</ul>`);
+    b += fila("Tema y sesiones", X, Y, e => `<p>${(e.sesion || [e.tema]).join(" · ")}</p>`);
+    if (X && Y) {
+      const da = X.links.map(l => l[0]), db = Y.links.map(l => l[0]);
+      const grupo = (t, ids) => ids.length ? `<h4>${t}</h4><p>${ids.map(d => chip(d)).join("")}</p>` : "";
+      b += `<h3>Decisiones vinculadas</h3><div class="cmp-dec">` +
+        grupo("A los dos", da.filter(d => db.includes(d))) +
+        grupo(`Solo a ${X.label}`, da.filter(d => !db.includes(d))) +
+        grupo(`Solo a ${Y.label}`, db.filter(d => !da.includes(d))) +
+        `<p class="note">Cada decisión abre su panel, con el motivo del vínculo para cada estimador.</p></div>`;
+    }
+    b += `<h3>Fichas completas</h3><p>` + [X, Y].filter(Boolean).map(e => chip(e.id, "est")).join("") + `</p>`;
+  }
+  $("#phead").innerHTML = head;
+  $("#pbody").innerHTML = b;
+  $("#pclose").addEventListener("click", closePanel);
+  document.body.classList.add("panel-open", "cmp-open");
+  $$("#outline [data-go]").forEach(el => { el.classList.toggle("cmpA", el.dataset.go === state.cmp[0]); el.classList.toggle("cmpB", el.dataset.go === state.cmp[1]); });
+  renderMath($("#panel"));
+}
+function setHashCmp() {
+  try { history.replaceState(null, "", "#comparar=" + state.cmp.map(x => x || "").join(",")); } catch (e) { /* iframe sandbox */ }
+}
+function enterCompare(first) {
+  if (first && comparable(first) && !state.cmp.includes(first)) state.cmp = [first, null];
+  state.cmpMode = true; state.sel = null; state.hover = null;
+  document.body.classList.add("cmp-mode");
+  $("#cmpBtn").setAttribute("aria-pressed", "true");
+  renderCompare();
+  $("#pbody").scrollTop = 0;
+  applyFocus(); setHashCmp();
+  frameCompare();
+}
+// Sale del modo comparación sin cerrar el panel. Se conserva la pareja para volver a ella.
+function leaveCompare() {
+  state.cmpMode = false;
+  document.body.classList.remove("cmp-mode", "cmp-open");
+  $("#cmpBtn").setAttribute("aria-pressed", "false");
+  $$("#outline [data-go]").forEach(el => el.classList.remove("cmpA", "cmpB"));
+}
+function setSlot(slot, id) {
+  state.cmp[slot] = id || null;
+  const top = $("#pbody").scrollTop;
+  renderCompare();
+  $("#pbody").scrollTop = top;
+  applyFocus(); setHashCmp();
+}
+function toggleCmp(id) {
+  if (!comparable(id)) return;
+  const i = state.cmp.indexOf(id);
+  if (i >= 0) state.cmp[i] = null;
+  else state.cmp[state.cmp[0] ? 1 : 0] = id;
+  const top = $("#pbody").scrollTop;
+  renderCompare();
+  $("#pbody").scrollTop = state.cmp[0] && state.cmp[1] ? 0 : top;
+  applyFocus(); setHashCmp();
+}
+// Encuadra la columna de estimadores en el área que deja libre el panel, para poder marcarlos.
+function frameEstimadores() {
+  const ps = ESTIMADORES.filter(e => G.pos.has(e.id) && els.get(e.id).style.display !== "none").map(e => G.pos.get(e.id));
+  if (!ps.length) return;
+  const x1 = Math.min(...ps.map(p => p.x)) - 30, x2 = Math.max(...ps.map(p => p.x + p.w)) + 20, y1 = Math.min(...ps.map(p => p.y));
+  const { w } = visibleArea();
+  const k = Math.min(0.9, Math.max(0.45, w / (x2 - x1)));
+  state.view = { k, x: (w - (x2 - x1) * k) / 2 - x1 * k, y: 12 - y1 * k };
+  applyView();
+}
+// Muestra los estimadores elegidos: el mapa entero si cabe a escala legible; si no, el A.
+function frameCompare() {
+  const ids = state.cmp.filter(Boolean);
+  ids.forEach(id => state.open[NODES.get(id).fam] = true);
+  layout();
+  if (!ids.length) { frameEstimadores(); return; }
+  if (ids.every(inView) && state.view.k >= 0.45) return;
+  if (!isNarrow()) {
+    const { w } = visibleArea(), h = visibleArea().h - 16;
+    if (Math.min(w / G.W, h / G.H) >= 0.45) { fit(); return; }
+  }
+  centerOn(ids[0]);
 }
 function renderMath(el) {
   if (window.renderMathInElement) {
@@ -1637,6 +1943,7 @@ function setHash(id) {
   try { history.replaceState(null, "", id ? "#nodo=" + id : location.pathname + location.search); } catch (e) { /* iframe sandbox */ }
 }
 function select(id, opts = {}) {
+  if (id && state.cmpMode) leaveCompare();
   state.sel = id;
   if (id) {
     const n = NODES.get(id);
@@ -1765,6 +2072,7 @@ viewport.addEventListener("click", e => {
   if (tog) { toggle(tog.dataset.tog); return; }
   if (e.target.closest(".sim")) return;
   const node = e.target.closest(".node");
+  if (state.cmpMode) { if (node) toggleCmp(node.dataset.id); return; }
   if (node) { const id = node.dataset.id; if (state.sel === id) closePanel(); else select(id); return; }
   if (state.sel) closePanel();
 });
@@ -1775,10 +2083,10 @@ viewport.addEventListener("dblclick", e => {
 viewport.addEventListener("keydown", e => {
   const node = e.target.closest(".node");
   if (!node) return;
-  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(node.dataset.id); }
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (state.cmpMode) toggleCmp(node.dataset.id); else select(node.dataset.id); }
 });
 stage.addEventListener("pointerover", e => {
-  if (e.pointerType !== "mouse") return;
+  if (e.pointerType !== "mouse" || state.cmpMode) return;
   const node = e.target.closest(".node.estimador, .node.decision, .node.familia");
   const id = node ? node.dataset.id : null;
   if (id !== state.hover) { state.hover = id; applyFocus(); }
@@ -1800,21 +2108,32 @@ function toggle(id) {
    PANEL: navegación entre nodos
    ===================================================================== */
 $("#panel").addEventListener("click", e => {
+  const c = e.target.closest("[data-cmp]");
+  if (c) { enterCompare(c.dataset.cmp); return; }
   const go = e.target.closest("[data-go]");
   if (go) select(go.dataset.go, { center: true });
+});
+$("#panel").addEventListener("change", e => {
+  const s = e.target.closest("select[data-slot]");
+  if (s) { setSlot(+s.dataset.slot, s.value); frameCompare(); }
 });
 // Atajos al estilo de reveal.js: F pantalla completa, + y − acercar y alejar, 0 ajustar.
 document.addEventListener("keydown", e => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest("input, textarea")) return;
-  if (document.body.classList.contains("list-mode")) { if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); } return; }
+  if (document.body.classList.contains("list-mode")) {
+    if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
+    if (e.key === "c" || e.key === "C") { e.preventDefault(); toggleCompareMode(); }
+    return;
+  }
   const { w, h } = visibleArea();
   if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomAt(1.25, w / 2, h / 2); }
   else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomAt(0.8, w / 2, h / 2); }
   else if (e.key === "0") { e.preventDefault(); fit(); }
   else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
+  else if (e.key === "c" || e.key === "C") { e.preventDefault(); toggleCompareMode(); }
 });
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { if ($("#results").classList.contains("show")) hideResults(); else if (state.sel) closePanel(); }
+  if (e.key === "Escape") { if ($("#results").classList.contains("show")) hideResults(); else if (state.sel || state.cmpMode) closePanel(); }
 });
 
 /* =====================================================================
@@ -1903,6 +2222,7 @@ $("#outline").addEventListener("click", e => {
   const b = e.target.closest("[data-go]");
   if (!b) return;
   const n = NODES.get(b.dataset.go);
+  if (state.cmpMode) { toggleCmp(n.id); return; }
   state.sel = n.id; openPanel(n.id); setHash(n.id);
 });
 function toggleList(force) {
@@ -1913,6 +2233,8 @@ function toggleList(force) {
   if (!on) { layout(); if (state.sel) centerOn(state.sel); else fit(); }
 }
 $("#listBtn").addEventListener("click", () => toggleList());
+function toggleCompareMode() { if (state.cmpMode) closePanel(); else enterCompare(state.sel); }
+$("#cmpBtn").addEventListener("click", toggleCompareMode);
 
 /* =====================================================================
    BOTONES
@@ -1946,7 +2268,15 @@ $("#expandAll").addEventListener("click", () => { Object.keys(state.open).forEac
 $("#collapseAll").addEventListener("click", () => { FAMILIAS.forEach(f => state.open[f.id] = false); layout(); fit(); });
 
 let rT = null;
-window.addEventListener("resize", () => { clearTimeout(rT); rT = setTimeout(() => { layout(); fit(); }, 120); });
+window.addEventListener("resize", () => {
+  clearTimeout(rT);
+  rT = setTimeout(() => {
+    layout();
+    if (state.cmpMode) frameCompare();
+    else if (state.sel) frame(state.sel, true);
+    else fit({ readable: true });
+  }, 120);
+});
 
 /* =====================================================================
    INICIO
@@ -1954,6 +2284,8 @@ window.addEventListener("resize", () => { clearTimeout(rT); rT = setTimeout(() =
 layout();
 fit({ readable: true });
 (function fromHash() {
+  const c = /comparar=([\w-]*),?([\w-]*)/.exec(location.hash);
+  if (c) { state.cmp = [c[1], c[2]].map(id => comparable(id) ? id : null); enterCompare(); return; }
   const m = /nodo=([\w-]+)/.exec(location.hash);
   if (m && NODES.has(m[1])) select(m[1], { center: true });
 })();

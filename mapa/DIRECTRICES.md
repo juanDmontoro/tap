@@ -112,6 +112,17 @@ Cada estimador debe tener estos campos, que el panel muestra en este orden:
 
 Cada nodo de estimador debe llevar un botón «Simular» desactivado con `data-simulador="<id del estimador>"`. El panel repite el botón con el mismo atributo. No se implementan simuladores hasta que el profesor lo pida.
 
+### 4.4 Niveles para el comparador
+
+El comparador (sección 9) enfrenta dos estimadores con los campos comunes de sus fichas. Para el resumen, cada estimador predictivo tiene una entrada en `NIVELES` con tres dimensiones: flexibilidad (`flex`), interpretabilidad (`interp`) y coste computacional (`coste`).
+
+- Cada nivel resume la entrada correspondiente de «Qué lo hace peculiar». No se añade información que no esté en la ficha. Si la ficha dice «Baja», el nivel es 1 en la escala de `ESCALAS` (0 ninguna o muy baja, 1 baja, 2 media, 3 alta, 4 muy alta).
+- Un nivel es un intervalo `[mínimo, máximo]`. El mínimo y el máximo son distintos solo cuando la ficha dice que el nivel depende de un hiperparámetro (por ejemplo, el grado del polinomio o el núcleo de una SVM).
+- El valor `null` indica que el nivel depende de los modelos que se combinan (voting, stacking). En ese caso el resumen no compara esa dimensión.
+- Si cambia el texto de una entrada de «Qué lo hace peculiar», hay que revisar su nivel.
+- Un estimador que no predice (`tarea` vacía) no entra en el comparador.
+- Las frases del resumen se generan con reglas fijas a partir de la relación «extiende», `tarea`, `NIVELES`, `hp` y `links`. No se escribe texto a mano para cada pareja, porque con $n$ estimadores habría $n(n-1)/2$ parejas que mantener.
+
 ## 5. Decisiones transversales y vínculos
 
 ### 5.1 Decisiones mínimas
@@ -213,15 +224,16 @@ Estas reglas adaptan al castellano las reglas anti-IA del autor:
 
 - Paleta y tipografía de `tap_web.scss`: azul `#447099`, marino `#1F3A5F`, terracota `#E07A5F`, salvia `#81B29A`, gris `#6C757D`, crema `#F7F3EF` y fondo `#F2F5F8`.
 - Un color por tipo de nodo: marino para el objetivo, azul para familias y estimadores, y terracota para las decisiones. La salvia marca la selección y las coincidencias del buscador. El borde discontinuo marca las fichas provisionales.
-- El panel lateral ocupa el 40 % del ancho de la ventana, entre 440 px y 760 px. En pantallas de menos de 760 px de ancho, el panel se muestra como una hoja inferior a pantalla completa de ancho. Las tablas del panel no deben partir los nombres de clases ni de argumentos. Si no caben, la tabla se desplaza en horizontal.
+- El panel lateral ocupa el 40 % del ancho de la ventana, entre 460 px y 760 px. En pantallas de menos de 760 px de ancho, el panel se muestra como una hoja inferior a pantalla completa de ancho. Las tablas del panel no deben partir los nombres de clases ni de argumentos. Si no caben, la tabla se desplaza en horizontal.
 - Interacción: los nodos con hijos se pliegan y despliegan. Al pulsar un estimador se resaltan sus vínculos con las decisiones y se abre el panel. Hay buscador, vista en lista y enlaces directos `#nodo=<id>`.
+- Comparador: botón «Comparar» en la cabecera, tecla C y botón «Comparar con otro estimador» en cada ficha. Mientras está abierto, pulsar un estimador lo marca como A o B. Si ya hay dos, el nuevo sustituye al B. El panel de comparación ocupa el 55 % del ancho, entre 600 px y 1040 px, porque muestra dos columnas. Contiene el resumen (4.4), la escala orientativa, las secciones comunes de las fichas en paralelo y las decisiones vinculadas a los dos, solo a A y solo a B. El enlace directo es `#comparar=<id A>,<id B>`. A se marca en marino y B en salvia oscuro (`#3F7A5E`), que da más contraste que la salvia de la paleta.
 - Pantalla completa, como en reveal.js: botón en la cabecera y tecla F; se sale con F o Esc. Los atajos + y − acercan y alejan, y 0 ajusta el mapa a la pantalla. Dentro de un `<iframe>` hace falta el atributo `allowfullscreen`; si el navegador no lo permite, el botón abre el mapa en una pestaña nueva.
 
 ## 10. Implementación
 
 - El mapa es un único archivo HTML con el CSS y el JS en línea. La única dependencia externa permitida es KaTeX desde cdnjs, con versión fija. Si no carga, las fórmulas se ven como texto LaTeX y el resto funciona.
 - Debe funcionar dentro de un `<iframe>` (Moodle) y en GitHub Pages, sin `localStorage` obligatorio ni acceso a la ventana padre.
-- Todo el contenido está en el bloque `CONTENIDO` del `<script>`: `DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES` y `ESTIMADORES`. El mapa, los resaltados y los paneles se generan a partir de esos objetos. No se escribe contenido en el código de presentación.
+- Todo el contenido está en el bloque `CONTENIDO` del `<script>`: `DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES`, `ESTIMADORES`, `NIVELES` y `ESCALAS`. El mapa, los resaltados y los paneles se generan a partir de esos objetos. No se escribe contenido en el código de presentación.
 - Los textos con fórmulas usan ``String.raw`...` `` (alias `R`), para conservar las barras invertidas de LaTeX. Las fórmulas en línea van entre `\(` y `\)`, y las de bloque entre `\[` y `\]`.
 - `_quarto.yml` debe incluir `mapa/**` en `resources`, y `materiales.qmd` debe tener un botón `tap-btn` que abra el mapa.
 
@@ -233,11 +245,12 @@ Estas reglas adaptan al castellano las reglas anti-IA del autor:
 4. Comprobar que los ids de las slides de los decks publicados existen en el HTML.
 5. Buscar en el texto del mapa las palabras y estructuras prohibidas de la sección 6: «compromiso», «leer», «legible», «columna» (revisar cada caso), el nombre de los conjuntos de datos de los decks y « no … sino ».
 6. Comprobar que hay 1 botón «Simular» por estimador en el mapa.
+7. Generar el comparador para todas las parejas de estimadores predictivos y comprobar que no hay errores. Leer el resumen de varias parejas de familias distintas, de una variante con su modelo base y de dos variantes del mismo modelo, y comprobar que cada frase coincide con las fichas.
 
 ## 12. Adaptar el mapa a otra asignatura
 
 1. Leer las fuentes de la sección 2 de la nueva asignatura y hacer el inventario con las reglas de la sección 3.
-2. Sustituir el contenido de `DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES` y `ESTIMADORES`. El código de presentación no debe cambiar.
+2. Sustituir el contenido de `DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES`, `ESTIMADORES` y `NIVELES`. El código de presentación no debe cambiar.
 3. Revisar la lista de decisiones mínimas (5.1) y añadir las que la asignatura trate como transversales.
 4. Cambiar la paleta solo si la asignatura tiene otra hoja de estilo, manteniendo un color por tipo de nodo.
 5. Seguir la verificación de la sección 11.

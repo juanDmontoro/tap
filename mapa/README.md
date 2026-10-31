@@ -6,6 +6,7 @@
 - Se publica con la web del curso (`mapa/**` está en `resources` de `_quarto.yml`): <https://juandmontoro.github.io/tap/mapa/mapa_mental_tap.html>
 - Cada nodo de estimador lleva un botón **Simular** desactivado con `data-simulador="<id del estimador>"`, reservado para los simuladores de una fase posterior. El panel lateral repite el botón con el mismo atributo.
 - Se puede enlazar directamente a un nodo con `#nodo=<id>`, por ejemplo `mapa_mental_tap.html#nodo=lasso` o `#nodo=d_cv`.
+- El botón **Comparar** (o la tecla C) enfrenta dos estimadores: un resumen generado a partir de sus fichas, una escala orientativa de flexibilidad, interpretabilidad y coste, y las secciones comunes de las fichas en paralelo. Se puede enlazar directamente a una comparación con `#comparar=<id A>,<id B>`, por ejemplo `mapa_mental_tap.html#comparar=ridge,lasso`.
 
 ## Insertar en Moodle
 
