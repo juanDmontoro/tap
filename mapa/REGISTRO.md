@@ -31,7 +31,7 @@ Antes de cambiar el mapa hay que leer este archivo, para no deshacer una decisi�
 
 ## Pendientes
 
-- Añadir a `DECKS` la ruta de los decks cuando se publiquen: boosting (`t4b`, 3 nov), combinar e interpretar (`t4c`, 10 nov) y SVM (`t5`, 17 nov). Después hay que comprobar que los ids de sus slides coinciden con el HTML publicado (directrices, 8 y 11).
+- Añadir a `DECKS` la ruta de los decks cuando se publiquen: combinar e interpretar (`t4c`, 10 nov) y SVM (`t5`, 17 nov). Después hay que comprobar que los ids de sus slides coinciden con el HTML publicado (directrices, 8 y 11).
 - Revisar la ficha del perceptrón multicapa cuando se publique el deck del tema 6. Ahora se basa en un esquema didáctico y su fórmula de una capa oculta no aparece en los materiales.
 - Redactar la ficha de DoubleML cuando haya material del tema 7.
 - Implementar los simuladores que activarán los botones «Simular».
@@ -48,4 +48,5 @@ Antes de cambiar el mapa hay que leer este archivo, para no deshacer una decisi�
 | 31-10-2026 | `5a8a681` | Fichas reestructuradas, contenido de boosting, voting, stacking, interpretación y SVM (SVR y SVC), variantes sangradas, enlaces a slides, vocabulario, panel al 40 % y `DIRECTRICES.md`. |
 | 31-10-2026 | `1e5425b` | Pantalla completa y atajos de zoom. |
 | 31-10-2026 | `1fa6e8d` | Decisiones universales y este registro. |
-| 31-10-2026 | este commit | Comparador de dos estimadores, con enlace directo `#comparar=`. |
+| 31-10-2026 | `2d04040` | Comparador de dos estimadores, con enlace directo `#comparar=`. |
+| 02-11-2026 | este commit | Enlaces al deck de boosting (`t4b`), ya publicado. Los 13 ids de slide del mapa existen en `slides/04/04_boosting_sn.html`. |

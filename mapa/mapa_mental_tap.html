@@ -412,11 +412,11 @@ body.panel-open #outline { right: var(--panel-w); }
 "use strict";
 /* =====================================================================
    CONTENIDO
-   Fuentes: planificacion.qmd, materiales.qmd y los decks de slides/
-   (temas 1 a 4). Los temas 4 (boosting, voting, stacking), 5, 6 y 7
-   aún no tienen deck publicado: su ficha se limita a lo que dicen la
-   planificación, el deck de presentación y la tabla «Controlar la
-   complejidad» del tema 1.
+   Fuentes: planificacion.qmd, materiales.qmd y los decks de slides/.
+   Las fichas de voting, stacking, interpretación y SVM se basan en
+   decks facilitados por el profesor y aún no publicados; sus enlaces
+   se activan al poner la ruta del deck en DECKS. Las de MLP y DoubleML
+   son provisionales (ver mapa/REGISTRO.md).
    ===================================================================== */
 const R = String.raw;
 const BASE = "https://juandmontoro.github.io/tap/";
@@ -430,7 +430,7 @@ const DECKS = {
   t2c: { titulo: "Tema 2. Código esencial", url: "slides/02/semana_2/02_codigo_esencial_sn.html", fecha: "15 oct" },
   t3: { titulo: "Tema 3. GLM", url: "slides/03/03_glm_familias_sn.html", fecha: "20 oct" },
   t4a: { titulo: "Tema 4. Árboles y bosques", url: "slides/04/04_arboles_bosques_sn.html", fecha: "27 oct" },
-  t4b: { titulo: "Tema 4. Boosting", url: null, fecha: "3 nov" },
+  t4b: { titulo: "Tema 4. Boosting", url: "slides/04/04_boosting_sn.html", fecha: "3 nov" },
   t4c: { titulo: "Tema 4. Combinar e interpretar", url: null, fecha: "10 nov" },
   t5: { titulo: "Tema 5. SVM", url: null, fecha: "17 nov" },
   m1: { titulo: "Materiales del tema 1", url: "materiales.html#tema-1" },
