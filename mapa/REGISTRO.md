@@ -27,6 +27,11 @@ Antes de cambiar el mapa hay que leer este archivo, para no deshacer una decisi�
 | 31-10-2026 | Comparador de dos estimadores. El resumen se genera con reglas a partir de las fichas, sin texto escrito para cada pareja. | Petición del profesor. Con 22 estimadores predictivos hay 231 parejas, y un texto por pareja sería imposible de mantener. |
 | 31-10-2026 | Escala orientativa de 0 a 4 (`NIVELES`) para flexibilidad, interpretabilidad y coste, con intervalos cuando el nivel depende de los hiperparámetros. | Los decks no tienen una escala común, pero cada ficha califica esas tres dimensiones con una palabra («Baja», «Muy alta»). La escala resume esa palabra. Los casos sin palabra en la ficha se decidieron por comparación con los demás (ver Pendientes). |
 | 31-10-2026 | DoubleML no entra en el comparador. | No es un modelo predictivo, así que flexibilidad, métricas o coste no se comparan en los mismos términos. |
+| 02-11-2026 | Versión en R con selector de cuatro opciones (Python, tidymodels, caret y mlr3) en un único mapa, en lugar de un mapa de R aparte. | Decisión del profesor. Así el contenido conceptual no se duplica y una corrección vale para todas las versiones. |
+| 02-11-2026 | El código en R se toma de la documentación oficial de cada paquete y se comprueba ejecutándolo. | Decisión del profesor: los materiales del curso solo usan Python. |
+| 02-11-2026 | mlr3 en lugar de mlr. | mlr está superado por mlr3. |
+| 02-11-2026 | En tidymodels y mlr3, el gradient boosting usa xgboost. | parsnip no tiene motor para gbm y mlr3learners no incluye gbm. caret sí usa gbm (`method = "gbm"`). |
+| 02-11-2026 | Voting: tidymodels y caret no tienen función propia. El mapa indica que se promedian las predicciones y que `stacks` y `caretEnsemble()` corresponden al stacking. | `caretEnsemble()` y `blend_predictions()` estiman los pesos con un modelo. |
 | 31-10-2026 | Panel de comparación al 55 % del ancho (entre 600 y 1040 px). | Muestra dos columnas de texto. Al 40 %, cada columna se queda en unos 240 px a 1440 px de ancho. |
 
 ## Pendientes
@@ -35,6 +40,9 @@ Antes de cambiar el mapa hay que leer este archivo, para no deshacer una decisi�
 - Revisar la ficha del perceptrón multicapa cuando se publique el deck del tema 6. Ahora se basa en un esquema didáctico y su fórmula de una capa oculta no aparece en los materiales.
 - Redactar la ficha de DoubleML cuando haya material del tema 7.
 - Implementar los simuladores que activarán los botones «Simular».
+- Código en R: se comprobó con las versiones de conda-forge disponibles (R 4.1.3, parsnip 1.1.0, tune 1.1.1, recipes 1.0.6, caret 6.0-94, caretEnsemble 2.0.2, mlr3 0.16.0, mlr3learners 0.5.6, mlr3pipelines 0.5.0-1, mlr3tuning 0.18.0, glmnet 4.1-7, ranger 0.15.1, xgboost 1.7.4, kernlab 0.9-32). Conviene repasarlo con las versiones actuales de CRAN.
+  - El motor keras de parsnip 1.1 no admite `learn_rate`, y las versiones recientes pueden haber cambiado.
+  - Quedan sin comprobar porque no se pudieron instalar: `regr.glm` de mlr3extralearners (GLM Gamma en mlr3), el motor brulee de parsnip, `explain_tidymodels()` y `explain_mlr3()` de DALEXtra, y `predict_parts(type = "shap")` de DALEX.
 - Revisar los niveles de `NIVELES` (DIRECTRICES, 4.4). Hay dos grupos de casos dudosos:
   - Fichas sin una palabra que fije el nivel, en las que se asignó por comparación con las demás: el coste de Lasso, Elastic Net, bagging, random forest, gradient boosting, XGBoost, SVR, SVC y MLP; la flexibilidad del bagging y del logit multinomial (media, porque tiene un conjunto de coeficientes por clase); y la interpretabilidad del logit multinomial (media).
   - Fichas en las que el nivel se aparta de la palabra: la flexibilidad de los árboles y del MLP es «muy alta» en la ficha, pero se codifica de baja a muy alta porque la ficha dice que se controla con los hiperparámetros; la de XGBoost es «alta», y se codifica de alta a muy alta porque la ficha dice que la limitan sus hiperparámetros, como en el gradient boosting.
@@ -49,4 +57,5 @@ Antes de cambiar el mapa hay que leer este archivo, para no deshacer una decisi�
 | 31-10-2026 | `1e5425b` | Pantalla completa y atajos de zoom. |
 | 31-10-2026 | `1fa6e8d` | Decisiones universales y este registro. |
 | 31-10-2026 | `2d04040` | Comparador de dos estimadores, con enlace directo `#comparar=`. |
-| 02-11-2026 | este commit | Enlaces al deck de boosting (`t4b`), ya publicado. Los 13 ids de slide del mapa existen en `slides/04/04_boosting_sn.html`. |
+| 02-11-2026 | `d4b0432` | Enlaces al deck de boosting (`t4b`), ya publicado. Los 13 ids de slide del mapa existen en `slides/04/04_boosting_sn.html`. |
+| 02-11-2026 | este commit | Selector de infraestructura de código (Python, tidymodels, caret y mlr3), con `?infra=` en la URL. La versión Python no cambia. |

@@ -76,6 +76,13 @@ header.bar {
 .results .kind { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--tap-gray); white-space: nowrap; }
 .results .empty { padding: 8px; color: var(--tap-gray); font-size: 14px; }
 .tools { display: flex; gap: 6px; }
+.infra { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #fff; }
+.infra .sr { opacity: .85; }
+.infra select {
+  height: 34px; border-radius: 6px; border: 1px solid rgba(255,255,255,.55); background: var(--tap-navy); color: #fff;
+  font: inherit; font-size: 14px; padding: 0 6px; cursor: pointer;
+}
+.infra select:focus-visible { outline: 2px solid var(--tap-terracotta); outline-offset: 1px; }
 .tbtn {
   height: 34px; min-width: 34px; padding: 0 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.55);
   background: transparent; color: #fff; font-size: 14px; cursor: pointer; white-space: nowrap;
@@ -342,9 +349,11 @@ body.panel-open #outline { right: var(--panel-w); }
 @media (max-width: 760px) {
   :root { --header-h: 96px; --panel-w: 100vw; }
   header.bar { flex-wrap: wrap; height: var(--header-h); padding: 8px 10px; gap: 8px; align-content: center; }
-  .bar h1 { flex: 1 1 auto; font-size: 16px; }
+  .bar h1 { flex: 1 1 calc(100% - 210px); min-width: 0; font-size: 16px; }
   .bar h1 small { display: none; }
-  .search { order: 3; flex: 1 1 100%; max-width: none; margin: 0; }
+  .search { order: 3; flex: 1 1 60%; min-width: 0; max-width: none; margin: 0; }
+  .infra { order: 4; }
+  .infra .sr { display: none; }
   .tools .wide { display: none; }
   #panel {
     top: auto; left: 0; right: 0; width: 100%; height: 64vh; border-left: 0; border-top: 1px solid var(--border);
@@ -372,6 +381,16 @@ body.panel-open #outline { right: var(--panel-w); }
     <input id="q" type="search" placeholder="Buscar: lasso, AUC, poda, λ…" autocomplete="off" aria-label="Buscar en el mapa" aria-controls="results">
     <ul id="results" class="results" role="listbox" aria-label="Resultados"></ul>
   </div>
+  <label class="infra" title="Código de los ejemplos: Python o R"><span class="sr">Código</span>
+    <select id="infra" aria-label="Infraestructura de código">
+      <option value="py">Python</option>
+      <optgroup label="R">
+        <option value="tidymodels">tidymodels</option>
+        <option value="caret">caret</option>
+        <option value="mlr3">mlr3</option>
+      </optgroup>
+    </select>
+  </label>
   <div class="tools">
     <button class="tbtn wide" id="expandAll" type="button" title="Desplegar todas las ramas">Desplegar</button>
     <button class="tbtn wide" id="collapseAll" type="button" title="Plegar las ramas de estimadores">Plegar</button>
@@ -419,6 +438,19 @@ body.panel-open #outline { right: var(--panel-w); }
    son provisionales (ver mapa/REGISTRO.md).
    ===================================================================== */
 const R = String.raw;
+/* Textos que dependen de la infraestructura de código. V({ py, r, tidymodels, caret, mlr3 })
+   guarda las variantes; T() devuelve la de la infraestructura elegida. La clave «r» sirve
+   para los tres marcos de R cuando el texto es el mismo. */
+const V = o => ({ __v: o });
+const T = x => {
+  if (!x || !x.__v) return x || "";
+  const v = x.__v, k = typeof state !== "undefined" ? state.infra : "py";
+  return v[k] ?? (k !== "py" ? v.r : undefined) ?? v.py ?? "";
+};
+// Dónde se aprende el preprocesado en cada infraestructura, para los textos que lo citan.
+const PIPE = { py: R`dentro del <code>Pipeline</code>`, tidymodels: R`en la receta del <code>workflow()</code>`, caret: R`con el argumento <code>preProcess</code> de <code>train()</code>`, mlr3: R`en el grafo de mlr3pipelines` };
+const enPipe = f => V(Object.fromEntries(Object.entries(PIPE).map(([k, v]) => [k, f(v)])));
+const todas = x => x && x.__v ? Object.values(x.__v) : [x];
 const BASE = "https://juandmontoro.github.io/tap/";
 /* Decks. url: ruta desde la raíz de la web; null si aún no está publicado. */
 const DECKS = {
@@ -500,7 +532,7 @@ const HUB = {
   id: "decisiones", type: "hub",
   label: "Decisiones de aprendizaje supervisado",
   sub: "Comunes a todos los estimadores",
-  idea: R`Las reglas con las que entrenamos, evaluamos y elegimos modelos son las mismas a lo largo del curso. En el código solo cambia el último paso del <code>Pipeline</code>, el estimador. Al pulsar una decisión se resaltan los estimadores con los que se conecta.`,
+  idea: V({ py: R`Las reglas con las que entrenamos, evaluamos y elegimos modelos son las mismas a lo largo del curso. En el código solo cambia el último paso del <code>Pipeline</code>, el estimador. Al pulsar una decisión se resaltan los estimadores con los que se conecta.`, tidymodels: R`Las reglas con las que entrenamos, evaluamos y elegimos modelos son las mismas a lo largo del curso. En el código solo cambia la especificación del modelo dentro del <code>workflow()</code>. Al pulsar una decisión se resaltan los estimadores con los que se conecta.`, caret: R`Las reglas con las que entrenamos, evaluamos y elegimos modelos son las mismas a lo largo del curso. En el código solo cambia el argumento <code>method</code> de <code>train()</code>. Al pulsar una decisión se resaltan los estimadores con los que se conecta.`, mlr3: R`Las reglas con las que entrenamos, evaluamos y elegimos modelos son las mismas a lo largo del curso. En el código solo cambia el learner (<code>lrn()</code>). Al pulsar una decisión se resaltan los estimadores con los que se conecta.` }),
   materiales: ["t2", "t2c"]
 };
 
@@ -539,13 +571,13 @@ const DECISIONES = [
   { id: "d_hiper", label: "Selección de hiperparámetros", sub: "Se eligen con datos de validación", tema: "T1–T2",
     idea: R`Los <b>parámetros</b> son los valores que el modelo aprende de los datos al ajustarse, como los coeficientes de una regresión. Los <b>hiperparámetros</b> los fija quien ajusta el modelo, antes del ajuste, y suelen controlar su complejidad, como la penalización \(\lambda\) o la profundidad de un árbol. No hay una fórmula que dé su mejor valor, así que se prueban varios candidatos y se elige el que tiene menor error de validación.`,
     puntos: [
-      R`Primero se fijan la métrica y la regla de decisión. Después se define una rejilla de valores candidatos y <code>GridSearchCV</code> estima por validación cruzada el error de cada uno. Cuando el hiperparámetro varía en órdenes de magnitud, como \(\lambda\), la rejilla se define en escala logarítmica.`,
-      R`Dentro de un <code>Pipeline</code>, el hiperparámetro se nombra con el nombre del paso, dos guiones bajos y el nombre del argumento, por ejemplo <code>modelo__alpha</code>.`,
-      R`scikit-learn busca la puntuación más alta. Por eso las métricas de error se usan con signo negativo, como <code>neg_root_mean_squared_error</code>.`,
-      R`La <b>regla del error típico</b> elige, entre los modelos cuyo error no supera al mínimo en más de un error típico, el más sencillo. Qué se considera más sencillo se fija de antemano: más penalización, menos predictores o menos hojas, según el modelo.`,
-      R`El mejor error de la búsqueda (<code>best_score_</code>) es optimista, porque se calcula con los mismos datos que sirvieron para elegir al ganador.`,
-      R`Todo hiperparámetro se fija mediante un argumento del estimador, pero muchos argumentos no son hiperparámetros porque no se eligen por validación. Es el caso de la semilla (<code>random_state</code>), del número máximo de iteraciones o del criterio de pérdida.`,
-      R`Los nombres cambian entre estimadores y bibliotecas. La intensidad de la penalización \(\lambda\) se llama <code>alpha</code> en Ridge, Lasso, ElasticNet, GammaRegressor y PoissonRegressor, y <code>LogisticRegression</code> usa su inversa, <code>C</code> \(=1/\lambda\). En glmnet (R), en cambio, <code>alpha</code> es la mezcla entre L1 y L2 y <code>lambda</code> la intensidad.`
+      V({ py: R`Primero se fijan la métrica y la regla de decisión. Después se define una rejilla de valores candidatos y <code>GridSearchCV</code> estima por validación cruzada el error de cada uno. Cuando el hiperparámetro varía en órdenes de magnitud, como \(\lambda\), la rejilla se define en escala logarítmica.`, tidymodels: R`Primero se fijan la métrica y la regla de decisión. Después se marcan con <code>tune()</code> los hiperparámetros que se van a elegir, se define una rejilla de valores candidatos (<code>grid_regular()</code> o un <code>data.frame</code>) y <code>tune_grid()</code> estima por validación cruzada el error de cada uno. Cuando el hiperparámetro varía en órdenes de magnitud, como \(\lambda\), la rejilla se define en escala logarítmica, y <code>penalty()</code> ya trabaja en escala \(\log_{10}\).`, caret: R`Primero se fijan la métrica y la regla de decisión. Después se define una rejilla de valores candidatos con <code>expand.grid()</code>, se pasa a <code>train()</code> en <code>tuneGrid</code> y <code>trainControl()</code> fija la validación cruzada con la que se estima el error de cada uno. Cuando el hiperparámetro varía en órdenes de magnitud, como \(\lambda\), la rejilla se define en escala logarítmica, por ejemplo <code>10^seq(-4, 1, length.out = 30)</code>.`, mlr3: R`Primero se fijan la métrica y la regla de decisión. Después se marcan con <code>to_tune()</code> los valores candidatos de cada hiperparámetro, y <code>auto_tuner()</code> (paquete mlr3tuning) estima por validación cruzada el error de cada uno. Cuando el hiperparámetro varía en órdenes de magnitud, como \(\lambda\), se usa <code>to_tune(..., logscale = TRUE)</code>.` }),
+      V({ py: R`Dentro de un <code>Pipeline</code>, el hiperparámetro se nombra con el nombre del paso, dos guiones bajos y el nombre del argumento, por ejemplo <code>modelo__alpha</code>.`, tidymodels: R`En un <code>workflow()</code>, el hiperparámetro se marca con <code>tune()</code> allí donde se define, en la especificación del modelo o en un paso de la receta, por ejemplo <code>linear_reg(penalty = tune())</code>.`, caret: R`En <code>tuneGrid</code>, cada columna lleva el nombre de un parámetro del método, por ejemplo <code>alpha</code> y <code>lambda</code> en <code>method = "glmnet"</code>. <code>modelLookup()</code> muestra los parámetros de cada método, y la rejilla tiene que incluirlos todos.`, mlr3: R`En un grafo de mlr3pipelines, el hiperparámetro se nombra con el id del paso, un punto y el nombre del parámetro, por ejemplo <code>regr.glmnet.lambda</code>.` }),
+      V({ py: R`scikit-learn busca la puntuación más alta. Por eso las métricas de error se usan con signo negativo, como <code>neg_root_mean_squared_error</code>.`, tidymodels: R`Cada métrica de yardstick sabe si debe minimizarse o maximizarse, así que no hace falta cambiar el signo. <code>show_best()</code> y <code>select_best()</code> ordenan los candidatos según la métrica elegida.`, caret: R`<code>train()</code> minimiza las métricas de error, como el RMSE o el MAE, y maximiza las demás. El argumento <code>maximize</code> permite cambiarlo.`, mlr3: R`Cada medida de mlr3 indica si debe minimizarse (<code>msr("regr.rmse")$minimize</code>), así que no hace falta cambiar el signo.` }),
+      V({ py: R`La <b>regla del error típico</b> elige, entre los modelos cuyo error no supera al mínimo en más de un error típico, el más sencillo. Qué se considera más sencillo se fija de antemano: más penalización, menos predictores o menos hojas, según el modelo.`, tidymodels: R`La <b>regla del error típico</b> elige, entre los modelos cuyo error no supera al mínimo en más de un error típico, el más sencillo. Qué se considera más sencillo se fija de antemano: más penalización, menos predictores o menos hojas, según el modelo. En tidymodels la aplica <code>select_by_one_std_err()</code>, indicando por qué hiperparámetro se ordena la sencillez.`, caret: R`La <b>regla del error típico</b> elige, entre los modelos cuyo error no supera al mínimo en más de un error típico, el más sencillo. Qué se considera más sencillo se fija de antemano: más penalización, menos predictores o menos hojas, según el modelo. En caret se activa con <code>trainControl(selectionFunction = "oneSE")</code>.`, mlr3: R`La <b>regla del error típico</b> elige, entre los modelos cuyo error no supera al mínimo en más de un error típico, el más sencillo. Qué se considera más sencillo se fija de antemano: más penalización, menos predictores o menos hojas, según el modelo. mlr3tuning no la incluye, así que se aplica sobre la tabla de resultados de la búsqueda (<code>as.data.table(instance$archive)</code>).` }),
+      V({ py: R`El mejor error de la búsqueda (<code>best_score_</code>) es optimista, porque se calcula con los mismos datos que sirvieron para elegir al ganador.`, tidymodels: R`El mejor error de la búsqueda (el primero de <code>show_best()</code>) es optimista, porque se calcula con los mismos datos que sirvieron para elegir al ganador.`, caret: R`El mejor error de la búsqueda (la fila de <code>fit$results</code> que corresponde a <code>fit$bestTune</code>) es optimista, porque se calcula con los mismos datos que sirvieron para elegir al ganador.`, mlr3: R`El mejor error de la búsqueda (<code>instance$result_y</code>) es optimista, porque se calcula con los mismos datos que sirvieron para elegir al ganador.` }),
+      V({ py: R`Todo hiperparámetro se fija mediante un argumento del estimador, pero muchos argumentos no son hiperparámetros porque no se eligen por validación. Es el caso de la semilla (<code>random_state</code>), del número máximo de iteraciones o del criterio de pérdida.`, r: R`Todo hiperparámetro se fija mediante un argumento del modelo, pero muchos argumentos no son hiperparámetros porque no se eligen por validación. Es el caso del número máximo de iteraciones o del criterio de pérdida. La semilla se fija aparte, con <code>set.seed()</code>.` }),
+      V({ py: R`Los nombres cambian entre estimadores y bibliotecas. La intensidad de la penalización \(\lambda\) se llama <code>alpha</code> en Ridge, Lasso, ElasticNet, GammaRegressor y PoissonRegressor, y <code>LogisticRegression</code> usa su inversa, <code>C</code> \(=1/\lambda\). En glmnet (R), en cambio, <code>alpha</code> es la mezcla entre L1 y L2 y <code>lambda</code> la intensidad.`, tidymodels: R`Los nombres cambian entre marcos y paquetes. tidymodels usa los mismos nombres con todos los motores: <code>penalty</code> para la intensidad \(\lambda\) y <code>mixture</code> para la mezcla entre L1 y L2. En glmnet se llaman <code>lambda</code> y <code>alpha</code>, y en scikit-learn <code>alpha</code> es la intensidad.`, caret: R`Los nombres cambian entre marcos y paquetes. caret usa los nombres del paquete motor: en glmnet, <code>alpha</code> es la mezcla entre L1 y L2 y <code>lambda</code> la intensidad \(\lambda\). En scikit-learn, en cambio, <code>alpha</code> es la intensidad.`, mlr3: R`Los nombres cambian entre marcos y paquetes. mlr3 usa los nombres del paquete motor: en glmnet, <code>alpha</code> es la mezcla entre L1 y L2 y <code>lambda</code> la intensidad \(\lambda\). En scikit-learn, en cambio, <code>alpha</code> es la intensidad.` })
     ],
     slides: [["t1a", "controlar-la-complejidad", "Controlar la complejidad"], ["t2c", "elegir-alpha-por-validación-cruzada", "Elegir alpha por validación cruzada"], ["t2", "si-dos-modelos-empatan-elegimos-el-más-sencillo", "Si dos modelos empatan, el más sencillo"], ["t2c", "mínimo-del-rmse-y-regla-del-error-típico", "Mínimo del RMSE y regla del error típico"]],
     vocab: ["hiperparametro"],
@@ -554,13 +586,13 @@ const DECISIONES = [
     alcance: "todos", generico: R`Como cualquier modelo predictivo, se compara con los demás mediante validación cruzada, con las mismas particiones y la misma métrica.`,
     idea: R`La validación cruzada estima el error que cometerá un <b>método</b> en datos nuevos. Por método entendemos el procedimiento completo: el preprocesado, el algoritmo de ajuste y unos valores concretos de los hiperparámetros. Los modelos que se ajustan durante la validación cruzada solo sirven para medir ese procedimiento, y después se descartan.`,
     puntos: [
-      R`Las observaciones se reparten en \(k\) particiones. En cada vuelta se ajusta de nuevo todo el <code>Pipeline</code> con \(k-1\) particiones y se mide el error en la restante. Cada observación valida una vez, y el resultado es la media de los \(k\) errores.`,
+      V({ py: R`Las observaciones se reparten en \(k\) particiones. En cada vuelta se ajusta de nuevo todo el <code>Pipeline</code> con \(k-1\) particiones y se mide el error en la restante. Cada observación valida una vez, y el resultado es la media de los \(k\) errores.`, tidymodels: R`Las observaciones se reparten en \(k\) particiones. En cada vuelta se ajusta de nuevo todo el <code>workflow()</code>, receta y modelo, con \(k-1\) particiones y se mide el error en la restante. Cada observación valida una vez, y el resultado es la media de los \(k\) errores.`, caret: R`Las observaciones se reparten en \(k\) particiones. En cada vuelta se ajusta de nuevo todo el procedimiento de <code>train()</code>, incluido el preprocesado de <code>preProcess</code>, con \(k-1\) particiones y se mide el error en la restante. Cada observación valida una vez, y el resultado es la media de los \(k\) errores.`, mlr3: R`Las observaciones se reparten en \(k\) particiones. En cada vuelta se ajusta de nuevo todo el learner, incluido el grafo de preprocesado, con \(k-1\) particiones y se mide el error en la restante. Cada observación valida una vez, y el resultado es la media de los \(k\) errores.` }),
       R`Se obtienen \(k\) modelos distintos, uno por partición, y ninguno de ellos es el modelo final. Una vez elegidos los hiperparámetros, el modelo final se ajusta con todo el conjunto de entrenamiento.`,
-      R`Por esta razón el preprocesado forma parte del <code>Pipeline</code>. Si se aprendiera con todos los datos, la partición de validación influiría en el ajuste que pretende evaluar.`,
+      V({ py: R`Por esta razón el preprocesado forma parte del <code>Pipeline</code>. Si se aprendiera con todos los datos, la partición de validación influiría en el ajuste que pretende evaluar.`, tidymodels: R`Por esta razón el preprocesado va en una receta dentro del <code>workflow()</code>. Si se aprendiera con todos los datos, la partición de validación influiría en el ajuste que pretende evaluar.`, caret: R`Por esta razón el preprocesado se indica en el argumento <code>preProcess</code> de <code>train()</code>. Si se aprendiera con todos los datos, la partición de validación influiría en el ajuste que pretende evaluar.`, mlr3: R`Por esta razón el preprocesado se encadena con el learner en un grafo (<code>%>>%</code>). Si se aprendiera con todos los datos, la partición de validación influiría en el ajuste que pretende evaluar.` }),
       R`Con una sola división en entrenamiento y validación, el error estimado depende mucho de qué observaciones caen en cada parte. Con \(k=2\) cada modelo se entrena con la mitad de los datos y la estimación es pesimista, mientras que a partir de \(k=5\) apenas cambia. LOOCV (\(k=n\)) exige \(n\) ajustes.`,
       R`El <b>error típico</b> de la validación cruzada es la desviación típica de los \(k\) errores dividida por \(\sqrt{k}\). Es una referencia orientativa y algo optimista, y el modelo ganador puede cambiar con otro reparto de las observaciones.`,
-      R`En la <b>validación cruzada anidada</b>, un bucle externo evalúa y otro interno elige los hiperparámetros (<code>cross_val_score(GridSearchCV(...))</code>). Así se estima el error del procedimiento completo, incluida la elección de los hiperparámetros.`,
-      R`En clasificación las particiones se estratifican (<code>StratifiedKFold</code>), para que todas tengan la misma proporción de cada clase. <code>cross_val_predict</code> devuelve, para cada observación, la predicción obtenida cuando su partición hace de validación.`,
+      V({ py: R`En la <b>validación cruzada anidada</b>, un bucle externo evalúa y otro interno elige los hiperparámetros (<code>cross_val_score(GridSearchCV(...))</code>). Así se estima el error del procedimiento completo, incluida la elección de los hiperparámetros.`, tidymodels: R`En la <b>validación cruzada anidada</b>, un bucle externo evalúa y otro interno elige los hiperparámetros (<code>nested_cv()</code> del paquete rsample). Así se estima el error del procedimiento completo, incluida la elección de los hiperparámetros.`, caret: R`En la <b>validación cruzada anidada</b>, un bucle externo evalúa y otro interno elige los hiperparámetros. caret no la incluye, y el bucle externo se programa con <code>createFolds()</code>. Así se estima el error del procedimiento completo, incluida la elección de los hiperparámetros.`, mlr3: R`En la <b>validación cruzada anidada</b>, un bucle externo evalúa y otro interno elige los hiperparámetros (<code>resample()</code> aplicado a un <code>auto_tuner()</code>). Así se estima el error del procedimiento completo, incluida la elección de los hiperparámetros.` }),
+      V({ py: R`En clasificación las particiones se estratifican (<code>StratifiedKFold</code>), para que todas tengan la misma proporción de cada clase. <code>cross_val_predict</code> devuelve, para cada observación, la predicción obtenida cuando su partición hace de validación.`, tidymodels: R`En clasificación las particiones se estratifican (<code>vfold_cv(strata = y)</code>), para que todas tengan la misma proporción de cada clase. Con <code>control_resamples(save_pred = TRUE)</code>, <code>collect_predictions()</code> devuelve, para cada observación, la predicción obtenida cuando su partición hace de validación.`, caret: R`En clasificación las particiones se estratifican, para que todas tengan la misma proporción de cada clase, y caret lo hace por defecto. Con <code>trainControl(savePredictions = "final")</code>, <code>fit$pred</code> guarda, para cada observación, la predicción obtenida cuando su partición hace de validación.`, mlr3: R`En clasificación las particiones se estratifican, para que todas tengan la misma proporción de cada clase, declarando la respuesta como estrato (<code>task$col_roles$stratum</code>). <code>rr$prediction()</code> devuelve, para cada observación, la predicción obtenida cuando su partición hace de validación.` }),
       R`En el bagging y el random forest, el <b>error fuera de la bolsa</b> (OOB) da una estimación parecida con un único ajuste. En el stacking hay dos niveles: una validación cruzada interna crea las predicciones con las que aprende el metamodelo, y otra externa evalúa el conjunto.`
     ],
     slides: [["t2", "una-sola-división-da-un-error-que-depende-de-la-semilla", "Una sola división da un error que depende de la semilla"], ["t2", "cuántas-particiones-usamos", "¿Cuántas particiones usamos?"], ["t2", "validación-cruzada-anidada-procedimiento-completo", "Validación cruzada anidada"], ["t2c", "evaluación-anidada-medir-el-procedimiento-completo", "Evaluación anidada en código"]],
@@ -570,19 +602,19 @@ const DECISIONES = [
     alcance: "todos", generico: R`Como cualquier modelo predictivo, se ajusta con los datos de entrenamiento, se elige con datos de validación y se evalúa una sola vez en el test.`,
     idea: R`Con los datos de entrenamiento se ajustan los parámetros, y con los de validación se eligen el modelo y sus hiperparámetros. El conjunto de prueba (test) se reserva para evaluar una sola vez el modelo elegido.`,
     puntos: [
-      R`La partición se hace con <code>train_test_split</code> antes de cualquier cálculo. En clasificación se añade <code>stratify=y</code> para conservar la proporción de cada clase.`,
+      V({ py: R`La partición se hace con <code>train_test_split</code> antes de cualquier cálculo. En clasificación se añade <code>stratify=y</code> para conservar la proporción de cada clase.`, tidymodels: R`La partición se hace con <code>initial_split()</code> antes de cualquier cálculo, y <code>training()</code> y <code>testing()</code> extraen cada parte. En clasificación se añade <code>strata = y</code> para conservar la proporción de cada clase.`, caret: R`La partición se hace con <code>createDataPartition(y, p = 0.8)</code> antes de cualquier cálculo. Esta función estratifica según la respuesta, así que conserva la proporción de cada clase.`, mlr3: R`La partición se hace con <code>partition(task, ratio = 0.8)</code> antes de cualquier cálculo. En clasificación estratifica según la respuesta, así que conserva la proporción de cada clase.` }),
       R`El test se consulta una vez, cuando la decisión ya está tomada, y su resultado no reabre la selección. Si se cambia el modelo después de mirar el test, la evaluación deja de ser independiente.`,
       R`El error que se comunica es el del test. Si no hay test, se usa el de la validación cruzada anidada, y nunca el mejor resultado de la búsqueda de hiperparámetros.`,
       R`Hay <b>fuga de información</b> cuando \(X\) contiene algo que no se conocería en el momento de predecir, como componentes de la propia respuesta, identificadores o pesos muestrales. Un modelo con fuga parece predecir muy bien y falla al usarse.`
     ],
     slides: [["t1a", "validar-para-elegir-probar-para-evaluar", "Validar para elegir, probar para evaluar"], ["t1c", "predictores-legítimos-y-fuga-de-información", "Predictores legítimos y fuga de información"], ["t2", "qué-error-esperado-comunicamos-del-modelo-elegido", "¿Qué error comunicamos?"]],
     materiales: ["t1a", "t1c", "t2"] },
-  { id: "d_prep", label: "Preprocesado en el Pipeline", sub: "Transformaciones aprendidas en entrenamiento", tema: "T1–T2",
-    idea: R`Las transformaciones de los predictores (medias, desviaciones típicas, categorías) se aprenden solo con los datos de ajuste. Para garantizarlo, se combinan un <code>ColumnTransformer</code> y el modelo dentro de un <code>Pipeline</code>, y así cada partición de la validación cruzada repite el preprocesado con sus propios datos.`,
+  { id: "d_prep", label: V({ py: "Preprocesado en el Pipeline", tidymodels: "Preprocesado en el workflow", caret: "Preprocesado en train()", mlr3: "Preprocesado en el grafo" }), sub: "Transformaciones aprendidas en entrenamiento", tema: "T1–T2",
+    idea: V({ py: R`Las transformaciones de los predictores (medias, desviaciones típicas, categorías) se aprenden solo con los datos de ajuste. Para garantizarlo, se combinan un <code>ColumnTransformer</code> y el modelo dentro de un <code>Pipeline</code>, y así cada partición de la validación cruzada repite el preprocesado con sus propios datos.`, tidymodels: R`Las transformaciones de los predictores (medias, desviaciones típicas, categorías) se aprenden solo con los datos de ajuste. Para garantizarlo, se combinan una receta (<code>recipe()</code>) y el modelo en un <code>workflow()</code>, y así cada partición de la validación cruzada repite el preprocesado con sus propios datos.`, caret: R`Las transformaciones de los predictores (medias, desviaciones típicas, categorías) se aprenden solo con los datos de ajuste. Para garantizarlo, se indican en el argumento <code>preProcess</code> de <code>train()</code>, y así cada partición de la validación cruzada repite el preprocesado con sus propios datos.`, mlr3: R`Las transformaciones de los predictores (medias, desviaciones típicas, categorías) se aprenden solo con los datos de ajuste. Para garantizarlo, se encadenan los pasos de preprocesado y el learner en un grafo de mlr3pipelines (<code>%>>%</code>), y así cada partición de la validación cruzada repite el preprocesado con sus propios datos.` }),
     puntos: [
-      R`Los predictores numéricos se estandarizan con <code>StandardScaler()</code> y, si hay valores faltantes, se imputan con <code>SimpleImputer(strategy="median")</code>. Los categóricos se codifican con <code>OneHotEncoder(handle_unknown="ignore")</code>.`,
-      R`Antes de penalizar hay que estandarizar, porque la penalización depende de las unidades: un coeficiente medido en kilómetros y otro en metros no pueden castigarse por igual. El intercepto no se penaliza.`,
-      R`Las SVM con núcleo miden la semejanza entre observaciones con distancias, así que sin estandarizar el predictor con mayor escala decide la semejanza. Lo mismo ocurre en el descenso del gradiente de las redes neuronales, donde escalas muy distintas frenan la optimización.`,
+      V({ py: R`Los predictores numéricos se estandarizan con <code>StandardScaler()</code> y, si hay valores faltantes, se imputan con <code>SimpleImputer(strategy="median")</code>. Los categóricos se codifican con <code>OneHotEncoder(handle_unknown="ignore")</code>.`, tidymodels: R`Los predictores numéricos se estandarizan con <code>step_normalize()</code> y, si hay valores faltantes, se imputan con <code>step_impute_median()</code>. Los categóricos se codifican con <code>step_dummy(one_hot = TRUE)</code>, y <code>step_novel()</code> prepara la receta para categorías que no aparecen en entrenamiento.`, caret: R`Los predictores numéricos se estandarizan y se imputan con <code>preProcess = c("center", "scale", "medianImpute")</code>. Con la interfaz de fórmula, <code>train()</code> codifica los predictores categóricos como variables indicadoras.`, mlr3: R`Los predictores numéricos se estandarizan con <code>po("scale")</code> y, si hay valores faltantes, se imputan con <code>po("imputemedian")</code>. Los categóricos se codifican con <code>po("encode", method = "one-hot")</code>.` }),
+      V({ py: R`Antes de penalizar hay que estandarizar, porque la penalización depende de las unidades: un coeficiente medido en kilómetros y otro en metros no pueden castigarse por igual. El intercepto no se penaliza.`, r: R`Antes de penalizar hay que estandarizar, porque la penalización depende de las unidades: un coeficiente medido en kilómetros y otro en metros no pueden castigarse por igual. El intercepto no se penaliza. glmnet estandariza los predictores por defecto (<code>standardize = TRUE</code>) y devuelve los coeficientes en la escala original.` }),
+      V({ py: R`Las SVM con núcleo miden la semejanza entre observaciones con distancias, así que sin estandarizar el predictor con mayor escala decide la semejanza. Lo mismo ocurre en el descenso del gradiente de las redes neuronales, donde escalas muy distintas frenan la optimización.`, r: R`Las SVM con núcleo miden la semejanza entre observaciones con distancias, así que sin estandarizar el predictor con mayor escala decide la semejanza. Lo mismo ocurre en el descenso del gradiente de las redes neuronales, donde escalas muy distintas frenan la optimización. kernlab y e1071 estandarizan por defecto (<code>scaled = TRUE</code> y <code>scale = TRUE</code>).` }),
       R`Un árbol no cambia al estandarizar, porque cada corte \(x_j\le s\) depende solo del orden de los valores. Por eso el preprocesado de los árboles y de sus ensambles no incluye este paso.`
     ],
     slides: [["t1c", "partir-primero-preprocesar-dentro-del-pipeline", "Partir primero, preprocesar dentro del Pipeline"], ["t2c", "transformar-las-columnas-según-su-tipo", "Transformar las columnas según su tipo"], ["t4a", "qué-cambia-si-transformamos-un-predictor", "¿Qué cambia si transformamos un predictor?"], ["t5", "escalar-antes-de-medir-distancias", "Escalar antes de medir distancias"]],
@@ -595,7 +627,7 @@ const DECISIONES = [
       R`Pérdidas del curso: la RSS en la regresión lineal, la RSS más una penalización en Ridge, Lasso y Elastic Net, y la log-verosimilitud cambiada de signo en los GLM, que con una respuesta binaria coincide con la log-loss. Las SVM usan la pérdida insensible a \(\varepsilon\) (SVR) o la pérdida bisagra (SVC).`,
       R`La tasa de aprendizaje \(\alpha\) fija el tamaño de cada paso. Una tasa constante puede dejar oscilaciones alrededor del mínimo, y reducirla durante el entrenamiento ayuda a afinar el ajuste.`,
       R`El gradiente puede calcularse con todos los datos (por lotes), con una observación (estocástico) o con un minilote de \(m\) observaciones. Un epoch es una pasada completa por los datos y contiene \(\lceil n/m\rceil\) pasos.`,
-      R`Para detener el algoritmo se combinan un máximo de iteraciones (<code>max_iter</code>) y una tolerancia. La <b>parada temprana</b> vigila la pérdida en un conjunto de validación y detiene el entrenamiento antes de que la generalización empeore.`,
+      V({ py: R`Para detener el algoritmo se combinan un máximo de iteraciones (<code>max_iter</code>) y una tolerancia. La <b>parada temprana</b> vigila la pérdida en un conjunto de validación y detiene el entrenamiento antes de que la generalización empeore.`, r: R`Para detener el algoritmo se combinan un máximo de iteraciones (<code>maxit</code> en glmnet y nnet) y una tolerancia. La <b>parada temprana</b> vigila la pérdida en un conjunto de validación y detiene el entrenamiento antes de que la generalización empeore.` }),
       R`MCO y Ridge tienen solución directa, mientras que Lasso, Elastic Net y los GLM se resuelven de forma iterativa. Un árbol aislado se construye con un algoritmo voraz, sin gradiente. El boosting sí sigue el gradiente: cada árbol nuevo aproxima el gradiente negativo de la pérdida respecto a las predicciones.`
     ],
     slides: [["t1a", "ajustar-los-parámetros-minimizando-una-pérdida", "Ajustar los parámetros minimizando una pérdida"], ["t1a", "lotes-estocástico-y-minilotes", "Lotes, estocástico y minilotes"], ["t1a", "tasa-de-aprendizaje-y-ruido-de-las-actualizaciones", "Tasa de aprendizaje y ruido"], ["t1c", "las-pérdidas-que-hemos-minimizado", "Las pérdidas que hemos minimizado"]],
@@ -606,9 +638,9 @@ const DECISIONES = [
     idea: R`La métrica forma parte de la regla de decisión. Se elige según el problema de negocio antes de validar, y cada modelo se compara con el modelo nulo.`,
     formula: R`\[\mathrm{MSE}=\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat f(x_i)\right)^2,\qquad \mathrm{RMSE}=\sqrt{\mathrm{MSE}}\]`,
     puntos: [
-      R`El <b>RMSE</b> se expresa en las unidades de la respuesta y pesa más los errores grandes (<code>"neg_root_mean_squared_error"</code>). El MSE, en cambio, está en unidades al cuadrado.`,
-      R`El <b>MAE</b> es el error absoluto medio, y la predicción que lo minimiza es la mediana (<code>"neg_mean_absolute_error"</code>).`,
-      R`El <b>R²</b> mide la proporción de la varianza de la respuesta que reproduce el modelo. El modelo nulo obtiene un R² igual a 0 (<code>"r2"</code>).`,
+      V({ py: R`El <b>RMSE</b> se expresa en las unidades de la respuesta y pesa más los errores grandes (<code>"neg_root_mean_squared_error"</code>). El MSE, en cambio, está en unidades al cuadrado.`, tidymodels: R`El <b>RMSE</b> se expresa en las unidades de la respuesta y pesa más los errores grandes (<code>rmse</code> en yardstick). El MSE, en cambio, está en unidades al cuadrado.`, caret: R`El <b>RMSE</b> se expresa en las unidades de la respuesta y pesa más los errores grandes (<code>"RMSE"</code> en <code>train()</code>). El MSE, en cambio, está en unidades al cuadrado.`, mlr3: R`El <b>RMSE</b> se expresa en las unidades de la respuesta y pesa más los errores grandes (<code>msr("regr.rmse")</code>). El MSE, en cambio, está en unidades al cuadrado.` }),
+      V({ py: R`El <b>MAE</b> es el error absoluto medio, y la predicción que lo minimiza es la mediana (<code>"neg_mean_absolute_error"</code>).`, tidymodels: R`El <b>MAE</b> es el error absoluto medio, y la predicción que lo minimiza es la mediana (<code>mae</code>).`, caret: R`El <b>MAE</b> es el error absoluto medio, y la predicción que lo minimiza es la mediana (<code>"MAE"</code>).`, mlr3: R`El <b>MAE</b> es el error absoluto medio, y la predicción que lo minimiza es la mediana (<code>msr("regr.mae")</code>).` }),
+      V({ py: R`El <b>R²</b> mide la proporción de la varianza de la respuesta que reproduce el modelo. El modelo nulo obtiene un R² igual a 0 (<code>"r2"</code>).`, tidymodels: R`El <b>R²</b> mide la proporción de la varianza de la respuesta que reproduce el modelo. El modelo nulo obtiene un R² igual a 0 (<code>rsq_trad</code> en yardstick). La métrica <code>rsq</code> calcula otra cosa, el cuadrado de la correlación entre la respuesta y la predicción, que no penaliza las predicciones sesgadas.`, caret: R`El <b>R²</b> mide la proporción de la varianza de la respuesta que reproduce el modelo. El modelo nulo obtiene un R² igual a 0. El <code>"Rsquared"</code> de caret calcula otra cosa, el cuadrado de la correlación entre la respuesta y la predicción, que no penaliza las predicciones sesgadas.`, mlr3: R`El <b>R²</b> mide la proporción de la varianza de la respuesta que reproduce el modelo. El modelo nulo obtiene un R² igual a 0 (<code>msr("regr.rsq")</code>).` }),
       R`Si la respuesta está en logaritmos, el RMSE mide errores relativos: equivocarse un 10 % cuesta lo mismo en un importe pequeño que en uno grande.`
     ],
     slides: [["t1a", "qué-error-medimos", "¿Qué error medimos?"], ["t3", "qué-modelo-elegimos-para-el-precio", "Elegir un modelo con RMSE y MAE"]],
@@ -622,7 +654,7 @@ const DECISIONES = [
       R`La <b>precisión</b> responde a cuántos de los señalados como positivos lo son, y la <b>sensibilidad</b> a cuántos de los positivos se señalan. <b>F1</b> es su media armónica, \(2VP/(2VP+FP+FN)\), y solo es alta cuando ambas lo son.`,
       R`La <b>curva ROC</b> muestra la sensibilidad frente a la tasa de falsos positivos para todos los umbrales. El <b>AUC</b> es la probabilidad de que un positivo elegido al azar reciba una puntuación mayor que un negativo. No depende del umbral, y un valor de 0,5 equivale a ordenar al azar.`,
       R`La <b>log-loss</b> (entropía cruzada) evalúa las probabilidades sin fijar un umbral, y un error pesa más cuanto mayor es la seguridad con la que se comete.\[-\frac1n\sum_i\big[y_i\log\hat p_i+(1-y_i)\log(1-\hat p_i)\big]\]`,
-      R`En scikit-learn se eligen con el argumento <code>scoring</code>: <code>"accuracy"</code>, <code>"precision"</code>, <code>"recall"</code>, <code>"f1"</code>, <code>"roc_auc"</code>, <code>"neg_log_loss"</code> o <code>"average_precision"</code>.`
+      V({ py: R`En scikit-learn se eligen con el argumento <code>scoring</code>: <code>"accuracy"</code>, <code>"precision"</code>, <code>"recall"</code>, <code>"f1"</code>, <code>"roc_auc"</code>, <code>"neg_log_loss"</code> o <code>"average_precision"</code>.`, tidymodels: R`En tidymodels se eligen con <code>metric_set()</code>: <code>accuracy</code>, <code>precision</code>, <code>recall</code>, <code>f_meas</code>, <code>roc_auc</code>, <code>mn_log_loss</code> o <code>pr_auc</code>. Por defecto, yardstick toma como clase positiva el primer nivel del factor (<code>event_level = "first"</code>).`, caret: R`En caret se eligen con el argumento <code>metric</code> de <code>train()</code>. Por defecto calcula <code>"Accuracy"</code> y <code>"Kappa"</code>. Con <code>summaryFunction = twoClassSummary</code> calcula <code>"ROC"</code>, <code>"Sens"</code> y <code>"Spec"</code>, con <code>prSummary</code> calcula <code>"AUC"</code>, <code>"Precision"</code>, <code>"Recall"</code> y <code>"F"</code>, y con <code>mnLogLoss</code> calcula <code>"logLoss"</code>. Las métricas de probabilidad exigen <code>classProbs = TRUE</code>.`, mlr3: R`En mlr3 se eligen con <code>msr()</code>: <code>"classif.acc"</code>, <code>"classif.precision"</code>, <code>"classif.recall"</code>, <code>"classif.fbeta"</code>, <code>"classif.auc"</code>, <code>"classif.logloss"</code> o <code>"classif.prauc"</code>. Las métricas de probabilidad exigen <code>predict_type = "prob"</code>.` })
     ],
     slides: [["t2", "matriz-de-confusión", "Matriz de confusión"], ["t2", "precisión-sensibilidad-y-f1", "Precisión, sensibilidad y F1"], ["t2", "la-curva-roc-sensibilidad-y-especificidad-para-distintos-umbrales", "La curva ROC"], ["t2", "log-loss-la-pérdida-crece-con-la-seguridad-del-error", "Log-loss"], ["t2", "cada-métrica-responde-a-una-pregunta-distinta", "Cada métrica responde a una pregunta distinta"]],
     materiales: ["t2", "t3"] },
@@ -630,10 +662,10 @@ const DECISIONES = [
     idea: R`Cuando una clase es rara, la exactitud deja de informar: con un 1 % de positivos, el modelo nulo acierta el 99 %. Además, una probabilidad bien calibrada casi nunca supera 0,5, así que el umbral por defecto deja de tener sentido.`,
     puntos: [
       R`La <b>curva precisión-sensibilidad (PR)</b> y su resumen, la <b>precisión media (AP)</b>, sustituyen a la exactitud y a la curva ROC. La referencia de la AP es la prevalencia, la proporción de positivos.`,
-      R`El punto de partida son las particiones estratificadas (<code>stratify=y</code>, <code>StratifiedKFold</code>).`,
-      R`Una corrección es <b>ponderar</b> los errores de la clase rara al estimar: <code>class_weight="balanced"</code> en el logit, el random forest o la SVC, y <code>scale_pos_weight</code> en XGBoost. Las probabilidades resultantes dejan de estimar la proporción de positivos.`,
-      R`Otra corrección es <b>mover el umbral</b> según el coste de cada error. Con probabilidades calibradas, el umbral óptimo es \(C_{FP}/(C_{FP}+C_{FN})\), y <code>TunedThresholdClassifierCV</code> lo busca por validación cruzada. Esta opción conserva las probabilidades.`,
-      R`El remuestreo (submuestreo o SMOTE) modifica las observaciones de entrenamiento. No se usa en el curso.`
+      V({ py: R`El punto de partida son las particiones estratificadas (<code>stratify=y</code>, <code>StratifiedKFold</code>).`, tidymodels: R`El punto de partida son las particiones estratificadas (<code>strata</code> en <code>initial_split()</code> y <code>vfold_cv()</code>).`, caret: R`El punto de partida son las particiones estratificadas, que <code>createDataPartition()</code> y <code>train()</code> hacen por defecto.`, mlr3: R`El punto de partida son las particiones estratificadas (<code>task$col_roles$stratum</code>).` }),
+      V({ py: R`Una corrección es <b>ponderar</b> los errores de la clase rara al estimar: <code>class_weight="balanced"</code> en el logit, el random forest o la SVC, y <code>scale_pos_weight</code> en XGBoost. Las probabilidades resultantes dejan de estimar la proporción de positivos.`, tidymodels: R`Una corrección es <b>ponderar</b> los errores de la clase rara al estimar, con pesos de caso (<code>importance_weights()</code> y <code>add_case_weights()</code>) o con argumentos del motor, como <code>scale_pos_weight</code> en XGBoost. Las probabilidades resultantes dejan de estimar la proporción de positivos.`, caret: R`Una corrección es <b>ponderar</b> los errores de la clase rara al estimar, con el argumento <code>weights</code> de <code>train()</code> en los métodos que admiten pesos. Las probabilidades resultantes dejan de estimar la proporción de positivos.`, mlr3: R`Una corrección es <b>ponderar</b> los errores de la clase rara al estimar: <code>po("classweights", minor_weight = ...)</code>, <code>class.weights</code> en ranger y en la SVM, o <code>scale_pos_weight</code> en XGBoost. Las probabilidades resultantes dejan de estimar la proporción de positivos.` }),
+      V({ py: R`Otra corrección es <b>mover el umbral</b> según el coste de cada error. Con probabilidades calibradas, el umbral óptimo es \(C_{FP}/(C_{FP}+C_{FN})\), y <code>TunedThresholdClassifierCV</code> lo busca por validación cruzada. Esta opción conserva las probabilidades.`, tidymodels: R`Otra corrección es <b>mover el umbral</b> según el coste de cada error. Con probabilidades calibradas, el umbral óptimo es \(C_{FP}/(C_{FP}+C_{FN})\). <code>threshold_perf()</code> (paquete probably) calcula las métricas para varios umbrales. Esta opción conserva las probabilidades.`, caret: R`Otra corrección es <b>mover el umbral</b> según el coste de cada error. Con probabilidades calibradas, el umbral óptimo es \(C_{FP}/(C_{FP}+C_{FN})\). <code>thresholder()</code> calcula las métricas de validación para varios umbrales. Esta opción conserva las probabilidades.`, mlr3: R`Otra corrección es <b>mover el umbral</b> según el coste de cada error. Con probabilidades calibradas, el umbral óptimo es \(C_{FP}/(C_{FP}+C_{FN})\). <code>po("tunethreshold")</code> lo busca por validación interna, y <code>prediction$set_threshold()</code> lo aplica. Esta opción conserva las probabilidades.` }),
+      V({ py: R`El remuestreo (submuestreo o SMOTE) modifica las observaciones de entrenamiento. No se usa en el curso.`, tidymodels: R`El remuestreo (submuestreo o SMOTE) modifica las observaciones de entrenamiento. No se usa en el curso. En tidymodels lo hacen los pasos del paquete themis, como <code>step_downsample()</code> o <code>step_smote()</code>.`, caret: R`El remuestreo (submuestreo o SMOTE) modifica las observaciones de entrenamiento. No se usa en el curso. En caret se activa con <code>trainControl(sampling = "down")</code>, <code>"up"</code> o <code>"smote"</code>.`, mlr3: R`El remuestreo (submuestreo o SMOTE) modifica las observaciones de entrenamiento. No se usa en el curso. En mlr3 lo hacen <code>po("classbalancing")</code> y <code>po("smote")</code>.` })
     ],
     slides: [["t2", "con-clases-raras-la-exactitud-deja-de-informar", "Con clases raras, la exactitud deja de informar"], ["t2", "la-curva-precisión-sensibilidad-pr", "La curva PR"], ["t2", "correcciones-ponderar-mover-el-umbral-y-remuestrear", "Correcciones"], ["t2", "con-costes-asimétricos-el-umbral-óptimo-se-desplaza", "Umbral óptimo con costes asimétricos"]],
     materiales: ["t2"] },
@@ -646,7 +678,7 @@ const DECISIONES = [
       R`La <b>importancia por permutación</b> desordena al azar los valores de un predictor en los datos de validación y mide cuánto sube el error. Trabaja con los predictores originales. Si hay predictores correlacionados, uno puede parecer poco importante porque el modelo recupera su información de los otros.`,
       R`La <b>dependencia parcial</b> muestra cómo cambia la predicción media al variar un predictor con los demás fijos, y cada <b>curva ICE</b> muestra lo mismo para una observación. Al cambiar un solo predictor pueden aparecer combinaciones poco representadas en los datos.`,
       R`Los <b>valores de Shapley</b> reparten la predicción de una observación entre sus predictores, \(\hat f(x)=\phi_0+\sum_j\phi_j\), donde \(\phi_0\) es un valor base y \(\phi_j\) lo que el predictor \(j\) suma o resta. Explican predicciones concretas y, promediados en valor absoluto, sirven como importancia global.`,
-      R`Herramientas: <code>permutation_importance</code> y <code>PartialDependenceDisplay</code> (<code>sklearn.inspection</code>), y <code>shap.TreeExplainer</code> (biblioteca <code>shap</code>).`,
+      V({ py: R`Herramientas: <code>permutation_importance</code> y <code>PartialDependenceDisplay</code> (<code>sklearn.inspection</code>), y <code>shap.TreeExplainer</code> (biblioteca <code>shap</code>).`, tidymodels: R`Herramientas: <code>vip()</code> y <code>vi_permute()</code> (paquete vip), y los explicadores de DALEX (<code>model_parts()</code>, <code>model_profile()</code> y <code>predict_parts(type = "shap")</code>), que se crean con <code>explain_tidymodels()</code> del paquete DALEXtra.`, caret: R`Herramientas: <code>varImp()</code> de caret y los explicadores de DALEX: <code>explain()</code>, <code>model_parts()</code>, <code>model_profile()</code> y <code>predict_parts(type = "shap")</code>.`, mlr3: R`Herramientas: <code>learner$importance()</code> en los learners que la calculan, como ranger con <code>importance = "permutation"</code>, y los explicadores de DALEX, que se crean con <code>explain_mlr3()</code> del paquete DALEXtra.` }),
       R`Todas estas herramientas describen cómo usa el modelo los predictores para predecir. Qué pasaría si se cambiara un predictor es una pregunta causal, que requiere los supuestos del tema 7.`
     ],
     slides: [["t1b", "lasso-selecciona-variables", "Lasso selecciona variables"], ["t3", "qué-dice-un-coeficiente-igual-a-cero", "¿Qué dice un coeficiente igual a cero?"], ["t4c", "importancia-por-permutación", "Importancia por permutación"], ["t4c", "importancia-con-predictores-correlacionados", "Importancia con predictores correlacionados"], ["t4c", "dependencia-parcial-de-las-plazas", "Dependencia parcial y curvas ICE"], ["t4c", "el-valor-de-shapley-de-un-predictor", "El valor de Shapley de un predictor"]],
@@ -707,7 +739,7 @@ const ESTIMADORES = [
     links: [
       ["d_sesgo", R`Tiene poco sesgo si la relación es lineal, pero con pocos datos y predictores correlacionados su varianza es alta: sus coeficientes cambian mucho de una muestra a otra.`, ["t1b", "mco-es-insesgado-pero-su-varianza-crece-con-la-colinealidad", "MCO es insesgado, pero su varianza crece con la colinealidad"]],
       ["d_part", R`Si su error de entrenamiento es mucho menor que su error en datos nuevos, el modelo está sobreajustando. La partición de los datos permite detectarlo.`, ["t1c", "sobreajuste-con-datos-reales", "Sobreajuste con datos reales"]],
-      ["d_prep", R`Los predictores categóricos se codifican (one-hot) y los valores faltantes se imputan dentro del <code>Pipeline</code>.`],
+      ["d_prep", enPipe(p => R`Los predictores categóricos se codifican (one-hot) y los valores faltantes se imputan ${p}.`)],
       ["d_train", R`Minimiza la RSS. En el tema 1 sirve también para mostrar cómo funciona el descenso del gradiente.`, ["t1a", "regresión-lineal-tres-formas-de-calcular-el-paso", "Regresión lineal: tres formas de calcular el paso"]],
       ["d_mreg", R`Se evalúa con el RMSE, el MAE y el R² en datos que no ha visto.`],
       ["d_interp", R`Sus coeficientes se interpretan directamente, y por eso es el modelo de referencia para describir asociaciones entre predictores y respuesta.`],
@@ -757,9 +789,9 @@ const ESTIMADORES = [
     args: [],
     links: [
       ["d_sesgo", R`Introduce algo de sesgo a cambio de reducir mucho la varianza de los coeficientes.`, ["t1b", "sesgo-y-varianza", "Sesgo y varianza de MCO y Ridge"]],
-      ["d_hiper", R`\(\lambda\) se busca en una rejilla de valores en escala logarítmica. En scikit-learn se llama <code>alpha</code>.`, ["t1b", "selección-por-validación", "Selección por validación"]],
+      ["d_hiper", V({ py: R`\(\lambda\) se busca en una rejilla de valores en escala logarítmica. En scikit-learn se llama <code>alpha</code>.`, tidymodels: R`\(\lambda\) se busca en una rejilla de valores en escala logarítmica. En tidymodels se llama <code>penalty</code>.`, r: R`\(\lambda\) se busca en una rejilla de valores en escala logarítmica. En glmnet se llama <code>lambda</code>.` }), ["t1b", "selección-por-validación", "Selección por validación"]],
       ["d_cv", R`Primero se elige el mejor \(\lambda\) dentro de Ridge y después se compara Ridge con las demás familias, siempre por validación cruzada.`, ["t1b", "elegir-en-dos-niveles", "Elegir en dos niveles"]],
-      ["d_prep", R`Los predictores se estandarizan dentro del <code>Pipeline</code> antes de penalizar.`],
+      ["d_prep", V({ py: R`Los predictores se estandarizan dentro del <code>Pipeline</code> antes de penalizar.`, r: R`Los predictores se estandarizan antes de penalizar. glmnet lo hace por defecto (<code>standardize = TRUE</code>).` })],
       ["d_train", R`Cambia la pérdida: a la RSS se suma la penalización L2.`],
       ["d_mreg", R`Su RMSE de validación se compara con el de MCO y con el del modelo nulo.`],
       ["d_part", R`Su ventaja sobre MCO es grande con pocos datos de entrenamiento y se reduce a medida que crece la muestra.`, ["t1b", "cuándo-deja-de-ser-útil-regularizar", "¿Cuándo deja de ser útil regularizar?"]]
@@ -813,9 +845,9 @@ const ESTIMADORES = [
     args: [["max_iter", "número entero", R`Máximo de iteraciones del algoritmo.`]],
     links: [
       ["d_sesgo", R`\(\lambda\) regula el equilibrio entre sesgo y varianza, igual que en Ridge y Lasso.`],
-      ["d_hiper", R`Se busca en una rejilla de \(\lambda\) en escala logarítmica combinada con varias mezclas \(\alpha\). Atención a los nombres: en scikit-learn la intensidad es <code>alpha</code> y la mezcla <code>l1_ratio</code>.`],
+      ["d_hiper", V({ py: R`Se busca en una rejilla de \(\lambda\) en escala logarítmica combinada con varias mezclas \(\alpha\). Atención a los nombres: en scikit-learn la intensidad es <code>alpha</code> y la mezcla <code>l1_ratio</code>.`, tidymodels: R`Se busca en una rejilla de \(\lambda\) en escala logarítmica combinada con varias mezclas \(\alpha\). Atención a los nombres: en tidymodels la intensidad es <code>penalty</code> y la mezcla <code>mixture</code>.`, r: R`Se busca en una rejilla de \(\lambda\) en escala logarítmica combinada con varias mezclas \(\alpha\). Atención a los nombres: en glmnet la intensidad es <code>lambda</code> y la mezcla <code>alpha</code>, que coincide con la \(\alpha\) de la ficha.` })],
       ["d_cv", R`Si su ventaja sobre Lasso es menor que la variación que introduce la partición, no hay motivo sólido para preferirlo.`, ["t2", "error-típico-de-la-validación-cruzada", "Error típico de la validación cruzada"]],
-      ["d_prep", R`Los predictores se estandarizan dentro del <code>Pipeline</code>.`],
+      ["d_prep", V({ py: R`Los predictores se estandarizan dentro del <code>Pipeline</code>.`, r: R`Los predictores se estandarizan. glmnet lo hace por defecto (<code>standardize = TRUE</code>).` })],
       ["d_train", R`Minimiza la RSS más una mezcla de penalizaciones con un algoritmo iterativo.`],
       ["d_mreg", R`Se elige por su RMSE de validación.`],
       ["d_part", R`Una vez elegido por validación, se evalúa una sola vez en el test, y ese resultado no reabre la elección.`, ["t1b", "decidir-con-validación-comprobar-con-el-test", "Decidir con validación, comprobar con el test"]]
@@ -862,8 +894,8 @@ const ESTIMADORES = [
     args: [["class_weight", R`<code>None</code> o <code>"balanced"</code>`, R`Con <code>"balanced"</code> da más peso a los errores de la clase rara al estimar.`], ["max_iter", "número entero", R`Máximo de iteraciones del algoritmo.`]],
     links: [
       ["d_mclas", R`Es el modelo con el que se presentan la matriz de confusión, la curva ROC, el AUC y la log-loss.`, ["t2", "matriz-de-confusión", "Matriz de confusión"]],
-      ["d_deseq", R`Con <code>class_weight="balanced"</code> suben las probabilidades de la clase rara. En el logit esto equivale casi a bajar el umbral, pero las probabilidades dejan de estar calibradas.`, ["t2", "class_weight-cambia-los-pesos-de-estimación", "class_weight cambia los pesos de estimación"]],
-      ["d_hiper", R`<code>C</code> y <code>l1_ratio</code> se eligen por validación cruzada con la métrica del problema.`],
+      ["d_deseq", V({ py: R`Con <code>class_weight="balanced"</code> suben las probabilidades de la clase rara. En el logit esto equivale casi a bajar el umbral, pero las probabilidades dejan de estar calibradas.`, tidymodels: R`Con pesos de caso mayores para la clase rara (<code>importance_weights()</code>) suben las probabilidades de la clase rara. En el logit esto equivale casi a bajar el umbral, pero las probabilidades dejan de estar calibradas.`, caret: R`Con pesos mayores para la clase rara (argumento <code>weights</code> de <code>train()</code>) suben las probabilidades de la clase rara. En el logit esto equivale casi a bajar el umbral, pero las probabilidades dejan de estar calibradas.`, mlr3: R`Con <code>po("classweights")</code> suben las probabilidades de la clase rara. En el logit esto equivale casi a bajar el umbral, pero las probabilidades dejan de estar calibradas.` }), ["t2", "class_weight-cambia-los-pesos-de-estimación", "class_weight cambia los pesos de estimación"]],
+      ["d_hiper", V({ py: R`<code>C</code> y <code>l1_ratio</code> se eligen por validación cruzada con la métrica del problema.`, tidymodels: R`<code>penalty</code> y <code>mixture</code> se eligen por validación cruzada con la métrica del problema.`, r: R`<code>lambda</code> y <code>alpha</code> se eligen por validación cruzada con la métrica del problema.` })],
       ["d_cv", R`Las particiones se estratifican para que todas tengan la misma proporción de cada clase.`],
       ["d_prep", R`Los predictores se estandarizan antes de penalizar.`],
       ["d_train", R`Maximizar la verosimilitud de Bernoulli equivale a minimizar la log-loss.`, ["t3", "los-coeficientes-se-estiman-por-máxima-verosimilitud", "Los coeficientes se estiman por máxima verosimilitud"]],
@@ -917,8 +949,8 @@ const ESTIMADORES = [
     args: [],
     links: [
       ["d_sesgo", R`Con pocos datos sobreajusta, y la penalización reduce su error de validación. Con muchos datos, la penalización apenas cambia las predicciones.`, ["t3", "cuándo-necesita-penalización-un-glm", "¿Cuándo necesita penalización un GLM?"]],
-      ["d_hiper", R`<code>alpha</code> se elige por validación cruzada con el RMSE.`],
-      ["d_cv", R`Comparar el error medio de entrenamiento y de validación (<code>return_train_score=True</code>) permite detectar el sobreajuste.`, ["t3", "con-pocos-anuncios-el-gamma-sobreajusta", "El Gamma sobreajusta con pocos datos"]],
+      ["d_hiper", V({ py: R`<code>alpha</code> se elige por validación cruzada con el RMSE.`, tidymodels: R`<code>penalty</code> se elige por validación cruzada con el RMSE.`, r: R`<code>lambda</code> se elige por validación cruzada con el RMSE.` })],
+      ["d_cv", V({ py: R`Comparar el error medio de entrenamiento y de validación (<code>return_train_score=True</code>) permite detectar el sobreajuste.`, r: R`Comparar el error medio de entrenamiento y de validación permite detectar el sobreajuste.` }), ["t3", "con-pocos-anuncios-el-gamma-sobreajusta", "El Gamma sobreajusta con pocos datos"]],
       ["d_prep", R`Los predictores se estandarizan antes de penalizar.`],
       ["d_train", R`Se estima por máxima verosimilitud, con penalización si hace falta.`],
       ["d_mreg", R`La métrica principal es el RMSE. Si interesa predecir la mediana, el MAE es más adecuado.`, ["t3", "qué-modelo-elegimos-para-el-precio", "Elegir un modelo con RMSE y MAE"]]
@@ -942,7 +974,7 @@ const ESTIMADORES = [
     hp: [[R`Intensidad de la penalización Ridge (\(\lambda\))`, R`<code>alpha</code>`, R`Al aumentarla, los coeficientes se acercan a cero.`]],
     args: [],
     links: [
-      ["d_hiper", R`<code>alpha</code> se elige por validación cruzada.`],
+      ["d_hiper", V({ py: R`<code>alpha</code> se elige por validación cruzada.`, tidymodels: R`<code>penalty</code> se elige por validación cruzada.`, r: R`<code>lambda</code> se elige por validación cruzada.` })],
       ["d_cv", R`Con las predicciones de validación cruzada se compara, por grupos de observaciones, el recuento medio predicho con el observado.`, ["t3", "reseñas-del-último-año-distribución-de-poisson", "Distribución de Poisson"]],
       ["d_prep", R`Los predictores se estandarizan antes de penalizar.`],
       ["d_train", R`Se estima por máxima verosimilitud.`],
@@ -1059,10 +1091,10 @@ const ESTIMADORES = [
     links: [
       ["d_sesgo", R`Sortear los predictores reduce la correlación entre árboles y, con ella, la varianza de la media.`, ["t4a", "menos-predictores-por-corte-árboles-menos-parecidos", "Menos predictores por corte, árboles menos parecidos"]],
       ["d_hiper", R`\(m\) se elige por validación cruzada.`, ["t4a", "hiperparámetros-de-un-random-forest", "Hiperparámetros de un random forest"]],
-      ["d_cv", R`La búsqueda de <code>max_features</code> usa las mismas particiones que los demás modelos.`],
+      ["d_cv", V({ py: R`La búsqueda de <code>max_features</code> usa las mismas particiones que los demás modelos.`, r: R`La búsqueda de <code>mtry</code> usa las mismas particiones que los demás modelos.` })],
       ["d_mreg", R`En regresión suele mejorar el error del bagging, aunque a menudo por poco.`],
       ["d_mclas", R`En clasificación, el bosque promedia las probabilidades de sus árboles.`],
-      ["d_deseq", R`<code>class_weight</code> cambia la impureza y, con ella, los cortes de todos los árboles.`],
+      ["d_deseq", V({ py: R`<code>class_weight</code> cambia la impureza y, con ella, los cortes de todos los árboles.`, r: R`Los pesos de clase de ranger (<code>class.weights</code>) cambian la impureza y, con ella, los cortes de todos los árboles.` })],
       ["d_interp", R`Gana precisión a costa de interpretabilidad, y se interpreta con importancias y valores de Shapley.`]
     ],
     slides: [["t4a", "random-forest-cada-corte-elige-entre-m-predictores", "Random forest: cada corte elige entre m predictores"]],
@@ -1108,7 +1140,7 @@ const ESTIMADORES = [
       supuestos: R`Los del gradient boosting.`,
       flexibilidad: R`Alta. Además de la tasa, el número de árboles y la profundidad, \(\lambda\) y \(\gamma\) limitan la complejidad de cada árbol.`,
       interpretabilidad: R`Baja. Ofrece importancias por ganancia, y sus predicciones se explican con valores de Shapley.`,
-      coste: R`Agrupa cada predictor en intervalos antes de buscar los cortes, lo que lo hace más rápido que el gradient boosting de scikit-learn. A cambio, tiene más hiperparámetros que elegir.`
+      coste: V({ py: R`Agrupa cada predictor en intervalos antes de buscar los cortes, lo que lo hace más rápido que el gradient boosting de scikit-learn. A cambio, tiene más hiperparámetros que elegir.`, r: R`Puede agrupar cada predictor en intervalos antes de buscar los cortes (<code>tree_method = "hist"</code>), lo que lo hace más rápido que gbm. A cambio, tiene más hiperparámetros que elegir.` })
     },
     sklearn: [["XGBRegressor", "xgboost", "Regresión (biblioteca externa con interfaz de scikit-learn)"], ["XGBClassifier", "xgboost", "Clasificación"]],
     hp: [[R`Número de árboles`, R`<code>n_estimators</code>`, R`Al aumentarlo, el modelo gana capacidad de ajuste.`],
@@ -1150,7 +1182,7 @@ const ESTIMADORES = [
       ["d_hiper", R`Cada modelo combinado conserva sus propios hiperparámetros, elegidos antes de combinarlo.`],
       ["d_cv", R`Se evalúa con las mismas particiones que los modelos que combina, para comprobar si la media mejora al mejor de ellos.`, ["t4c", "la-media-de-las-predicciones", "La media de las predicciones"]],
       ["d_mreg", R`Se compara con cada modelo base usando la misma métrica.`],
-      ["d_mclas", R`En clasificación se vota la clase (<code>"hard"</code>) o se promedian las probabilidades (<code>"soft"</code>).`, ["t4c", "voting-y-stacking-en-clasificación", "Voting y stacking en clasificación"]]
+      ["d_mclas", V({ py: R`En clasificación se vota la clase (<code>"hard"</code>) o se promedian las probabilidades (<code>"soft"</code>).`, r: R`En clasificación se promedian las probabilidades de los modelos o se vota la clase más frecuente.`, mlr3: R`En clasificación, <code>po("classifavg")</code> promedia las probabilidades de los modelos.` }), ["t4c", "voting-y-stacking-en-clasificación", "Voting y stacking en clasificación"]]
     ],
     slides: [["t4c", "los-errores-de-random-forest-y-xgboost-están-correlacionados", "Errores correlacionados entre modelos"]],
     vocab: [],
@@ -1193,7 +1225,7 @@ const ESTIMADORES = [
       supuestos: R`Con un núcleo no lineal no impone una forma funcional. Mide la semejanza entre observaciones con distancias, así que los predictores deben estar estandarizados.`,
       flexibilidad: R`La controlan \(C\), que fija cuánto cuesta cada error fuera del tubo, y, con núcleo RBF, \(\gamma\), que fija la anchura de cada campana. Con \(\gamma\) y \(C\) grandes, la función puede reproducir el entrenamiento y sobreajustar.`,
       interpretabilidad: R`Alta con núcleo lineal, porque tiene coeficientes, y baja con núcleo RBF.`,
-      coste: R`Con núcleo, el tiempo de ajuste crece entre \(n^2\) y \(n^3\), así que con cientos de miles de observaciones deja de ser práctico. <code>LinearSVR</code> es la alternativa lineal para muchos datos.`
+      coste: V({ py: R`Con núcleo, el tiempo de ajuste crece entre \(n^2\) y \(n^3\), así que con cientos de miles de observaciones deja de ser práctico. <code>LinearSVR</code> es la alternativa lineal para muchos datos.`, r: R`Con núcleo, el tiempo de ajuste crece entre \(n^2\) y \(n^3\), así que con cientos de miles de observaciones deja de ser práctico. Para muchos datos, la alternativa es el núcleo lineal del paquete LiblineaR.` })
     },
     sklearn: [["SVR", "sklearn.svm", "Regresión con núcleo"], ["LinearSVR", "sklearn.svm", "Regresión lineal para muchas observaciones"]],
     hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`, R`Al aumentarlo, los errores pesan más y la función puede ser menos plana.`],
@@ -1203,9 +1235,9 @@ const ESTIMADORES = [
     args: [["kernel", R`<code>"rbf"</code> (por defecto), <code>"linear"</code> o <code>"poly"</code>`, R`Núcleo: fija la forma de la función que se puede ajustar.`]],
     links: [
       ["d_sesgo", R`\(C\) y \(\gamma\) controlan la complejidad. Con campanas estrechas y errores caros, la función sigue el ruido del entrenamiento.`, ["t5", "entrenamiento-frente-a-validación", "Entrenamiento frente a validación"]],
-      ["d_hiper", R`\(C\) y \(\gamma\) se eligen juntos con <code>GridSearchCV</code>, porque el mejor valor de \(C\) depende de \(\gamma\).`, ["t5", "hiperparámetros-de-la-svm", "Hiperparámetros de la SVM"]],
+      ["d_hiper", V({ py: R`\(C\) y \(\gamma\) se eligen juntos con <code>GridSearchCV</code>, porque el mejor valor de \(C\) depende de \(\gamma\).`, tidymodels: R`\(C\) y la anchura del núcleo se eligen juntos con <code>tune_grid()</code>, porque el mejor valor de \(C\) depende de la anchura.`, caret: R`\(C\) y la anchura del núcleo se eligen juntos en la misma rejilla de <code>train()</code>, porque el mejor valor de \(C\) depende de la anchura.`, mlr3: R`\(C\) y la anchura del núcleo se eligen juntos con <code>auto_tuner()</code>, porque el mejor valor de \(C\) depende de la anchura.` }), ["t5", "hiperparámetros-de-la-svm", "Hiperparámetros de la SVM"]],
       ["d_cv", R`Se compara con los demás modelos del curso usando las mismas particiones.`],
-      ["d_prep", R`Los predictores se estandarizan dentro del <code>Pipeline</code>, porque la semejanza entre observaciones se mide con distancias.`, ["t5", "escalar-antes-de-medir-distancias", "Escalar antes de medir distancias"]],
+      ["d_prep", V({ py: R`Los predictores se estandarizan dentro del <code>Pipeline</code>, porque la semejanza entre observaciones se mide con distancias.`, r: R`Los predictores se estandarizan, porque la semejanza entre observaciones se mide con distancias. kernlab y e1071 lo hacen por defecto (<code>scaled = TRUE</code> y <code>scale = TRUE</code>).` }), ["t5", "escalar-antes-de-medir-distancias", "Escalar antes de medir distancias"]],
       ["d_train", R`Minimiza la pérdida insensible a \(\varepsilon\) más una penalización de los coeficientes, con la misma estructura que Ridge.`, ["t5", "lo-que-minimiza-la-svr-lineal", "Lo que minimiza la SVR lineal"]],
       ["d_mreg", R`Se evalúa con el RMSE de validación.`]
     ],
@@ -1233,9 +1265,9 @@ const ESTIMADORES = [
       ["d_sesgo", R`\(C\) y \(\gamma\) controlan la complejidad de la frontera.`],
       ["d_hiper", R`\(C\) y \(\gamma\) se eligen juntos por validación cruzada.`],
       ["d_cv", R`Se compara con los demás clasificadores usando las mismas particiones estratificadas.`],
-      ["d_prep", R`Los predictores se estandarizan dentro del <code>Pipeline</code>.`],
+      ["d_prep", V({ py: R`Los predictores se estandarizan dentro del <code>Pipeline</code>.`, r: R`Los predictores se estandarizan. kernlab y e1071 lo hacen por defecto.` })],
       ["d_mclas", R`Sin calibrar, la SVC da una clase y una puntuación que sirve para ordenar las observaciones. La exactitud es adecuada si los dos tipos de error cuestan lo mismo.`, ["t5", "la-svc-lineal-frente-al-clasificador-nulo", "La SVC lineal frente al clasificador nulo"]],
-      ["d_deseq", R`<code>class_weight</code> encarece los errores de la clase rara.`],
+      ["d_deseq", V({ py: R`<code>class_weight</code> encarece los errores de la clase rara.`, r: R`Los pesos de clase (<code>class.weights</code> en kernlab y e1071) encarecen los errores de la clase rara.` })],
       ["d_train", R`Minimiza la pérdida bisagra más una penalización de los coeficientes.`, ["t5", "la-pérdida-bisagra", "La pérdida bisagra"]]
     ],
     slides: [["t5", "el-margen", "El margen"]],
@@ -1307,6 +1339,247 @@ const ESTIMADORES = [
    un intervalo indica que el nivel depende de los hiperparámetros, y null, que depende de
    los modelos que se combinan. Si cambia el texto de una ficha, hay que revisar su nivel.
    DoubleML no se compara porque estima un efecto y no es un modelo predictivo. */
+/* Implementación en R de cada estimador, por marco: tidymodels, caret y mlr3.
+   fn: [código, paquete, uso]; hp: [nombre del hiperparámetro en la ficha, argumento] (el efecto
+   se toma de la ficha) o [nombre nuevo, argumento, efecto]; args: [argumento, valores, para qué];
+   lib: paquetes adicionales para library(); nota: aclaración breve. Fuente: documentación de cada
+   paquete (ver mapa/REGISTRO.md). */
+const EF_LAMBDA = R`Al aumentarla, los coeficientes se contraen más: más sesgo y menos varianza.`;
+const EF_MEZCLA = R`Al acercarla a 1, el modelo se parece más a Lasso: 0 equivale a Ridge y 1 a Lasso.`;
+const NOTA_GLMNET = R`glmnet estandariza los predictores por defecto (<code>standardize = TRUE</code>) y devuelve los coeficientes en la escala original. En glmnet, <code>alpha</code> es la mezcla entre L1 y L2 y <code>lambda</code> la intensidad, al revés que en scikit-learn, donde <code>alpha</code> es la intensidad.`;
+const NOTA_RPART = R`El <code>cp</code> de rpart mide la poda en proporción al error del nodo raíz, así que su escala es distinta de la de <code>ccp_alpha</code> en scikit-learn.`;
+const NOTA_KERNLAB = R`En kernlab, el núcleo RBF es \(\exp(-\sigma\lVert x-x'\rVert^2)\), así que \(\sigma\) desempeña el papel de \(\gamma\). kernlab estandariza los predictores por defecto (<code>scaled = TRUE</code>).`;
+const NOTA_E1071 = R`e1071 estandariza los predictores por defecto (<code>scale = TRUE</code>). Con núcleo RBF, la semejanza es \(\exp(-\gamma\lVert x-x'\rVert^2)\).`;
+const R_IMPL = {
+  nulo: {
+    tidymodels: { fn: [["null_model()", "parsnip", "Regresión y clasificación"]], nota: R`Predice la media en regresión y la clase más frecuente en clasificación.` },
+    caret: { fn: [[`train(..., method = "null")`, "caret", "Regresión y clasificación"]], nota: R`Predice la media en regresión y la clase más frecuente en clasificación.` },
+    mlr3: { fn: [[`lrn("regr.featureless")`, "mlr3", "Regresión"], [`lrn("classif.featureless")`, "mlr3", "Clasificación"]],
+      args: [["robust", R`<code>FALSE</code> (media, por defecto) o <code>TRUE</code> (mediana)`, R`Fija qué predice en regresión.`],
+             ["method", R`<code>"mode"</code> (por defecto), <code>"sample"</code> o <code>"weighted.sample"</code>`, R`Fija qué predice en clasificación: la clase más frecuente o una clase sorteada.`]] }
+  },
+  mco: {
+    tidymodels: { fn: [["linear_reg()", "parsnip", "Especificación del modelo"], [`set_engine("lm")`, "stats", "Ajuste por MCO"]] },
+    caret: { fn: [[`train(..., method = "lm")`, "caret", "Regresión (usa lm())"]], nota: R`caret muestra en la rejilla un parámetro <code>intercept</code>, que solo indica si el modelo incluye el intercepto.` },
+    mlr3: { fn: [[`lrn("regr.lm")`, "mlr3learners", "Regresión (usa lm())"]] }
+  },
+  poli: {
+    tidymodels: { fn: [["step_poly()", "recipes", "Crea las potencias (paso de la receta)"], ["linear_reg()", "parsnip", "Ajusta la regresión"]],
+      hp: [[R`Grado del polinomio (\(d\))`, R`<code>degree</code> (en <code>step_poly()</code>)`]],
+      nota: R`Por defecto, <code>step_poly()</code> crea polinomios ortogonales. Las predicciones coinciden con las de las potencias \(x, x^2, \dots\), pero los coeficientes no. Para usar las potencias se añade <code>options = list(raw = TRUE)</code>.` },
+    caret: { fn: [["poly(x, degree)", "stats", "Potencias dentro de la fórmula"], [`train(..., method = "lm")`, "caret", "Ajusta la regresión"]],
+      hp: [[R`Grado del polinomio (\(d\))`, R`<code>degree</code> (en <code>poly()</code>)`]],
+      nota: R`La rejilla de <code>train()</code> no incluye el grado. Se ajusta un modelo por grado con las mismas particiones y se comparan con <code>resamples()</code>.` },
+    mlr3: { fn: [[`po("mutate")`, "mlr3pipelines", "Crea las potencias"], [`lrn("regr.lm")`, "mlr3learners", "Ajusta la regresión"]],
+      hp: [[R`Grado del polinomio (\(d\))`, R`fórmulas de <code>mutation</code>, por ejemplo <code>list(x2 = ~ x^2)</code>`]],
+      lib: ["mlr3pipelines"],
+      nota: R`mlr3pipelines no tiene un paso de potencias con el grado como parámetro. Cada grado es un grafo distinto, y los grafos se comparan con <code>benchmark()</code>.` }
+  },
+  ridge: {
+    tidymodels: { fn: [["linear_reg(mixture = 0)", "parsnip", "Regresión con penalización L2"], [`set_engine("glmnet")`, "glmnet", "Ajuste"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>penalty</code>`]], nota: NOTA_GLMNET },
+    caret: { fn: [[`train(..., method = "glmnet")`, "caret", "Regresión"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code>`]],
+      args: [["alpha", R`<code>0</code>`, R`Fija la penalización L2 (Ridge). En <code>tuneGrid</code> se deja en un solo valor.`]], nota: NOTA_GLMNET },
+    mlr3: { fn: [[`lrn("regr.glmnet", alpha = 0)`, "mlr3learners", "Regresión"], [`lrn("regr.cv_glmnet", alpha = 0)`, "mlr3learners", R`Regresión con \(\lambda\) elegido por validación cruzada interna`]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code>`]], nota: NOTA_GLMNET }
+  },
+  lasso: {
+    tidymodels: { fn: [["linear_reg(mixture = 1)", "parsnip", "Regresión con penalización L1"], [`set_engine("glmnet")`, "glmnet", "Ajuste"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>penalty</code>`]], nota: NOTA_GLMNET },
+    caret: { fn: [[`train(..., method = "glmnet")`, "caret", "Regresión"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code>`]],
+      args: [["alpha", R`<code>1</code>`, R`Fija la penalización L1 (Lasso). En <code>tuneGrid</code> se deja en un solo valor.`]], nota: NOTA_GLMNET },
+    mlr3: { fn: [[`lrn("regr.glmnet", alpha = 1)`, "mlr3learners", "Regresión"], [`lrn("regr.cv_glmnet", alpha = 1)`, "mlr3learners", R`Regresión con \(\lambda\) elegido por validación cruzada interna`]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code>`]],
+      args: [["maxit", "número entero", R`Máximo de iteraciones del algoritmo.`]], nota: NOTA_GLMNET }
+  },
+  enet: {
+    tidymodels: { fn: [["linear_reg()", "parsnip", "Regresión penalizada"], [`set_engine("glmnet")`, "glmnet", "Ajuste"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>penalty</code>`], [R`Mezcla entre L1 y L2 (\(\alpha\))`, R`<code>mixture</code>`]], nota: NOTA_GLMNET },
+    caret: { fn: [[`train(..., method = "glmnet")`, "caret", "Regresión"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code>`], [R`Mezcla entre L1 y L2 (\(\alpha\))`, R`<code>alpha</code>`]], nota: NOTA_GLMNET },
+    mlr3: { fn: [[`lrn("regr.glmnet")`, "mlr3learners", "Regresión"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code>`], [R`Mezcla entre L1 y L2 (\(\alpha\))`, R`<code>alpha</code>`]], nota: NOTA_GLMNET }
+  },
+  mpl: {
+    tidymodels: { fn: [["linear_reg()", "parsnip", "Regresión sobre la respuesta codificada 0/1"], [`set_engine("lm")`, "stats", "Ajuste por MCO"]],
+      nota: R`La respuesta tiene que ser numérica (0/1). Con una respuesta de tipo factor, parsnip exige un modelo de clasificación.` },
+    caret: { fn: [[`train(..., method = "lm")`, "caret", "Regresión sobre la respuesta codificada 0/1"]], nota: R`La respuesta tiene que ser numérica (0/1).` },
+    mlr3: { fn: [[`lrn("regr.lm")`, "mlr3learners", "Regresión sobre la respuesta codificada 0/1"]], nota: R`La tarea es de regresión (<code>as_task_regr()</code>), con la respuesta numérica 0/1.` }
+  },
+  logit: {
+    tidymodels: { fn: [["logistic_reg()", "parsnip", "Clasificación binaria"], [`set_engine("glm")`, "stats", "Sin penalización"], [`set_engine("glmnet")`, "glmnet", "Con penalización"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>penalty</code>`, EF_LAMBDA], [R`Mezcla entre L1 y L2`, R`<code>mixture</code>`]],
+      nota: R`En R la penalización se expresa con \(\lambda\). scikit-learn usa su inversa, \(C=1/\lambda\).` },
+    caret: { fn: [[`train(..., method = "glm")`, "caret", "Sin penalización (familia binomial)"], [`train(..., method = "glmnet")`, "caret", "Con penalización"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code>`, EF_LAMBDA], [R`Mezcla entre L1 y L2`, R`<code>alpha</code>`]],
+      nota: R`En R la penalización se expresa con \(\lambda\). scikit-learn usa su inversa, \(C=1/\lambda\).` },
+    mlr3: { fn: [[`lrn("classif.log_reg")`, "mlr3learners", "Sin penalización"], [`lrn("classif.glmnet")`, "mlr3learners", "Con penalización"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code>`, EF_LAMBDA], [R`Mezcla entre L1 y L2`, R`<code>alpha</code>`]],
+      nota: R`En R la penalización se expresa con \(\lambda\). scikit-learn usa su inversa, \(C=1/\lambda\).` }
+  },
+  multinomial: {
+    tidymodels: { fn: [["multinom_reg()", "parsnip", "Clasificación con más de dos clases"], [`set_engine("glmnet")`, "glmnet", "Con penalización elastic net"], [`set_engine("nnet")`, "nnet", "Con penalización L2 de los pesos"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>penalty</code>`, EF_LAMBDA], [R`Mezcla entre L1 y L2`, R`<code>mixture</code> (solo con glmnet)`]],
+      nota: R`Con el motor nnet, <code>penalty</code> se traduce en el decaimiento de los pesos (<code>decay</code>).` },
+    caret: { fn: [[`train(..., method = "glmnet")`, "caret", "Con penalización elastic net"], [`train(..., method = "multinom")`, "caret", "Con penalización L2 (paquete nnet)"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code> (glmnet) o <code>decay</code> (multinom)`, EF_LAMBDA], [R`Mezcla entre L1 y L2`, R`<code>alpha</code> (glmnet)`]] },
+    mlr3: { fn: [[`lrn("classif.glmnet")`, "mlr3learners", "Con penalización elastic net"], [`lrn("classif.multinom")`, "mlr3learners", "Con penalización L2 (paquete nnet)"]],
+      hp: [[R`Intensidad de la penalización (\(\lambda\))`, R`<code>lambda</code> (glmnet) o <code>decay</code> (multinom)`, EF_LAMBDA], [R`Mezcla entre L1 y L2`, R`<code>alpha</code> (glmnet)`]] }
+  },
+  gamma: {
+    tidymodels: { fn: [["linear_reg()", "parsnip", "Especificación del modelo"], [`set_engine("glm", family = Gamma(link = "log"))`, "stats", "GLM Gamma con enlace logarítmico"]],
+      sinHp: R`Con el motor glm no tiene hiperparámetros. glmnet admite la familia Gamma (<code>family = Gamma(link = "log")</code>) si se necesita penalizar.` },
+    caret: { fn: [[`train(..., method = "glm", family = Gamma(link = "log"))`, "caret", "GLM Gamma con enlace logarítmico"]],
+      sinHp: R`Con <code>method = "glm"</code> no tiene hiperparámetros.` },
+    mlr3: { fn: [[`lrn("regr.glm", family = "Gamma")`, "mlr3extralearners", "GLM Gamma"]], lib: ["mlr3extralearners"],
+      sinHp: R`No tiene hiperparámetros.`,
+      nota: R`mlr3learners no incluye la familia Gamma: <code>regr.glmnet</code> solo admite <code>"gaussian"</code> y <code>"poisson"</code>. El learner <code>regr.glm</code> está en mlr3extralearners, que se instala desde GitHub y no se ha podido comprobar al preparar el mapa.` }
+  },
+  poisson: {
+    tidymodels: { fn: [["poisson_reg()", "poissonreg", "GLM Poisson"], [`set_engine("glm")`, "stats", "Sin penalización"], [`set_engine("glmnet")`, "glmnet", "Con penalización"]], lib: ["poissonreg"],
+      hp: [[R`Intensidad de la penalización Ridge (\(\lambda\))`, R`<code>penalty</code>, con <code>mixture = 0</code>`, EF_LAMBDA]] },
+    caret: { fn: [[`train(..., method = "glm", family = poisson)`, "caret", "Sin penalización"], [`train(..., method = "glmnet", family = "poisson")`, "caret", "Con penalización"]],
+      hp: [[R`Intensidad de la penalización Ridge (\(\lambda\))`, R`<code>lambda</code>, con <code>alpha = 0</code>`, EF_LAMBDA]] },
+    mlr3: { fn: [[`lrn("regr.glmnet", family = "poisson", alpha = 0)`, "mlr3learners", "Con penalización Ridge"]],
+      hp: [[R`Intensidad de la penalización Ridge (\(\lambda\))`, R`<code>lambda</code>`, EF_LAMBDA]] }
+  },
+  arbol_reg: {
+    tidymodels: { fn: [["decision_tree()", "parsnip", "Regresión (con set_mode(\"regression\"))"], [`set_engine("rpart")`, "rpart", "Ajuste"]],
+      hp: [["Profundidad máxima", R`<code>tree_depth</code> (<code>maxdepth</code> en rpart)`],
+           ["Observaciones mínimas para dividir un nodo", R`<code>min_n</code> (<code>minsplit</code> en rpart)`, R`Al aumentarlo, el árbol hace menos cortes y es más simple.`],
+           [R`Intensidad de la poda (\(\alpha\))`, R`<code>cost_complexity</code> (<code>cp</code> en rpart)`]], nota: NOTA_RPART },
+    caret: { fn: [[`train(..., method = "rpart")`, "caret", "Ajusta la poda"], [`train(..., method = "rpart2")`, "caret", "Ajusta la profundidad"]],
+      hp: [[R`Intensidad de la poda (\(\alpha\))`, R`<code>cp</code> (método <code>"rpart"</code>)`], ["Profundidad máxima", R`<code>maxdepth</code> (método <code>"rpart2"</code>)`]],
+      nota: R`Cada método de caret ajusta un solo hiperparámetro. ` + NOTA_RPART },
+    mlr3: { fn: [[`lrn("regr.rpart")`, "mlr3", "Regresión"]],
+      hp: [["Profundidad máxima", R`<code>maxdepth</code>`], ["Observaciones mínimas por hoja", R`<code>minbucket</code>`], [R`Intensidad de la poda (\(\alpha\))`, R`<code>cp</code>`]], nota: NOTA_RPART }
+  },
+  arbol_clas: {
+    tidymodels: { fn: [["decision_tree()", "parsnip", "Clasificación (con set_mode(\"classification\"))"], [`set_engine("rpart")`, "rpart", "Ajuste"]],
+      hp: [["Profundidad máxima", R`<code>tree_depth</code> (<code>maxdepth</code> en rpart)`],
+           ["Observaciones mínimas para dividir un nodo", R`<code>min_n</code> (<code>minsplit</code> en rpart)`, R`Al aumentarlo, el árbol hace menos cortes y es más simple.`],
+           [R`Intensidad de la poda (\(\alpha\))`, R`<code>cost_complexity</code> (<code>cp</code> en rpart)`]], nota: NOTA_RPART },
+    caret: { fn: [[`train(..., method = "rpart")`, "caret", "Ajusta la poda"], [`train(..., method = "rpart2")`, "caret", "Ajusta la profundidad"]],
+      hp: [[R`Intensidad de la poda (\(\alpha\))`, R`<code>cp</code> (método <code>"rpart"</code>)`], ["Profundidad máxima", R`<code>maxdepth</code> (método <code>"rpart2"</code>)`]],
+      nota: R`Cada método de caret ajusta un solo hiperparámetro. ` + NOTA_RPART },
+    mlr3: { fn: [[`lrn("classif.rpart")`, "mlr3", "Clasificación"]],
+      hp: [["Profundidad máxima", R`<code>maxdepth</code>`], ["Observaciones mínimas por hoja", R`<code>minbucket</code>`], [R`Intensidad de la poda (\(\alpha\))`, R`<code>cp</code>`]], nota: NOTA_RPART }
+  },
+  bagging: {
+    tidymodels: { fn: [["bag_tree()", "parsnip", "Especificación del modelo"], [`set_engine("rpart", times = 25)`, "baguette", "Ajuste con remuestras bootstrap"]], lib: ["baguette"],
+      args: [["times", R`número entero (11 por defecto)`, R`Número de árboles (\(B\)). Es un argumento del motor, en <code>set_engine()</code>.`]],
+      sinHp: R`El número de árboles se fija con <code>times</code>. <code>bag_tree()</code> admite además los hiperparámetros de cada árbol (<code>cost_complexity</code>, <code>tree_depth</code>, <code>min_n</code>), que en el bagging suelen dejarse sin límite.` },
+    caret: { fn: [[`train(..., method = "treebag")`, "caret", "Bagging de árboles (paquete ipred)"]],
+      args: [["nbagg", R`número entero (25 por defecto)`, R`Número de árboles (\(B\)). Se pasa a <code>train()</code> como argumento fijo.`]],
+      sinHp: R`<code>method = "treebag"</code> no tiene parámetros en la rejilla.` },
+    mlr3: { fn: [[`ppl("bagging", graph = lrn("regr.rpart"))`, "mlr3pipelines", "Bagging de cualquier learner"], [`po("regravg", collect_multiplicity = TRUE)`, "mlr3pipelines", "Promedia las predicciones (argumento averager)"]], lib: ["mlr3pipelines"],
+      hp: [[R`Número de árboles (\(B\))`, R`<code>iterations</code>`], ["Tamaño de cada remuestra", R`<code>frac</code>`]],
+      nota: R`<code>ppl("bagging")</code> toma las remuestras sin reemplazamiento, con una fracción <code>frac</code> de las observaciones. Un bagging de árboles con remuestras bootstrap es un random forest que sortea todos los predictores: <code>lrn("regr.ranger", mtry.ratio = 1)</code>.` }
+  },
+  rf: {
+    tidymodels: { fn: [["rand_forest()", "parsnip", "Especificación del modelo"], [`set_engine("ranger")`, "ranger", "Ajuste"]],
+      hp: [["Número de árboles", R`<code>trees</code>`], [R`Predictores sorteados en cada corte (\(m\); mtry en R)`, R`<code>mtry</code>`],
+           ["Tamaño mínimo de los nodos", R`<code>min_n</code> (<code>min.node.size</code> en ranger)`, R`Al aumentarlo, los árboles son más pequeños y más simples.`]],
+      args: [["importance", R`<code>"impurity"</code> o <code>"permutation"</code>, en <code>set_engine()</code>`, R`Calcula la importancia de los predictores.`]] },
+    caret: { fn: [[`train(..., method = "ranger")`, "caret", "Random forest con ranger"], [`train(..., method = "rf")`, "caret", "Random forest con randomForest (solo ajusta mtry)"]],
+      hp: [[R`Predictores sorteados en cada corte (\(m\); mtry en R)`, R`<code>mtry</code>`],
+           ["Tamaño mínimo de los nodos", R`<code>min.node.size</code>`, R`Al aumentarlo, los árboles son más pequeños y más simples.`]],
+      args: [["num.trees", R`número entero (500 por defecto)`, R`Número de árboles. Se pasa a <code>train()</code> como argumento fijo, porque no está en la rejilla.`],
+             ["splitrule", R`<code>"variance"</code> (regresión) o <code>"gini"</code> (clasificación)`, R`Criterio de corte. La rejilla de <code>"ranger"</code> lo exige, aunque se deje en un solo valor.`]] },
+    mlr3: { fn: [[`lrn("regr.ranger")`, "mlr3learners", "Regresión"], [`lrn("classif.ranger")`, "mlr3learners", "Clasificación"]],
+      hp: [["Número de árboles", R`<code>num.trees</code>`], [R`Predictores sorteados en cada corte (\(m\); mtry en R)`, R`<code>mtry</code> o <code>mtry.ratio</code>`],
+           ["Profundidad máxima de cada árbol", R`<code>max.depth</code>`], ["Tamaño mínimo de los nodos", R`<code>min.node.size</code>`, R`Al aumentarlo, los árboles son más pequeños y más simples.`]],
+      args: [["importance", R`<code>"impurity"</code> o <code>"permutation"</code>`, R`Calcula la importancia de los predictores.`], ["class.weights", "un peso por clase", R`Da más peso a los errores de la clase rara en el índice de Gini.`]] }
+  },
+  gb: {
+    tidymodels: { fn: [["boost_tree()", "parsnip", "Especificación del modelo"], [`set_engine("xgboost")`, "xgboost", "Ajuste (motor por defecto)"]],
+      hp: [[R`Número de árboles (\(B\))`, R`<code>trees</code>`], [R`Tasa de aprendizaje (\(\nu\))`, R`<code>learn_rate</code>`], ["Profundidad de cada árbol", R`<code>tree_depth</code>`], ["Fracción de observaciones por árbol", R`<code>sample_size</code>`]],
+      nota: R`parsnip no tiene un motor para gbm. <code>boost_tree()</code> usa por defecto xgboost, cuyos hiperparámetros adicionales se describen en la ficha de XGBoost.` },
+    caret: { fn: [[`train(..., method = "gbm")`, "caret", "Gradient boosting con el paquete gbm"]],
+      hp: [[R`Número de árboles (\(B\))`, R`<code>n.trees</code>`], [R`Tasa de aprendizaje (\(\nu\))`, R`<code>shrinkage</code>`], ["Profundidad de cada árbol", R`<code>interaction.depth</code>`],
+           ["Observaciones mínimas por hoja", R`<code>n.minobsinnode</code>`, R`Al aumentarlo, cada árbol es más simple.`]],
+      args: [["bag.fraction", R`entre 0 y 1 (0,5 por defecto)`, R`Fracción de observaciones por árbol. No está en la rejilla de caret y se pasa como argumento fijo.`],
+             ["distribution", R`<code>"gaussian"</code>, <code>"bernoulli"</code>…`, R`Pérdida cuyo gradiente siguen los árboles.`]] },
+    mlr3: { fn: [[`lrn("regr.xgboost")`, "mlr3learners", "Regresión"], [`lrn("classif.xgboost")`, "mlr3learners", "Clasificación"]],
+      hp: [[R`Número de árboles (\(B\))`, R`<code>nrounds</code>`], [R`Tasa de aprendizaje (\(\nu\))`, R`<code>eta</code>`], ["Profundidad de cada árbol", R`<code>max_depth</code>`], ["Fracción de observaciones por árbol", R`<code>subsample</code>`]],
+      nota: R`mlr3learners no incluye gbm. El gradient boosting se ajusta con xgboost, cuyos hiperparámetros adicionales se describen en la ficha de XGBoost.` }
+  },
+  xgb: {
+    tidymodels: { fn: [["boost_tree()", "parsnip", "Especificación del modelo"], [`set_engine("xgboost")`, "xgboost", "Ajuste"]],
+      hp: [["Número de árboles", R`<code>trees</code>`], [R`Tasa de aprendizaje (\(\nu\))`, R`<code>learn_rate</code>`], ["Profundidad de cada árbol", R`<code>tree_depth</code>`],
+           [R`Penalización de las hojas (\(\lambda\))`, R`<code>lambda</code>, argumento del motor en <code>set_engine()</code>`], [R`Coste por hoja (\(\gamma\))`, R`<code>loss_reduction</code>`],
+           ["Fracción de observaciones y de predictores por árbol", R`<code>sample_size</code> y <code>mtry</code>`]],
+      args: [["stop_iter", "número entero", R`Parada temprana: rondas sin mejora en el conjunto de validación interno (<code>validation</code> en <code>set_engine()</code>).`],
+             ["scale_pos_weight", R`número positivo, en <code>set_engine()</code>`, R`Peso de la clase positiva en la pérdida, para clases desequilibradas.`]],
+      nota: R`parsnip expresa <code>mtry</code> como número de predictores y lo traduce a la proporción <code>colsample_bynode</code> de xgboost.` },
+    caret: { fn: [[`train(..., method = "xgbTree")`, "caret", "Regresión y clasificación"]],
+      hp: [["Número de árboles", R`<code>nrounds</code>`], [R`Tasa de aprendizaje (\(\nu\))`, R`<code>eta</code>`], ["Profundidad de cada árbol", R`<code>max_depth</code>`],
+           [R`Coste por hoja (\(\gamma\))`, R`<code>gamma</code>`], ["Fracción de observaciones y de predictores por árbol", R`<code>subsample</code> y <code>colsample_bytree</code>`]],
+      nota: R`La rejilla de <code>"xgbTree"</code> tiene que incluir sus siete parámetros (<code>nrounds</code>, <code>max_depth</code>, <code>eta</code>, <code>gamma</code>, <code>colsample_bytree</code>, <code>min_child_weight</code> y <code>subsample</code>), aunque algunos se dejen en un solo valor. La penalización \(\lambda\) no está en la rejilla.` },
+    mlr3: { fn: [[`lrn("regr.xgboost")`, "mlr3learners", "Regresión"], [`lrn("classif.xgboost")`, "mlr3learners", "Clasificación"]],
+      hp: [["Número de árboles", R`<code>nrounds</code>`], [R`Tasa de aprendizaje (\(\nu\))`, R`<code>eta</code>`], ["Profundidad de cada árbol", R`<code>max_depth</code>`],
+           [R`Penalización de las hojas (\(\lambda\))`, R`<code>lambda</code>`], [R`Coste por hoja (\(\gamma\))`, R`<code>gamma</code>`], ["Fracción de observaciones y de predictores por árbol", R`<code>subsample</code> y <code>colsample_bytree</code>`]],
+      args: [["early_stopping_rounds", "número entero", R`Parada temprana: rondas sin mejora en el conjunto de validación.`], ["scale_pos_weight", "número positivo", R`Peso de la clase positiva en la pérdida, para clases desequilibradas.`]] }
+  },
+  voting: {
+    tidymodels: { fn: [["fit() y predict()", "workflows", "Ajusta cada workflow y promedia sus predicciones"]],
+      sinHp: R`tidymodels no tiene una función de voting. Se ajustan los workflows con los mismos datos y se promedian sus predicciones, con pesos fijados de antemano o elegidos por validación.`,
+      nota: R`El paquete stacks estima los pesos con un metamodelo, así que corresponde al stacking.` },
+    caret: { fn: [["caretList()", "caretEnsemble", "Ajusta varios modelos con las mismas particiones"]], lib: ["caretEnsemble"],
+      sinHp: R`Los pesos del promedio se fijan de antemano o se eligen por validación.`,
+      nota: R`<code>caretEnsemble()</code> estima los pesos con una regresión lineal, así que corresponde al stacking. Para un voting con pesos fijos se promedian las predicciones de los modelos de <code>caretList()</code>.` },
+    mlr3: { fn: [["gunion(list(...))", "mlr3pipelines", "Ajusta los modelos en paralelo"], [`po("regravg")`, "mlr3pipelines", "Promedia las predicciones (regresión)"], [`po("classifavg")`, "mlr3pipelines", "Promedia las probabilidades (clasificación)"]], lib: ["mlr3pipelines"],
+      hp: [["Pesos de cada modelo", R`<code>weights</code>`]] }
+  },
+  stacking: {
+    tidymodels: { fn: [["stacks()", "stacks", "Crea la pila"], ["add_candidates()", "stacks", "Añade los modelos base con sus predicciones de validación cruzada"],
+                       ["blend_predictions()", "stacks", "Ajusta el metamodelo"], ["fit_members()", "stacks", "Reajusta los modelos base con peso distinto de cero"]], lib: ["stacks"],
+      hp: [["Intensidad de la penalización del metamodelo", R`<code>penalty</code> (en <code>blend_predictions()</code>)`, R`Al aumentarla, el metamodelo deja más modelos base con peso cero.`]],
+      nota: R`El metamodelo es por defecto un Lasso con pesos no negativos. Los modelos base se ajustan con <code>control_stack_grid()</code> o <code>control_stack_resamples()</code>, que guardan sus predicciones de validación cruzada.` },
+    caret: { fn: [["caretList()", "caretEnsemble", "Ajusta los modelos base con las mismas particiones"], [`caretStack(..., method = "glm")`, "caretEnsemble", "Ajusta el metamodelo"]], lib: ["caretEnsemble"],
+      sinHp: R`El metamodelo se elige con <code>method</code> en <code>caretStack()</code>, y sus hiperparámetros, si los tiene, con su propia rejilla.`,
+      nota: R`<code>trainControl()</code> tiene que guardar las predicciones de validación (<code>savePredictions = "final"</code>).` },
+    mlr3: { fn: [[`ppl("stacking", base_learners, super_learner)`, "mlr3pipelines", "Modelos base y metamodelo en un grafo"]], lib: ["mlr3pipelines"],
+      sinHp: R`El metamodelo es el learner <code>super_learner</code>, con sus propios hiperparámetros.`,
+      args: [["folds", R`número entero (3 por defecto)`, R`Particiones de la validación cruzada interna que crea las predicciones de los modelos base.`],
+             ["use_features", R`<code>TRUE</code> (por defecto) o <code>FALSE</code>`, R`Añade los predictores originales al metamodelo.`]] }
+  },
+  svr: {
+    tidymodels: { fn: [["svm_rbf()", "parsnip", "Núcleo RBF"], ["svm_linear()", "parsnip", "Núcleo lineal"], ["svm_poly()", "parsnip", "Núcleo polinómico"], [`set_engine("kernlab")`, "kernlab", "Ajuste"]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del tubo (\(\varepsilon\))`, R`<code>margin</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>rbf_sigma</code> (\(\sigma\) en kernlab)`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>svm_poly()</code>)`]], nota: NOTA_KERNLAB },
+    caret: { fn: [[`train(..., method = "svmRadial")`, "caret", "Núcleo RBF (kernlab)"], [`train(..., method = "svmLinear")`, "caret", "Núcleo lineal"], [`train(..., method = "svmPoly")`, "caret", "Núcleo polinómico"]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>sigma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>"svmPoly"</code>)`]],
+      args: [["epsilon", R`número positivo (0,1 por defecto)`, R`Anchura del tubo \(\varepsilon\). No está en la rejilla y se pasa como argumento fijo.`]], nota: NOTA_KERNLAB },
+    mlr3: { fn: [[`lrn("regr.svm")`, "mlr3learners", "Regresión (paquete e1071)"]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del tubo (\(\varepsilon\))`, R`<code>epsilon</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code>`]],
+      args: [["kernel", R`<code>"radial"</code> (por defecto), <code>"linear"</code> o <code>"polynomial"</code>`, R`Núcleo: fija la forma de la función que se puede ajustar.`], ["type", R`<code>"eps-regression"</code>`, R`Tipo de SVM. Con <code>"eps-regression"</code> usa la pérdida insensible a \(\varepsilon\).`]], nota: NOTA_E1071 }
+  },
+  svc: {
+    tidymodels: { fn: [["svm_rbf()", "parsnip", "Núcleo RBF"], ["svm_linear()", "parsnip", "Núcleo lineal"], ["svm_poly()", "parsnip", "Núcleo polinómico"], [`set_engine("kernlab")`, "kernlab", "Ajuste"]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>rbf_sigma</code> (\(\sigma\) en kernlab)`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>svm_poly()</code>)`]], nota: NOTA_KERNLAB },
+    caret: { fn: [[`train(..., method = "svmRadial")`, "caret", "Núcleo RBF (kernlab)"], [`train(..., method = "svmLinear")`, "caret", "Núcleo lineal"], [`train(..., method = "svmPoly")`, "caret", "Núcleo polinómico"]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>sigma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>"svmPoly"</code>)`]],
+      nota: R`Para obtener probabilidades hay que indicar <code>classProbs = TRUE</code> en <code>trainControl()</code>. ` + NOTA_KERNLAB },
+    mlr3: { fn: [[`lrn("classif.svm")`, "mlr3learners", "Clasificación (paquete e1071)"]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code>`]],
+      args: [["kernel", R`<code>"radial"</code> (por defecto), <code>"linear"</code> o <code>"polynomial"</code>`, R`Núcleo: fija la forma de la frontera.`], ["class.weights", "un peso por clase", R`Encarece los errores de la clase rara.`]], nota: NOTA_E1071 }
+  },
+  mlp: {
+    tidymodels: { fn: [["mlp()", "parsnip", "Especificación del modelo"], [`set_engine("nnet")`, "nnet", "Una capa oculta"], [`set_engine("keras")`, "keras", "Una capa oculta, con dropout"]],
+      hp: [["Arquitectura (capas y neuronas)", R`<code>hidden_units</code>`], ["Penalización L2", R`<code>penalty</code>`], ["Tasa de aprendizaje", R`<code>learn_rate</code> (motor brulee)`], ["Dropout", R`<code>dropout</code> (motores keras y brulee)`]],
+      args: [["epochs", "número entero", R`Número de epochs (<code>maxit</code> en nnet).`], ["activation", R`<code>"relu"</code>, <code>"sigmoid"</code>…`, R`Función de activación de las neuronas ocultas (motores keras y brulee).`]],
+      nota: R`Con los motores de parsnip, la red tiene una sola capa oculta. Para varias capas se usa directamente el paquete keras.` },
+    caret: { fn: [[`train(..., method = "nnet")`, "caret", "Una capa oculta (paquete nnet)"]],
+      hp: [["Arquitectura (capas y neuronas)", R`<code>size</code> (neuronas de la capa oculta)`], ["Penalización L2", R`<code>decay</code>`]],
+      args: [["maxit", "número entero (100 por defecto)", R`Máximo de iteraciones.`], ["linout", R`<code>TRUE</code> en regresión`, R`Salida lineal en lugar de logística.`]] },
+    mlr3: { fn: [[`lrn("regr.nnet")`, "mlr3learners", "Regresión (paquete nnet)"], [`lrn("classif.nnet")`, "mlr3learners", "Clasificación"]],
+      hp: [["Arquitectura (capas y neuronas)", R`<code>size</code> (neuronas de la capa oculta)`], ["Penalización L2", R`<code>decay</code>`]],
+      args: [["maxit", "número entero", R`Máximo de iteraciones.`]] }
+  }
+};
+
 const NIVELES = {
   nulo:        { flex: [0, 0], interp: [4, 4], coste: [0, 0] },
   mco:         { flex: [1, 1], interp: [3, 3], coste: [0, 0] },
@@ -1383,6 +1656,15 @@ ESTIMADORES.forEach(e => e.links.forEach(([d, why, sl, gen]) => NODES.get(d).bac
   DECISIONES.forEach(d => {
     if (d.alcance && (!ALCANCE[d.alcance] || !d.generico)) err(`alcance o motivo genérico no válido en ${d.id}`);
   });
+  Object.keys(R_IMPL).forEach(id => { if (!NODES.has(id)) err(`R_IMPL: estimador «${id}» desconocido`); });
+  ESTIMADORES.forEach(e => {
+    const r = R_IMPL[e.id];
+    if (!r) { if (!e.pendiente) err(`R_IMPL: falta ${e.id}`); return; }
+    ["tidymodels", "caret", "mlr3"].forEach(k => {
+      if (!r[k]) { err(`R_IMPL: falta ${k} en ${e.id}`); return; }
+      (r[k].hp || []).forEach(h => { if (h.length < 3 && !e.hp.some(x => x[0] === h[0])) err(`R_IMPL: hiperparámetro «${h[0]}» de ${k} no está en la ficha de ${e.id}`); });
+    });
+  });
   ESTIMADORES.filter(e => e.tarea.length).forEach(e => {
     const n = NIVELES[e.id];
     if (!n) { err(`faltan los niveles del comparador en ${e.id}`); return; }
@@ -1396,11 +1678,33 @@ ESTIMADORES.forEach(e => e.links.forEach(([d, why, sl, gen]) => NODES.get(d).bac
 /* =====================================================================
    ESTADO
    ===================================================================== */
+const INFRAS = {
+  py: { nombre: "Python", largo: "Python (scikit-learn)", titulo: "En scikit-learn", lib: [] },
+  tidymodels: { nombre: "tidymodels", largo: "R con tidymodels", titulo: "En R con tidymodels", lib: ["tidymodels"] },
+  caret: { nombre: "caret", largo: "R con caret", titulo: "En R con caret", lib: ["caret"] },
+  mlr3: { nombre: "mlr3", largo: "R con mlr3", titulo: "En R con mlr3", lib: ["mlr3", "mlr3learners"] }
+};
+function infraInicial() {
+  const q = new URLSearchParams(location.search).get("infra");
+  if (q && INFRAS[q]) return q;
+  try { const g = localStorage.getItem("tap-mapa-infra"); if (g && INFRAS[g]) return g; } catch (e) { /* sin almacenamiento */ }
+  return "py";
+}
 const comparable = id => { const n = NODES.get(id); return !!n && n.type === "estimador" && n.tarea.length > 0; };
+// Implementación del estimador en la infraestructura elegida: { fn, hp, args, nota, lib, sinHp }
+function impl(e) {
+  if (state.infra === "py") return { fn: e.sklearn, hp: e.hp, args: e.args || [], sinHp: e.sinHp };
+  const r = (R_IMPL[e.id] || {})[state.infra];
+  if (!r) return null;
+  const hp = (r.hp || []).map(([nom, arg, ef]) => [nom, arg, ef ?? ((e.hp.find(h => h[0] === nom) || [])[2] || "")]);
+  return { fn: r.fn || [], hp, args: r.args || [], nota: r.nota, lib: r.lib || [], sinHp: r.sinHp || e.sinHp };
+}
+const hpOf = e => { const i = impl(e); return i ? i.hp : []; };
 const state = {
   open: { [ROOT.id]: true, [HUB.id]: true },
   sel: null, hover: null,
   cmpMode: false, cmp: [null, null],
+  infra: infraInicial(),
   view: { x: 0, y: 0, k: 1 },
   query: ""
 };
@@ -1422,11 +1726,11 @@ function makeNode(n) {
   el.dataset.id = n.id;
   el.tabIndex = 0;
   el.setAttribute("role", "button");
-  const label = n.label + (n.pendiente ? " (tema por publicar)" : "");
+  const label = T(n.label) + (n.pendiente ? " (tema por publicar)" : "");
   el.setAttribute("aria-label", label);
   const txt = document.createElement("span");
   txt.className = "txt";
-  txt.innerHTML = `<span class="lbl">${n.label}</span>` + (n.sub ? `<span class="sub">${n.sub}</span>` : "") +
+  txt.innerHTML = `<span class="lbl">${T(n.label)}</span>` + (n.sub ? `<span class="sub">${n.sub}</span>` : "") +
     (n.alcance ? `<span class="univ-tag">${ALCANCE[n.alcance].etiqueta}</span>` : "");
   el.appendChild(txt);
   if (n.type === "estimador") {
@@ -1675,11 +1979,39 @@ function slideLink(r, cls = "") {
   if (!d.url) return `<span class="slide nolink ${cls}" title="Deck del ${d.fecha}, pendiente de publicar">${r[2]} <small>(${d.titulo}, por publicar)</small></span>`;
   return `<a class="slide ${cls}" href="${BASE + d.url}#/${r[1]}" target="_blank" rel="noopener" title="${d.titulo}: se abre en una ventana nueva">${r[2]} ↗</a>`;
 }
-const chip = (id, cls = "") => `<button type="button" class="chip ${cls}" data-go="${id}">${NODES.get(id).label}</button>`;
+const fmtHp = t => t.replace(/\((\\\(.+?\\\))\)/g, '<span class="nw">($1)</span>');
+// Sección de código del estimador («En scikit-learn» o «En R con …»), hiperparámetros y otros argumentos.
+function implHTML(n) {
+  const I = INFRAS[state.infra], im = impl(n);
+  let b = `<h3>${I.titulo}</h3>`;
+  if (!im) return b + `<p class="note">Sin implementación en ${I.nombre} en el mapa${n.pendiente ? ", porque la ficha es provisional" : ""}.</p>`;
+  if (state.infra === "py") {
+    const mods = {};
+    im.fn.forEach(([c, m]) => (mods[m] = mods[m] || []).push(c));
+    b += `<div class="tw"><table class="hp"><thead><tr><th>Clase</th><th>Módulo</th><th>Uso</th></tr></thead><tbody>` +
+      im.fn.map(r => `<tr><td><code class="nw">${r[0]}</code></td><td><code class="nw">${r[1]}</code></td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>` +
+      `<pre class="imp">` + Object.entries(mods).map(([m, cs]) => m === "tensorflow.keras" ? `from tensorflow import keras` : `from ${m} import ${cs.join(", ")}`).join("\n") + `</pre>`;
+  } else {
+    b += `<div class="tw"><table class="hp"><thead><tr><th>Código</th><th>Paquete</th><th>Uso</th></tr></thead><tbody>` +
+      im.fn.map(r => `<tr><td><code class="nw">${r[0]}</code></td><td><code class="nw">${r[1]}</code></td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>` +
+      `<pre class="imp">` + [...new Set([...I.lib, ...im.lib])].map(l => `library(${l})`).join("\n") + `</pre>`;
+    if (im.nota) b += `<p class="note">${im.nota}</p>`;
+  }
+  b += `<h3>Hiperparámetros</h3>` + (im.hp.length
+    ? `<div class="tw"><table class="hp"><thead><tr><th>Hiperparámetro</th><th>Argumento</th><th>Efecto al aumentarlo</th></tr></thead><tbody>` +
+      im.hp.map(r => `<tr><td>${fmtHp(r[0])}</td><td class="arg">${r[1]}</td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>`
+    : `<p>${T(im.sinHp) || "No tiene hiperparámetros."}</p>`);
+  if (im.args.length) {
+    b += `<h3>Otros argumentos</h3><p class="note">Argumentos ${state.infra === "py" ? "del estimador" : "del modelo"} que no se eligen por validación.</p><div class="tw"><table class="hp"><thead><tr><th>Argumento</th><th>Valores</th><th>Para qué sirve</th></tr></thead><tbody>` +
+      im.args.map(r => `<tr><td class="arg"><code class="nw">${r[0]}</code></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>`;
+  }
+  return b;
+}
+const chip = (id, cls = "") => `<button type="button" class="chip ${cls}" data-go="${id}">${T(NODES.get(id).label)}</button>`;
 function openPanel(id) {
   const n = NODES.get(id);
   let head = `<div class="p-kind ${n.type}">${KIND[n.type]}${n.type === "estimador" ? " · " + NODES.get(n.fam).label : ""}</div>
-    <h2>${n.label}</h2><button type="button" class="p-close" id="pclose" aria-label="Cerrar panel">×</button><div class="badges">`;
+    <h2>${T(n.label)}</h2><button type="button" class="p-close" id="pclose" aria-label="Cerrar panel">×</button><div class="badges">`;
   if (n.sesion) head += n.sesion.map(s => `<span class="badge">${s}</span>`).join("");
   else if (n.tema) head += `<span class="badge">${n.tema.replace(/^T/, "Tema ")}</span>`;
   if (n.pendiente) head += `<span class="badge warn">Ficha provisional: tema por publicar</span>`;
@@ -1690,46 +2022,34 @@ function openPanel(id) {
     if (n.base || n.variants.length) {
       b += `<p class="rel-est">` + (n.base ? `Extiende: ${chip(n.base, "est")}` : "") + (n.variants.length ? ` Variantes: ${n.variants.map(v => chip(v, "est")).join("")}` : "") + `</p>`;
     }
-    b += `<div class="porque"><h3>Por qué este modelo</h3><p>${n.porque}</p></div>`;
+    b += `<div class="porque"><h3>Por qué este modelo</h3><p>${T(n.porque)}</p></div>`;
   }
-  if (n.idea) b += `<p class="idea">${n.idea}</p>`;
+  if (n.idea) b += `<p class="idea">${T(n.idea)}</p>`;
   if (n.formula) b += `<div class="formula">${n.formula}</div>`;
   if (n.type === "estimador") {
-    if (n.modelo.formula || n.modelo.texto) b += `<h3>Especificación</h3>` + (n.modelo.formula ? `<div class="formula">${n.modelo.formula}</div>` : "") + `<p>${n.modelo.texto}</p>`;
+    if (n.modelo.formula || n.modelo.texto) b += `<h3>Especificación</h3>` + (n.modelo.formula ? `<div class="formula">${n.modelo.formula}</div>` : "") + `<p>${T(n.modelo.texto)}</p>`;
     b += `<h3>Qué lo hace peculiar</h3><dl class="peculiar">` +
-      Object.entries(n.peculiar).map(([k, v]) => `<dt>${LAB[k]}</dt><dd>${v}</dd>`).join("") + `</dl>`;
-    const mods = {};
-    n.sklearn.forEach(([c, m]) => (mods[m] = mods[m] || []).push(c));
-    b += `<h3>En scikit-learn</h3><div class="tw"><table class="hp"><thead><tr><th>Clase</th><th>Módulo</th><th>Uso</th></tr></thead><tbody>` +
-      n.sklearn.map(r => `<tr><td><code class="nw">${r[0]}</code></td><td><code class="nw">${r[1]}</code></td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>` +
-      `<pre class="imp">` + Object.entries(mods).map(([m, cs]) => m === "tensorflow.keras" ? `from tensorflow import keras` : `from ${m} import ${cs.join(", ")}`).join("\n") + `</pre>`;
-    b += `<h3>Hiperparámetros</h3>` + (n.hp.length
-      ? `<div class="tw"><table class="hp"><thead><tr><th>Hiperparámetro</th><th>Argumento</th><th>Efecto al aumentarlo</th></tr></thead><tbody>` +
-        n.hp.map(r => `<tr><td>${r[0].replace(/\((\\\(.+?\\\))\)/g, '<span class="nw">($1)</span>')}</td><td class="arg">${r[1]}</td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>`
-      : `<p>${n.sinHp || "No tiene hiperparámetros."}</p>`);
-    if (n.args && n.args.length) {
-      b += `<h3>Otros argumentos</h3><p class="note">Argumentos del estimador que no se eligen por validación.</p><div class="tw"><table class="hp"><thead><tr><th>Argumento</th><th>Valores</th><th>Para qué sirve</th></tr></thead><tbody>` +
-        n.args.map(r => `<tr><td class="arg"><code class="nw">${r[0]}</code></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>`;
-    }
+      Object.entries(n.peculiar).map(([k, v]) => `<dt>${LAB[k]}</dt><dd>${T(v)}</dd>`).join("") + `</dl>`;
+    b += implHTML(n);
     b += `<h3>Decisiones vinculadas</h3><ul class="links">` +
-      n.links.map(([d, why, sl, gen]) => `<li>${chip(d)}${gen ? `<span class="tag-com">común a todos</span>` : ""}<span class="reason">${why}${sl ? " " + slideLink(sl, "inl") : ""}</span></li>`).join("") + `</ul>`;
+      n.links.map(([d, why, sl, gen]) => `<li>${chip(d)}${gen ? `<span class="tag-com">común a todos</span>` : ""}<span class="reason">${T(why)}${sl ? " " + slideLink(sl, "inl") : ""}</span></li>`).join("") + `</ul>`;
   }
-  if (n.puntos) b += `<h3>${n.type === "objetivo" ? "Ideas clave" : "Qué decidir y cómo"}</h3><ul>` + n.puntos.map(p => `<li>${p}</li>`).join("") + `</ul>`;
+  if (n.puntos) b += `<h3>${n.type === "objetivo" ? "Ideas clave" : "Qué decidir y cómo"}</h3><ul>` + n.puntos.map(p => `<li>${T(p)}</li>`).join("") + `</ul>`;
   if (n.type === "decision") {
     const esp = n.back.filter(r => !r[3]), gen = n.back.filter(r => r[3]);
     if (n.alcance) b += `<p class="univ-note"><b>${ALCANCE[n.alcance].etiqueta}.</b> Esta decisión se aplica a todos los estimadores de su alcance (${n.back.length}). Abajo se detallan los que tienen un motivo específico.</p>`;
     b += `<h3>Estimadores vinculados (${n.back.length})</h3><ul class="links">` +
-      esp.map(([e, why, sl]) => `<li>${chip(e, "est")}<span class="reason">${why}${sl ? " " + slideLink(sl, "inl") : ""}</span></li>`).join("") + `</ul>`;
-    if (gen.length) b += `<p class="reason">${n.generico}</p><p>` + gen.map(([e]) => chip(e, "est")).join("") + `</p>`;
+      esp.map(([e, why, sl]) => `<li>${chip(e, "est")}<span class="reason">${T(why)}${sl ? " " + slideLink(sl, "inl") : ""}</span></li>`).join("") + `</ul>`;
+    if (gen.length) b += `<p class="reason">${T(n.generico)}</p><p>` + gen.map(([e]) => chip(e, "est")).join("") + `</p>`;
     if (n.id === "d_hiper") {
       b += `<h3>Hiperparámetros de cada estimador</h3><div class="tw"><table class="hp"><thead><tr><th>Estimador</th><th>Hiperparámetros (argumento)</th></tr></thead><tbody>` +
-        ESTIMADORES.filter(e => e.hp.length).map(e => `<tr><td>${chip(e.id, "est")}</td><td>${e.hp.map(r => `${r[0]} (${r[1]})`).join("<br>")}</td></tr>`).join("") + `</tbody></table></div>`;
+        ESTIMADORES.filter(e => hpOf(e).length).map(e => `<tr><td>${chip(e.id, "est")}</td><td>${hpOf(e).map(r => `${r[0]} (${r[1]})`).join("<br>")}</td></tr>`).join("") + `</tbody></table></div>`;
     }
   }
   if (n.type === "familia") b += `<h3>Estimadores</h3><p>` + n.children.map(c => chip(c, "est")).join("") + `</p>`;
   if (n.type === "hub") b += `<h3>Decisiones</h3><p>` + DECISIONES.map(d => chip(d.id)).join("") + `</p>`;
   if (n.type === "objetivo") b += `<h3>Ramas</h3><p>` + FAMILIAS.map(f => chip(f.id, "est")).join("") + chip(HUB.id) + `</p>`;
-  if (n.slides && n.slides.length) b += `<h3>Para verlo en las slides</h3><ul class="slides">` + n.slides.map(r => `<li>${slideLink(r)}</li>`).join("") + `</ul>`;
+  if (n.slides && n.slides.length) b += `<h3>Para verlo en las slides</h3>` + (state.infra !== "py" ? `<p class="note">Las slides del curso usan Python. Los conceptos son los mismos.</p>` : "") + `<ul class="slides">` + n.slides.map(r => `<li>${slideLink(r)}</li>`).join("") + `</ul>`;
   if (n.vocab && n.vocab.length) b += `<h3>Vocabulario</h3><dl class="vocab">` + n.vocab.map(k => `<dt>${VOCAB[k][0]}</dt><dd>${VOCAB[k][1]}</dd>`).join("") + `</dl>`;
   b += matLinks(n.materiales);
   if (n.type === "estimador") {
@@ -1798,12 +2118,13 @@ function fraseNivel(k, A, B) {
 const minus = s => s.charAt(0).toLowerCase() + s.slice(1);
 const lista = xs => xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " y " + xs[xs.length - 1];
 function fraseHp(A, B) {
-  const n = e => e.hp.length ? `tiene ${plural(e.hp.length, "hiperparámetro", "hiperparámetros")}` : "no tiene hiperparámetros";
-  let f = A.hp.length === B.hp.length
-    ? (A.hp.length ? `Los dos tienen ${plural(A.hp.length, "hiperparámetro", "hiperparámetros")}.` : `Ninguno de los dos tiene hiperparámetros.`)
-    : `${b_(A)} ${n(A)}, y ${b_(B)} ${n(B)}.`;
+  const hA = hpOf(A), hB = hpOf(B);
+  const n = h => h.length ? `tiene ${plural(h.length, "hiperparámetro", "hiperparámetros")}` : "no tiene hiperparámetros";
+  let f = hA.length === hB.length
+    ? (hA.length ? `Los dos tienen ${plural(hA.length, "hiperparámetro", "hiperparámetros")}.` : `Ninguno de los dos tiene hiperparámetros.`)
+    : `${b_(A)} ${n(hA)}, y ${b_(B)} ${n(hB)}.`;
   const raiz = h => h.replace(/\s*\(.*\)\s*$/, "");
-  const comunes = A.hp.map(r => r[0]).filter(h => B.hp.some(r => raiz(r[0]) === raiz(h)));
+  const comunes = hA.map(r => r[0]).filter(h => hB.some(r => raiz(r[0]) === raiz(h)));
   if (comunes.length) f += comunes.length === 1 ? ` Comparten este hiperparámetro: ${minus(comunes[0])}.` : ` Comparten estos hiperparámetros: ${lista(comunes.map(minus))}.`;
   return f;
 }
@@ -1847,12 +2168,12 @@ function renderCompare() {
   if (A || B) {
     if (A && B && A !== B) b += `<div class="cmp-head"><div><span class="dot a">A</span>${A.label}</div><div><span class="dot b">B</span>${B.label}</div></div>`;
     const X = A, Y = A === B ? null : B;
-    b += fila("Por qué este modelo", X, Y, e => `<p>${e.porque}</p>`);
-    b += fila("Idea", X, Y, e => `<p>${e.idea}</p>`);
-    b += fila("Especificación", X, Y, e => (e.modelo.formula ? `<div class="formula">${e.modelo.formula}</div>` : "") + `<p>${e.modelo.texto}</p>`);
-    Object.keys(LAB).forEach(k => { b += fila(LAB[k], X, Y, e => `<p>${e.peculiar[k] || "—"}</p>`); });
-    b += fila("Hiperparámetros", X, Y, e => e.hp.length ? `<ul>` + e.hp.map(r => `<li>${r[0]}: ${r[1]}</li>`).join("") + `</ul>` : `<p>${e.sinHp || "No tiene hiperparámetros."}</p>`);
-    b += fila("En scikit-learn", X, Y, e => `<ul>` + e.sklearn.map(r => `<li><code>${r[0]}</code> <span class="note">(${r[1]})</span></li>`).join("") + `</ul>`);
+    b += fila("Por qué este modelo", X, Y, e => `<p>${T(e.porque)}</p>`);
+    b += fila("Idea", X, Y, e => `<p>${T(e.idea)}</p>`);
+    b += fila("Especificación", X, Y, e => (e.modelo.formula ? `<div class="formula">${e.modelo.formula}</div>` : "") + `<p>${T(e.modelo.texto)}</p>`);
+    Object.keys(LAB).forEach(k => { b += fila(LAB[k], X, Y, e => `<p>${T(e.peculiar[k]) || "—"}</p>`); });
+    b += fila("Hiperparámetros", X, Y, e => { const im = impl(e); return im && im.hp.length ? `<ul>` + im.hp.map(r => `<li>${r[0]}: ${r[1]}</li>`).join("") + `</ul>` : `<p>${T(im ? im.sinHp : e.sinHp) || "No tiene hiperparámetros."}</p>`; });
+    b += fila(INFRAS[state.infra].titulo, X, Y, e => { const im = impl(e); return im ? `<ul>` + im.fn.map(r => `<li><code>${r[0]}</code> <span class="note">(${r[1]})</span></li>`).join("") + `</ul>` : `<p class="vacio">Sin implementación en el mapa.</p>`; });
     b += fila("Tema y sesiones", X, Y, e => `<p>${(e.sesion || [e.tema]).join(" · ")}</p>`);
     if (X && Y) {
       const da = X.links.map(l => l[0]), db = Y.links.map(l => l[0]);
@@ -2119,7 +2440,7 @@ $("#panel").addEventListener("change", e => {
 });
 // Atajos al estilo de reveal.js: F pantalla completa, + y − acercar y alejar, 0 ajustar.
 document.addEventListener("keydown", e => {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest("input, textarea")) return;
+  if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest("input, textarea, select")) return;
   if (document.body.classList.contains("list-mode")) {
     if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
     if (e.key === "c" || e.key === "C") { e.preventDefault(); toggleCompareMode(); }
@@ -2143,15 +2464,16 @@ const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase
 const strip = s => (s || "").replace(/<[^>]+>/g, " ").replace(/\\[a-zA-Z]+/g, " ");
 const INDEX = [];
 NODES.forEach(n => {
-  const parts = [n.label, n.sub, n.idea, n.porque, n.formula, ...(n.puntos || []), ...(n.sesion || [])];
-  if (n.modelo) parts.push(n.modelo.texto);
+  const parts = [n.sub, ...todas(n.idea), ...todas(n.porque), n.formula, ...(n.puntos || []).flatMap(todas), ...(n.sesion || [])];
+  if (n.modelo) parts.push(...todas(n.modelo.texto));
+  if (R_IMPL[n.id]) Object.values(R_IMPL[n.id]).forEach(r => { (r.fn || []).forEach(x => parts.push(...x)); (r.hp || []).forEach(x => parts.push(...x.filter(Boolean))); (r.args || []).forEach(x => parts.push(...x)); });
   if (n.sklearn) n.sklearn.forEach(r => parts.push(...r));
   if (n.args) n.args.forEach(r => parts.push(...r));
   (n.vocab || []).forEach(k => parts.push(...VOCAB[k]));
-  if (n.peculiar) parts.push(...Object.values(n.peculiar));
+  if (n.peculiar) parts.push(...Object.values(n.peculiar).flatMap(todas));
   if (n.hp) n.hp.forEach(r => parts.push(...r));
-  if (n.links) n.links.forEach(l => parts.push(l[1]));
-  INDEX.push({ id: n.id, label: norm(n.label), text: norm(strip(parts.join(" "))) });
+  if (n.links) n.links.forEach(l => parts.push(...todas(l[1])));
+  INDEX.push({ id: n.id, label: norm(todas(n.label).join(" ")), text: norm(strip(parts.join(" "))) });
 });
 const qEl = $("#q"), resEl = $("#results");
 let active = -1, current = [];
@@ -2180,7 +2502,7 @@ function search(q) {
 }
 function showResults() {
   resEl.innerHTML = current.length
-    ? current.slice(0, 10).map((r, i) => { const n = NODES.get(r.id); return `<li role="option"><button type="button" data-go="${r.id}" class="${i === active ? "active" : ""}"><span>${n.label}</span><span class="kind">${KIND[n.type]}</span></button></li>`; }).join("")
+    ? current.slice(0, 10).map((r, i) => { const n = NODES.get(r.id); return `<li role="option"><button type="button" data-go="${r.id}" class="${i === active ? "active" : ""}"><span>${T(n.label)}</span><span class="kind">${KIND[n.type]}</span></button></li>`; }).join("")
     : `<li class="empty">Sin resultados</li>`;
   resEl.classList.add("show");
 }
@@ -2214,7 +2536,7 @@ function buildOutline() {
       `</ul></details>`;
   });
   h += `<details class="hub" open><summary>${HUB.label}</summary><ul>` +
-    DECISIONES.map(d => `<li><button type="button" data-go="${d.id}"><span>${d.label}</span><small>${d.back.length} estimadores</small></button></li>`).join("") + `</ul></details>`;
+    DECISIONES.map(d => `<li><button type="button" data-go="${d.id}"><span>${T(d.label)}</span><small>${d.back.length} estimadores</small></button></li>`).join("") + `</ul></details>`;
   w.innerHTML = h;
 }
 buildOutline();
@@ -2233,6 +2555,27 @@ function toggleList(force) {
   if (!on) { layout(); if (state.sel) centerOn(state.sel); else fit(); }
 }
 $("#listBtn").addEventListener("click", () => toggleList());
+// Cambio de infraestructura: se recuerda en la URL (?infra=) y, si se puede, en el navegador.
+function setInfra(k) {
+  if (!INFRAS[k]) return;
+  state.infra = k;
+  $("#infra").value = k;
+  document.documentElement.dataset.infra = k;
+  try { localStorage.setItem("tap-mapa-infra", k); } catch (e) { /* sin almacenamiento */ }
+  try {
+    const u = new URL(location.href);
+    if (k === "py") u.searchParams.delete("infra"); else u.searchParams.set("infra", k);
+    history.replaceState(null, "", u.pathname + u.search + u.hash);
+  } catch (e) { /* iframe sandbox */ }
+  let relabel = false;
+  NODES.forEach(n => { if (n.label && n.label.__v) { els.get(n.id).querySelector(".lbl").innerHTML = T(n.label); els.get(n.id).setAttribute("aria-label", T(n.label)); relabel = true; } });
+  if (relabel) { layout(); buildOutline(); }
+  if (state.cmpMode) { const top = $("#pbody").scrollTop; renderCompare(); $("#pbody").scrollTop = top; }
+  else if (state.sel && document.body.classList.contains("panel-open")) { const top = $("#pbody").scrollTop; openPanel(state.sel); $("#pbody").scrollTop = top; }
+}
+$("#infra").value = state.infra;
+document.documentElement.dataset.infra = state.infra;
+$("#infra").addEventListener("change", e => setInfra(e.target.value));
 function toggleCompareMode() { if (state.cmpMode) closePanel(); else enterCompare(state.sel); }
 $("#cmpBtn").addEventListener("click", toggleCompareMode);
 

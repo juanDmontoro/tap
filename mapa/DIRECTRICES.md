@@ -42,6 +42,7 @@ Al final se recogen los errores detectados en la primera versión, como ejemplos
 - El contenido de una ficha debe aparecer en las slides, es decir, en el texto que ven los estudiantes. Las notas del profesor (bloques `{.notes}`) solo sirven para entender una slide. Ninguna afirmación del mapa debe apoyarse únicamente en una nota.
 - Si algo no aparece en los materiales, no se añade. Se anota en la descripción del pull request.
 - Cuando un tema no tiene material, su ficha se marca como provisional (`pendiente: true`) y se limita a lo que dice la planificación.
+- Excepción: el código en R (sección 7.4). Los materiales del curso usan Python, así que la versión en R se basa en la documentación oficial de cada paquete y se comprueba ejecutando código (7.4). El contenido conceptual de las fichas no cambia.
 
 ### 2.3 Qué no se sube al repositorio
 
@@ -212,6 +213,24 @@ Estas reglas adaptan al castellano las reglas anti-IA del autor:
 - Los argumentos que no son hiperparámetros van en una tabla aparte, «Otros argumentos», con las columnas **Argumento**, **Valores** y **Para qué sirve**. Son argumentos que no se eligen por validación: la pérdida (`criterion`, `loss`), la estrategia del modelo nulo (`strategy`), la semilla (`random_state`), el número máximo de iteraciones (`max_iter`) o los pesos de clase (`class_weight`).
 - Ejemplo correcto: `criterion` · `"squared_error"` (por defecto) · «Medida de error que minimiza cada corte».
 
+### 7.4 Infraestructuras de R: tidymodels, caret y mlr3
+
+El selector «Código» de la cabecera cambia entre Python (scikit-learn) y tres marcos de R. Solo cambia lo que depende del código. Los textos conceptuales, los niveles del comparador, los vínculos y los enlaces a slides son los mismos en las cuatro opciones.
+
+- **Implementación de cada estimador:** va en `R_IMPL`, con una entrada por marco (`tidymodels`, `caret`, `mlr3`). Cada entrada tiene:
+  - `fn`: filas [código, paquete, uso], por ejemplo `linear_reg(mixture = 0)` · `parsnip` · Regresión con penalización L2;
+  - `hp`: filas [nombre del hiperparámetro, argumento]. Si el nombre coincide con uno de la ficha, el efecto se toma de la ficha. Si no coincide, la fila lleva un tercer elemento con su efecto;
+  - `args`, `lib`, `nota` y `sinHp`, si hacen falta.
+- **Nombres de los hiperparámetros:** el argumento es el del marco, no el del paquete motor. En tidymodels, `penalty`, y no `lambda`. Cuando el motor lo llama de otra forma, se añade entre paréntesis: `min_n` (`minsplit` en rpart).
+- **Textos que citan código:** se escriben con `V({ py, r, tidymodels, caret, mlr3 })`. La clave `r` sirve para los tres marcos cuando el texto es el mismo. Si falta la variante de un marco, se usa la de `r` y, si tampoco existe, la de `py`. Para los textos que citan el `Pipeline` se usa `enPipe()`.
+- **Diferencias que hay que señalar en la nota:**
+  - glmnet usa `alpha` para la mezcla, y scikit-learn para la intensidad;
+  - glmnet, kernlab y e1071 estandarizan por defecto;
+  - el `rsq` de yardstick y el `Rsquared` de caret son el cuadrado de la correlación, no el R² de las slides;
+  - caret exige en la rejilla todos los parámetros del método.
+- **Si un marco no tiene el estimador:** se indica qué usar en su lugar y por qué. Por ejemplo, parsnip no tiene motor para gbm, así que se usa xgboost. Lo que no se ha podido ejecutar se marca en la nota y en `REGISTRO.md`.
+- **Comprobación:** cada función, argumento y valor por defecto se comprueba en R antes de escribirlo: `translate()` en parsnip, `modelLookup()` en caret y `lrn(...)$param_set` en mlr3. En `REGISTRO.md` se anotan las versiones de los paquetes con las que se comprobó.
+
 ## 8. Enlaces a las slides
 
 - Los decks se declaran una vez en el objeto `DECKS`, con su título, su ruta y la fecha de la sesión. Un deck no publicado tiene `url: null`, y sus enlaces se muestran como texto con la indicación «por publicar». Cuando se publique, basta con poner su ruta.
@@ -227,13 +246,14 @@ Estas reglas adaptan al castellano las reglas anti-IA del autor:
 - El panel lateral ocupa el 40 % del ancho de la ventana, entre 460 px y 760 px. En pantallas de menos de 760 px de ancho, el panel se muestra como una hoja inferior a pantalla completa de ancho. Las tablas del panel no deben partir los nombres de clases ni de argumentos. Si no caben, la tabla se desplaza en horizontal.
 - Interacción: los nodos con hijos se pliegan y despliegan. Al pulsar un estimador se resaltan sus vínculos con las decisiones y se abre el panel. Hay buscador, vista en lista y enlaces directos `#nodo=<id>`.
 - Comparador: botón «Comparar» en la cabecera, tecla C y botón «Comparar con otro estimador» en cada ficha. Mientras está abierto, pulsar un estimador lo marca como A o B. Si ya hay dos, el nuevo sustituye al B. El panel de comparación ocupa el 55 % del ancho, entre 600 px y 1040 px, porque muestra dos columnas. Contiene el resumen (4.4), la escala orientativa, las secciones comunes de las fichas en paralelo y las decisiones vinculadas a los dos, solo a A y solo a B. El enlace directo es `#comparar=<id A>,<id B>`. A se marca en marino y B en salvia oscuro (`#3F7A5E`), que da más contraste que la salvia de la paleta.
+- Selector «Código» en la cabecera: Python, tidymodels, caret o mlr3. La elección se guarda en la URL (`?infra=caret`) y, si el navegador lo permite, en `localStorage`. Con `?infra=` se publica el mapa directamente en una de las versiones de R. Al elegir R, la sección de slides indica que las slides usan Python.
 - Pantalla completa, como en reveal.js: botón en la cabecera y tecla F; se sale con F o Esc. Los atajos + y − acercan y alejan, y 0 ajusta el mapa a la pantalla. Dentro de un `<iframe>` hace falta el atributo `allowfullscreen`; si el navegador no lo permite, el botón abre el mapa en una pestaña nueva.
 
 ## 10. Implementación
 
 - El mapa es un único archivo HTML con el CSS y el JS en línea. La única dependencia externa permitida es KaTeX desde cdnjs, con versión fija. Si no carga, las fórmulas se ven como texto LaTeX y el resto funciona.
 - Debe funcionar dentro de un `<iframe>` (Moodle) y en GitHub Pages, sin `localStorage` obligatorio ni acceso a la ventana padre.
-- Todo el contenido está en el bloque `CONTENIDO` del `<script>`: `DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES`, `ESTIMADORES`, `NIVELES` y `ESCALAS`. El mapa, los resaltados y los paneles se generan a partir de esos objetos. No se escribe contenido en el código de presentación.
+- Todo el contenido está en el bloque `CONTENIDO` del `<script>`: `DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES`, `ESTIMADORES`, `NIVELES`, `ESCALAS` y `R_IMPL`. El mapa, los resaltados y los paneles se generan a partir de esos objetos. No se escribe contenido en el código de presentación.
 - Los textos con fórmulas usan ``String.raw`...` `` (alias `R`), para conservar las barras invertidas de LaTeX. Las fórmulas en línea van entre `\(` y `\)`, y las de bloque entre `\[` y `\]`.
 - `_quarto.yml` debe incluir `mapa/**` en `resources`, y `materiales.qmd` debe tener un botón `tap-btn` que abra el mapa.
 
@@ -246,6 +266,7 @@ Estas reglas adaptan al castellano las reglas anti-IA del autor:
 5. Buscar en el texto del mapa las palabras y estructuras prohibidas de la sección 6: «compromiso», «leer», «legible», «columna» (revisar cada caso), el nombre de los conjuntos de datos de los decks y « no … sino ».
 6. Comprobar que hay 1 botón «Simular» por estimador en el mapa.
 7. Generar el comparador para todas las parejas de estimadores predictivos y comprobar que no hay errores. Leer el resumen de varias parejas de familias distintas, de una variante con su modelo base y de dos variantes del mismo modelo, y comprobar que cada frase coincide con las fichas.
+8. Con cada opción del selector, abrir todos los nodos y comprobar que no aparece `undefined` ni restos de código de otra infraestructura. Con Python, comparar el texto de todos los paneles con la versión anterior: un cambio en R no debe alterar la versión Python.
 
 ## 12. Adaptar el mapa a otra asignatura
 
