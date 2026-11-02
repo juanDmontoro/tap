@@ -602,7 +602,7 @@ const DECISIONES = [
     alcance: "todos", generico: R`Como cualquier modelo predictivo, se ajusta con los datos de entrenamiento, se elige con datos de validación y se evalúa una sola vez en el test.`,
     idea: R`Con los datos de entrenamiento se ajustan los parámetros, y con los de validación se eligen el modelo y sus hiperparámetros. El conjunto de prueba (test) se reserva para evaluar una sola vez el modelo elegido.`,
     puntos: [
-      V({ py: R`La partición se hace con <code>train_test_split</code> antes de cualquier cálculo. En clasificación se añade <code>stratify=y</code> para conservar la proporción de cada clase.`, tidymodels: R`La partición se hace con <code>initial_split()</code> antes de cualquier cálculo, y <code>training()</code> y <code>testing()</code> extraen cada parte. En clasificación se añade <code>strata = y</code> para conservar la proporción de cada clase.`, caret: R`La partición se hace con <code>createDataPartition(y, p = 0.8)</code> antes de cualquier cálculo. Esta función estratifica según la respuesta, así que conserva la proporción de cada clase.`, mlr3: R`La partición se hace con <code>partition(task, ratio = 0.8)</code> antes de cualquier cálculo. En clasificación estratifica según la respuesta, así que conserva la proporción de cada clase.` }),
+      V({ py: R`La partición se hace con <code>train_test_split</code> antes de cualquier cálculo. En clasificación se añade <code>stratify=y</code> para conservar la proporción de cada clase.`, tidymodels: R`La partición se hace con <code>initial_split()</code> antes de cualquier cálculo, y <code>training()</code> y <code>testing()</code> extraen cada parte. En clasificación se añade <code>strata = y</code> para conservar la proporción de cada clase.`, caret: R`La partición se hace con <code>createDataPartition(y, p = 0.8)</code> antes de cualquier cálculo. Esta función estratifica según la respuesta, así que conserva la proporción de cada clase.`, mlr3: R`La partición se hace con <code>partition(task, ratio = 0.8)</code> antes de cualquier cálculo. En clasificación, para conservar la proporción de cada clase, antes se declara la respuesta como estrato (<code>task$col_roles$stratum</code>).` }),
       R`El test se consulta una vez, cuando la decisión ya está tomada, y su resultado no reabre la selección. Si se cambia el modelo después de mirar el test, la evaluación deja de ser independiente.`,
       R`El error que se comunica es el del test. Si no hay test, se usa el de la validación cruzada anidada, y nunca el mejor resultado de la búsqueda de hiperparámetros.`,
       R`Hay <b>fuga de información</b> cuando \(X\) contiene algo que no se conocería en el momento de predecir, como componentes de la propia respuesta, identificadores o pesos muestrales. Un modelo con fuga parece predecir muy bien y falla al usarse.`
@@ -1435,7 +1435,7 @@ const R_IMPL = {
       sinHp: R`Con <code>method = "glm"</code> no tiene hiperparámetros.` },
     mlr3: { fn: [[`lrn("regr.glm", family = "Gamma")`, "mlr3extralearners", "GLM Gamma"]], lib: ["mlr3extralearners"],
       sinHp: R`No tiene hiperparámetros.`,
-      nota: R`mlr3learners no incluye la familia Gamma: <code>regr.glmnet</code> solo admite <code>"gaussian"</code> y <code>"poisson"</code>. El learner <code>regr.glm</code> está en mlr3extralearners, que se instala desde GitHub y no se ha podido comprobar al preparar el mapa.` }
+      nota: R`mlr3learners no incluye la familia Gamma: <code>regr.glmnet</code> solo admite <code>"gaussian"</code> y <code>"poisson"</code>. El learner <code>regr.glm</code> está en mlr3extralearners, que no está en CRAN y se instala desde r-universe o GitHub.` }
   },
   poisson: {
     tidymodels: { fn: [["poisson_reg()", "poissonreg", "GLM Poisson"], [`set_engine("glm")`, "stats", "Sin penalización"], [`set_engine("glmnet")`, "glmnet", "Con penalización"]], lib: ["poissonreg"],
@@ -1476,7 +1476,8 @@ const R_IMPL = {
       sinHp: R`<code>method = "treebag"</code> no tiene parámetros en la rejilla.` },
     mlr3: { fn: [[`ppl("bagging", graph = lrn("regr.rpart"))`, "mlr3pipelines", "Bagging de cualquier learner"], [`po("regravg", collect_multiplicity = TRUE)`, "mlr3pipelines", "Promedia las predicciones (argumento averager)"]], lib: ["mlr3pipelines"],
       hp: [[R`Número de árboles (\(B\))`, R`<code>iterations</code>`], ["Tamaño de cada remuestra", R`<code>frac</code>`]],
-      nota: R`<code>ppl("bagging")</code> toma las remuestras sin reemplazamiento, con una fracción <code>frac</code> de las observaciones. Un bagging de árboles con remuestras bootstrap es un random forest que sortea todos los predictores: <code>lrn("regr.ranger", mtry.ratio = 1)</code>.` }
+      args: [["replace", R`<code>FALSE</code> (por defecto) o <code>TRUE</code>`, R`Con <code>TRUE</code> y <code>frac = 1</code>, las remuestras son bootstrap, como en el bagging de las slides.`]],
+      nota: R`Por defecto, <code>ppl("bagging")</code> toma las remuestras sin reemplazamiento. Otra forma de hacer bagging de árboles es un random forest que sortea todos los predictores: <code>lrn("regr.ranger", mtry.ratio = 1)</code>.` }
   },
   rf: {
     tidymodels: { fn: [["rand_forest()", "parsnip", "Especificación del modelo"], [`set_engine("ranger")`, "ranger", "Ajuste"]],
@@ -1517,19 +1518,19 @@ const R_IMPL = {
     caret: { fn: [[`train(..., method = "xgbTree")`, "caret", "Regresión y clasificación"]],
       hp: [["Número de árboles", R`<code>nrounds</code>`], [R`Tasa de aprendizaje (\(\nu\))`, R`<code>eta</code>`], ["Profundidad de cada árbol", R`<code>max_depth</code>`],
            [R`Coste por hoja (\(\gamma\))`, R`<code>gamma</code>`], ["Fracción de observaciones y de predictores por árbol", R`<code>subsample</code> y <code>colsample_bytree</code>`]],
-      nota: R`La rejilla de <code>"xgbTree"</code> tiene que incluir sus siete parámetros (<code>nrounds</code>, <code>max_depth</code>, <code>eta</code>, <code>gamma</code>, <code>colsample_bytree</code>, <code>min_child_weight</code> y <code>subsample</code>), aunque algunos se dejen en un solo valor. La penalización \(\lambda\) no está en la rejilla.` },
+      nota: R`La rejilla de <code>"xgbTree"</code> tiene que incluir sus siete parámetros (<code>nrounds</code>, <code>max_depth</code>, <code>eta</code>, <code>gamma</code>, <code>colsample_bytree</code>, <code>min_child_weight</code> y <code>subsample</code>), aunque algunos se dejen en un solo valor. La penalización \(\lambda\) no está en la rejilla. Con xgboost 3, <code>"xgbTree"</code> falla al ajustar (comprobado con caret 7.0.1 y xgboost 3.4). Funciona con xgboost 1.7.` },
     mlr3: { fn: [[`lrn("regr.xgboost")`, "mlr3learners", "Regresión"], [`lrn("classif.xgboost")`, "mlr3learners", "Clasificación"]],
       hp: [["Número de árboles", R`<code>nrounds</code>`], [R`Tasa de aprendizaje (\(\nu\))`, R`<code>eta</code>`], ["Profundidad de cada árbol", R`<code>max_depth</code>`],
            [R`Penalización de las hojas (\(\lambda\))`, R`<code>lambda</code>`], [R`Coste por hoja (\(\gamma\))`, R`<code>gamma</code>`], ["Fracción de observaciones y de predictores por árbol", R`<code>subsample</code> y <code>colsample_bytree</code>`]],
-      args: [["early_stopping_rounds", "número entero", R`Parada temprana: rondas sin mejora en el conjunto de validación.`], ["scale_pos_weight", "número positivo", R`Peso de la clase positiva en la pérdida, para clases desequilibradas.`]] }
+      args: [["early_stopping_rounds", "número entero", R`Parada temprana: rondas sin mejora en el conjunto de validación.`], ["scale_pos_weight", "número positivo", R`Peso de la clase positiva en la pérdida, para clases desequilibradas. En <code>classif.xgboost</code> exige fijar <code>booster = "gbtree"</code>.`]] }
   },
   voting: {
     tidymodels: { fn: [["fit() y predict()", "workflows", "Ajusta cada workflow y promedia sus predicciones"]],
       sinHp: R`tidymodels no tiene una función de voting. Se ajustan los workflows con los mismos datos y se promedian sus predicciones, con pesos fijados de antemano o elegidos por validación.`,
       nota: R`El paquete stacks estima los pesos con un metamodelo, así que corresponde al stacking.` },
-    caret: { fn: [["caretList()", "caretEnsemble", "Ajusta varios modelos con las mismas particiones"]], lib: ["caretEnsemble"],
+    caret: { fn: [["caretList()", "caretEnsemble", "Ajusta varios modelos con las mismas particiones"], ["caretEnsemble()", "caretEnsemble", "Media ponderada con pesos elegidos por validación"]], lib: ["caretEnsemble"],
       sinHp: R`Los pesos del promedio se fijan de antemano o se eligen por validación.`,
-      nota: R`<code>caretEnsemble()</code> estima los pesos con una regresión lineal, así que corresponde al stacking. Para un voting con pesos fijos se promedian las predicciones de los modelos de <code>caretList()</code>.` },
+      nota: R`<code>caretEnsemble()</code> calcula una media ponderada cuyos pesos elige un algoritmo voraz que minimiza el error de validación. Es un voting con pesos elegidos por validación. Para pesos fijos se promedian las predicciones de los modelos de <code>caretList()</code>.` },
     mlr3: { fn: [["gunion(list(...))", "mlr3pipelines", "Ajusta los modelos en paralelo"], [`po("regravg")`, "mlr3pipelines", "Promedia las predicciones (regresión)"], [`po("classifavg")`, "mlr3pipelines", "Promedia las probabilidades (clasificación)"]], lib: ["mlr3pipelines"],
       hp: [["Pesos de cada modelo", R`<code>weights</code>`]] }
   },
@@ -1540,7 +1541,7 @@ const R_IMPL = {
       nota: R`El metamodelo es por defecto un Lasso con pesos no negativos. Los modelos base se ajustan con <code>control_stack_grid()</code> o <code>control_stack_resamples()</code>, que guardan sus predicciones de validación cruzada.` },
     caret: { fn: [["caretList()", "caretEnsemble", "Ajusta los modelos base con las mismas particiones"], [`caretStack(..., method = "glm")`, "caretEnsemble", "Ajusta el metamodelo"]], lib: ["caretEnsemble"],
       sinHp: R`El metamodelo se elige con <code>method</code> en <code>caretStack()</code>, y sus hiperparámetros, si los tiene, con su propia rejilla.`,
-      nota: R`<code>trainControl()</code> tiene que guardar las predicciones de validación (<code>savePredictions = "final"</code>).` },
+      nota: R`<code>caretList()</code> guarda por defecto las predicciones de validación de cada modelo (<code>savePredictions = "final"</code>), que son las que usa el metamodelo.` },
     mlr3: { fn: [[`ppl("stacking", base_learners, super_learner)`, "mlr3pipelines", "Modelos base y metamodelo en un grafo"]], lib: ["mlr3pipelines"],
       sinHp: R`El metamodelo es el learner <code>super_learner</code>, con sus propios hiperparámetros.`,
       args: [["folds", R`número entero (3 por defecto)`, R`Particiones de la validación cruzada interna que crea las predicciones de los modelos base.`],
@@ -1552,9 +1553,9 @@ const R_IMPL = {
     caret: { fn: [[`train(..., method = "svmRadial")`, "caret", "Núcleo RBF (kernlab)"], [`train(..., method = "svmLinear")`, "caret", "Núcleo lineal"], [`train(..., method = "svmPoly")`, "caret", "Núcleo polinómico"]],
       hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>sigma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>"svmPoly"</code>)`]],
       args: [["epsilon", R`número positivo (0,1 por defecto)`, R`Anchura del tubo \(\varepsilon\). No está en la rejilla y se pasa como argumento fijo.`]], nota: NOTA_KERNLAB },
-    mlr3: { fn: [[`lrn("regr.svm")`, "mlr3learners", "Regresión (paquete e1071)"]],
+    mlr3: { fn: [[`lrn("regr.svm", type = "eps-regression", kernel = "radial")`, "mlr3learners", "Regresión (paquete e1071)"]],
       hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del tubo (\(\varepsilon\))`, R`<code>epsilon</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code>`]],
-      args: [["kernel", R`<code>"radial"</code> (por defecto), <code>"linear"</code> o <code>"polynomial"</code>`, R`Núcleo: fija la forma de la función que se puede ajustar.`], ["type", R`<code>"eps-regression"</code>`, R`Tipo de SVM. Con <code>"eps-regression"</code> usa la pérdida insensible a \(\varepsilon\).`]], nota: NOTA_E1071 }
+      args: [["kernel", R`<code>"radial"</code> (por defecto), <code>"linear"</code> o <code>"polynomial"</code>`, R`Núcleo: fija la forma de la función que se puede ajustar.`], ["type", R`<code>"eps-regression"</code>`, R`Tipo de SVM. Con <code>"eps-regression"</code> usa la pérdida insensible a \(\varepsilon\).`]], nota: R`mlr3 solo deja fijar <code>cost</code> y <code>epsilon</code> si se ha indicado <code>type</code>, y <code>gamma</code> o <code>degree</code> si se ha indicado <code>kernel</code>. ` + NOTA_E1071 }
   },
   svc: {
     tidymodels: { fn: [["svm_rbf()", "parsnip", "Núcleo RBF"], ["svm_linear()", "parsnip", "Núcleo lineal"], ["svm_poly()", "parsnip", "Núcleo polinómico"], [`set_engine("kernlab")`, "kernlab", "Ajuste"]],
@@ -1562,15 +1563,15 @@ const R_IMPL = {
     caret: { fn: [[`train(..., method = "svmRadial")`, "caret", "Núcleo RBF (kernlab)"], [`train(..., method = "svmLinear")`, "caret", "Núcleo lineal"], [`train(..., method = "svmPoly")`, "caret", "Núcleo polinómico"]],
       hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>sigma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>"svmPoly"</code>)`]],
       nota: R`Para obtener probabilidades hay que indicar <code>classProbs = TRUE</code> en <code>trainControl()</code>. ` + NOTA_KERNLAB },
-    mlr3: { fn: [[`lrn("classif.svm")`, "mlr3learners", "Clasificación (paquete e1071)"]],
+    mlr3: { fn: [[`lrn("classif.svm", type = "C-classification", kernel = "radial")`, "mlr3learners", "Clasificación (paquete e1071)"]],
       hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code>`]],
-      args: [["kernel", R`<code>"radial"</code> (por defecto), <code>"linear"</code> o <code>"polynomial"</code>`, R`Núcleo: fija la forma de la frontera.`], ["class.weights", "un peso por clase", R`Encarece los errores de la clase rara.`]], nota: NOTA_E1071 }
+      args: [["kernel", R`<code>"radial"</code> (por defecto), <code>"linear"</code> o <code>"polynomial"</code>`, R`Núcleo: fija la forma de la frontera.`], ["class.weights", "un peso por clase", R`Encarece los errores de la clase rara.`]], nota: R`mlr3 solo deja fijar <code>cost</code> si se ha indicado <code>type</code>, y <code>gamma</code> o <code>degree</code> si se ha indicado <code>kernel</code>. ` + NOTA_E1071 }
   },
   mlp: {
     tidymodels: { fn: [["mlp()", "parsnip", "Especificación del modelo"], [`set_engine("nnet")`, "nnet", "Una capa oculta"], [`set_engine("keras")`, "keras", "Una capa oculta, con dropout"]],
       hp: [["Arquitectura (capas y neuronas)", R`<code>hidden_units</code>`], ["Penalización L2", R`<code>penalty</code>`], ["Tasa de aprendizaje", R`<code>learn_rate</code> (motor brulee)`], ["Dropout", R`<code>dropout</code> (motores keras y brulee)`]],
       args: [["epochs", "número entero", R`Número de epochs (<code>maxit</code> en nnet).`], ["activation", R`<code>"relu"</code>, <code>"sigmoid"</code>…`, R`Función de activación de las neuronas ocultas (motores keras y brulee).`]],
-      nota: R`Con los motores de parsnip, la red tiene una sola capa oculta. Para varias capas se usa directamente el paquete keras.` },
+      nota: R`Con los motores nnet y keras, la red tiene una sola capa oculta. El motor brulee_two_layer admite dos, y para más capas se usa directamente el paquete keras.` },
     caret: { fn: [[`train(..., method = "nnet")`, "caret", "Una capa oculta (paquete nnet)"]],
       hp: [["Arquitectura (capas y neuronas)", R`<code>size</code> (neuronas de la capa oculta)`], ["Penalización L2", R`<code>decay</code>`]],
       args: [["maxit", "número entero (100 por defecto)", R`Máximo de iteraciones.`], ["linout", R`<code>TRUE</code> en regresión`, R`Salida lineal en lugar de logística.`]] },
