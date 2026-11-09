@@ -6,12 +6,12 @@ toc-title: "Meses"
 ---
 
 ::: {.callout-warning title="Planificación sujeta a cambios"}
-Las fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 28-10-2026. La hora límite de cada entrega se comunica en el Aula Virtual.
+Las fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 02-11-2026. La hora límite de cada entrega se comunica en el Aula Virtual.
 :::
 
 **Teoría:** martes, 12:30-13:30. **Prácticas:** jueves, 8:30-11:30 y 11:30-14:30 (mismo contenido en los dos grupos).
 
-T y P con número: sesión de teoría o de prácticas de ese tema. **H1-H5:** hitos del proyecto. **E1-E5:** entregas individuales.
+T y P con número: sesión de teoría o de prácticas de ese tema. **H1-H5:** hitos del proyecto. **E1-E4:** entregas individuales.
 
 ## Septiembre
 
@@ -64,14 +64,14 @@ T y P con número: sesión de teoría o de prácticas de ese tema. **H1-H5:** hi
 | Fecha | Sesión | Contenido | Materiales |
 |:--|:--|:--|:--|
 | martes 1 | **T6 · Aprendizaje** | Backpropagation y regularización de redes neuronales. |  |
-| jueves 3 | **P6 · Regularización** | Regularización y búsqueda de arquitecturas en Keras. **Entrega E4 · Redes neuronales (T6).** |  |
+| jueves 3 | **P6 · Keras guiado** | Sesión completa: práctica guiada de regularización y búsqueda de arquitecturas en Keras. |  |
 | lunes 7 | | *Fiesta de centro* | |
 | martes 8 | | *Festivo: sin teoría* | |
-| jueves 10 | **P7 · Predicción y causalidad** | DAG y sesgos; simulación guiada, ortogonalización y cross-fitting. **Entrega E5 · Simulación de sesgos (T7).** |  |
+| jueves 10 | **P7 · Predicción y causalidad** | 40 min: DAG y sesgos; simulación guiada, ortogonalización y cross-fitting. **Entrega E4 · Redes neuronales (T6).** |  |
 | domingo 13 | | ***Límite de entrega del proyecto*** | |
 | martes 15 | **T7 · DoubleML** | Caso Hillstrom: demostración, interpretación y discusión de supuestos. |  |
 | jueves 17 | **Proyecto · Defensa oral** | Presentación y defensa oral del proyecto (sesión completa). |  |
 | martes 22 | **Repaso del examen escrito** | Síntesis de contenidos, preguntas y resolución de dudas. |  |
 | miércoles 23 | | *Fin del cuatrimestre* | |
 
-*E4: 3 dic. Por el reajuste del 14-10 se suprimen RNN/CNN y LLMs. 13 dic: fecha límite del proyecto (repositorio, memoria y registro de IA). Defensa oral: 17 dic. Repaso: 22 dic.*
+*3 dic: práctica completa de Keras. E4: 10 dic (E5 suprimida). Sin RNN/CNN ni LLMs (reajuste del 14-10). 13 dic: límite del proyecto (repositorio, memoria y registro de IA). Defensa oral: 17 dic. Repaso: 22 dic.*

@@ -69,6 +69,7 @@ Las **presentaciones** se abren en el navegador (pantalla completa con la tecla 
 | Árboles, bagging y random forest | 27 oct (T4) | <a class="tap-btn" href="slides/04/04_arboles_bosques_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
 | Instrucciones del hito 3 del proyecto: modelo base | 29 oct (H3) | <a class="tap-btn" href="proyecto2627/hitos/S06_modelo_base.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
 | Boosting: gradient boosting y XGBoost | 3 nov (T4) | <a class="tap-btn" href="slides/04/04_boosting_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+| Combinar e interpretar modelos: voting, stacking, importancias y valores de Shapley | 10 nov (T4) | <a class="tap-btn" href="slides/04/04_combinar_interpretar_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
 
 ### Cuadernos
 
@@ -76,7 +77,8 @@ Las **presentaciones** se abren en el navegador (pantalla completa con la tecla 
 |:--|:--|:--|
 | Introducción a los árboles de decisión (práctica, 29 oct) | <a class="tap-btn" href="clabs/04/tema_04_arboles.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_arboles.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/04/tema_04_arboles.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
 | Bagging y random forest (práctica, 29 oct) | <a class="tap-btn" href="clabs/04/tema_04_bosques.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_bosques.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/04/tema_04_bosques.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
-| XGBoost (práctica, 5 nov) | <a class="tap-btn" href="clabs/04/tema_04_xgboost.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_xgboost.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | A partir del 12 nov |
+| XGBoost (práctica, 5 nov) | <a class="tap-btn" href="clabs/04/tema_04_xgboost.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_xgboost.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/04/tema_04_xgboost.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
+| Entrega E2: random forest y XGBoost para clasificación (5 nov) | <a class="tap-btn" href="clabs/04/tema_04_entrega_E2.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_entrega_E2.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | Sin versión resuelta |
 
 ## Entorno y Python {#python}
 
