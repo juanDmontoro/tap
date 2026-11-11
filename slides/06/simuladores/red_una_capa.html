@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulador de una red de una capa</title>
+<!--
+  Simulador del deck 1 del tema 6 (el perceptrón multicapa), slide «Entrena una red de una capa».
+  Creado el 28-10-2026 (tarea T6-01; plan en ../../plan_tema_06.md, sección 7). Página autónoma, sin
+  dependencias externas, con el aspecto del simulador de optimizadores del deck 2 (../../semana_2/simuladores/).
+
+  Datos: las 300 observaciones simuladas del gancho y de las slides 5 y 7 del deck,
+    x uniforme en [0, 6], y = 1 + sen(x) + ruido normal de desviación típica 0,2, semilla 42 de numpy.
+  Las escribe ../datos_red_una_capa.py en la constante DATOS del script (entre sus dos marcas de comentario),
+  redondeadas a 6 decimales; el deck y su cuaderno compañero las regeneran con la misma función.
+
+  La red: una capa oculta con K neuronas (1-10) y salida lineal,
+    zₖ = wₖ x̃ + bₖ,  hₖ = g(zₖ),  f(x) = β₀ + Σₖ βₖ hₖ,
+  con x̃ = x estandarizada (media y desviación típica de las 300 observaciones; los gráficos usan x en su escala)
+  y g la activación elegida (ReLU, tangente hiperbólica, sigmoide o identidad).
+  Pesos iniciales como en Keras: Glorot uniforme (límites √(6/(1+K)) en la capa oculta y √(6/(K+1)) en la de
+  salida, primero los K pesos w y después los K pesos β, con un generador mulberry32 sembrado con la semilla),
+  sesgos a cero. Pérdida: error cuadrático medio. Cada época es una actualización de Adam con el gradiente de
+  las 300 observaciones (lote completo), con β₁ = 0,9, β₂ = 0,999 y ε = 10⁻⁷ (valores por defecto de Keras).
+
+  Valores por defecto: K = 3, ReLU, η = 0,05, semilla 127. Entrena 120 épocas por segundo y para en la época
+  1000 (unos 8 s). K, la activación y la semilla vuelven a la época 0; η cambia sin reiniciar. Con los sesgos a
+  cero, en la época 0 todos los codos están en la media de x (2,92). El eje del RMSE llega a 1, o al medio punto
+  por encima del RMSE inicial si este es mayor.
+  Qué debe verse (comprobado en Node y en Chrome, 28-10-2026; batch_logs/tema_06_2026-10-28/simulador_red_una_capa/):
+    ReLU, semilla 127: K = 1, un codo en x = 4,83 (RMSE 0,420); K = 2, codos en 1,89 y 4,18 (0,368);
+      K = 3, codos en 1,56 y 4,5 y una neurona activa en todo el rango (0,210, el nivel del ruido, hacia la
+      época 400); K = 10, más codos y 0,20 en unas 100 épocas.
+    Identidad, con cualquier K: la recta de mínimos cuadrados (0,437).
+    Tangente hiperbólica, K = 3: curva suave, 0,223 en la época 1000.
+    Semillas 128, 129 y 130 con K = 3 ReLU: 0,267, 0,420 (un codo) y 0,762 (plana: todas las neuronas a cero
+      en el rango de x). Con K = 10, las cuatro semillas llegan a 0,20-0,23.
+    η = 0,001: 0,399 en la época 1000 (lento); η = 0,2: se queda en 0,368; η = 1: plana.
+  Parámetros iniciales por URL: ?K=3&activacion=relu&tasa=0.05&semilla=127&epocas=0
+  (activacion: relu, tanh, sigmoide, identidad; epocas: entrena ese número de épocas al cargar).
+-->
+<style>
+:root {
+  --azul: #447099; --azul-oscuro: #1F3A5F; --naranja: #E07A5F; --salvia: #81B29A; --gris: #6C757D; --oro: #C9A227;
+  --fondo: #FFFFFF; --panel: #F4F7FA; --borde: #D5DEE8; --rejilla: #DCE3EA;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--fondo); color: var(--azul-oscuro);
+  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif; }
+body { padding: 6px 4px; font-size: 24px; }
+.simulador { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; align-items: start; }
+.columna { display: grid; gap: 12px; min-width: 0; }
+.panel { background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 8px 14px; min-width: 0; }
+.titulo-panel { font-weight: 600; font-size: 24px; margin: 0 0 2px; }
+.titulo-panel small { font-weight: 400; font-size: 22px; color: var(--gris); }
+svg { width: 100%; height: auto; display: block; }
+.mandos2 { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+.mando label, .mando .etiqueta { display: flex; justify-content: space-between; align-items: baseline;
+  font-weight: 600; font-size: 22px; margin-bottom: 8px; gap: 8px; }
+.mando output { font-size: 28px; font-weight: 700; color: var(--naranja); font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; height: 30px; accent-color: var(--azul); cursor: pointer; }
+.botones { display: flex; gap: 8px; }
+.botones button, button.accion { flex: 1; font: inherit; font-size: 22px; font-weight: 600; padding: 7px 4px; border-radius: 8px;
+  border: 2px solid var(--borde); background: var(--fondo); color: var(--azul-oscuro); cursor: pointer; white-space: nowrap; }
+.botones button[aria-pressed=true] { background: var(--azul); border-color: var(--azul); color: #FFFFFF; }
+#botonesActivacion button[data-valor=tanh] { flex: 2.2; }
+.fila-entreno { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 14px; align-items: end; }
+.semilla { display: flex; gap: 8px; align-items: center; }
+.semilla button { flex: 0 0 52px; }
+.semilla output { flex: 1; text-align: center; }
+button.accion.principal { background: var(--azul); border-color: var(--azul); color: #FFFFFF; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--naranja); outline-offset: 2px; }
+.cifras { display: flex; gap: 34px; font-size: 24px; flex-wrap: wrap; }
+.cifras strong { font-size: 28px; font-variant-numeric: tabular-nums; margin-left: 6px; }
+</style>
+</head>
+<body>
+<div class="simulador">
+  <section class="columna" aria-label="La red y sus neuronas">
+    <div class="panel">
+      <p class="titulo-panel">Observaciones y predicción de la red <small>(datos simulados: y = 1 + sen(x) más ruido)</small></p>
+      <svg id="grafDatos" viewBox="0 0 1000 340" role="img" aria-label="Observaciones simuladas y curva que predice la red"></svg>
+    </div>
+    <div class="panel">
+      <p class="titulo-panel">Contribución de cada neurona, βₖ hₖ(x) <small>(su suma más β₀ da la curva de arriba)</small></p>
+      <svg id="grafNeuronas" viewBox="0 0 1000 300" role="img" aria-label="Contribución de cada neurona a la predicción"></svg>
+    </div>
+  </section>
+  <section class="columna" aria-label="Entrenamiento y mandos">
+    <div class="panel">
+      <p class="titulo-panel">RMSE de entrenamiento <small>(una actualización por época)</small></p>
+      <svg id="grafRmse" viewBox="0 0 640 330" role="img" aria-label="RMSE de entrenamiento según la época"></svg>
+    </div>
+    <div class="mandos2">
+      <div class="mando">
+        <label for="neuronas">Neuronas K <output id="valorK">3</output></label>
+        <input type="range" id="neuronas" min="1" max="10" step="1" value="3">
+      </div>
+      <div class="mando">
+        <label for="tasa">Tasa de aprendizaje η <output id="valorTasa">0,05</output></label>
+        <input type="range" id="tasa" min="0" max="60" step="1">
+      </div>
+    </div>
+    <div class="mando">
+      <div class="etiqueta">Activación de las neuronas</div>
+      <div class="botones" id="botonesActivacion" role="group" aria-label="Activación de las neuronas">
+        <button type="button" data-valor="relu">ReLU</button><button type="button" data-valor="tanh">Tangente hiperbólica</button><button type="button" data-valor="sigmoide">Sigmoide</button><button type="button" data-valor="identidad">Identidad</button>
+      </div>
+    </div>
+    <div class="fila-entreno">
+      <div class="mando">
+        <div class="etiqueta">Semilla</div>
+        <div class="semilla botones">
+          <button type="button" id="semillaMenos" aria-label="Semilla anterior">−</button>
+          <output id="valorSemilla">127</output>
+          <button type="button" id="semillaMas" aria-label="Semilla siguiente">+</button>
+        </div>
+      </div>
+      <button type="button" class="accion principal" id="entrenar">Entrenar</button>
+      <button type="button" class="accion" id="reiniciar">Reiniciar</button>
+    </div>
+    <div class="cifras" aria-live="polite">
+      <span>Época<strong id="epoca">0</strong></span>
+      <span>RMSE de entrenamiento<strong id="rmse">—</strong></span>
+    </div>
+  </section>
+</div>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const DATOS = /* DATOS: inicio */ {"x":[0.044174,0.083618,0.107021,0.126888,0.129672,0.136272,0.136823,0.149157,0.184907,0.224475,0.249685,0.26085,0.262823,0.269464,0.295525,0.311771,0.320292,0.332372,0.349816,0.382904,0.399353,0.49638,0.506666,0.5259,0.540287,0.565064,0.5668,0.578346,0.594679,0.610031,0.620418,0.631668,0.635384,0.646446,0.651454,0.654864,0.68718,0.69294,0.708035,0.730995,0.736548,0.742523,0.768682,0.779529,0.786347,0.790933,0.838515,0.838782,0.841495,0.842038,0.863232,0.863385,0.867145,0.877039,0.913873,0.919706,0.92168,0.925737,0.967631,0.987647,0.99319,1.001838,1.023558,1.047849,1.060637,1.07561,1.08899,1.136828,1.167832,1.178608,1.198654,1.199449,1.21418,1.287508,1.361456,1.363432,1.377936,1.381284,1.395844,1.403637,1.419974,1.420469,1.445823,1.487037,1.496325,1.535791,1.574763,1.59522,1.601854,1.633449,1.687403,1.688303,1.70832,1.718677,1.729969,1.745507,1.761563,1.805692,1.809073,1.823701,1.83574,1.861942,1.862008,1.8742,1.895574,1.902833,1.907947,1.954952,1.979167,1.989414,2.081219,2.127156,2.170876,2.222758,2.224788,2.225534,2.241685,2.241946,2.245104,2.286127,2.32487,2.361783,2.385469,2.438321,2.451172,2.475429,2.494844,2.497575,2.514686,2.555293,2.592558,2.610582,2.620304,2.622912,2.633271,2.633469,2.660485,2.676938,2.696169,2.702316,2.723381,2.734658,2.753495,2.771263,2.800326,2.80429,2.817335,2.826577,2.840936,2.85423,2.893821,2.91995,2.931504,2.944242,2.963945,3.004447,3.006269,3.027157,3.03798,3.090343,3.11315,3.124034,3.142518,3.184618,3.321476,3.324217,3.327509,3.329115,3.331188,3.342193,3.355243,3.391417,3.412447,3.427396,3.430368,3.475317,3.486367,3.4867,3.504588,3.525867,3.545493,3.546863,3.566602,3.576255,3.596297,3.618643,3.636095,3.763853,3.781696,3.789986,3.803851,3.80831,3.8549,3.863191,3.89908,3.911586,3.956536,3.969968,3.971499,3.977185,3.985881,3.989105,4.010418,4.018884,4.033441,4.065952,4.084287,4.094973,4.098294,4.165575,4.177922,4.184208,4.198243,4.201591,4.230992,4.292443,4.301341,4.316778,4.334156,4.361968,4.433904,4.468573,4.476086,4.480738,4.491648,4.548526,4.551117,4.566838,4.589993,4.611885,4.632075,4.643736,4.664429,4.670301,4.672505,4.676865,4.684374,4.696411,4.703389,4.708581,4.716386,4.721546,4.780903,4.812155,4.824747,4.826165,4.828586,4.849509,4.884122,4.899413,4.93657,4.947985,4.957752,4.965787,4.976572,4.978738,4.986676,4.993559,4.996069,5.000751,5.06145,5.10679,5.120418,5.139686,5.151588,5.204944,5.206434,5.247372,5.25003,5.344755,5.350064,5.358727,5.36068,5.376965,5.415614,5.415919,5.451484,5.496071,5.525823,5.548851,5.549051,5.550721,5.56059,5.565375,5.598139,5.616261,5.620879,5.626959,5.717396,5.73374,5.751355,5.771386,5.797391,5.805058,5.815058,5.824188,5.830959,5.853734,5.877424,5.954253],"y":[0.985725,1.062823,1.056421,1.15706,1.423608,0.622519,1.089027,1.183907,1.243054,1.148212,0.895754,1.323501,1.605277,0.959442,1.464007,1.24104,1.302578,1.115707,1.275834,1.633624,1.505354,1.822708,1.720747,1.589809,1.863169,1.623269,1.702533,1.487325,1.573552,1.433408,1.779292,1.354831,1.749957,1.564223,1.840593,1.759225,1.998489,1.784957,1.335935,1.65422,1.437333,1.572493,1.997434,1.830451,1.567991,1.508266,1.750207,1.500518,1.611412,1.808403,1.991009,1.881799,1.304227,1.829723,1.806281,1.878201,2.11986,1.386416,1.705323,1.952914,1.521453,2.137652,1.927636,2.035668,1.758478,2.042633,2.099854,1.95388,1.966783,1.978144,1.758881,1.902334,1.906579,2.03682,2.178133,1.76687,1.956458,2.278387,1.836017,1.821611,2.029109,2.157599,1.994486,2.262286,2.168587,2.167751,2.110815,2.465232,1.958485,1.597333,2.31406,1.901564,2.012135,2.250996,1.666907,1.734447,1.661604,1.813711,2.059674,2.073027,2.020362,1.675362,1.495876,1.965196,1.853366,2.037257,2.084092,1.954763,2.069796,1.959494,1.978551,1.708249,1.789369,1.83425,1.957767,1.71446,1.887503,1.729939,1.757631,1.92078,1.330294,1.44385,1.389669,1.179993,1.501209,1.767861,1.545618,1.639972,1.804486,1.81882,1.508036,1.777122,1.516423,1.328256,1.367832,1.190432,1.285134,1.376511,1.591557,1.769439,1.12969,1.474362,1.17032,1.456862,1.308464,0.964762,1.504265,1.188831,1.189367,1.069474,1.114388,1.30541,1.170697,1.261805,1.249099,1.400848,1.066354,0.818814,1.316872,0.98493,1.251357,1.094233,0.972847,1.026744,1.211287,1.233785,0.829029,0.845613,1.026786,0.63161,0.854585,0.747594,0.795227,0.551398,0.397308,0.257839,0.438539,0.569968,0.586286,1.012559,0.828191,0.413315,0.657212,0.49748,0.503931,0.577904,0.649241,0.349275,0.615492,0.167705,0.386369,0.901125,0.390278,0.626058,0.331206,0.420025,0.260957,0.229085,0.106235,0.344366,0.082194,0.383481,0.453487,0.304296,0.164517,0.292558,0.129121,0.371732,-0.183576,0.078693,-0.258703,-0.162737,0.40206,0.306683,-0.030245,-0.213612,-0.509608,-0.03146,0.554764,0.147749,-0.073387,0.122592,-0.284402,-0.032753,0.04416,-0.003825,0.171137,0.079503,0.141146,-0.132628,0.182787,0.328143,-0.19288,-0.176654,0.267952,-0.037638,0.281157,-0.08838,0.29105,0.026304,0.051654,0.312986,-0.070008,-0.183252,-0.083407,0.096932,-0.306409,0.13688,-0.093044,0.247001,-0.453829,-0.129689,-0.307343,-0.133312,0.084227,-0.000584,-0.013294,0.007432,0.080646,-0.160418,0.201676,0.209306,0.159103,0.201217,0.154191,0.525887,0.102159,0.078306,-0.009625,-0.013084,-0.052377,0.023946,0.188747,0.27968,0.247468,0.08433,0.440959,0.439563,0.281063,0.199323,0.439741,0.368891,0.049041,0.328667,0.419699,0.201489,0.423031,0.098904,0.731155,0.727375,0.442385,0.582944,0.051105,0.308614,0.490029,0.342524,0.70591,0.983087,0.369959,0.509475]} /* DATOS: fin */;
+  const COLOR = { azul: '#447099', azulOscuro: '#1F3A5F', naranja: '#E07A5F', salvia: '#81B29A', gris: '#6C757D', oro: '#C9A227', rejilla: '#DCE3EA', fondo: '#FFFFFF' };
+  // Colores de las neuronas (paleta de tapviz sin el terracota de la curva); de la sexta en adelante, a trazos
+  const COLOR_NEURONA = [COLOR.azul, COLOR.salvia, COLOR.oro, COLOR.azulOscuro, COLOR.gris];
+  const MAX_EPOCAS = 1000, EPOCAS_POR_SEGUNDO = 120;
+
+  // Datos: x estandarizada para la red; los gráficos usan x en su escala
+  const n = DATOS.x.length;
+  const media = DATOS.x.reduce((s, v) => s + v, 0) / n;
+  const dt = Math.sqrt(DATOS.x.reduce((s, v) => s + (v - media) ** 2, 0) / n);
+  const Z = DATOS.x.map(v => (v - media) / dt), Yv = DATOS.y;
+
+  // Recta de mínimos cuadrados: la referencia del panel del RMSE
+  const rmseRecta = (() => {
+    const my = Yv.reduce((s, v) => s + v, 0) / n;
+    let sxy = 0, sxx = 0;
+    for (let i = 0; i < n; i++) { sxy += (DATOS.x[i] - media) * (Yv[i] - my); sxx += (DATOS.x[i] - media) ** 2; }
+    let s = 0;
+    for (let i = 0; i < n; i++) s += (my + sxy / sxx * (DATOS.x[i] - media) - Yv[i]) ** 2;
+    return Math.sqrt(s / n);
+  })();
+
+  // Generador con semilla (mulberry32)
+  function generador(semilla) {
+    let a = semilla >>> 0;
+    return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+
+  // Activaciones y sus derivadas
+  const ACT = {
+    relu: { g: z => (z > 0 ? z : 0), d: z => (z > 0 ? 1 : 0) },
+    tanh: { g: z => Math.tanh(z), d: z => { const t = Math.tanh(z); return 1 - t * t; } },
+    sigmoide: { g: z => 1 / (1 + Math.exp(-z)), d: z => { const s = 1 / (1 + Math.exp(-z)); return s * (1 - s); } },
+    identidad: { g: z => z, d: () => 1 },
+  };
+
+  // Pesos iniciales como en Keras: Glorot uniforme en las dos capas, sesgos a cero
+  function iniciar(K, semilla) {
+    const azar = generador(semilla);
+    const l1 = Math.sqrt(6 / (1 + K)), l2 = Math.sqrt(6 / (K + 1));
+    const w = Array.from({ length: K }, () => (2 * azar() - 1) * l1);
+    const beta = Array.from({ length: K }, () => (2 * azar() - 1) * l2);
+    return { K, w, b: new Array(K).fill(0), beta, beta0: 0, t: 0, m: new Array(3 * K + 1).fill(0), s: new Array(3 * K + 1).fill(0) };
+  }
+  function predecir(red, z) {
+    let f = red.beta0;
+    for (let k = 0; k < red.K; k++) f += red.beta[k] * ACT[ajustes.act].g(red.w[k] * z + red.b[k]);
+    return f;
+  }
+  function rmse(red) {
+    let s = 0;
+    for (let i = 0; i < n; i++) s += (predecir(red, Z[i]) - Yv[i]) ** 2;
+    return Math.sqrt(s / n);
+  }
+
+  // Una época: gradiente del error cuadrático medio en las 300 observaciones y un paso de Adam
+  function epoca(red) {
+    const K = red.K, g = new Array(3 * K + 1).fill(0), act = ACT[ajustes.act];
+    for (let i = 0; i < n; i++) {
+      const z = Z[i];
+      const zk = red.w.map((w, k) => w * z + red.b[k]);
+      const h = zk.map(v => act.g(v));
+      let f = red.beta0; for (let k = 0; k < K; k++) f += red.beta[k] * h[k];
+      const e = 2 * (f - Yv[i]) / n;
+      for (let k = 0; k < K; k++) {
+        const dz = e * red.beta[k] * act.d(zk[k]);
+        g[k] += dz * z; g[K + k] += dz; g[2 * K + k] += e * h[k];
+      }
+      g[3 * K] += e;
+    }
+    const b1 = 0.9, b2 = 0.999, eps = 1e-7; red.t += 1;
+    const p = [...red.w, ...red.b, ...red.beta, red.beta0];
+    for (let j = 0; j < p.length; j++) {
+      red.m[j] = b1 * red.m[j] + (1 - b1) * g[j];
+      red.s[j] = b2 * red.s[j] + (1 - b2) * g[j] * g[j];
+      const mh = red.m[j] / (1 - b1 ** red.t), sh = red.s[j] / (1 - b2 ** red.t);
+      p[j] -= ajustes.tasa * mh / (Math.sqrt(sh) + eps);
+    }
+    red.w = p.slice(0, K); red.b = p.slice(K, 2 * K); red.beta = p.slice(2 * K, 3 * K); red.beta0 = p[3 * K];
+  }
+
+  // Ajustes iniciales (por URL si vienen)
+  const ajustes = { K: 3, act: 'relu', tasa: 0.05, semilla: 127 };
+  const params = new URLSearchParams(location.search);
+  if (params.has('K')) ajustes.K = Math.min(10, Math.max(1, Math.round(+params.get('K'))));
+  if (ACT[params.get('activacion')]) ajustes.act = params.get('activacion');
+  if (params.has('tasa')) ajustes.tasa = Math.min(1, Math.max(0.001, +params.get('tasa')));
+  if (params.has('semilla')) ajustes.semilla = Math.max(1, Math.round(+params.get('semilla')));
+
+  // Formato de las cifras: coma decimal y signo menos
+  const coma = (v, d) => v.toFixed(d).replace('.', ',').replace('-', '−');
+  const tasaDe = k => Math.pow(10, -3 + k / 20), posDe = v => Math.round((Math.log10(v) + 3) * 20);
+  const tasaTexto = v => (v >= 0.1 ? coma(v, 2) : v >= 0.01 ? coma(v, 3) : coma(v, 4)).replace(/0+$/, '').replace(/,$/, '');
+  const n2 = v => Number(v).toFixed(2);
+  const texto = (x, y, t, ancla = 'middle', color = COLOR.azulOscuro, extra = '') =>
+    `<text x="${n2(x)}" y="${n2(y)}" fill="${color}" font-size="22" font-family="Roboto, system-ui, sans-serif" text-anchor="${ancla}"${extra}>${t}</text>`;
+  // Marcas «redondas» de un eje: paso de 1, 2, 2,5 o 5 por una potencia de 10
+  function pasoRedondo(crudo) {
+    const pot = Math.pow(10, Math.floor(Math.log10(crudo)));
+    return [1, 2, 2.5, 5, 10].map(k => k * pot).find(k => k >= crudo - 1e-12);
+  }
+  const decimalesDe = paso => Math.max(0, -Math.floor(Math.log10(paso) + 1e-9) + (Math.abs(paso / Math.pow(10, Math.floor(Math.log10(paso))) - 2.5) < 1e-9 ? 1 : 0));
+
+  // Rejilla de x para dibujar las curvas
+  const XS = Array.from({ length: 241 }, (_, i) => 6 * i / 240), ZS = XS.map(v => (v - media) / dt);
+
+  // Panel de datos: ejes y observaciones fijos, curva de la red en cada fotograma
+  const DAT = { izq: 72, der: 970, arr: 12, aba: 286, ymin: -1, ymax: 3 };
+  const xD = v => DAT.izq + v / 6 * (DAT.der - DAT.izq);
+  const yD = v => DAT.aba - (v - DAT.ymin) / (DAT.ymax - DAT.ymin) * (DAT.aba - DAT.arr);
+  const fondoDatos = (() => {
+    let s = `<rect width="1000" height="340" fill="${COLOR.fondo}"/>`;
+    for (let v = DAT.ymin; v <= DAT.ymax; v++) s += `<line x1="${DAT.izq}" y1="${n2(yD(v))}" x2="${DAT.der}" y2="${n2(yD(v))}" stroke="${COLOR.rejilla}"/>` + texto(DAT.izq - 12, yD(v) + 8, coma(v, 0), 'end');
+    for (let v = 0; v <= 6; v++) s += texto(xD(v), DAT.aba + 28, String(v));
+    s += texto((DAT.izq + DAT.der) / 2, 336, 'x') + texto(22, (DAT.arr + DAT.aba) / 2 + 8, 'y');
+    for (let i = 0; i < n; i++) s += `<circle cx="${n2(xD(DATOS.x[i]))}" cy="${n2(yD(Yv[i]))}" r="4.5" fill="${COLOR.azul}" fill-opacity="0.45"/>`;
+    return s;
+  })();
+  function dibujarDatos(red) {
+    const pts = ZS.map((z, i) => [xD(XS[i]), yD(Math.min(DAT.ymax + 0.3, Math.max(DAT.ymin - 0.3, predecir(red, z))))]);
+    const d = pts.map(([a, b], i) => (i ? 'L' : 'M') + n2(a) + ' ' + n2(b)).join(' ');
+    $('grafDatos').innerHTML = fondoDatos +
+      `<clipPath id="recorteDatos"><rect x="${DAT.izq}" y="${DAT.arr}" width="${DAT.der - DAT.izq}" height="${DAT.aba - DAT.arr}"/></clipPath>` +
+      `<path d="${d}" stroke="${COLOR.naranja}" stroke-width="5" fill="none" stroke-linejoin="round" clip-path="url(#recorteDatos)"/>`;
+  }
+
+  // Panel de neuronas: βₖ hₖ(x) de cada neurona, con escala simétrica que se ajusta a las contribuciones
+  const NEU = { izq: 72, der: 940, arr: 12, aba: 250 };
+  const xN = v => NEU.izq + v / 6 * (NEU.der - NEU.izq);
+  function dibujarNeuronas(red) {
+    const act = ACT[ajustes.act];
+    const curvas = red.beta.map((bk, k) => ZS.map(z => bk * act.g(red.w[k] * z + red.b[k])));
+    const maxAbs = Math.max(0.5, ...curvas.flat().map(Math.abs));
+    const paso = pasoRedondo(maxAbs / 2), lim = Math.ceil(maxAbs / paso - 1e-9) * paso, dec = decimalesDe(paso);
+    const yN = v => NEU.aba - (v + lim) / (2 * lim) * (NEU.aba - NEU.arr);
+    let s = `<rect width="1000" height="300" fill="${COLOR.fondo}"/>`;
+    for (let v = -lim; v <= lim + paso / 2; v += paso) {
+      const cero = Math.abs(v) < paso / 1e6;
+      s += `<line x1="${NEU.izq}" y1="${n2(yN(v))}" x2="${NEU.der}" y2="${n2(yN(v))}" stroke="${cero ? COLOR.gris : COLOR.rejilla}"${cero ? ' stroke-width="1.5"' : ''}/>` +
+        texto(NEU.izq - 12, yN(v) + 8, coma(cero ? 0 : v, dec), 'end');
+    }
+    for (let v = 0; v <= 6; v++) s += texto(xN(v), NEU.aba + 28, String(v));
+    s += texto((NEU.izq + NEU.der) / 2, 298, 'x');
+    // Rótulos de las neuronas al final de cada curva, separados para que no se pisen
+    const rotulos = curvas.map((c, k) => ({ k, y: yN(c[c.length - 1]) })).sort((p, q) => p.y - q.y);
+    for (let i = 1; i < rotulos.length; i++) rotulos[i].y = Math.max(rotulos[i].y, rotulos[i - 1].y + 23);
+    const exceso = rotulos.length ? rotulos[rotulos.length - 1].y - (NEU.aba + 4) : 0;
+    if (exceso > 0) for (const r of rotulos) r.y -= exceso;
+    curvas.forEach((c, k) => {
+      const d = c.map((v, i) => (i ? 'L' : 'M') + n2(xN(XS[i])) + ' ' + n2(yN(v))).join(' ');
+      const color = COLOR_NEURONA[k % 5], trazos = k >= 5 ? ' stroke-dasharray="12 7"' : '';
+      s += `<path d="${d}" stroke="${color}" stroke-width="4" fill="none" stroke-linejoin="round"${trazos}/>`;
+    });
+    for (const r of rotulos) s += texto(NEU.der + 10, r.y + 8, String(r.k + 1), 'start', COLOR_NEURONA[r.k % 5], ' font-weight="700"');
+    $('grafNeuronas').innerHTML = s;
+  }
+
+  // Panel del RMSE: historia por época, con la recta de mínimos cuadrados como referencia.
+  // El eje vertical llega a 1 o, si el RMSE inicial es mayor, al medio punto siguiente (como mucho 3); se fija al reiniciar
+  const RM = { izq: 74, der: 612, arr: 14, aba: 270, ymax: 1 };
+  const xR = e => RM.izq + e / MAX_EPOCAS * (RM.der - RM.izq);
+  const yR = v => RM.aba - Math.min(v, RM.ymax) / RM.ymax * (RM.aba - RM.arr);
+  let fondoRmse = '';
+  function prepararRmse(inicial) {
+    RM.ymax = Math.min(3, Math.max(1, Math.ceil(inicial * 2 - 1e-9) / 2));
+    const paso = RM.ymax > 1 ? 0.5 : 0.2;
+    let s = `<rect width="640" height="330" fill="${COLOR.fondo}"/>`;
+    for (let v = 0; v <= RM.ymax + 1e-9; v += paso) s += `<line x1="${RM.izq}" y1="${n2(yR(v))}" x2="${RM.der}" y2="${n2(yR(v))}" stroke="${COLOR.rejilla}"/>` + texto(RM.izq - 10, yR(v) + 8, coma(v, 1), 'end');
+    for (let e = 0; e <= MAX_EPOCAS; e += 250) s += texto(xR(e), RM.aba + 28, String(e));
+    s += texto((RM.izq + RM.der) / 2, 326, 'épocas (lote completo)');
+    s += `<line x1="${RM.izq}" y1="${n2(yR(rmseRecta))}" x2="${RM.der}" y2="${n2(yR(rmseRecta))}" stroke="${COLOR.gris}" stroke-width="2.5" stroke-dasharray="10 8"/>` +
+      texto(RM.der - 4, yR(rmseRecta) - 10, `recta de mínimos cuadrados (${coma(rmseRecta, 3)})`, 'end', COLOR.gris);
+    fondoRmse = s;
+  }
+  function dibujarRmse() {
+    const d = historia.map((v, e) => (e ? 'L' : 'M') + n2(xR(e)) + ' ' + n2(yR(v))).join(' ');
+    const e = historia.length - 1;
+    $('grafRmse').innerHTML = fondoRmse +
+      `<path d="${d}" stroke="${COLOR.naranja}" stroke-width="4" fill="none" stroke-linejoin="round"/>` +
+      `<circle cx="${n2(xR(e))}" cy="${n2(yR(historia[e]))}" r="7" fill="${COLOR.naranja}" stroke="${COLOR.fondo}" stroke-width="2"/>`;
+  }
+
+  // Estado del entrenamiento
+  let red, historia, animacion = null, ultimo = 0, resto = 0;
+  function dibujar() {
+    dibujarDatos(red); dibujarNeuronas(red); dibujarRmse();
+    $('epoca').textContent = red.t; $('rmse').textContent = coma(historia[historia.length - 1], 3);
+  }
+  function reiniciar() {
+    red = iniciar(ajustes.K, ajustes.semilla); historia = [rmse(red)]; resto = 0; prepararRmse(historia[0]); dibujar();
+  }
+  function entrenarHasta(epocas) {
+    while (red.t < Math.min(epocas, MAX_EPOCAS)) { epoca(red); historia.push(rmse(red)); }
+  }
+  function parar() {
+    cancelAnimationFrame(animacion); animacion = null; $('entrenar').textContent = 'Entrenar';
+  }
+  function fotograma(ahora) {
+    const dtSeg = Math.min(0.1, (ahora - ultimo) / 1000); ultimo = ahora;
+    resto += dtSeg * EPOCAS_POR_SEGUNDO;
+    const k = Math.floor(resto); resto -= k;
+    entrenarHasta(red.t + k); dibujar();
+    animacion = red.t < MAX_EPOCAS ? requestAnimationFrame(fotograma) : (parar(), null);
+  }
+  function arrancar() {
+    if (red.t >= MAX_EPOCAS) reiniciar();
+    $('entrenar').textContent = 'Pausa'; ultimo = performance.now();
+    animacion = requestAnimationFrame(fotograma);
+  }
+
+  // Mandos: K, activación y semilla vuelven a la época 0 (y siguen entrenando si estaba en marcha); η no
+  function mostrarMandos() {
+    $('valorK').textContent = ajustes.K; $('neuronas').value = ajustes.K;
+    $('valorTasa').textContent = tasaTexto(ajustes.tasa);
+    $('valorSemilla').textContent = ajustes.semilla;
+    for (const b of $('botonesActivacion').querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.valor === ajustes.act));
+  }
+  function cambiarRed() {
+    const enMarcha = animacion !== null;
+    if (enMarcha) parar();
+    mostrarMandos(); reiniciar();
+    if (enMarcha) arrancar();
+  }
+  $('neuronas').addEventListener('input', ev => { ajustes.K = +ev.target.value; cambiarRed(); });
+  $('botonesActivacion').addEventListener('click', ev => { const b = ev.target.closest('button[data-valor]'); if (b) { ajustes.act = b.dataset.valor; cambiarRed(); } });
+  $('semillaMenos').addEventListener('click', () => { ajustes.semilla = Math.max(1, ajustes.semilla - 1); cambiarRed(); });
+  $('semillaMas').addEventListener('click', () => { ajustes.semilla += 1; cambiarRed(); });
+  $('tasa').addEventListener('input', ev => { ajustes.tasa = tasaDe(+ev.target.value); mostrarMandos(); });
+  $('entrenar').addEventListener('click', () => (animacion ? parar() : arrancar()));
+  $('reiniciar').addEventListener('click', () => { parar(); reiniciar(); });
+
+  $('tasa').value = posDe(ajustes.tasa);
+  mostrarMandos(); reiniciar();
+  if (params.has('epocas')) { entrenarHasta(Math.max(0, Math.round(+params.get('epocas')))); dibujar(); }
+
+  // Dentro del deck: las teclas de avance pasan a Reveal (API postMessage), salvo las flechas sobre un deslizador
+  document.addEventListener('keydown', ev => {
+    if (window.parent === window) return;
+    const enDeslizador = ev.target instanceof HTMLInputElement && ev.target.type === 'range';
+    const enBoton = ev.target instanceof HTMLButtonElement;
+    const metodos = { PageDown: 'next', PageUp: 'prev', ArrowRight: 'next', ArrowLeft: 'prev', ArrowDown: 'next', ArrowUp: 'prev', ' ': 'next' };
+    const metodo = metodos[ev.key];
+    if (!metodo) return;
+    if (enDeslizador && ev.key.startsWith('Arrow')) return;
+    if (enBoton && ev.key === ' ') return;
+    window.parent.postMessage(JSON.stringify({ method: metodo }), '*');
+    ev.preventDefault();
+  });
+})();
+</script>
+</body>
+</html>

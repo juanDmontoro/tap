@@ -270,7 +270,7 @@
     "href": "proyecto.html#hitos",
     "title": "Proyecto del cuatrimestre",
     "section": "3 Hitos",
-    "text": "3 Hitos\nCinco hitos previos a la entrega final, ligados al tema en curso. Cada hito se apoya en lo trabajado en las prácticas de las semanas anteriores.\n\n\n\n\n\n\n\n\n\n\nSemana\nFechas\nHito\nQué se entrega\nTema de apoyo\n\n\n\n\n2\n21–25 sep\nGrupos, pregunta de negocio y datos\nFicha breve de viabilidad, sin código ni EDA (una página por grupo)\n1. Fundamentos\n\n\n5\n15 oct\nAnálisis exploratorio (EDA)\nCuaderno: descripción de variables, valores faltantes, distribuciones, relación con la respuesta; partición entrenamiento/prueba definida y congelada\n2. Selección y evaluación\n\n\n7\n29 oct\nModelo base\nPipeline con preprocesado y GLM (con regularización si procede); métrica elegida y justificada; resultado por validación cruzada en el conjunto de entrenamiento\n4. Ensambles\n\n\n9\n12 nov\nEnsambles\nBosques aleatorios, boosting y/o stacking frente al modelo base en el mismo conjunto de prueba; importancias y valores de Shapley\n4. Ensambles\n\n\n11\n26 nov\nRevisión intermedia\nTabla de comparación de modelos (ensambles o SVM); borrador de la memoria; registro de IA acumulado. Retroalimentación del profesor\n5. SVM · 6. Redes neuronales\n\n\n14\n17 dic\nEntrega final y defensa oral\nRepositorio, memoria y registro de IA completo. Defensa el jueves 17 de diciembre\n7. Predicción y efectos causales\n\n\n\n\n\n\n\n\n\nEntre la revisión intermedia y la entrega final\n\n\n\nDespués de la revisión intermedia (semana 11) no hay más hitos hasta la entrega final. Las redes neuronales (semanas 11–12) también forman parte del recorrido de modelización. Usad la retroalimentación de la semana 11 para cerrar la comparación de modelos (al menos tres familias), completar la interpretación y redactar la memoria."
+    "text": "3 Hitos\nCinco hitos previos a la entrega final, ligados al tema en curso. Cada hito se apoya en lo trabajado en las prácticas de las semanas anteriores.\n\n\n\n\n\n\n\n\n\n\nSemana\nFechas\nHito\nQué se entrega\nTema de apoyo\n\n\n\n\n2\n21–25 sep\nGrupos, pregunta de negocio y datos\nFicha breve de viabilidad, sin código ni EDA (una página por grupo)\n1. Fundamentos\n\n\n5\n15 oct\nAnálisis exploratorio (EDA)\nCuaderno: descripción de variables, valores faltantes, distribuciones, relación con la respuesta; partición entrenamiento/prueba definida y congelada\n2. Selección y evaluación\n\n\n7\n29 oct\nModelo base\nPipeline con preprocesado y GLM (con regularización si procede); métrica elegida y justificada; resultado por validación cruzada en el conjunto de entrenamiento\n4. Ensambles\n\n\n9\n12 nov\nEnsambles\nBosques aleatorios, boosting y/o stacking frente al modelo base en el mismo conjunto de prueba; importancias y valores de Shapley\n4. Ensambles\n\n\n11\n26 nov\nRevisión intermedia\nTabla de comparación de modelos (ensambles o SVM); borrador de la memoria; registro de IA acumulado. Retroalimentación del profesor\n5. SVM · 6. Redes neuronales\n\n\n14\n17 dic\nEntrega final y defensa oral\nRepositorio, memoria y registro de IA completo. Defensa el jueves 17 de diciembre\n7. Predicción y efectos causales\n\n\n\n\n\n\n\n\n\nEntre la revisión intermedia y la entrega final\n\n\n\nDespués de la revisión intermedia (semana 11) no hay más hitos hasta la entrega final. Las redes neuronales (semanas 11–12) también forman parte del recorrido de modelización. Usad la retroalimentación de la semana 11 para cerrar la comparación de modelos (al menos tres familias), completar la interpretación y redactar la memoria. La última hora de la práctica del jueves 10 de diciembre (60 min) se dedica a resolver dudas sobre el proyecto."
   },
   {
     "objectID": "proyecto.html#sec-ia",
@@ -291,14 +291,14 @@
     "href": "proyecto.html#documentos-relacionados",
     "title": "Proyecto del cuatrimestre",
     "section": "6 Documentos relacionados",
-    "text": "6 Documentos relacionados\n\nFicha de viabilidad de los datos (hito S2): hitos/S02_datos.\nGuía docente de la asignatura 2026-27 y calendario de sesiones (Aula Virtual).\nLas fechas límite concretas de cada hito y el medio de entrega se comunican en el Aula Virtual.\nFicha de viabilidad de los datos del hito S2.\nInstrucciones del hito 3: modelo base."
+    "text": "6 Documentos relacionados\n\nFicha de viabilidad de los datos (hito S2): hitos/S02_datos.\nGuía docente de la asignatura 2026-27 y calendario de sesiones (Aula Virtual).\nLas fechas límite concretas de cada hito y el medio de entrega se comunican en el Aula Virtual.\nFicha de viabilidad de los datos del hito S2.\nInstrucciones del hito 3: modelo base.\nInstrucciones del hito 4: ensambles."
   },
   {
     "objectID": "planificacion.html",
     "href": "planificacion.html",
     "title": "Planificación de las sesiones",
     "section": "",
-    "text": "Planificación sujeta a cambios\n\n\n\nLas fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 02-11-2026. La hora límite de cada entrega se comunica en el Aula Virtual.\nTeoría: martes, 12:30-13:30. Prácticas: jueves, 8:30-11:30 y 11:30-14:30 (mismo contenido en los dos grupos).\nT y P con número: sesión de teoría o de prácticas de ese tema. H1-H5: hitos del proyecto. E1-E4: entregas individuales."
+    "text": "Planificación sujeta a cambios\n\n\n\nLas fechas y contenidos pueden ajustarse a lo largo del curso. Última actualización: 11-11-2026. La hora límite de cada entrega se comunica en el Aula Virtual.\nTeoría: martes, 12:30-13:30. Prácticas: jueves, 8:30-11:30 y 11:30-14:30 (mismo contenido en los dos grupos).\nT y P con número: sesión de teoría o de prácticas de ese tema. H1-H5: hitos del proyecto. E1-E3: entregas individuales."
   },
   {
     "objectID": "planificacion.html#septiembre",
@@ -319,14 +319,14 @@
     "href": "planificacion.html#noviembre",
     "title": "Planificación de las sesiones",
     "section": "Noviembre",
-    "text": "Noviembre\n\n\n\nFecha\nSesión\nContenido\nMateriales\n\n\n\n\nmartes 3\nT4 · Boosting\nGradient boosting y XGBoost.\nTema 4\n\n\njueves 5\nP4 · XGBoost\nAjuste y validación de XGBoost; comparación con random forest. Entrega E2 · Ensambles (T4).\nTema 4\n\n\nmartes 10\nT4 · Ensambles\nVoting y stacking; importancias y valores de Shapley.\nTema 4\n\n\njueves 12\nP4 · Interpretación\n90 min: stacking y SHAP guiados. H4 · 90 min: ensambles del proyecto.\nTema 4\n\n\nmartes 17\nT5 · SVM\nClasificación y regresión con vectores de soporte; núcleos.\n\n\n\njueves 19\nP5 · Comparar modelos\nSVM: escalado, ajuste y comparación transversal de modelos. Entrega E3 · SVM (T5).\n\n\n\nmartes 24\nT6 · Redes neuronales\nPerceptrón multicapa (MLP).\n\n\n\njueves 26\nP6 · Keras\n90 min: MLP guiado en Keras. H5 · 90 min: revisión intermedia; todos los modelos + SVM y feedback.\n\n\n\n\nE2: 5 nov, ensambles vistos hasta esa fecha. H4: 12 nov. E3: 19 nov, exclusivamente SVM. H5: 26 nov, revisión de todos los modelos + SVM y feedback."
+    "text": "Noviembre\n\n\n\nFecha\nSesión\nContenido\nMateriales\n\n\n\n\nmartes 3\nT4 · Boosting\nGradient boosting y XGBoost.\nTema 4\n\n\njueves 5\nP4 · XGBoost\nAjuste y validación de XGBoost; comparación con random forest. Entrega E2 · Ensambles (T4).\nTema 4\n\n\nmartes 10\nT4 · Ensambles\nVoting y stacking; importancias y valores de Shapley.\nTema 4\n\n\njueves 12\nP4 · Interpretación\n90 min: stacking y SHAP guiados. H4 · 90 min: ensambles del proyecto.\nTema 4\n\n\nmartes 17\nT5 · SVM\nClasificación y regresión con vectores de soporte; núcleos.\nTema 5\n\n\njueves 19\nP5 · Comparar modelos\nSesión completa: SVM, escalado, ajuste y comparación transversal de modelos.\nTema 5\n\n\nmartes 24\nT6 · Redes neuronales\nPerceptrón multicapa (MLP).\nTema 6\n\n\njueves 26\nP6 · Keras\n90 min: MLP guiado en Keras. H5 · 90 min: revisión intermedia; todos los modelos + SVM y feedback.\nTema 6\n\n\n\nE2: 5 nov, ensambles vistos hasta esa fecha. H4: 12 nov. 19 nov: sesión completa de práctica de SVM, sin entrega (cambio del 10-11). H5: 26 nov, revisión de todos los modelos + SVM y feedback."
   },
   {
     "objectID": "planificacion.html#diciembre",
     "href": "planificacion.html#diciembre",
     "title": "Planificación de las sesiones",
     "section": "Diciembre",
-    "text": "Diciembre\n\n\n\n\n\n\n\n\n\nFecha\nSesión\nContenido\nMateriales\n\n\n\n\nmartes 1\nT6 · Aprendizaje\nBackpropagation y regularización de redes neuronales.\n\n\n\njueves 3\nP6 · Keras guiado\nSesión completa: práctica guiada de regularización y búsqueda de arquitecturas en Keras.\n\n\n\nlunes 7\n\nFiesta de centro\n\n\n\nmartes 8\n\nFestivo: sin teoría\n\n\n\njueves 10\nP7 · Predicción y causalidad\n40 min: DAG y sesgos; simulación guiada, ortogonalización y cross-fitting. Entrega E4 · Redes neuronales (T6).\n\n\n\ndomingo 13\n\nLímite de entrega del proyecto\n\n\n\nmartes 15\nT7 · DoubleML\nCaso Hillstrom: demostración, interpretación y discusión de supuestos.\n\n\n\njueves 17\nProyecto · Defensa oral\nPresentación y defensa oral del proyecto (sesión completa).\n\n\n\nmartes 22\nRepaso del examen escrito\nSíntesis de contenidos, preguntas y resolución de dudas.\n\n\n\nmiércoles 23\n\nFin del cuatrimestre\n\n\n\n\n3 dic: práctica completa de Keras. E4: 10 dic (E5 suprimida). Sin RNN/CNN ni LLMs (reajuste del 14-10). 13 dic: límite del proyecto (repositorio, memoria y registro de IA). Defensa oral: 17 dic. Repaso: 22 dic."
+    "text": "Diciembre\n\n\n\nFecha\nSesión\nContenido\nMateriales\n\n\n\n\nmartes 1\nT6 · Aprendizaje\nBackpropagation y regularización de redes neuronales.\nTema 6\n\n\njueves 3\nP6 · Keras guiado\nSesión completa: práctica guiada de regularización y búsqueda de arquitecturas en Keras.\nTema 6\n\n\nlunes 7\n\nFiesta de centro\n\n\n\nmartes 8\n\nFestivo: sin teoría\n\n\n\njueves 10\nEntrega y proyecto\n120 min: entrega individual con su cuestionario de verificación (Moodle). 60 min: dudas sobre el proyecto. Entrega E3 · Redes neuronales (T6).\n\n\n\ndomingo 13\n\nLímite de entrega del proyecto\n\n\n\nmartes 15\nT7 · Predicción y causalidad\nDAG y sesgo del aprendizaje automático ingenuo. DoubleML con el caso Hillstrom: demostración, interpretación y supuestos.\n\n\n\njueves 17\nProyecto · Defensa oral\nPresentación y defensa oral del proyecto (sesión completa).\n\n\n\nmartes 22\nRepaso del examen escrito\nSíntesis de contenidos, preguntas y resolución de dudas.\n\n\n\nmiércoles 23\n\nFin del cuatrimestre\n\n\n\n\n3 dic: práctica completa de Keras. 10 dic: E3 de redes neuronales (antes E4), 120 min con su cuestionario, y 60 min de dudas sobre el proyecto. 13 dic: límite del proyecto. 15 dic: tema 7. Defensa oral: 17 dic. Repaso: 22 dic."
   },
   {
     "objectID": "index.html",
@@ -357,6 +357,13 @@
     "text": "Presentación del curso\n\n\n\n\n\n\n\n\nPresentación\nSesión\n\n\n\n\n\nPresentación de la asignatura\n15 sep\n Abrir"
   },
   {
+    "objectID": "materiales.html#proyecto",
+    "href": "materiales.html#proyecto",
+    "title": "Materiales",
+    "section": "Proyecto",
+    "text": "Proyecto\nInstrucciones de las sesiones de los hitos. El enunciado, las normas y la rúbrica están en la página Proyecto.\n\n\n\n\n\n\n\n\nPresentación\nSesión\n\n\n\n\n\nInstrucciones del hito 3: modelo base\n29 oct (H3)\n Abrir\n\n\nInstrucciones del hito 4: ensambles\n12 nov (H4)\n Abrir"
+  },
+  {
     "objectID": "materiales.html#tema-1",
     "href": "materiales.html#tema-1",
     "title": "Materiales",
@@ -382,7 +389,21 @@
     "href": "materiales.html#tema-4",
     "title": "Materiales",
     "section": "Tema 4. Ensambles",
-    "text": "Tema 4. Ensambles\n\nPresentaciones\n\n\n\n\n\n\n\n\nPresentación\nSesión\n\n\n\n\n\nÁrboles, bagging y random forest\n27 oct (T4)\n Abrir\n\n\nInstrucciones del hito 3 del proyecto: modelo base\n29 oct (H3)\n Abrir\n\n\nBoosting: gradient boosting y XGBoost\n3 nov (T4)\n Abrir\n\n\nCombinar e interpretar modelos: voting, stacking, importancias y valores de Shapley\n10 nov (T4)\n Abrir\n\n\n\n\n\nCuadernos\n\n\n\n\n\n\n\n\nCuaderno\nSin resultados\nVersión resuelta\n\n\n\n\nIntroducción a los árboles de decisión (práctica, 29 oct)\n Descargar Abrir en Colab\n Ver resuelto\n\n\nBagging y random forest (práctica, 29 oct)\n Descargar Abrir en Colab\n Ver resuelto\n\n\nXGBoost (práctica, 5 nov)\n Descargar Abrir en Colab\n Ver resuelto\n\n\nEntrega E2: random forest y XGBoost para clasificación (5 nov)\n Descargar Abrir en Colab\nSin versión resuelta"
+    "text": "Tema 4. Ensambles\n\nPresentaciones\n\n\n\n\n\n\n\n\nPresentación\nSesión\n\n\n\n\n\nÁrboles, bagging y random forest\n27 oct (T4)\n Abrir\n\n\nBoosting: gradient boosting y XGBoost\n3 nov (T4)\n Abrir\n\n\nCombinar e interpretar modelos: voting, stacking, importancias y valores de Shapley\n10 nov (T4)\n Abrir\n\n\n\n\n\nCuadernos\n\n\n\n\n\n\n\n\nCuaderno\nSin resultados\nVersión resuelta\n\n\n\n\nIntroducción a los árboles de decisión (práctica, 29 oct)\n Descargar Abrir en Colab\n Ver resuelto\n\n\nBagging y random forest (práctica, 29 oct)\n Descargar Abrir en Colab\n Ver resuelto\n\n\nXGBoost (práctica, 5 nov)\n Descargar Abrir en Colab\n Ver resuelto\n\n\nInterpretación de modelos (práctica, 12 nov)\n Descargar Abrir en Colab\nSe publica el 19 nov\n\n\nEntrega E2: random forest y XGBoost para clasificación (5 nov)\n Descargar Abrir en Colab\nSin versión resuelta"
+  },
+  {
+    "objectID": "materiales.html#tema-5",
+    "href": "materiales.html#tema-5",
+    "title": "Materiales",
+    "section": "Tema 5. Máquinas de vectores de soporte",
+    "text": "Tema 5. Máquinas de vectores de soporte\n\nPresentaciones\n\n\n\n\n\n\n\n\nPresentación\nSesión\n\n\n\n\n\nMáquinas de vectores de soporte: clasificación, núcleos y regresión\n17 nov (T5)\n Abrir"
+  },
+  {
+    "objectID": "materiales.html#tema-6",
+    "href": "materiales.html#tema-6",
+    "title": "Materiales",
+    "section": "Tema 6. Redes neuronales",
+    "text": "Tema 6. Redes neuronales\n\nPresentaciones\n\n\n\n\n\n\n\n\nPresentación\nSesión\n\n\n\n\n\nRedes neuronales: el perceptrón multicapa\n24 nov (T6)\n Abrir\n\n\nRedes neuronales: entrenamiento y regularización\n1 dic (T6)\n Abrir"
   },
   {
     "objectID": "materiales.html#python",

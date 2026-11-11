@@ -161,6 +161,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#presentacion" id="toc-presentacion" class="nav-link active" data-scroll-target="#presentacion">Presentación del curso</a></li>
+  <li><a href="#proyecto" id="toc-proyecto" class="nav-link" data-scroll-target="#proyecto">Proyecto</a></li>
   <li><a href="#tema-1" id="toc-tema-1" class="nav-link" data-scroll-target="#tema-1">Tema 1. Fundamentos y regresión regularizada</a>
   <ul class="collapse">
   <li><a href="#presentaciones" id="toc-presentaciones" class="nav-link" data-scroll-target="#presentaciones">Presentaciones</a></li>
@@ -180,6 +181,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#presentaciones-3" id="toc-presentaciones-3" class="nav-link" data-scroll-target="#presentaciones-3">Presentaciones</a></li>
   <li><a href="#cuadernos-3" id="toc-cuadernos-3" class="nav-link" data-scroll-target="#cuadernos-3">Cuadernos</a></li>
+  </ul></li>
+  <li><a href="#tema-5" id="toc-tema-5" class="nav-link" data-scroll-target="#tema-5">Tema 5. Máquinas de vectores de soporte</a>
+  <ul class="collapse">
+  <li><a href="#presentaciones-4" id="toc-presentaciones-4" class="nav-link" data-scroll-target="#presentaciones-4">Presentaciones</a></li>
+  </ul></li>
+  <li><a href="#tema-6" id="toc-tema-6" class="nav-link" data-scroll-target="#tema-6">Tema 6. Redes neuronales</a>
+  <ul class="collapse">
+  <li><a href="#presentaciones-5" id="toc-presentaciones-5" class="nav-link" data-scroll-target="#presentaciones-5">Presentaciones</a></li>
   </ul></li>
   <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Entorno y Python</a>
   <ul class="collapse">
@@ -232,6 +241,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Presentación de la asignatura</td>
 <td style="text-align: left;">15 sep</td>
 <td style="text-align: left;"><a class="tap-btn" href="slides/0_presentacion/presentacion_2627_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="proyecto" class="level2">
+<h2 class="anchored" data-anchor-id="proyecto">Proyecto</h2>
+<p>Instrucciones de las sesiones de los hitos. El enunciado, las normas y la rúbrica están en la página <a href="./proyecto.html">Proyecto</a>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Presentación</th>
+<th style="text-align: left;">Sesión</th>
+<th style="text-align: left;"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Instrucciones del hito 3: modelo base</td>
+<td style="text-align: left;">29 oct (H3)</td>
+<td style="text-align: left;"><a class="tap-btn" href="proyecto2627/hitos/S06_modelo_base.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Instrucciones del hito 4: ensambles</td>
+<td style="text-align: left;">12 nov (H4)</td>
+<td style="text-align: left;"><a class="tap-btn" href="proyecto2627/hitos/S08_ensambles.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
 </tr>
 </tbody>
 </table>
@@ -438,16 +477,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;"><a class="tap-btn" href="slides/04/04_arboles_bosques_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Instrucciones del hito 3 del proyecto: modelo base</td>
-<td style="text-align: left;">29 oct (H3)</td>
-<td style="text-align: left;"><a class="tap-btn" href="proyecto2627/hitos/S06_modelo_base.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">Boosting: gradient boosting y XGBoost</td>
 <td style="text-align: left;">3 nov (T4)</td>
 <td style="text-align: left;"><a class="tap-btn" href="slides/04/04_boosting_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Combinar e interpretar modelos: voting, stacking, importancias y valores de Shapley</td>
 <td style="text-align: left;">10 nov (T4)</td>
 <td style="text-align: left;"><a class="tap-btn" href="slides/04/04_combinar_interpretar_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
@@ -487,9 +521,73 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;"><a class="tap-btn" href="./resueltos/04/tema_04_xgboost.html"><i class="bi bi-check2-square"></i> Ver resuelto</a></td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Interpretación de modelos (práctica, 12 nov)</td>
+<td style="text-align: left;"><a class="tap-btn" href="clabs/04/tema_04_interpretacion.ipynb" download=""><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_interpretacion.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a></td>
+<td style="text-align: left;">Se publica el 19 nov</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Entrega E2: random forest y XGBoost para clasificación (5 nov)</td>
 <td style="text-align: left;"><a class="tap-btn" href="clabs/04/tema_04_entrega_E2.ipynb" download=""><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_entrega_E2.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a></td>
 <td style="text-align: left;">Sin versión resuelta</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="tema-5" class="level2">
+<h2 class="anchored" data-anchor-id="tema-5">Tema 5. Máquinas de vectores de soporte</h2>
+<section id="presentaciones-4" class="level3">
+<h3 class="anchored" data-anchor-id="presentaciones-4">Presentaciones</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Presentación</th>
+<th style="text-align: left;">Sesión</th>
+<th style="text-align: left;"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Máquinas de vectores de soporte: clasificación, núcleos y regresión</td>
+<td style="text-align: left;">17 nov (T5)</td>
+<td style="text-align: left;"><a class="tap-btn" href="slides/05/05_svm_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="tema-6" class="level2">
+<h2 class="anchored" data-anchor-id="tema-6">Tema 6. Redes neuronales</h2>
+<section id="presentaciones-5" class="level3">
+<h3 class="anchored" data-anchor-id="presentaciones-5">Presentaciones</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Presentación</th>
+<th style="text-align: left;">Sesión</th>
+<th style="text-align: left;"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Redes neuronales: el perceptrón multicapa</td>
+<td style="text-align: left;">24 nov (T6)</td>
+<td style="text-align: left;"><a class="tap-btn" href="slides/06/06_mlp_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Redes neuronales: entrenamiento y regularización</td>
+<td style="text-align: left;">1 dic (T6)</td>
+<td style="text-align: left;"><a class="tap-btn" href="slides/06/06_entrenamiento_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a></td>
 </tr>
 </tbody>
 </table>
