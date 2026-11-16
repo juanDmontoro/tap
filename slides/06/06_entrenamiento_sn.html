@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<script src="06_entrenamiento_files/libs/clipboard/clipboard.min.js"></script>
+<script src="06_entrenamiento_files/libs/quarto-html/tabby.min.js"></script>
+<script src="06_entrenamiento_files/libs/quarto-html/popper.min.js"></script>
+<script src="06_entrenamiento_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="06_entrenamiento_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="06_entrenamiento_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="06_entrenamiento_files/libs/quarto-html/quarto-syntax-highlighting-9ea0a49c779b6fc496fdb60b6bf00fef.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.39">
+
+  <meta name="author" content="Prof.&nbsp;Juan D. Montoro-Pons | 2026/27">
+  <title>Tema 6. Redes neuronales: entrenamiento y regularización</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="06_entrenamiento_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="06_entrenamiento_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="06_entrenamiento_files/libs/revealjs/dist/theme/quarto-1e9466bccfb7164c1a8d0144366c482b.css">
+  <link href="06_entrenamiento_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="06_entrenamiento_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="06_entrenamiento_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="06_entrenamiento_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+<script src="_extensions/grantmcdermott/clean/mathjax-config.js"></script>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-color="#447099" class="quarto-title-block center">
+  <h1 class="title">Tema 6. Redes neuronales: entrenamiento y regularización</h1>
+  <p class="subtitle">Técnicas Avanzadas de Predicción en Negocios</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Prof.&nbsp;Juan D. Montoro-Pons | 2026/27 
+</div>
+</div>
+</div>
+
+</section>
+<section id="la-misma-red-entrenada-dos-veces" class="slide level2 fig-side">
+<h2>La misma red entrenada dos veces</h2>
+<p>&nbsp;</p>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Pregunta</a></li><li><a href="#tabset-1-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="73767d70" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-4-output-1.png" alt="MSE de entrenamiento por época, de la época 2 a la 100, de dos entrenamientos de una red de seis capas, sin leyenda. La curva naranja baja desde la primera época. La azul está pegada a la línea gris discontinua del modelo nulo, que predice la media, hasta la época 75, y después baja de golpe."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Una red de seis capas ajustada dos veces a los mismos anuncios, con el mismo descenso del gradiente y la misma tasa de aprendizaje.</li>
+<li>Una baja desde la primera época. La otra sigue a la altura del modelo nulo, que predice la media, hasta la época 75.</li>
+<li>¿Qué distingue a los dos entrenamientos?</li>
+</ul>
+</div></div>
+</div>
+<div id="tabset-1-2">
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="b34dce6e" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-5-output-1.png" alt="La misma figura con leyenda: la curva naranja es la red con los pesos iniciales por defecto de Keras y la azul, la red con pesos iniciales pequeños."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>El tamaño de los pesos iniciales. La semilla es la misma y cambia la escala de los pesos: desviación típica 0,05 en la azul y la que Keras pone por defecto en la naranja.</li>
+<li>En la época 100 las dos tienen un error próximo, 0,134 y 0,109. Cambia cuántas épocas hacen falta para llegar.</li>
+<li>Entrenar una red tiene dificultades propias, que dependen de los pesos iniciales y de cómo se da cada paso.</li>
+</ul>
+</div></div>
+</div>
+</div>
+</div>
+<div class="source">
+<p>Anuncios de Valencia, una división del entrenamiento (80 % para ajustar), desde la época 2. MSE de log(precio): la pérdida que minimiza la red.</p>
+</div>
+</section>
+<section id="tres-preguntas" class="slide level2 body-callout">
+<h2>Tres preguntas</h2>
+<p>&nbsp;</p>
+<p>Una red se entrena con descenso del gradiente. La retropropagación calcula el gradiente de la pérdida respecto de todos los pesos con una pasada hacia delante y otra hacia atrás, y la regularización limita cuánto se ajusta la red al conjunto de entrenamiento.</p>
+<ol type="1">
+<li><strong>¿Cómo calcula una red el gradiente de cada peso?</strong> Con la regla de la cadena, desde la salida hacia la entrada, capa a capa.</li>
+<li><strong>¿Por qué cuesta optimizar una red profunda?</strong> Su pérdida tiene mesetas y valles estrechos, y el gradiente puede debilitarse al pasar por las capas.</li>
+<li><strong>¿Cómo se evita que una red memorice el entrenamiento?</strong> Con las ideas de otros modelos: penalizar la complejidad y vigilar el error de validación.</li>
+</ol>
+</section>
+<section>
+<section id="cómo-calcula-una-red-el-gradiente-de-cada-peso" class="title-slide slide level1 center" data-background-color="#447099">
+<h1>¿Cómo calcula una red el gradiente de cada peso?</h1>
+
+</section>
+<section id="entrenar-es-bajar-por-la-pérdida" class="slide level2 body-callout">
+<h2>Entrenar es bajar por la pérdida</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div title="Notación">
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Notación</strong></p>
+</div>
+<div class="callout-content">
+<p><span class="math display">\[\theta^{(t+1)} = \theta^{(t)} - \eta\, \nabla L\big(\theta^{(t)}\big)\]</span> <span class="math inline">\(\theta\)</span> son todos los pesos de la red en el paso <span class="math inline">\(t\)</span>, <span class="math inline">\(\eta\)</span> es la tasa de aprendizaje y <span class="math inline">\(\nabla L\)</span>, el <strong>gradiente</strong>: la derivada de la pérdida <span class="math inline">\(L\)</span> respecto de cada peso.</p>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Cada paso necesita una derivada por peso. Con los 46 predictores de los anuncios (las numéricas y las columnas de barrio y tipo), una capa oculta de 50 neuronas tiene <span class="math inline">\((46+1) \cdot 50\)</span> pesos y la salida, <span class="math inline">\(50+1\)</span>: 2401 en total.</li>
+<li>Con dos capas ocultas de 200 neuronas: <span class="math inline">\(47 \cdot 200 + 201 \cdot 200 + 201\)</span> = 49 801.</li>
+<li>La <strong>retropropagación</strong> calcula todas esas derivadas con una pasada hacia delante y otra hacia atrás.</li>
+</ul>
+</div></div>
+</section>
+<section id="la-notación-de-una-red-por-capas" class="slide level2 fig-side">
+<h2>La notación de una red por capas</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="5e62d91a" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-6-output-1.png" alt="Diagrama de una red con tres entradas, una capa oculta de cuatro neuronas y una neurona de salida, rotulada h super 2 sub 1, igual a la predicción. Las conexiones están en gris. Una, de la entrada 1 a la neurona 2 de la capa 1, está en naranja y rotulada w super 1 sub 2 1. La neurona 4 de la capa 1 lleva rotulado su término independiente."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Cada neurona <span class="math inline">\(j\)</span> de la capa <span class="math inline">\(l\)</span> combina las salidas de la capa anterior y les aplica su activación <span class="math inline">\(g\)</span>: <span class="math display">\[z^{(l)}_j = \sum_k w^{(l)}_{jk}\, h^{(l-1)}_k + w^{(l)}_{0j}, \qquad h^{(l)}_j = g\big(z^{(l)}_j\big)\]</span></li>
+<li><span class="math inline">\(w^{(l)}_{jk}\)</span> va de la neurona <span class="math inline">\(k\)</span> de la capa anterior a la neurona <span class="math inline">\(j\)</span>. El segundo índice es el origen.</li>
+<li>Las entradas son <span class="math inline">\(h^{(0)} = x\)</span>, y las capas van de <span class="math inline">\(l = 1\)</span> a la de salida, <span class="math inline">\(M\)</span>. La predicción es la salida de la última capa: <span class="math inline">\(\hat y = h^{(2)}_1\)</span>.</li>
+</ul>
+</div></div>
+</section>
+<section id="un-peso-cambia-la-pérdida-a-través-de-la-red" class="slide level2 fig-side">
+<h2>Un peso cambia la pérdida a través de la red</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="4e7d42dc" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-7-output-1.png" alt="La red de la slide anterior con un nodo L, la pérdida, a la derecha de la salida. Un camino naranja va de la entrada 1 a la neurona 2 de la capa 1 por el peso w super 1 sub 2 1, de ahí a la neurona de salida y de la salida a la pérdida."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Se entrena cambiando los pesos para que la pérdida baje. Con una observación, la pérdida se escribe con la salida de la red: <span class="math display">\[L = (y - \hat y)^2 = \big(y - h^{(2)}_1\big)^2\]</span></li>
+<li>Hace falta <span class="math inline">\(\partial L / \partial w^{(l)}_{jk}\)</span> para cada peso. Un cambio en un peso llega a la pérdida pasando por su neurona y por las que vienen después, y en la regla de la cadena cada tramo del camino es un factor.</li>
+</ul>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Para pensar</a></li><li><a href="#tabset-2-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<p>¿Por cuántos caminos llega a la pérdida un cambio en <span class="math inline">\(w^{(1)}_{21}\)</span>? ¿Y un cambio en <span class="math inline">\(x_1\)</span>?</p>
+</div>
+<div id="tabset-2-2">
+<ul>
+<li><span class="math inline">\(w^{(1)}_{21}\)</span>: uno, el naranja. <span class="math inline">\(x_1\)</span>: cuatro, uno por cada neurona de la capa 1.</li>
+<li>Con varios caminos, la derivada suma un producto por camino.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="el-error-de-una-neurona" class="slide level2 body-callout">
+<h2>El error de una neurona</h2>
+<p>&nbsp;</p>
+<div title="Definición">
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Definición</strong></p>
+</div>
+<div class="callout-content">
+<p>El <strong>error</strong> de la neurona <span class="math inline">\(j\)</span> de la capa <span class="math inline">\(l\)</span> es <span class="math inline">\(\delta^{(l)}_j = \dfrac{\partial L}{\partial z^{(l)}_j}\)</span>: cuánto cambia la pérdida si cambia la <span class="math inline">\(z\)</span> de esa neurona. Es lo que la neurona aporta a la pérdida.</p>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>Con la regla de la cadena en dos factores, el gradiente de cada peso es el error de la neurona a la que llega por la salida de la neurona de la que sale: <span class="math display">\[\frac{\partial L}{\partial w^{(l)}_{jk}} = \frac{\partial L}{\partial z^{(l)}_j}\,\frac{\partial z^{(l)}_j}{\partial w^{(l)}_{jk}} = \delta^{(l)}_j\, h^{(l-1)}_k\]</span></li>
+<li>Conocido el <span class="math inline">\(\delta\)</span> de cada neurona, se tienen todos los gradientes.</li>
+<li>Con salida lineal y <span class="math inline">\(L = \big(y - h^{(2)}_1\big)^2\)</span>, el error de la salida de la red anterior es <span class="math inline">\(\delta^{(2)}_1 = -2\,\big(y - h^{(2)}_1\big)\)</span>.</li>
+</ul>
+</section>
+<section id="las-cuatro-ecuaciones-de-la-retropropagación" class="slide level2 body-callout">
+<h2>Las cuatro ecuaciones de la retropropagación</h2>
+<p>&nbsp;</p>
+<div class="formula">
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Ecuación</th>
+<th style="text-align: left;">Qué calcula</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">BP1</td>
+<td style="text-align: left;"><span class="math inline">\(\delta^{(M)} = \dfrac{\partial L}{\partial h^{(M)}} \odot g'\big(z^{(M)}\big)\)</span></td>
+<td style="text-align: left;">Error de la capa de salida</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BP2</td>
+<td style="text-align: left;"><span class="math inline">\(\delta^{(l)} = \big((w^{(l+1)})^\top \delta^{(l+1)}\big) \odot g'\big(z^{(l)}\big)\)</span></td>
+<td style="text-align: left;">Error de la capa <span class="math inline">\(l\)</span> a partir del de la <span class="math inline">\(l+1\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BP3</td>
+<td style="text-align: left;"><span class="math inline">\(\dfrac{\partial L}{\partial w^{(l)}_{0j}} = \delta^{(l)}_j\)</span></td>
+<td style="text-align: left;">Gradiente del término independiente</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BP4</td>
+<td style="text-align: left;"><span class="math inline">\(\dfrac{\partial L}{\partial w^{(l)}_{jk}} = h^{(l-1)}_k\, \delta^{(l)}_j\)</span></td>
+<td style="text-align: left;">Gradiente de cada peso</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>&nbsp;</p>
+<p>Cada ecuación sale de la regla de la cadena. En la salida (BP1), con la pérdida <span class="math inline">\(L = \big(y - h^{(M)}\big)^2\)</span>: <span class="math display">\[\delta^{(M)} = \frac{\partial L}{\partial h^{(M)}}\, \frac{\partial h^{(M)}}{\partial z^{(M)}} = -2\,\big(y - h^{(M)}\big)\, g'\big(z^{(M)}\big)\]</span> El símbolo <span class="math inline">\(\odot\)</span> es el producto elemento a elemento.</p>
+</section>
+<section id="el-algoritmo-de-retropropagación" class="slide level2 body-callout">
+<h2>El algoritmo de retropropagación</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<ol type="1">
+<li><strong>Hacia delante</strong>: se calcula la predicción capa a capa y se guardan la <span class="math inline">\(z\)</span> y la <span class="math inline">\(h\)</span> de cada neurona.</li>
+<li><strong>Error de la salida</strong> con BP1.</li>
+<li><strong>Hacia atrás</strong>: el error de cada capa, de la <span class="math inline">\(M-1\)</span> a la 1, con BP2.</li>
+<li><strong>Gradientes</strong> con BP3 y BP4, y cada peso se mueve en contra de su gradiente: <span class="math inline">\(w \leftarrow w - \eta\, \partial L / \partial w\)</span>.</li>
+</ol>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Para pensar</a></li><li><a href="#tabset-3-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1">
+<p>Una neurona ReLU tiene <span class="math inline">\(z &lt; 0\)</span> para una observación. ¿Qué gradiente reciben sus pesos de entrada por esa observación?</p>
+</div>
+<div id="tabset-3-2">
+<ul>
+<li>Cero: con <span class="math inline">\(z &lt; 0\)</span> la ReLU es plana, <span class="math inline">\(g'(z) = 0\)</span>, y por BP2 su error <span class="math inline">\(\delta\)</span> vale 0.</li>
+<li>Por BP4, esa observación no cambia los pesos de entrada de esa neurona.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="un-ejemplo-con-números" class="slide level2 fig-side">
+<h2>Un ejemplo con números</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="r-stack">
+<div id="b1fad1ab" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-9-output-1.png" alt="Una cadena de cinco nodos de izquierda a derecha: la entrada x, dos neuronas ocultas, la neurona de salida y la pérdida L. Cada neurona es una caja partida en dos mitades: a la izquierda la suma, con su z, y a la derecha la activación, sigmoide en las ocultas y lineal en la salida, con su h. Sobre cada flecha azul, el peso: w1, w2 y w3, y el error al cuadrado antes de la pérdida. Cada nodo lleva su valor numérico."></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div id="06ad7729" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-10-output-1.png" alt="La misma cadena con flechas naranjas hacia atrás y, debajo de la mitad de la suma de cada neurona, su error delta con su fórmula: delta 3 igual a menos 2 por y menos y gorro, delta 2 igual a w3 por delta 3 por sigma prima de z2, delta 1 igual a w2 por delta 2 por sigma prima de z1."></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div id="c926f491" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-11-output-1.png" alt="La misma cadena con una fila más abajo, en verde: debajo de la flecha de cada peso, su gradiente, igual a lo que entra por el peso por el error de la neurona a la que llega: menos 0,16 para w1, menos 0,44 para w2 y menos 1,25 para w3."></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:36%;">
+<ul>
+<li>Dos neuronas sigmoides (<span class="math inline">\(\sigma\)</span>) y salida lineal, sin términos independientes.</li>
+<li><span class="math inline">\(x\)</span> = 1, <span class="math inline">\(y\)</span> = 2 y <span class="math inline">\(L = (y - \hat y)^2\)</span>.</li>
+<li><span class="math inline">\(\sigma'(z) = \sigma(z)\,\big(1 - \sigma(z)\big)\)</span>. Aquí, <span class="math inline">\(\sigma'(z_1)\)</span> = 0,240 y <span class="math inline">\(\sigma'(z_2)\)</span> = 0,233.</li>
+</ul>
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Para pensar</a></li><li><a href="#tabset-4-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1">
+<p>Con <span class="math inline">\(\eta\)</span> = 0,1, ¿cuál es el nuevo valor de <span class="math inline">\(w_1\)</span>?</p>
+</div>
+<div id="tabset-4-2">
+<ul>
+<li>0,4 − 0,1 · (−0,16) = 0,42.</li>
+<li>El gradiente es negativo: subir <span class="math inline">\(w_1\)</span> baja la pérdida, y el peso sube.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="por-qué-cuesta-optimizar-una-red-profunda" class="title-slide slide level1 center" data-background-color="#447099">
+<h1>¿Por qué cuesta optimizar una red profunda?</h1>
+
+</section>
+<section id="cuatro-problemas-al-entrenar-una-red" class="slide level2 body-callout">
+<h2>Cuatro problemas al entrenar una red</h2>
+<p>&nbsp;</p>
+<p>La <strong>superficie de la pérdida</strong> es el valor de la pérdida para cada combinación de pesos. La de la regresión lineal es convexa, un cuenco a veces alargado con un solo valor mínimo. Al entrenar una red aparecen cuatro problemas:</p>
+<ol type="1">
+<li><strong>La pérdida no es convexa</strong>: cada entrenamiento acaba en una red distinta.</li>
+<li><strong>Mesetas y puntos de silla</strong>: la pérdida apenas cambia durante muchas épocas.</li>
+<li><strong>Valles estrechos</strong>: el descenso del gradiente zigzaguea de lado a lado.</li>
+<li><strong>El gradiente se desvanece o explota</strong>: cambia de tamaño al pasar por las capas.</li>
+</ol>
+</section>
+<section id="qué-pérdida-hay-entre-dos-redes-entrenadas" class="slide level2 fig-side">
+<h2>¿Qué pérdida hay entre dos redes entrenadas?</h2>
+<p>&nbsp;</p>
+<div class="panel-tabset">
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Pregunta</a></li><li><a href="#tabset-5-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1">
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="84cd3bfc" class="cell" data-execution_count="12">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-13-output-1.png" alt="Ejes con dos puntos naranjas a la misma altura, cerca de cero: la pérdida de entrenamiento de la red de la semilla 42, a la izquierda, y de la red de la semilla 7, a la derecha. Entre los dos, a medio camino, un signo de interrogación."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>La misma red, una capa de 50 neuronas, ajustada dos veces. Solo cambia la semilla, que fija los pesos iniciales y el orden de los minilotes.</li>
+<li>En una superficie convexa, la pérdida de cualquier punto entre dos soluciones es como mucho la mayor de las dos.</li>
+<li>A medio camino entre los pesos de las dos redes, ¿qué pérdida se esperaría si la superficie fuera convexa?</li>
+</ul>
+</div></div>
+</div>
+<div id="tabset-5-2">
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="ed01411b" class="cell" data-execution_count="13">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-14-output-1.png" alt="La pérdida de entrenamiento de las redes cuyos pesos están entre los de las dos. Es baja en los dos extremos y sube mucho entre ellos, con un máximo a medio camino. Una línea gris discontinua une los dos extremos, pegada al eje: es lo más que permitiría una superficie convexa."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Como mucho 0,072. La red a medio camino tiene 3,55, unas 50 veces más: la superficie de la pérdida de una red no es convexa.</li>
+<li>Intercambiar dos neuronas de una capa da la misma red con otros pesos. Hay muchas combinaciones de pesos con la misma pérdida, y cada entrenamiento acaba en una distinta.</li>
+<li>Corrección: ajustar la red con varias semillas y promediar sus predicciones.</li>
+</ul>
+</div></div>
+</div>
+</div>
+</div>
+<div class="source">
+<p>Una división del entrenamiento. Pérdida: MSE de log(precio) con las observaciones del ajuste. A medio camino: la red con la media de los pesos de las dos.</p>
+</div>
+</section>
+<section id="alrededor-de-un-punto-de-silla" class="slide level2 fig-wide">
+<h2>Alrededor de un punto de silla</h2>
+<p>&nbsp;</p>
+
+<img data-src="06_entrenamiento_files/figure-revealjs/cell-15-output-1.png" alt="A la izquierda, una superficie en tres dimensiones con forma de silla de montar, f igual a w1 al cuadrado menos w2 al cuadrado, con el punto de silla S en el centro. Un camino naranja de descenso del gradiente baja hacia S, se amontona junto a él y después cae por un lado. A la derecha, el valor de la función en cada paso de ese camino: baja de 1 a casi 0, se queda plano en una banda sombreada junto a S y después baja cada vez más deprisa." class="r-stretch"><ul>
+<li>En el <strong>punto de silla</strong> <span class="math inline">\(S\)</span> el gradiente es cero. La función sube al moverse en una dirección y baja en la otra.</li>
+<li>Cerca de <span class="math inline">\(S\)</span> el gradiente es casi cero y los pasos son diminutos: el descenso pasa 27 pasos a menos de 0,01 del valor de <span class="math inline">\(S\)</span>.</li>
+<li>En la curva de la pérdida de una red, un tramo plano así se ve como una <strong>meseta</strong>.</li>
+</ul>
+<div class="source">
+<p>Función de ejemplo con dos pesos, <span class="math inline">\(f(w_1, w_2) = w_1^2 - w_2^2\)</span>. Descenso del gradiente desde (1; 0,001) con <span class="math inline">\(\eta\)</span> = 0,05.</p>
+</div>
+</section>
+<section id="una-meseta-cerca-de-un-punto-de-silla" class="slide level2 fig-side">
+<h2>Una meseta cerca de un punto de silla</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="1e555fb9" class="cell" data-execution_count="15">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-16-output-1.png" alt="MSE de entrenamiento por época, desde la época 2, de tres redes de seis capas de 16 neuronas. La de pesos iniciales pequeños con descenso del gradiente, en azul, se queda plana a la altura del modelo nulo, la línea gris discontinua, unas 70 épocas y después baja de golpe. La misma red con Adam, en verde, y la de pesos iniciales por defecto, en naranja, bajan desde el principio."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Causa: los pesos iniciales pequeños. En esta inicialización, el gradiente de cada matriz de pesos es más de 3000 veces menor que con la inicialización por defecto, y la pérdida apenas cambia.</li>
+<li>Con todos los pesos a cero y la salida en la media, el gradiente es cero y la pérdida baja en algunas direcciones: un <strong>punto de silla</strong>, como el de la slide anterior.</li>
+<li>Correcciones: con la inicialización por defecto de Keras no hay meseta, y con Adam, que cambia el paso del descenso del gradiente, dura 5 épocas.</li>
+</ul>
+</div></div>
+<div class="source">
+<p>Una división del entrenamiento, desde la época 2. Pesos iniciales pequeños: normales de desviación típica 0,05, elegidos pequeños a propósito. Por defecto, Keras usa una escala que depende del número de neuronas de cada capa. Descenso del gradiente con <span class="math inline">\(\eta\)</span> = 0,01 y Adam con <span class="math inline">\(\eta\)</span> = 0,001. Gradientes medidos con 512 anuncios del ajuste antes de entrenar.</p>
+</div>
+</section>
+<section id="en-un-valle-estrecho-el-descenso-zigzaguea" class="slide level2 fig-side">
+<h2>En un valle estrecho el descenso zigzaguea</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="fda0ba1b" class="cell" data-execution_count="17">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-18-output-1.png" alt="Mapa de la pérdida de una neurona lineal con dos pesos: curvas de nivel en forma de elipses muy alargadas en diagonal. El camino azul del descenso del gradiente sale del punto de partida y va de un lado a otro del valle en zigzag mientras avanza despacio hasta el mínimo."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>La pérdida sube mucho más deprisa en una dirección que en otra.</li>
+<li>Pasa en cualquier modelo ajustado por descenso del gradiente con predictores correlacionados, aunque estén estandarizados.</li>
+</ul>
+<div class="panel-tabset">
+<ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">Para pensar</a></li><li><a href="#tabset-6-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1">
+<p>En el valle, el gradiente cambia de signo en cada paso de un lado a otro y apunta siempre igual hacia el fondo. Si cada paso sumara los gradientes recientes, ¿qué pasaría en cada dirección?</p>
+</div>
+<div id="tabset-6-2">
+<ul>
+<li>De lado a lado, los gradientes de signo contrario se cancelarían y el zigzag se amortiguaría.</li>
+<li>Hacia el fondo se acumularían, y el avance se aceleraría.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+<div class="source">
+<p>Pérdida de una neurona lineal con dos predictores correlacionados (0,9) y estandarizados, 200 observaciones simuladas: el valle aparece ya sin capas ocultas. Descenso del gradiente con <span class="math inline">\(\eta\)</span> = 0,51.</p>
+</div>
+</section>
+<section id="el-momento-y-adam-cambian-el-paso" class="slide level2 fig-side">
+<h2>El momento y Adam cambian el paso</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="596dd615" class="cell" data-execution_count="18">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-19-output-1.png" alt="El mismo mapa del valle con los mismos primeros pasos de los dos métodos. El descenso, en azul claro, sigue en zigzag a medio valle. El momento, en naranja, da unos saltos de lado a lado que se amortiguan y llega al mínimo."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li><strong>Momento</strong>: <span class="math inline">\(v_t = \beta\, v_{t-1} - \eta\, g_t\)</span> y <span class="math inline">\(\theta_t = \theta_{t-1} + v_t\)</span>. Cada paso suma una fracción <span class="math inline">\(\beta\)</span> del anterior. En el valle llega al mínimo en 16 pasos, y el descenso en 48.</li>
+<li><strong>Adam</strong> divide el paso de cada peso por el tamaño típico de sus gradientes recientes. En la red de la meseta, la acortaba a 5 épocas.</li>
+</ul>
+</div></div>
+<div class="source">
+<p><span class="math inline">\(g_t\)</span>: gradiente del minilote en el paso <span class="math inline">\(t\)</span>. <span class="math inline">\(v_t\)</span>: la velocidad. <span class="math inline">\(\beta\)</span>: el peso del paso anterior (<code>momentum</code> en Keras), aquí 0,8. «Llega»: baja a 0,01 por encima de la pérdida mínima.</p>
+</div>
+</section>
+<section id="el-gradiente-se-desvanece-en-las-primeras-capas" class="slide level2 fig-side">
+<h2>El gradiente se desvanece en las primeras capas</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="81e1f060" class="cell" data-execution_count="19">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-20-output-1.png" alt="Norma del gradiente de los pesos de cada capa, en escala logarítmica, de la capa 1 a la salida, en una red de 10 capas de 32 neuronas antes de entrenar. Con la sigmoide, en azul, el gradiente sube desde unas millonésimas en la primera capa hasta decenas en la salida. Con ReLU e inicialización He, en naranja, va de unas unidades a unas decenas."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>En esta inicialización, con sigmoide y Glorot, el gradiente de la primera capa es unos 5 millones de veces menor que el de la salida. Con ReLU y He, 0,18 veces el de la salida.</li>
+<li>Por BP2, cada capa multiplica el error por <span class="math inline">\(g'(z)\)</span> y por sus pesos, y la derivada de la sigmoide no pasa de 1/4. Si los factores pasan de 1, el gradiente <strong>explota</strong> y la pérdida salta o da valores no numéricos.</li>
+<li>Correcciones: ReLU, inicialización He o Glorot, normalización por lotes y, contra la explosión, el recorte del gradiente.</li>
+</ul>
+</div></div>
+<div class="source">
+<p>Norma del gradiente de la pérdida respecto de los pesos de cada capa, antes de entrenar, con 512 anuncios. Escala logarítmica.</p>
+</div>
+</section>
+<section id="problemas-y-correcciones" class="slide level2 table-slide">
+<h2>Problemas y correcciones</h2>
+<p>&nbsp;</p>
+<div data-tbl-colwidths="[20,34,24,22]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 34%">
+<col style="width: 24%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Problema</th>
+<th style="text-align: left;">Señal que conviene comprobar</th>
+<th style="text-align: left;">Corrección</th>
+<th style="text-align: left;">En Keras</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1. La pérdida no es convexa</td>
+<td style="text-align: left;">Dos ajustes con errores parecidos y predicciones distintas</td>
+<td style="text-align: left;">Varias semillas y promediar las predicciones</td>
+<td style="text-align: left;"><code>keras.utils.set_random_seed</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2. Meseta cerca de un punto de silla</td>
+<td style="text-align: left;">La pérdida de entrenamiento cambia muy poco durante muchas épocas. Revisar los gradientes y la escala de los pesos iniciales</td>
+<td style="text-align: left;">Pesos iniciales al azar y escalados, o Adam</td>
+<td style="text-align: left;"><code>kernel_initializer</code>, <code>Adam()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3. Valle estrecho</td>
+<td style="text-align: left;">La pérdida baja despacio y oscila. Revisar la correlación de los predictores y la tasa</td>
+<td style="text-align: left;">Momento</td>
+<td style="text-align: left;"><code>SGD(momentum=0.9)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4a. Gradiente que se desvanece</td>
+<td style="text-align: left;">El gradiente de las primeras capas es mucho menor que el de las últimas. Revisar su norma capa a capa</td>
+<td style="text-align: left;">ReLU, inicialización He, normalización por lotes</td>
+<td style="text-align: left;"><code>activation="relu"</code>, <code>"he_normal"</code>, <code>BatchNormalization()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">4b. Gradiente que explota</td>
+<td style="text-align: left;">La pérdida salta o da <code>nan</code></td>
+<td style="text-align: left;">Recorte del gradiente, <span class="math inline">\(\eta\)</span> menor</td>
+<td style="text-align: left;"><code>clipnorm</code> del optimizador</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section></section>
+<section>
+<section id="cómo-se-evita-que-una-red-memorice-el-entrenamiento" class="title-slide slide level1 center" data-background-color="#447099">
+<h1>¿Cómo se evita que una red memorice el entrenamiento?</h1>
+
+</section>
+<section id="parada-temprana" class="slide level2 fig-side">
+<h2>Parada temprana</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="c6d122b7" class="cell" data-execution_count="20">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-21-output-1.png" alt="RMSE de entrenamiento, en azul, y de validación, en naranja, por época de una red de dos capas de 200 neuronas. Una línea vertical marca la época 8, la del menor error de validación, y una banda sombreada cubre de la época 8 a la 18, la paciencia de 10 épocas. Las curvas siguen, más claras, después de la época 18."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Se aparta una parte del conjunto de ajuste y se evalúa la red con ella al final de cada época.</li>
+<li>Se para cuando el error de validación no mejora durante un número de épocas, la <strong>paciencia</strong>, y se recuperan los pesos de la mejor época.</li>
+<li>En el ejemplo, con paciencia 10, el ajuste para en la época 18 y se queda con los pesos de la 8.</li>
+</ul>
+</div></div>
+<div class="source">
+<p>Red de dos capas de 200 neuronas sin regularizar, con una división del entrenamiento: 80 % para ajustar y 20 % para validar.</p>
+</div>
+</section>
+<section id="penalizar-los-pesos" class="slide level2 fig-side">
+<h2>Penalizar los pesos</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="63c979e4" class="cell" data-execution_count="21">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-22-output-1.png" alt="RMSE de entrenamiento, en azul, y de validación cruzada, en naranja, de la red de dos capas de 200 neuronas para cinco valores de lambda entre 0,00001 y 0,1, en escala logarítmica. El de entrenamiento sube con lambda. El de validación baja hasta lambda = 0,01 y vuelve a subir en 0,1."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Se suma a la pérdida el tamaño de los pesos, la penalización de Ridge: <span class="math display">\[L + \lambda \sum w^2\]</span></li>
+<li>Con <span class="math inline">\(\lambda\)</span> grande los pesos se encogen y la red se ajusta menos al entrenamiento.</li>
+<li>En el ejemplo de los anuncios, el menor RMSE de validación cruzada de la red (200, 200) es 0,345, con <span class="math inline">\(\lambda\)</span> = 0,01, frente a 0,433 sin penalizar.</li>
+</ul>
+</div></div>
+<div class="source">
+<p>Red de dos capas de 200 neuronas, 100 épocas, con la penalización en los pesos de cada capa oculta. Validación cruzada, media de 5 particiones del entrenamiento.</p>
+</div>
+</section>
+<section id="dropout-apagar-neuronas-al-azar" class="slide level2 fig-side">
+<h2>Dropout: apagar neuronas al azar</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="8fa2be7f" class="cell" data-execution_count="22">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-23-output-1.png" alt="Tres dibujos de la misma red pequeña, con tres entradas, dos capas ocultas de cinco neuronas y una salida, para una observación. En el paso t del entrenamiento hay tres neuronas ocultas tachadas en gris y sin conexiones. En el paso t más 1 están tachadas otras tres. Al predecir están todas."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>En cada paso del entrenamiento se anula al azar la salida de una fracción de las neuronas de cada capa, distinta para cada observación.</li>
+<li>Al predecir se usan todas las neuronas.</li>
+</ul>
+<div class="panel-tabset">
+<ul id="tabset-7" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-7-1">Para pensar</a></li><li><a href="#tabset-7-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1">
+<p>En cada paso, cada neurona falta con probabilidad 0,3. Si una sola neurona recogiera casi todo el efecto de un predictor, ¿qué pasaría en los pasos en que falta? ¿Qué le conviene a la red?</p>
+</div>
+<div id="tabset-7-2">
+<ul>
+<li>La predicción puede empeorar cuando falta esa contribución.</li>
+<li>A la red le conviene repartir ese efecto entre varias neuronas, para que ninguna sea imprescindible. Eso reduce su dependencia de neuronas concretas y puede limitar el sobreajuste.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="dropout-en-los-anuncios" class="slide level2 fig-side">
+<h2>Dropout en los anuncios</h2>
+<p>&nbsp;</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div id="d94c6656" class="cell" data-execution_count="23">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-24-output-1.png" alt="RMSE de validación por época de la red de dos capas de 200 neuronas, sin dropout en azul y con dropout 0,3 en naranja, con la misma división. Sin dropout, el mínimo está en la época 8 y la curva sube después. Con dropout, el mínimo llega más tarde, hacia la época 32, es más bajo, y la curva sube menos."></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:44%;">
+<ul>
+<li>Sin <em>dropout</em>, el error de validación es mínimo en la época 8 (0,364) y sube hasta 0,409 en la 100.</li>
+<li>Con <em>dropout</em> 0,3, el mínimo llega en la época 32 y es menor, 0,337.</li>
+<li>Por validación cruzada, con 100 épocas: 0,346 con <em>dropout</em> y 0,433 sin él.</li>
+</ul>
+</div></div>
+<div class="source">
+<p>Red de dos capas de 200 neuronas, con una división del entrenamiento: 80 % para ajustar y 20 % para validar. Los puntos marcan el mínimo de cada curva.</p>
+</div>
+</section>
+<section id="parada-temprana-en-clasificación" class="slide level2 table-slide">
+<h2>Parada temprana en clasificación</h2>
+<p>&nbsp;</p>
+<div data-tbl-colwidths="[52,16,16,16]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 52%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th>Exactitud</th>
+<th>AUC-ROC</th>
+<th>Log-loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regresión logística</td>
+<td>0,774</td>
+<td>0,805</td>
+<td>0,490</td>
+</tr>
+<tr class="even">
+<td>Red (200,) sin regularizar, 100 épocas</td>
+<td>0,805</td>
+<td>0,850</td>
+<td>0,593</td>
+</tr>
+<tr class="odd">
+<td>Red (200,) con parada temprana</td>
+<td>0,815</td>
+<td>0,859</td>
+<td>0,423</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>&nbsp;</p>
+<ul>
+<li>Superanfitrión: validación cruzada estratificada, media de 5 particiones del entrenamiento. La red tiene una capa de 200 neuronas.</li>
+<li>En cada ajuste, la parada temprana reserva una quinta parte para elegir la época. La partición apartada de la validación cruzada calcula su error.</li>
+<li>Con parada temprana, la log-loss baja de 0,593 a 0,423, por debajo de la logística.</li>
+</ul>
+</section>
+<section id="hiperparámetros-de-entrenamiento-y-regularización" class="slide level2 table-slide">
+<h2>Hiperparámetros de entrenamiento y regularización</h2>
+<p>&nbsp;</p>
+<p>En Keras, como argumentos de <code>fit</code> y <code>compile</code> o como capas:</p>
+<div data-tbl-colwidths="[24,46,30]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 46%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Hiperparámetro</th>
+<th style="text-align: left;">Dónde se fija</th>
+<th style="text-align: left;">Qué controla</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Parada temprana</td>
+<td style="text-align: left;"><code>keras.callbacks.EarlyStopping</code> (<code>monitor</code>, <code>patience</code>, <code>restore_best_weights</code>) en <code>callbacks</code> de <code>fit</code></td>
+<td style="text-align: left;">Cuándo para el ajuste</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Validación</td>
+<td style="text-align: left;"><code>validation_split</code> de <code>fit</code></td>
+<td style="text-align: left;">Fracción de cada ajuste apartada para decidir la parada, aparte de las particiones de la validación cruzada</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Penalización L2</td>
+<td style="text-align: left;"><code>kernel_regularizer=keras.regularizers.L2(λ)</code> en cada <code>Dense</code></td>
+<td style="text-align: left;">Tamaño de los pesos</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dropout</td>
+<td style="text-align: left;">Capa <code>Dropout(rate)</code> tras cada <code>Dense</code></td>
+<td style="text-align: left;">Fracción de neuronas apagadas</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Normalización por lotes</td>
+<td style="text-align: left;">Capa <code>BatchNormalization()</code></td>
+<td style="text-align: left;">Escala de la <span class="math inline">\(z\)</span> de cada neurona</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pesos iniciales</td>
+<td style="text-align: left;"><code>kernel_initializer</code> de cada <code>Dense</code></td>
+<td style="text-align: left;">Inicialización</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Optimizador</td>
+<td style="text-align: left;"><code>optimizer</code> de <code>compile</code>: <code>SGD</code> (con <code>momentum</code>) o <code>Adam</code>, con <code>learning_rate</code></td>
+<td style="text-align: left;">Tamaño y dirección de cada paso</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>&nbsp;</p>
+<p>Valores por defecto: <code>patience</code>=0, <code>restore_best_weights</code>=False, <code>validation_split</code>=0.0, <code>L2</code> con <span class="math inline">\(\lambda\)</span> = 0,01, <code>kernel_initializer</code>=“glorot_uniform”, <code>SGD</code> con <code>learning_rate</code>=0.01 y <code>momentum</code>=0.0.</p>
+</section>
+<section id="recapitulación-tres-respuestas" class="slide level2 body-callout">
+<h2>Recapitulación: tres respuestas</h2>
+<p>&nbsp;</p>
+<ol type="1">
+<li><strong>¿Cómo calcula una red el gradiente de cada peso?</strong> Con la retropropagación: el error de cada neurona se calcula desde la salida hacia la entrada, y el gradiente de cada peso es ese error por lo que entra por él.</li>
+<li><strong>¿Por qué cuesta optimizar una red profunda?</strong> Porque su pérdida no es convexa y tiene mesetas y valles estrechos, y porque el gradiente puede debilitarse o crecer al pasar por las capas.</li>
+<li><strong>¿Cómo se evita que una red memorice el entrenamiento?</strong> Con parada temprana, penalización de los pesos o <em>dropout</em>, elegidos por validación cruzada.</li>
+</ol>
+</section>
+<section id="actividad-final" class="slide level2 table-slide">
+<h2>Actividad final</h2>
+<p>&nbsp;</p>
+<div class="panel-tabset">
+<ul id="tabset-8" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-8-1">Pregunta</a></li><li><a href="#tabset-8-2">Respuesta</a></li></ul>
+<div class="tab-content">
+<div id="tabset-8-1">
+<p>Se necesita un modelo que proponga precios anunciados para alojamientos comparables. En parejas (3 min): ¿se propondría una red regularizada? Dar un argumento con la tabla y otro sobre lo que cuesta ajustarla.</p>
+<div data-tbl-colwidths="[46,13,13,13,15]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 46%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th>RMSE</th>
+<th>MAE</th>
+<th>R²</th>
+<th>Segundos por ajuste</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Modelo nulo (media)</td>
+<td>0,533</td>
+<td>0,419</td>
+<td>0,000</td>
+<td>0,0</td>
+</tr>
+<tr class="even">
+<td>Regresión lineal</td>
+<td>0,368</td>
+<td>0,276</td>
+<td>0,522</td>
+<td>0,0</td>
+</tr>
+<tr class="odd">
+<td>Red (200, 200) sin regularizar, 100 épocas</td>
+<td>0,433</td>
+<td>0,321</td>
+<td>0,337</td>
+<td>8,6</td>
+</tr>
+<tr class="even">
+<td>Red (200, 200) con parada temprana</td>
+<td>0,371</td>
+<td>0,278</td>
+<td>0,513</td>
+<td>3,1</td>
+</tr>
+<tr class="odd">
+<td>Red (200, 200) con penalización <span class="math inline">\(\lambda\)</span> = 0,01</td>
+<td>0,345</td>
+<td>0,258</td>
+<td>0,580</td>
+<td>9,1</td>
+</tr>
+<tr class="even">
+<td>Red (200, 200) con <em>dropout</em> 0,3</td>
+<td>0,346</td>
+<td>0,255</td>
+<td>0,577</td>
+<td>9,5</td>
+</tr>
+<tr class="odd">
+<td>SVR con núcleo RBF (<span class="math inline">\(C\)</span> = 1, <span class="math inline">\(\gamma\)</span> = 0,1)</td>
+<td>0,334</td>
+<td>0,246</td>
+<td>0,605</td>
+<td>0,4</td>
+</tr>
+<tr class="even">
+<td><em>Random forest</em> (500 árboles)</td>
+<td>0,314</td>
+<td>0,233</td>
+<td>0,652</td>
+<td>3,1</td>
+</tr>
+<tr class="odd">
+<td>XGBoost (2000 árboles)</td>
+<td>0,314</td>
+<td>0,233</td>
+<td>0,652</td>
+<td>0,9</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Validación cruzada de log(precio), media de 5 particiones del entrenamiento. Se compara por RMSE, con MAE y <span class="math inline">\(R^2\)</span> como referencia. La red con parada temprana reserva en cada ajuste una quinta parte para elegir la época. Segundos por ajuste con un núcleo de CPU.</p>
+</div>
+<div id="tabset-8-2">
+<ul>
+<li>Con la tabla: la mejor red regularizada (0,345) mejora a la regresión lineal (0,368) y queda por encima de la SVR, el <em>random forest</em> y XGBoost.</li>
+<li>Con el coste: elegir la regularización exige validar varias redes, de varios segundos por ajuste. La parada temprana abarata las grandes (de 8,6 a 3,1 s por ajuste la (200, 200)).</li>
+<li>La cifra de la red elegida es algo optimista: se eligió con estas mismas particiones.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="glosario-12-retropropagación-y-optimización" class="slide level2 table-slide dense">
+<h2>Glosario (1/2): retropropagación y optimización</h2>
+<p>&nbsp;</p>
+<div data-tbl-colwidths="[21,61,18]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 61%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Concepto</th>
+<th style="text-align: left;">Significado</th>
+<th style="text-align: left;">Keras</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Retropropagación</td>
+<td style="text-align: left;">Cálculo del gradiente de la pérdida respecto de todos los pesos con la regla de la cadena, con una pasada hacia delante y otra hacia atrás</td>
+<td style="text-align: left;">Automática en <code>fit</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Notación <span class="math inline">\(w^{(l)}_{jk}\)</span></td>
+<td style="text-align: left;">Peso de la neurona <span class="math inline">\(k\)</span> de la capa <span class="math inline">\(l-1\)</span> a la neurona <span class="math inline">\(j\)</span> de la capa <span class="math inline">\(l\)</span>. En la sesión del perceptrón se escribió <span class="math inline">\(w_{jk}\)</span> del predictor <span class="math inline">\(j\)</span> a la neurona <span class="math inline">\(k\)</span>, y <span class="math inline">\(\beta_k\)</span> en la salida, que aquí son los <span class="math inline">\(w^{(M)}\)</span></td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Error <span class="math inline">\(\delta\)</span> de una neurona</td>
+<td style="text-align: left;">Derivada de la pérdida respecto de la combinación lineal <span class="math inline">\(z\)</span> de la neurona</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Superficie de la pérdida</td>
+<td style="text-align: left;">Valor de la pérdida para cada combinación de pesos</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mínimo local</td>
+<td style="text-align: left;">Punto en el que la pérdida no baja en ningún punto cercano. Es malo si su pérdida es mayor que la del mejor punto</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Punto de silla</td>
+<td style="text-align: left;">Punto con gradiente cero en el que la pérdida sube en unas direcciones y baja en otras</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Meseta</td>
+<td style="text-align: left;">Zona en la que el gradiente es casi cero y la pérdida apenas cambia durante muchas épocas</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Valle estrecho</td>
+<td style="text-align: left;">Zona en la que la pérdida sube mucho más deprisa en una dirección que en otra (mal condicionamiento). El descenso zigzaguea</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Momento</td>
+<td style="text-align: left;">Suma a cada paso una fracción <span class="math inline">\(\beta\)</span> del paso anterior</td>
+<td style="text-align: left;"><code>SGD(momentum=β)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Adam</td>
+<td style="text-align: left;">Momento más un paso por peso dividido por el tamaño típico de sus gradientes recientes</td>
+<td style="text-align: left;"><code>Adam()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RMSprop</td>
+<td style="text-align: left;">Divide el paso de cada peso por la raíz de una media de sus gradientes al cuadrado, sin momento</td>
+<td style="text-align: left;"><code>RMSprop()</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Programación de la tasa de aprendizaje</td>
+<td style="text-align: left;">Cambiar <span class="math inline">\(\eta\)</span> durante el entrenamiento, por ejemplo bajarla cuando la pérdida se estanca</td>
+<td style="text-align: left;"><code>ReduceLROnPlateau</code>, <code>LearningRateScheduler</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="glosario-22-gradiente-y-regularización" class="slide level2 table-slide dense">
+<h2>Glosario (2/2): gradiente y regularización</h2>
+<p>&nbsp;</p>
+<div data-tbl-colwidths="[24,52,24]">
+<table class="caption-top">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 52%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Concepto</th>
+<th style="text-align: left;">Significado</th>
+<th style="text-align: left;">Keras</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Desvanecimiento y explosión del gradiente</td>
+<td style="text-align: left;">El gradiente encoge (o crece) capa a capa al multiplicarse los factores de la cadena</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Recorte del gradiente</td>
+<td style="text-align: left;">Limita el tamaño del gradiente antes de cada paso, contra la explosión</td>
+<td style="text-align: left;"><code>clipnorm</code> del optimizador</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Inicialización He y Xavier (Glorot)</td>
+<td style="text-align: left;">Pesos iniciales aleatorios con una varianza escalada: Glorot la divide por la media de las entradas y las salidas de la capa, y He usa <span class="math inline">\(2/n\)</span>, con <span class="math inline">\(n\)</span> las entradas</td>
+<td style="text-align: left;"><code>kernel_initializer="he_normal"</code> (Glorot, por defecto)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Normalización por lotes</td>
+<td style="text-align: left;">Estandariza la <span class="math inline">\(z\)</span> de cada neurona con la media y la desviación típica del minilote y la reescala con dos parámetros estimados</td>
+<td style="text-align: left;"><code>BatchNormalization()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Parada temprana</td>
+<td style="text-align: left;">Para el ajuste cuando el error de validación no mejora durante la paciencia. Si se pide, recupera los pesos de la mejor época</td>
+<td style="text-align: left;"><code>EarlyStopping(restore_best_weights=True)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Paciencia</td>
+<td style="text-align: left;">Épocas sin mejora que se esperan antes de parar</td>
+<td style="text-align: left;"><code>patience</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Penalización L2</td>
+<td style="text-align: left;">Suma <span class="math inline">\(\lambda \sum w^2\)</span> a la pérdida</td>
+<td style="text-align: left;"><code>keras.regularizers.L2(λ)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Penalización L1</td>
+<td style="text-align: left;">Suma <span class="math inline">\(\lambda \sum \lvert w \rvert\)</span> a la pérdida y lleva pesos a cero</td>
+<td style="text-align: left;"><code>keras.regularizers.L1(λ)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dropout</td>
+<td style="text-align: left;">Anula al azar la salida de una fracción de las neuronas en cada paso del entrenamiento</td>
+<td style="text-align: left;"><code>Dropout(rate)</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="section" class="slide level2" data-background-color="#447099">
+<h2></h2>
+<div class="closing">
+<div id="61a18e51" class="cell" data-execution_count="26">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="06_entrenamiento_files/figure-revealjs/cell-27-output-1.png" class="quarto-figure quarto-figure-center" alt="Ilustración de cierre: sobre fondo azul, el grafo de una red con tres entradas, dos capas ocultas de cuatro neuronas y una salida, con las conexiones en blanco semitransparente y flechas en naranja claro que vuelven de la salida hacia la entrada, con el texto: la retropropagación lleva el error desde la salida hasta cada peso."></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="06_entrenamiento_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="06_entrenamiento_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="06_entrenamiento_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="06_entrenamiento_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="06_entrenamiento_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="06_entrenamiento_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="06_entrenamiento_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="06_entrenamiento_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="06_entrenamiento_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="06_entrenamiento_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1920,
+
+        height: 1080,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copiado");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copiado");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>

@@ -103,7 +103,7 @@ Cinco hitos previos a la entrega final, ligados al tema en curso. Cada hito se a
 | 14 | 17 dic | **Entrega final y defensa oral** | Repositorio, memoria y registro de IA completo. Defensa el jueves 17 de diciembre | 7. Predicción y efectos causales |
 
 ::: {.callout-tip title="Entre la revisión intermedia y la entrega final"}
-Después de la revisión intermedia (semana 11) no hay más hitos hasta la entrega final. Las redes neuronales (semanas 11–12) también forman parte del recorrido de modelización. Usad la retroalimentación de la semana 11 para cerrar la comparación de modelos (al menos tres familias), completar la interpretación y redactar la memoria.
+Después de la revisión intermedia (semana 11) no hay más hitos hasta la entrega final. Las redes neuronales (semanas 11–12) también forman parte del recorrido de modelización. Usad la retroalimentación de la semana 11 para cerrar la comparación de modelos (al menos tres familias), completar la interpretación y redactar la memoria. La última hora de la práctica del jueves 10 de diciembre (60 min) se dedica a resolver dudas sobre el proyecto.
 :::
 
 ## Uso de IA {#sec-ia}
@@ -186,3 +186,4 @@ $$
 
 - [Ficha de viabilidad de los datos del hito S2](proyecto2627/hitos/S02_datos.html).
 - [Instrucciones del hito 3: modelo base](proyecto2627/hitos/S06_modelo_base.html).
+- [Instrucciones del hito 4: ensambles](proyecto2627/hitos/S08_ensambles.html).

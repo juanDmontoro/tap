@@ -2,4 +2,6 @@
 # Solo se fija scikit-learn (la versión del entorno `tap` de referencia, Mac).
 # numpy, pandas, scipy, matplotlib y seaborn se usan en la versión que trae Colab:
 # google-colab exige su pandas y numba exige numpy<2.3; fijarlos rompe el entorno.
+# shap, sin versión (09-11-2026, cuaderno de interpretación del tema 4): si Colab ya lo trae, pip no lo cambia.
 scikit-learn==1.9.1
+shap
