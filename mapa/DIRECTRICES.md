@@ -109,9 +109,9 @@ Cada estimador debe tener estos campos, que el panel muestra en este orden:
 - Ejemplo correcto (regresión polinómica): «Permite capturar relaciones no lineales entre un predictor y la respuesta sin abandonar el marco de la regresión lineal».
 - Ejemplo incorrecto: «Es una regresión lineal sobre potencias de $x$». Esto describe cómo funciona, pero no por qué se usa, así que corresponde al campo `idea`.
 
-### 4.3 Botón «Simular»
+### 4.3 Simuladores
 
-Cada nodo de estimador debe llevar un botón «Simular» desactivado con `data-simulador="<id del estimador>"`. El panel repite el botón con el mismo atributo. No se implementan simuladores hasta que el profesor lo pida.
+El mapa no muestra botones «Simular» mientras no existan los simuladores: un botón desactivado en cada nodo ocupa espacio y no enseña nada. Cuando el profesor pida implementarlos, cada estimador con simulador llevará un botón en su nodo y en su ficha, con `data-simulador="<id del estimador>"`.
 
 ### 4.4 Niveles para el comparador
 
@@ -245,8 +245,10 @@ El selector «Código» de la cabecera cambia entre Python (scikit-learn) y tres
 - Un color por tipo de nodo: marino para el objetivo, azul para familias y estimadores, y terracota para las decisiones. La salvia marca la selección y las coincidencias del buscador. El borde discontinuo marca las fichas provisionales.
 - El panel lateral ocupa el 40 % del ancho de la ventana, entre 460 px y 760 px. En pantallas de menos de 760 px de ancho, el panel se muestra como una hoja inferior a pantalla completa de ancho. Las tablas del panel no deben partir los nombres de clases ni de argumentos. Si no caben, la tabla se desplaza en horizontal.
 - Interacción: los nodos con hijos se pliegan y despliegan. Al pulsar un estimador se resaltan sus vínculos con las decisiones y se abre el panel. Hay buscador, vista en lista y enlaces directos `#nodo=<id>`.
+- Ayudas para el estudio: una ficha larga empieza con un índice de sus secciones; la vista en lista incluye una tabla resumen de los estimadores, generada a partir de las fichas y de `NIVELES`; y el botón «?» abre una ayuda con el modo de uso del mapa (`#ayuda`). El texto de la ayuda debe actualizarse si cambia la interacción.
+- Accesibilidad: el panel cerrado no debe quedar en el orden de tabulación (`visibility: hidden`), y las teclas Intro y Espacio sobre un botón interior de un nodo deben activar ese botón y no seleccionar el nodo.
 - Comparador: botón «Comparar» en la cabecera, tecla C y botón «Comparar con otro estimador» en cada ficha. Mientras está abierto, pulsar un estimador lo marca como A o B. Si ya hay dos, el nuevo sustituye al B. El panel de comparación ocupa el 55 % del ancho, entre 600 px y 1040 px, porque muestra dos columnas. Contiene el resumen (4.4), la escala orientativa, las secciones comunes de las fichas en paralelo y las decisiones vinculadas a los dos, solo a A y solo a B. El enlace directo es `#comparar=<id A>,<id B>`. A se marca en marino y B en salvia oscuro (`#3F7A5E`), que da más contraste que la salvia de la paleta.
-- Selector «Código» en la cabecera: Python, tidymodels, caret o mlr3. La elección se guarda en la URL (`?infra=caret`) y, si el navegador lo permite, en `localStorage`. Con `?infra=` se publica el mapa directamente en una de las versiones de R. Al elegir R, la sección de slides indica que las slides usan Python.
+- Selector «Código» en la cabecera: Python, tidymodels, caret o mlr3. La elección se guarda en la URL (`?infra=caret`, y también `?infra=py`) y, si el navegador lo permite, en `localStorage`. El parámetro de la URL tiene prioridad sobre la preferencia guardada, así que un enlace con `?infra=` muestra la misma versión a quien lo reciba. Al elegir R, la sección de slides indica que las slides usan Python.
 - Pantalla completa, como en reveal.js: botón en la cabecera y tecla F; se sale con F o Esc. Los atajos + y − acercan y alejan, y 0 ajusta el mapa a la pantalla. Dentro de un `<iframe>` hace falta el atributo `allowfullscreen`; si el navegador no lo permite, el botón abre el mapa en una pestaña nueva.
 
 ## 10. Implementación
@@ -264,7 +266,7 @@ El selector «Código» de la cabecera cambia entre Python (scikit-learn) y tres
 3. Comprobar que todos los ids de `links`, `slides`, `base` y `vocab` existen. El script los valida al cargar y escribe un error en la consola si alguno falta.
 4. Comprobar que los ids de las slides de los decks publicados existen en el HTML.
 5. Buscar en el texto del mapa las palabras y estructuras prohibidas de la sección 6: «compromiso», «leer», «legible», «columna» (revisar cada caso), el nombre de los conjuntos de datos de los decks y « no … sino ».
-6. Comprobar que hay 1 botón «Simular» por estimador en el mapa.
+6. Comprobar con el teclado que el panel cerrado no recibe el foco, que Intro sobre el botón de plegar pliega la rama, y que al volver de la lista al mapa se ve el nodo elegido.
 7. Generar el comparador para todas las parejas de estimadores predictivos y comprobar que no hay errores. Leer el resumen de varias parejas de familias distintas, de una variante con su modelo base y de dos variantes del mismo modelo, y comprobar que cada frase coincide con las fichas.
 8. Con cada opción del selector, abrir todos los nodos y comprobar que no aparece `undefined` ni restos de código de otra infraestructura. Con Python, comparar el texto de todos los paneles con la versión anterior: un cambio en R no debe alterar la versión Python.
 

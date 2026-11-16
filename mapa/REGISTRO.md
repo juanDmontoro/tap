@@ -10,7 +10,7 @@ Antes de cambiar el mapa hay que leer este archivo, para no deshacer una decisi�
 |:--|:--|:--|
 | 30-10-2026 | Tres tipos de nodo con un color cada uno: objetivo (marino), estimadores (azul) y decisiones (terracota). | Petición inicial del profesor. Paleta de `tap_web.scss`. |
 | 30-10-2026 | Disposición en columnas: objetivo, familias, estimadores y decisiones, con los vínculos entre estimadores y decisiones en el hueco central. | Permite ver los vínculos sin que crucen el resto del árbol. |
-| 30-10-2026 | Botón «Simular» desactivado con `data-simulador="<id>"` en cada estimador y en su panel. | Los simuladores llegarán en una fase posterior. |
+| 30-10-2026 | Botón «Simular» desactivado con `data-simulador="<id>"` en cada estimador y en su panel. **Sustituida el 16-11-2026.** | Los simuladores llegarán en una fase posterior. |
 | 30-10-2026 | Ejemplos generales de negocio, sin datos de Airbnb ni de la EES ni cifras de los decks. | Indicación del profesor: los ejemplos ligados a un conjunto de datos son demasiado específicos. |
 | 30-10-2026 | Redacción según las reglas anti-IA del autor: frases completas, sin contrastes binarios con punto y coma ni «no X, sino Y». | Indicación del profesor. |
 | 31-10-2026 | «Equilibrio sesgo-varianza» en lugar de «compromiso». | Indicación del profesor. |
@@ -33,19 +33,25 @@ Antes de cambiar el mapa hay que leer este archivo, para no deshacer una decisi�
 | 02-11-2026 | En tidymodels y mlr3, el gradient boosting usa xgboost. | parsnip no tiene motor para gbm y mlr3learners no incluye gbm. caret sí usa gbm (`method = "gbm"`). |
 | 02-11-2026 | Voting: tidymodels y caret no tienen función propia. El mapa indica que se promedian las predicciones y que `stacks` y `caretEnsemble()` corresponden al stacking. | `caretEnsemble()` y `blend_predictions()` estiman los pesos con un modelo. |
 | 31-10-2026 | Panel de comparación al 55 % del ancho (entre 600 y 1040 px). | Muestra dos columnas de texto. Al 40 %, cada columna se queda en unos 240 px a 1440 px de ancho. |
+| 16-11-2026 | Primera versión para publicar en la web. El mapa no muestra botones «Simular». | Decisión del profesor: las simulaciones quedan como trabajo futuro, y un botón desactivado en cada nodo no aporta nada al estudiante. |
+| 16-11-2026 | La ficha del perceptrón multicapa usa Keras (`keras.Sequential` con capas `Dense`) y solo cita `MLPRegressor` y `MLPClassifier`. | Los decks del tema 6 definen y entrenan las redes con Keras. La sección de código de esa ficha se titula «En Keras» (`implTitulo`). |
+| 16-11-2026 | En las SVM, \(\gamma\) se describe como el parámetro que fija el alcance de la semejanza entre observaciones, y los pesos de los vectores de soporte se escriben \(v_i\). | Es la redacción y la notación del deck publicado del tema 5, que sustituye a «la anchura de cada campana». |
+| 16-11-2026 | Ayudas de estudio: índice de secciones al principio de cada ficha, tabla resumen de los estimadores en la vista en lista y ayuda «Cómo usar el mapa» (botón «?», `#ayuda`). | Revisión pedagógica: el mapa se presenta a los estudiantes como resumen de estimadores y técnicas transversales. Las fichas son largas, faltaba una vista de conjunto y nada explicaba cómo usarlo. |
+| 16-11-2026 | Al elegir Python, la URL conserva `?infra=py`. | Revisión de Copilot (PR 2): sin el parámetro, un enlace compartido se abría en R si el destinatario tenía guardada esa preferencia. |
+| 16-11-2026 | En R, el GLM Gamma se muestra sin penalización y sus vínculos con las decisiones lo dicen. mlr3 necesita `link = "log"` y caret usa `poly(..., raw = TRUE)`. | Revisión de Copilot (PR 2), comprobada ejecutando el código: sin `link`, `regr.glm` ajusta el enlace inverso, y sin `raw`, `poly()` crea polinomios ortogonales. |
 
 ## Pendientes
 
-- Añadir a `DECKS` la ruta de los decks cuando se publiquen: combinar e interpretar (`t4c`, 10 nov) y SVM (`t5`, 17 nov). Después hay que comprobar que los ids de sus slides coinciden con el HTML publicado (directrices, 8 y 11).
-- Revisar la ficha del perceptrón multicapa cuando se publique el deck del tema 6. Ahora se basa en un esquema didáctico y su fórmula de una capa oculta no aparece en los materiales.
-- Redactar la ficha de DoubleML cuando haya material del tema 7.
-- Implementar los simuladores que activarán los botones «Simular». La exploración de los repositorios de GeostatsGuy (2-11-2026) propone candidatos por nodo, prioridades y motores de cálculo comunes en [`docs/simuladores_geostatsguy.md`](../docs/simuladores_geostatsguy.md). La mejora más inmediata es que los botones de `gb` y `xgb` enlacen los simuladores del tema 4.
+- Redactar la ficha de DoubleML y añadir su deck a `DECKS` cuando se publique el tema 7 (15 dic). Es la única ficha provisional.
+- Simuladores: no forman parte de esta versión. La exploración de los repositorios de GeostatsGuy (2-11-2026) propone candidatos por nodo, prioridades y motores de cálculo comunes en [`docs/simuladores_geostatsguy.md`](../docs/simuladores_geostatsguy.md). La web ya publica tres simuladores propios (`slides/04/simuladores/` y `slides/06/simuladores/`), que serían el primer paso.
+- Ideas de la revisión pedagógica del 16-11-2026 que no se han aplicado porque exigen contenido nuevo que debe validar el profesor: una pregunta de autoevaluación por ficha, tomada de los «Para pensar» de los decks, y una línea «Cuándo no usarlo» en cada estimador.
+- Añadir el cuaderno de prácticas de SVM y los de Keras a los materiales de sus fichas cuando se publiquen. Ahora enlazan los decks y la sección de materiales del tema.
 - Código en R: comprobado el 2-11-2026 con R 4.5.3, tidymodels 1.4.1 (parsnip 1.6.1, tune 2.1.0, recipes 1.4.0, yardstick 1.4.0, rsample 1.3.2), caret 7.0.1, caretEnsemble 4.0.2, mlr3 1.8.0, mlr3learners 0.15.1, mlr3pipelines 0.12.0, mlr3tuning 1.6.1, mlr3extralearners 1.1.0, glmnet 5.0, ranger 0.18.0, xgboost 3.4.2.1, kernlab 0.9-33, e1071 1.7-17, gbm 2.3.1, stacks 1.1.1, DALEX 2.5.4 y DALEXtra 2.3.1. Hay que repasarlo cuando cambie la versión mayor de alguno de estos paquetes.
   - Solo queda sin ejecutar el motor brulee de parsnip, porque no está en conda-forge. Sus argumentos se tomaron de `show_model_info("mlp")`.
   - Con caret 7.0.1 y xgboost 3.4, `method = "xgbTree"` falla al ajustar. La ficha de XGBoost lo indica. Hay que revisarlo cuando se publique una versión de caret compatible.
 - Revisar los niveles de `NIVELES` (DIRECTRICES, 4.4). Hay dos grupos de casos dudosos:
   - Fichas sin una palabra que fije el nivel, en las que se asignó por comparación con las demás: el coste de Lasso, Elastic Net, bagging, random forest, gradient boosting, XGBoost, SVR, SVC y MLP; la flexibilidad del bagging y del logit multinomial (media, porque tiene un conjunto de coeficientes por clase); y la interpretabilidad del logit multinomial (media).
-  - Fichas en las que el nivel se aparta de la palabra: la flexibilidad de los árboles y del MLP es «muy alta» en la ficha, pero se codifica de baja a muy alta porque la ficha dice que se controla con los hiperparámetros; la de XGBoost es «alta», y se codifica de alta a muy alta porque la ficha dice que la limitan sus hiperparámetros, como en el gradient boosting.
+  - Fichas en las que el nivel se aparta de la palabra: la flexibilidad de los árboles y del MLP es «muy alta» en la ficha (la del MLP se reescribió el 16-11-2026 con el deck del tema 6 y mantiene esa palabra), pero se codifica de baja a muy alta porque la ficha dice que se controla con los hiperparámetros; la de XGBoost es «alta», y se codifica de alta a muy alta porque la ficha dice que la limitan sus hiperparámetros, como en el gradient boosting.
 
 ## Historial de versiones
 
@@ -60,3 +66,4 @@ Antes de cambiar el mapa hay que leer este archivo, para no deshacer una decisi�
 | 02-11-2026 | `d4b0432` | Enlaces al deck de boosting (`t4b`), ya publicado. Los 13 ids de slide del mapa existen en `slides/04/04_boosting_sn.html`. |
 | 02-11-2026 | `befea76` | Selector de infraestructura de código (Python, tidymodels, caret y mlr3), con `?infra=` en la URL. La versión Python no cambia. |
 | 02-11-2026 | este commit | Código en R revisado con las versiones actuales de los paquetes (R 4.5.3, parsnip 1.6.1, caret 7.0.1, mlr3 1.8.0). |
+| 16-11-2026 | este commit | Primera versión para publicar. Decks de los temas 4 (combinar e interpretar), 5 y 6 enlazados, con los 210 ids de slide comprobados contra el HTML publicado. Ficha del MLP reescrita con Keras, fichas de SVM adaptadas al deck publicado y fechas de sesiones y entregas según la planificación del 11-11-2026. Sin botones «Simular». Índice de ficha, tabla resumen y ayuda. Correcciones de las dos revisiones de Copilot (5 en el PR 1 y 5 en el PR 2). |

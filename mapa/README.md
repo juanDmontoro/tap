@@ -4,9 +4,11 @@
 
 - Es un único archivo autocontenido (CSS y JS en línea). La única dependencia externa es KaTeX (cdnjs) para las fórmulas del panel; sin conexión a cdnjs, las fórmulas se ven como texto LaTeX y todo lo demás funciona.
 - Se publica con la web del curso (`mapa/**` está en `resources` de `_quarto.yml`): <https://juandmontoro.github.io/tap/mapa/mapa_mental_tap.html>
-- Cada nodo de estimador lleva un botón **Simular** desactivado con `data-simulador="<id del estimador>"`, reservado para los simuladores de una fase posterior. El panel lateral repite el botón con el mismo atributo.
+- El botón **?** (o la tecla ?) abre una ayuda para el estudiante: cómo moverse por el mapa, tres formas de estudiar con él y cómo interpretar una ficha. Se enlaza con `#ayuda`.
+- El botón **Lista** muestra los nodos en una lista y una tabla que resume todos los estimadores: tipo de respuesta, hiperparámetros y niveles orientativos de flexibilidad, interpretabilidad y coste.
+- Los simuladores no forman parte de esta versión. Quedan como trabajo futuro (ver [`REGISTRO.md`](REGISTRO.md)).
 - Se puede enlazar directamente a un nodo con `#nodo=<id>`, por ejemplo `mapa_mental_tap.html#nodo=lasso` o `#nodo=d_cv`.
-- El selector **Código** cambia los ejemplos de código entre Python (scikit-learn) y R con tidymodels, caret o mlr3. El contenido conceptual es el mismo. Para abrir el mapa en una versión de R se añade `?infra=` a la URL: `mapa_mental_tap.html?infra=tidymodels`, `?infra=caret` o `?infra=mlr3`.
+- El selector **Código** cambia los ejemplos de código entre Python (scikit-learn) y R con tidymodels, caret o mlr3. El contenido conceptual es el mismo. Para fijar una versión se añade `?infra=` a la URL: `mapa_mental_tap.html?infra=py`, `?infra=tidymodels`, `?infra=caret` o `?infra=mlr3`. Sin ese parámetro, el mapa se abre con la última opción que eligió cada persona en su navegador, y con Python la primera vez. Para que un enlace muestre Python a todo el mundo hay que escribir `?infra=py`.
 - El botón **Comparar** (o la tecla C) enfrenta dos estimadores: un resumen generado a partir de sus fichas, una escala orientativa de flexibilidad, interpretabilidad y coste, y las secciones comunes de las fichas en paralelo. Se puede enlazar directamente a una comparación con `#comparar=<id A>,<id B>`, por ejemplo `mapa_mental_tap.html#comparar=ridge,lasso`.
 
 ## Insertar en Moodle
@@ -35,4 +37,4 @@ Para abrir el iframe directamente en un nodo, añade el ancla a la URL, por ejem
 
 Las decisiones tomadas, los pendientes y el historial están en [`REGISTRO.md`](REGISTRO.md). Las reglas para elaborar, ampliar o rehacer el mapa están en [`DIRECTRICES.md`](DIRECTRICES.md): fuentes, inventario de estimadores, estructura de cada ficha, redacción, tablas de scikit-learn, enlaces a slides, diseño y verificación. Sirven también para crear el mapa de otra asignatura.
 
-El contenido está en el bloque `CONTENIDO` del `<script>` (`DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES`, `ESTIMADORES`, `NIVELES` y `R_IMPL`). Cuando se publique un deck que ahora figura como pendiente (boosting, combinar e interpretar, SVM), basta con poner su ruta en `DECKS`: los enlaces a sus slides se activan solos. Las fichas con `pendiente: true` (redes neuronales y DoubleML) se revisan cuando haya deck.
+El contenido está en el bloque `CONTENIDO` del `<script>` (`DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES`, `ESTIMADORES`, `NIVELES` y `R_IMPL`). Todos los decks de los temas 1 a 6 están enlazados. Cuando se publique el del tema 7, hay que añadirlo a `DECKS` y redactar la ficha de DoubleML, la única que sigue con `pendiente: true`.

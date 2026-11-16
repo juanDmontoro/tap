@@ -136,11 +136,6 @@ body.has-focus #edges .tree { opacity: .45; }
   background: transparent; color: inherit; font-size: 15px; line-height: 17px; padding: 0; cursor: pointer; font-weight: 700;
 }
 .node .tog:focus-visible { outline: 2px solid var(--tap-terracotta); outline-offset: 1px; }
-.node .sim {
-  flex: 0 0 auto; font-size: 11.5px; padding: 2px 7px; border-radius: 5px;
-  border: 1px dashed var(--tap-gray); background: var(--tap-cream); color: var(--tap-gray);
-}
-.sim:disabled { cursor: not-allowed; opacity: .75; }
 
 /* Tipo 1: objetivo (marino) */
 .node.objetivo { background: var(--tap-navy); border-color: var(--tap-navy); color: #fff; padding: 10px 12px; }
@@ -186,14 +181,32 @@ body.searching .node:not(.match) { opacity: .28; }
 .zoom button:hover { background: var(--blue-soft); }
 body.panel-open .zoom { right: calc(var(--panel-w) + 12px); }
 
+/* ---------- Índice de la ficha, ayuda y tabla resumen ---------- */
+.toc { display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 12px; }
+.toc button {
+  font: inherit; font-size: 12px; padding: 2px 9px; border-radius: 11px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--tap-light); color: var(--tap-navy);
+}
+.toc button:hover { background: var(--blue-soft); }
+.toc button:focus-visible { outline: 2px solid var(--tap-terracotta); outline-offset: 1px; }
+#outline details.resumen > summary { background: var(--tap-navy); }
+#outline details.resumen .note { margin: 8px 12px 2px; font-size: 13px; color: #5a5f64; }
+#outline details.resumen .tw { margin: 6px 8px 8px; }
+table.hp.res td { font-size: 13px; }
+table.hp.res td small { display: block; color: var(--tap-gray); margin-top: 2px; }
+table.hp.res .niv { display: block; font-size: 12px; color: #5a5f64; }
+table.hp.res .chip { margin: 0; }
+
 /* ---------- Panel lateral ---------- */
 #panel {
   position: fixed; top: var(--header-h); right: 0; bottom: 0; width: var(--panel-w); max-width: 100vw;
   background: var(--surface); border-left: 1px solid var(--border); z-index: 25;
   box-shadow: -8px 0 24px rgba(31,58,95,.12);
-  transform: translateX(105%); transition: transform .22s ease; display: flex; flex-direction: column;
+  transform: translateX(105%); visibility: hidden; transition: transform .22s ease, visibility 0s linear .22s;
+  display: flex; flex-direction: column;
 }
-body.panel-open #panel { transform: none; }
+/* Cerrado, el panel queda fuera de la pantalla y también del foco y del árbol de accesibilidad. */
+body.panel-open #panel { transform: none; visibility: visible; transition: transform .22s ease, visibility 0s; }
 .p-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); position: relative; }
 .p-kind { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
 .p-kind.objetivo { color: var(--tap-navy); }
@@ -263,8 +276,6 @@ table.hp tr:nth-child(even) td { background: #fafbfd; }
   color: var(--tap-blue); text-decoration: none; font-size: 13.5px;
 }
 .mat a:hover { background: var(--tap-light); }
-.simbox { margin-top: 18px; padding: 10px; border: 1px dashed var(--tap-gray); border-radius: 8px; background: var(--tap-cream); font-size: 13.5px; color: #5a5f64; }
-.simbox button { margin-right: 8px; font-size: 14px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--tap-gray); background: #fff; color: var(--tap-gray); }
 
 /* ---------- Comparador ---------- */
 :root { --cmp-a: var(--tap-navy); --cmp-b: #3f7a5e; --cmp-b-soft: var(--sage-soft); --cmp-a-soft: var(--blue-soft); }
@@ -349,8 +360,11 @@ body.panel-open #outline { right: var(--panel-w); }
 @media (max-width: 760px) {
   :root { --header-h: 96px; --panel-w: 100vw; }
   header.bar { flex-wrap: wrap; height: var(--header-h); padding: 8px 10px; gap: 8px; align-content: center; }
-  .bar h1 { flex: 1 1 calc(100% - 210px); min-width: 0; font-size: 16px; }
-  .bar h1 small { display: none; }
+  .bar h1 { flex: 1 1 calc(100% - 250px); min-width: 0; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tools { gap: 5px; }
+  .tbtn { padding-left: 9px; padding-right: 9px; }
+  .tbtn.icon { padding: 0; width: 32px; }
+  .bar h1 small, .bar h1 .h1x { display: none; }
   .search { order: 3; flex: 1 1 60%; min-width: 0; max-width: none; margin: 0; }
   .infra { order: 4; }
   .infra .sr { display: none; }
@@ -375,7 +389,7 @@ body.panel-open #outline { right: var(--panel-w); }
 </head>
 <body>
 <header class="bar">
-  <h1>Mapa de la asignatura <small>Técnicas Avanzadas de Predicción en Negocios</small></h1>
+  <h1>Mapa<span class="h1x"> de la asignatura</span> <small>Técnicas Avanzadas de Predicción en Negocios</small></h1>
   <div class="search" role="search">
     <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10.5 10.5 15 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
     <input id="q" type="search" placeholder="Buscar: lasso, AUC, poda, λ…" autocomplete="off" aria-label="Buscar en el mapa" aria-controls="results">
@@ -396,6 +410,7 @@ body.panel-open #outline { right: var(--panel-w); }
     <button class="tbtn wide" id="collapseAll" type="button" title="Plegar las ramas de estimadores">Plegar</button>
     <button class="tbtn" id="cmpBtn" type="button" aria-pressed="false" title="Comparar dos estimadores (C)">Comparar</button>
     <button class="tbtn" id="listBtn" type="button" aria-pressed="false" title="Alternar entre mapa y lista">Lista</button>
+    <button class="tbtn icon" id="helpBtn" type="button" aria-pressed="false" title="Cómo usar el mapa (?)" aria-label="Cómo usar el mapa"><b aria-hidden="true">?</b></button>
     <button class="tbtn icon" id="fsBtn" type="button" aria-pressed="false" title="Pantalla completa (F)" aria-label="Pantalla completa"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="fs-on" d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="fs-off" d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
 </header>
@@ -413,7 +428,7 @@ body.panel-open #outline { right: var(--panel-w); }
   <span><i style="background:var(--tap-blue)"></i>Estimadores</span>
   <span><i style="background:var(--tap-terracotta)"></i>Decisiones</span>
   <span><i style="border:1.5px dashed var(--tap-gray);background:#fff"></i>Tema por publicar</span>
-  <span class="hint">Pulsa un estimador para ver sus vínculos. Arrastra para moverte; + y − acercan y alejan; F, pantalla completa.</span>
+  <span class="hint">Pulsa un estimador para ver sus vínculos. Arrastra para moverte; + y − acercan y alejan; F, pantalla completa; ?, ayuda.</span>
   <span class="hint cmp-hint">Comparación: pulsa dos estimadores. Si ya hay dos, el nuevo sustituye al B.</span>
 </div>
 <div class="zoom">
@@ -463,12 +478,16 @@ const DECKS = {
   t3: { titulo: "Tema 3. GLM", url: "slides/03/03_glm_familias_sn.html", fecha: "20 oct" },
   t4a: { titulo: "Tema 4. Árboles y bosques", url: "slides/04/04_arboles_bosques_sn.html", fecha: "27 oct" },
   t4b: { titulo: "Tema 4. Boosting", url: "slides/04/04_boosting_sn.html", fecha: "3 nov" },
-  t4c: { titulo: "Tema 4. Combinar e interpretar", url: null, fecha: "10 nov" },
-  t5: { titulo: "Tema 5. SVM", url: null, fecha: "17 nov" },
+  t4c: { titulo: "Tema 4. Combinar e interpretar", url: "slides/04/04_combinar_interpretar_sn.html", fecha: "10 nov" },
+  t5: { titulo: "Tema 5. SVM", url: "slides/05/05_svm_sn.html", fecha: "17 nov" },
+  t6a: { titulo: "Tema 6. Perceptrón multicapa", url: "slides/06/06_mlp_sn.html", fecha: "24 nov" },
+  t6b: { titulo: "Tema 6. Entrenamiento y regularización", url: "slides/06/06_entrenamiento_sn.html", fecha: "1 dic" },
   m1: { titulo: "Materiales del tema 1", url: "materiales.html#tema-1" },
   m2: { titulo: "Materiales del tema 2", url: "materiales.html#tema-2" },
   m3: { titulo: "Materiales del tema 3", url: "materiales.html#tema-3" },
   m4: { titulo: "Materiales del tema 4", url: "materiales.html#tema-4" },
+  m5: { titulo: "Materiales del tema 5", url: "materiales.html#tema-5" },
+  m6: { titulo: "Materiales del tema 6", url: "materiales.html#tema-6" },
   plan: { titulo: "Planificación", url: "planificacion.html" }
 };
 
@@ -494,16 +513,18 @@ const VOCAB = {
   oob: ["Error fuera de la bolsa (OOB)", R`Error calculado, para cada observación, solo con los árboles que no la usaron en su ajuste. Aproxima el error de validación sin ajustes adicionales.`],
   tasa: ["Tasa de aprendizaje", R`Fracción de la corrección propuesta que se aplica en cada paso. En el boosting es la fracción de cada árbol que se suma al modelo.`],
   interaccion: ["Interacción", R`Situación en la que el efecto de un predictor sobre la respuesta depende del valor de otro predictor.`],
-  paradatemprana: ["Parada temprana", R`Detener el ajuste cuando el error en un conjunto de validación interno deja de mejorar durante un número fijado de pasos.`],
+  paradatemprana: ["Parada temprana", R`Detener el ajuste cuando el error en un conjunto de validación interno deja de mejorar durante un número fijado de pasos, la paciencia.`],
   metamodelo: ["Metamodelo", R`En el stacking, modelo cuyos predictores son las predicciones de los modelos base.`],
   predcv: ["Predicciones de validación cruzada", R`Predicción de cada observación obtenida con un ajuste que no usó esa observación.`],
   vectores: ["Vectores de soporte", R`Observaciones que definen la función de una SVM. En la SVR son las que quedan fuera del tubo o en su borde, y en la SVC las que quedan dentro del margen, en su borde o mal clasificadas.`],
-  nucleo: ["Núcleo", R`Función que mide la semejanza entre dos observaciones. Su forma determina la forma de la función que puede ajustar una SVM.`],
+  nucleo: ["Núcleo", R`Función que mide la semejanza entre dos observaciones. Equivale al producto escalar de sus columnas transformadas y lo calcula con los predictores originales, sin construir esas columnas. Su forma determina la forma de la función que puede ajustar una SVM.`],
   margen: ["Margen", R`Banda alrededor de la frontera de una SVC formada por las observaciones con puntuación entre −1 y +1.`],
-  epoch: ["Epoch", R`Pasada completa por todos los datos de entrenamiento.`],
+  epoch: ["Época (epoch)", R`Pasada completa por el conjunto de entrenamiento.`],
+  retroprop: ["Retropropagación (backpropagation)", R`Cálculo del gradiente de la pérdida respecto de todos los pesos de una red con la regla de la cadena, con una pasada hacia delante y otra hacia atrás.`],
+  relu: ["ReLU", R`Función de activación \(\max(0,z)\). Vale cero hasta un punto y crece en línea recta desde él.`],
   minilote: ["Minilote", R`Subconjunto de observaciones con el que se calcula cada paso del descenso del gradiente.`],
   activacion: ["Función de activación", R`Función no lineal que aplica cada neurona a la combinación lineal de sus entradas.`],
-  dropout: ["Dropout", R`Técnica de regularización que, durante el entrenamiento, desactiva al azar una fracción de las neuronas en cada paso.`],
+  dropout: ["Dropout", R`Técnica de regularización que anula al azar la salida de una fracción de las neuronas en cada paso del entrenamiento. Al predecir se usan todas las neuronas.`],
   crossfitting: ["Cross-fitting", R`Reparto de los datos en particiones para que los modelos auxiliares se ajusten con unas observaciones y se apliquen a otras.`],
   shapley: ["Valor de Shapley", R`Contribución de un predictor a la predicción de una observación. Los valores de todos los predictores suman la diferencia entre la predicción y un valor base.`],
   subajuste: ["Subajuste y sobreajuste", R`Hay subajuste cuando el modelo es demasiado simple para representar la relación, y sobreajuste cuando es tan flexible que reproduce el ruido de la muestra de entrenamiento.`]
@@ -544,11 +565,11 @@ const FAMILIAS = [
   { id: "f_glm", label: "Modelos lineales generalizados", sub: "Temas 2 y 3", tema: "T2–T3",
     idea: R`Un GLM combina tres elementos: una distribución para la respuesta (Bernoulli, multinomial, Gamma, Poisson…), un predictor lineal \(\nu=\beta_0+\beta_1x_1+\dots+\beta_px_p\) y una función de enlace \(g(\mu)=\nu\) que mantiene la predicción en el rango de la respuesta. La distribución y el enlace se eligen según el tipo de respuesta, y los coeficientes se estiman por máxima verosimilitud.`, materiales: ["t3", "m3"] },
   { id: "f_tree", label: "Árboles y ensambles", sub: "Tema 4", tema: "T4",
-    idea: R`Un árbol divide los datos en grupos con preguntas sucesivas sobre los predictores y asigna la misma predicción a todas las observaciones de un grupo. Un ensamble combina las predicciones de muchos árboles, o de varios modelos, para predecir mejor que cada uno por separado.`, materiales: ["t4a", "m4", "plan"] },
+    idea: R`Un árbol divide los datos en grupos con preguntas sucesivas sobre los predictores y asigna la misma predicción a todas las observaciones de un grupo. Un ensamble combina las predicciones de muchos árboles, o de varios modelos, para predecir mejor que cada uno por separado.`, materiales: ["t4a", "t4b", "t4c", "m4"] },
   { id: "f_svm", label: "Máquinas de vectores de soporte", sub: "Tema 5", tema: "T5",
-    idea: R`Las SVM ajustan una función combinando una pérdida que ignora parte de los errores y una penalización de la complejidad. Solo unas pocas observaciones, los vectores de soporte, definen la función. Con un núcleo pueden ajustar funciones curvas sin construir nuevos predictores.`, materiales: ["plan"] },
-  { id: "f_nn", label: "Redes neuronales", sub: "Tema 6", tema: "T6", pendiente: true,
-    idea: R`El tema empieza con el perceptrón multicapa en scikit-learn (24 de noviembre) y sigue con backpropagation y la regularización de las redes (1 de diciembre). Las prácticas pasan de scikit-learn a Keras (26 de noviembre y 3 de diciembre, entrega E4).`, materiales: ["plan"] },
+    idea: R`Las SVM ajustan una función combinando una pérdida que ignora parte de los errores y una penalización de la complejidad. Solo unas pocas observaciones, los vectores de soporte, definen la función. Con un núcleo pueden ajustar funciones curvas sin construir nuevos predictores.`, materiales: ["t5", "m5"] },
+  { id: "f_nn", label: "Redes neuronales", sub: "Tema 6", tema: "T6",
+    idea: R`Una red neuronal construye variables nuevas, las neuronas, como combinaciones lineales de los predictores transformadas por una función no lineal, y predice con una combinación de esas variables. Sus pesos se estiman minimizando una pérdida con descenso del gradiente, y la regularización limita cuánto se ajusta la red al conjunto de entrenamiento. En el curso, las redes se definen con Keras.`, materiales: ["t6a", "t6b", "m6"] },
   { id: "f_causal", label: "Predicción y efectos causales", sub: "Tema 7", tema: "T7", pendiente: true,
     idea: R`Explicar una relación o estimar el efecto de una intervención exige preguntas y supuestos distintos de los de la predicción. El aprendizaje automático puede ayudar en esa estimación.`, materiales: ["pres", "plan"] }
 ];
@@ -561,7 +582,7 @@ const DECISIONES = [
     puntos: [
       R`Hay <b>subajuste</b> cuando el modelo es demasiado simple para representar la relación y el sesgo domina el error. Hay <b>sobreajuste</b> cuando el modelo es tan flexible que sigue el ruido de la muestra y domina la varianza.`,
       R`El error de entrenamiento siempre baja al aumentar la complejidad, así que no sirve para elegir. Hay que medir el error en datos que el modelo no ha visto.`,
-      R`Cada familia tiene sus controles de complejidad: el grado en el polinomio, la penalización en los modelos lineales y los GLM, la profundidad y el tamaño de las hojas en los árboles, la tasa de aprendizaje y el número de árboles en el boosting, el coste \(C\) y la anchura del núcleo en las SVM, y la penalización, el dropout o la parada temprana en las redes neuronales.`,
+      R`Cada familia tiene sus controles de complejidad: el grado en el polinomio, la penalización en los modelos lineales y los GLM, la profundidad y el tamaño de las hojas en los árboles, la tasa de aprendizaje y el número de árboles en el boosting, el coste \(C\) y el parámetro \(\gamma\) del núcleo en las SVM, y la penalización, el dropout o la parada temprana en las redes neuronales.`,
       R`<b>Regularizar</b> es limitar la flexibilidad del ajuste. Aceptar algo de sesgo compensa si la varianza baja lo suficiente, sobre todo con pocos datos. Con muchos datos, la regularización apenas cambia las predicciones.`,
       R`Los ensambles actúan sobre componentes distintos. El bagging y el random forest promedian árboles profundos para reducir la varianza, mientras que el boosting suma árboles pequeños para reducir el sesgo.`
     ],
@@ -617,22 +638,23 @@ const DECISIONES = [
       V({ py: R`Las SVM con núcleo miden la semejanza entre observaciones con distancias, así que sin estandarizar el predictor con mayor escala decide la semejanza. Lo mismo ocurre en el descenso del gradiente de las redes neuronales, donde escalas muy distintas frenan la optimización.`, r: R`Las SVM con núcleo miden la semejanza entre observaciones con distancias, así que sin estandarizar el predictor con mayor escala decide la semejanza. Lo mismo ocurre en el descenso del gradiente de las redes neuronales, donde escalas muy distintas frenan la optimización. kernlab y e1071 estandarizan por defecto (<code>scaled = TRUE</code> y <code>scale = TRUE</code>).` }),
       R`Un árbol no cambia al estandarizar, porque cada corte \(x_j\le s\) depende solo del orden de los valores. Por eso el preprocesado de los árboles y de sus ensambles no incluye este paso.`
     ],
-    slides: [["t1c", "partir-primero-preprocesar-dentro-del-pipeline", "Partir primero, preprocesar dentro del Pipeline"], ["t2c", "transformar-las-columnas-según-su-tipo", "Transformar las columnas según su tipo"], ["t4a", "qué-cambia-si-transformamos-un-predictor", "¿Qué cambia si transformamos un predictor?"], ["t5", "escalar-antes-de-medir-distancias", "Escalar antes de medir distancias"]],
+    slides: [["t1c", "partir-primero-preprocesar-dentro-del-pipeline", "Partir primero, preprocesar dentro del Pipeline"], ["t2c", "transformar-las-columnas-según-su-tipo", "Transformar las columnas según su tipo"], ["t4a", "qué-cambia-si-transformamos-un-predictor", "¿Qué cambia si transformamos un predictor?"], ["t5", "escalar-antes-de-medir-distancias", "Escalar antes de medir distancias"], ["t6a", "escalar-los-predictores", "Escalar los predictores de una red"]],
     vocab: ["estandarizar", "onehot"],
     materiales: ["t1c", "t2c"] },
-  { id: "d_train", label: "Minimizar una pérdida", sub: "Gradiente, tasa de aprendizaje y lotes", tema: "T1, T3",
+  { id: "d_train", label: "Minimizar una pérdida", sub: "Gradiente, tasa de aprendizaje y lotes", tema: "T1, T3, T6",
     idea: R`Entrenar un modelo es ajustar sus parámetros para minimizar una pérdida sobre la muestra, y regularizar equivale a cambiar esa pérdida. Cuando no hay una solución directa, se minimiza paso a paso con el descenso del gradiente.`,
     formula: R`\[\theta^{(t+1)}=\theta^{(t)}-\alpha\,\nabla_\theta L(\theta^{(t)})\]`,
     puntos: [
       R`Pérdidas del curso: la RSS en la regresión lineal, la RSS más una penalización en Ridge, Lasso y Elastic Net, y la log-verosimilitud cambiada de signo en los GLM, que con una respuesta binaria coincide con la log-loss. Las SVM usan la pérdida insensible a \(\varepsilon\) (SVR) o la pérdida bisagra (SVC).`,
       R`La tasa de aprendizaje \(\alpha\) fija el tamaño de cada paso. Una tasa constante puede dejar oscilaciones alrededor del mínimo, y reducirla durante el entrenamiento ayuda a afinar el ajuste.`,
-      R`El gradiente puede calcularse con todos los datos (por lotes), con una observación (estocástico) o con un minilote de \(m\) observaciones. Un epoch es una pasada completa por los datos y contiene \(\lceil n/m\rceil\) pasos.`,
+      R`El gradiente puede calcularse con todos los datos (por lotes), con una observación (estocástico) o con un minilote de \(m\) observaciones. Una época (epoch) es una pasada completa por los datos y contiene \(\lceil n/m\rceil\) pasos.`,
       V({ py: R`Para detener el algoritmo se combinan un máximo de iteraciones (<code>max_iter</code>) y una tolerancia. La <b>parada temprana</b> vigila la pérdida en un conjunto de validación y detiene el entrenamiento antes de que la generalización empeore.`, r: R`Para detener el algoritmo se combinan un máximo de iteraciones (<code>maxit</code> en glmnet y nnet) y una tolerancia. La <b>parada temprana</b> vigila la pérdida en un conjunto de validación y detiene el entrenamiento antes de que la generalización empeore.` }),
-      R`MCO y Ridge tienen solución directa, mientras que Lasso, Elastic Net y los GLM se resuelven de forma iterativa. Un árbol aislado se construye con un algoritmo voraz, sin gradiente. El boosting sí sigue el gradiente: cada árbol nuevo aproxima el gradiente negativo de la pérdida respecto a las predicciones.`
+      R`MCO y Ridge tienen solución directa, mientras que Lasso, Elastic Net y los GLM se resuelven de forma iterativa. Un árbol aislado se construye con un algoritmo voraz, sin gradiente. El boosting sí sigue el gradiente: cada árbol nuevo aproxima el gradiente negativo de la pérdida respecto a las predicciones.`,
+      R`En una red neuronal, la <b>retropropagación</b> calcula el gradiente de todos los pesos con una pasada hacia delante y otra hacia atrás. La pérdida de una red no es convexa y tiene mesetas y valles estrechos, y el momento y Adam cambian el paso del descenso para atravesarlos. En el tema 6, la tasa de aprendizaje se escribe \(\eta\).`
     ],
-    slides: [["t1a", "ajustar-los-parámetros-minimizando-una-pérdida", "Ajustar los parámetros minimizando una pérdida"], ["t1a", "lotes-estocástico-y-minilotes", "Lotes, estocástico y minilotes"], ["t1a", "tasa-de-aprendizaje-y-ruido-de-las-actualizaciones", "Tasa de aprendizaje y ruido"], ["t1c", "las-pérdidas-que-hemos-minimizado", "Las pérdidas que hemos minimizado"]],
-    vocab: ["tasa", "epoch", "minilote", "paradatemprana"],
-    materiales: ["t1a", "t1c", "t3"] },
+    slides: [["t1a", "ajustar-los-parámetros-minimizando-una-pérdida", "Ajustar los parámetros minimizando una pérdida"], ["t1a", "lotes-estocástico-y-minilotes", "Lotes, estocástico y minilotes"], ["t1a", "tasa-de-aprendizaje-y-ruido-de-las-actualizaciones", "Tasa de aprendizaje y ruido"], ["t1c", "las-pérdidas-que-hemos-minimizado", "Las pérdidas que hemos minimizado"], ["t6b", "el-algoritmo-de-retropropagación", "El algoritmo de retropropagación"], ["t6b", "el-momento-y-adam-cambian-el-paso", "El momento y Adam cambian el paso"]],
+    vocab: ["tasa", "epoch", "minilote", "paradatemprana", "retroprop"],
+    materiales: ["t1a", "t1c", "t3", "t6b"] },
   { id: "d_mreg", label: "Métricas de regresión", sub: "MSE, RMSE, MAE y R²", tema: "T1–T3",
     alcance: "regresion", generico: R`Como modelo de regresión, se evalúa con la métrica elegida para el problema (RMSE, MAE o R²) y se compara con el modelo nulo.`,
     idea: R`La métrica forma parte de la regla de decisión. Se elige según el problema de negocio antes de validar, y cada modelo se compara con el modelo nulo.`,
@@ -683,7 +705,7 @@ const DECISIONES = [
     ],
     slides: [["t1b", "lasso-selecciona-variables", "Lasso selecciona variables"], ["t3", "qué-dice-un-coeficiente-igual-a-cero", "¿Qué dice un coeficiente igual a cero?"], ["t4c", "importancia-por-permutación", "Importancia por permutación"], ["t4c", "importancia-con-predictores-correlacionados", "Importancia con predictores correlacionados"], ["t4c", "dependencia-parcial-de-las-plazas", "Dependencia parcial y curvas ICE"], ["t4c", "el-valor-de-shapley-de-un-predictor", "El valor de Shapley de un predictor"]],
     vocab: ["shapley"],
-    materiales: ["t1b", "t3", "t4a", "plan"] }
+    materiales: ["t1b", "t3", "t4a", "t4c"] }
 ];
 
 /* Estimadores.
@@ -739,7 +761,7 @@ const ESTIMADORES = [
     links: [
       ["d_sesgo", R`Tiene poco sesgo si la relación es lineal, pero con pocos datos y predictores correlacionados su varianza es alta: sus coeficientes cambian mucho de una muestra a otra.`, ["t1b", "mco-es-insesgado-pero-su-varianza-crece-con-la-colinealidad", "MCO es insesgado, pero su varianza crece con la colinealidad"]],
       ["d_part", R`Si su error de entrenamiento es mucho menor que su error en datos nuevos, el modelo está sobreajustando. La partición de los datos permite detectarlo.`, ["t1c", "sobreajuste-con-datos-reales", "Sobreajuste con datos reales"]],
-      ["d_prep", enPipe(p => R`Los predictores categóricos se codifican (one-hot) y los valores faltantes se imputan ${p}.`)],
+      ["d_prep", V({ py: R`Los predictores categóricos se codifican (one-hot) y los valores faltantes se imputan dentro del <code>Pipeline</code>.`, tidymodels: R`Los predictores categóricos se codifican (one-hot) y los valores faltantes se imputan en la receta del <code>workflow()</code>.`, caret: R`La interfaz de fórmula de <code>train()</code> codifica los predictores categóricos con variables indicadoras, y los valores faltantes se imputan con el argumento <code>preProcess</code>.`, mlr3: R`Los predictores categóricos se codifican (one-hot) y los valores faltantes se imputan en el grafo de mlr3pipelines.` })],
       ["d_train", R`Minimiza la RSS. En el tema 1 sirve también para mostrar cómo funciona el descenso del gradiente.`, ["t1a", "regresión-lineal-tres-formas-de-calcular-el-paso", "Regresión lineal: tres formas de calcular el paso"]],
       ["d_mreg", R`Se evalúa con el RMSE, el MAE y el R² en datos que no ha visto.`],
       ["d_interp", R`Sus coeficientes se interpretan directamente, y por eso es el modelo de referencia para describir asociaciones entre predictores y respuesta.`],
@@ -948,10 +970,10 @@ const ESTIMADORES = [
     hp: [[R`Intensidad de la penalización Ridge (\(\lambda\))`, R`<code>alpha</code>`, R`Al aumentarla, los coeficientes se acercan a cero. Este estimador solo admite la penalización Ridge.`]],
     args: [],
     links: [
-      ["d_sesgo", R`Con pocos datos sobreajusta, y la penalización reduce su error de validación. Con muchos datos, la penalización apenas cambia las predicciones.`, ["t3", "cuándo-necesita-penalización-un-glm", "¿Cuándo necesita penalización un GLM?"]],
-      ["d_hiper", V({ py: R`<code>alpha</code> se elige por validación cruzada con el RMSE.`, tidymodels: R`<code>penalty</code> se elige por validación cruzada con el RMSE.`, r: R`<code>lambda</code> se elige por validación cruzada con el RMSE.` })],
+      ["d_sesgo", V({ py: R`Con pocos datos sobreajusta, y la penalización reduce su error de validación. Con muchos datos, la penalización apenas cambia las predicciones.`, r: R`Con pocos datos sobreajusta, y penalizar reduce su error de validación. Con muchos datos, la penalización apenas cambia las predicciones. El GLM de la tabla de código no penaliza.` }), ["t3", "cuándo-necesita-penalización-un-glm", "¿Cuándo necesita penalización un GLM?"]],
+      ["d_hiper", V({ py: R`<code>alpha</code> se elige por validación cruzada con el RMSE.`, tidymodels: R`Con el motor glm no hay hiperparámetros que elegir. Si se penaliza con el motor glmnet y la familia Gamma, <code>penalty</code> se elige por validación cruzada con el RMSE.`, caret: R`Con <code>method = "glm"</code> no hay hiperparámetros que elegir. Si se penaliza con <code>method = "glmnet"</code> y la familia Gamma, <code>lambda</code> se elige por validación cruzada con el RMSE.`, mlr3: R`El learner <code>regr.glm</code> no tiene hiperparámetros que elegir, y <code>regr.glmnet</code> no admite la familia Gamma.` })],
       ["d_cv", V({ py: R`Comparar el error medio de entrenamiento y de validación (<code>return_train_score=True</code>) permite detectar el sobreajuste.`, r: R`Comparar el error medio de entrenamiento y de validación permite detectar el sobreajuste.` }), ["t3", "con-pocos-anuncios-el-gamma-sobreajusta", "El Gamma sobreajusta con pocos datos"]],
-      ["d_prep", R`Los predictores se estandarizan antes de penalizar.`],
+      ["d_prep", V({ py: R`Los predictores se estandarizan antes de penalizar.`, r: R`Sin penalización no hace falta estandarizar los predictores. Si se penaliza con glmnet, este los estandariza por defecto.` })],
       ["d_train", R`Se estima por máxima verosimilitud, con penalización si hace falta.`],
       ["d_mreg", R`La métrica principal es el RMSE. Si interesa predecir la mediana, el MAE es más adecuado.`, ["t3", "qué-modelo-elegimos-para-el-precio", "Elegir un modelo con RMSE y MAE"]]
     ],
@@ -1129,7 +1151,7 @@ const ESTIMADORES = [
     ],
     slides: [["t4b", "la-predicción-se-construye-árbol-a-árbol", "La predicción se construye árbol a árbol"], ["t4b", "el-algoritmo-del-boosting-con-pérdida-cuadrática", "El algoritmo del boosting"], ["t4b", "qué-profundidad-necesita-cada-árbol", "¿Qué profundidad necesita cada árbol?"], ["t4b", "otras-implementaciones-del-boosting", "Otras implementaciones del boosting"]],
     vocab: ["residuo", "tasa", "interaccion", "paradatemprana"],
-    materiales: ["t1a", "plan"] },
+    materiales: ["t1a", "t4b", "m4"] },
   { id: "xgb", tarea: ["reg", "clas"], fam: "f_tree", base: "gb", label: "XGBoost", tema: "T4",
     sesion: ["T4 3 nov", "P4 5 nov (E2)"],
     porque: R`Añade al gradient boosting un control de la complejidad de cada árbol y una forma más rápida de buscar los cortes. Contrae las hojas con pocas observaciones, cuya corrección es poco fiable, y evita los cortes que mejoran poco la pérdida.`,
@@ -1180,13 +1202,13 @@ const ESTIMADORES = [
     args: [["estimators", "lista de pares (nombre, modelo)", R`Modelos que se combinan. Cada uno puede ser un <code>Pipeline</code> completo.`], ["voting", R`<code>"hard"</code> (voto) o <code>"soft"</code> (media de probabilidades), solo en <code>VotingClassifier</code>`, R`Solo <code>"soft"</code> da probabilidades.`]],
     links: [
       ["d_hiper", R`Cada modelo combinado conserva sus propios hiperparámetros, elegidos antes de combinarlo.`],
-      ["d_cv", R`Se evalúa con las mismas particiones que los modelos que combina, para comprobar si la media mejora al mejor de ellos.`, ["t4c", "la-media-de-las-predicciones", "La media de las predicciones"]],
+      ["d_cv", R`Se evalúa con las mismas particiones que los modelos que combina, para comprobar si la media mejora al mejor de ellos.`, ["t4c", "voting-media-de-las-predicciones", "Voting: media de las predicciones"]],
       ["d_mreg", R`Se compara con cada modelo base usando la misma métrica.`],
       ["d_mclas", V({ py: R`En clasificación se vota la clase (<code>"hard"</code>) o se promedian las probabilidades (<code>"soft"</code>).`, r: R`En clasificación se promedian las probabilidades de los modelos o se vota la clase más frecuente.`, mlr3: R`En clasificación, <code>po("classifavg")</code> promedia las probabilidades de los modelos.` }), ["t4c", "voting-y-stacking-en-clasificación", "Voting y stacking en clasificación"]]
     ],
     slides: [["t4c", "los-errores-de-random-forest-y-xgboost-están-correlacionados", "Errores correlacionados entre modelos"]],
     vocab: [],
-    materiales: ["plan"] },
+    materiales: ["t4c", "m4"] },
   { id: "stacking", tarea: ["reg", "clas"], fam: "f_tree", label: "Stacking", tema: "T4",
     sesion: ["T4 10 nov", "P4 12 nov (H4)"],
     porque: R`Combina varios modelos aprendiendo de los datos cuánto debe pesar cada uno, en lugar de fijar los pesos de antemano como en el voting.`,
@@ -1212,40 +1234,40 @@ const ESTIMADORES = [
     ],
     slides: [["t4c", "hiperparámetros-de-voting-y-stacking", "Argumentos de voting y stacking"]],
     vocab: ["metamodelo", "predcv"],
-    materiales: ["plan"] },
+    materiales: ["t4c", "m4"] },
 
   /* ---------- Tema 5 ---------- */
   { id: "svr", tarea: ["reg"], fam: "f_svm", label: "SVR (regresión)", tema: "T5",
-    sesion: ["T5 17 nov", "P5 19 nov (E3)"],
+    sesion: ["T5 17 nov", "P5 19 nov"],
     porque: R`Ajusta una función ignorando los errores pequeños, los que quedan dentro de una tolerancia elegida, y con un núcleo puede ajustar relaciones no lineales sin construir nuevos predictores.`,
     idea: R`Busca la función más plana posible que deje la mayoría de las observaciones dentro de un tubo de anchura \(\pm\varepsilon\) alrededor de ella. Solo cuentan los errores que salen del tubo.`,
     modelo: { formula: R`\[\min_{\beta_0,\beta}\ \tfrac12\sum_{j=1}^{p}\beta_j^2+C\sum_{i=1}^{n}L_\varepsilon\big(y_i-f(x_i)\big)\]\[L_\varepsilon(r)=\max\big(0,\ \lvert r\rvert-\varepsilon\big)\]`,
-      texto: R`Con núcleo lineal, \(f(x)=\beta_0+\beta_1x_1+\dots+\beta_px_p\) y se estiman los coeficientes. Es la estructura de Ridge con otra pérdida, y la penalización equivale a \(\lambda=1/(2C)\). Con el núcleo RBF, la predicción es una constante más una contribución de cada vector de soporte, ponderada por su semejanza con la observación que se predice: \(f(x)=b+\sum_{i\in\text{VS}}w_i\,k(x,x_i)\), con \(k(x,x_i)=e^{-\gamma\lVert x-x_i\rVert^2}\).` },
+      texto: R`Con núcleo lineal, \(f(x)=\beta_0+\beta_1x_1+\dots+\beta_px_p\) y se estiman los coeficientes. Es la estructura de Ridge con otra pérdida, y la penalización equivale a \(\lambda=1/(2C)\). Con un núcleo, la predicción es una constante más una contribución de cada vector de soporte (VS): su peso \(v_i\), estimado al ajustar, por su semejanza con la observación que se predice, \(f(x)=\beta_0+\sum_{i\in\text{VS}}v_i\,k(x_i,x)\). El núcleo RBF mide esa semejanza por la distancia, \(k(x_i,x)=e^{-\gamma\lVert x_i-x\rVert^2}\): vale 1 si las dos observaciones son iguales y baja hacia 0 al alejarse.` },
     peculiar: {
       supuestos: R`Con un núcleo no lineal no impone una forma funcional. Mide la semejanza entre observaciones con distancias, así que los predictores deben estar estandarizados.`,
-      flexibilidad: R`La controlan \(C\), que fija cuánto cuesta cada error fuera del tubo, y, con núcleo RBF, \(\gamma\), que fija la anchura de cada campana. Con \(\gamma\) y \(C\) grandes, la función puede reproducir el entrenamiento y sobreajustar.`,
+      flexibilidad: R`La controlan \(C\), que fija cuánto cuesta cada error fuera del tubo, y, con núcleo RBF, \(\gamma\), que fija el alcance de la semejanza entre observaciones. Con \(\gamma\) y \(C\) grandes, la función puede reproducir el entrenamiento y sobreajustar.`,
       interpretabilidad: R`Alta con núcleo lineal, porque tiene coeficientes, y baja con núcleo RBF.`,
       coste: V({ py: R`Con núcleo, el tiempo de ajuste crece entre \(n^2\) y \(n^3\), así que con cientos de miles de observaciones deja de ser práctico. <code>LinearSVR</code> es la alternativa lineal para muchos datos.`, r: R`Con núcleo, el tiempo de ajuste crece entre \(n^2\) y \(n^3\), así que con cientos de miles de observaciones deja de ser práctico. Para muchos datos, la alternativa es el núcleo lineal del paquete LiblineaR.` })
     },
     sklearn: [["SVR", "sklearn.svm", "Regresión con núcleo"], ["LinearSVR", "sklearn.svm", "Regresión lineal para muchas observaciones"]],
     hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`, R`Al aumentarlo, los errores pesan más y la función puede ser menos plana.`],
          [R`Anchura del tubo (\(\varepsilon\))`, R`<code>epsilon</code>`, R`Al aumentarla, se toleran más errores y suele haber menos vectores de soporte.`],
-         [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`, R`Al aumentarla, cada campana cubre menos observaciones y la función es más flexible.`],
+         [R`Parámetro del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`, R`Al aumentarlo, el alcance de la semejanza se acorta y la función es más flexible.`],
          [R`Grado del núcleo polinómico`, R`<code>degree</code>`, R`Al aumentarlo, la función recoge interacciones de mayor orden.`]],
     args: [["kernel", R`<code>"rbf"</code> (por defecto), <code>"linear"</code> o <code>"poly"</code>`, R`Núcleo: fija la forma de la función que se puede ajustar.`]],
     links: [
-      ["d_sesgo", R`\(C\) y \(\gamma\) controlan la complejidad. Con campanas estrechas y errores caros, la función sigue el ruido del entrenamiento.`, ["t5", "entrenamiento-frente-a-validación", "Entrenamiento frente a validación"]],
-      ["d_hiper", V({ py: R`\(C\) y \(\gamma\) se eligen juntos con <code>GridSearchCV</code>, porque el mejor valor de \(C\) depende de \(\gamma\).`, tidymodels: R`\(C\) y la anchura del núcleo se eligen juntos con <code>tune_grid()</code>, porque el mejor valor de \(C\) depende de la anchura.`, caret: R`\(C\) y la anchura del núcleo se eligen juntos en la misma rejilla de <code>train()</code>, porque el mejor valor de \(C\) depende de la anchura.`, mlr3: R`\(C\) y la anchura del núcleo se eligen juntos con <code>auto_tuner()</code>, porque el mejor valor de \(C\) depende de la anchura.` }), ["t5", "hiperparámetros-de-la-svm", "Hiperparámetros de la SVM"]],
+      ["d_sesgo", R`\(C\) y \(\gamma\) controlan la complejidad. Con un alcance corto de la semejanza y errores caros, la función sigue el ruido del entrenamiento.`, ["t5", "c-y-gamma-a-la-vez", R`\(C\) y \(\gamma\) a la vez`]],
+      ["d_hiper", V({ py: R`\(C\) y \(\gamma\) se eligen juntos con <code>GridSearchCV</code>, porque el mejor valor de \(C\) depende de \(\gamma\).`, tidymodels: R`\(C\) y el parámetro del núcleo se eligen juntos con <code>tune_grid()</code>, porque el mejor valor de \(C\) depende de ese parámetro.`, caret: R`\(C\) y el parámetro del núcleo se eligen juntos en la misma rejilla de <code>train()</code>, porque el mejor valor de \(C\) depende de ese parámetro.`, mlr3: R`\(C\) y el parámetro del núcleo se eligen juntos con <code>auto_tuner()</code>, porque el mejor valor de \(C\) depende de ese parámetro.` }), ["t5", "hiperparámetros-de-la-svm", "Hiperparámetros de la SVM"]],
       ["d_cv", R`Se compara con los demás modelos del curso usando las mismas particiones.`],
       ["d_prep", V({ py: R`Los predictores se estandarizan dentro del <code>Pipeline</code>, porque la semejanza entre observaciones se mide con distancias.`, r: R`Los predictores se estandarizan, porque la semejanza entre observaciones se mide con distancias. kernlab y e1071 lo hacen por defecto (<code>scaled = TRUE</code> y <code>scale = TRUE</code>).` }), ["t5", "escalar-antes-de-medir-distancias", "Escalar antes de medir distancias"]],
-      ["d_train", R`Minimiza la pérdida insensible a \(\varepsilon\) más una penalización de los coeficientes, con la misma estructura que Ridge.`, ["t5", "lo-que-minimiza-la-svr-lineal", "Lo que minimiza la SVR lineal"]],
+      ["d_train", R`Minimiza la pérdida insensible a \(\varepsilon\) más una penalización de los coeficientes, con la misma estructura que Ridge.`, ["t5", "lo-que-minimiza-la-svr", "Lo que minimiza la SVR"]],
       ["d_mreg", R`Se evalúa con el RMSE de validación.`]
     ],
-    slides: [["t5", "una-recta-no-basta", "Una recta no basta"], ["t5", "predicción-con-núcleo-rbf", "Predicción con núcleo RBF"], ["t5", "el-truco-del-núcleo", "El truco del núcleo"]],
+    slides: [["t5", "la-pérdida-fuera-del-tubo", "La pérdida fuera del tubo"], ["t5", "el-núcleo-evita-construir-las-columnas-transformadas", "El núcleo evita construir las columnas transformadas"], ["t5", "gamma-fija-cuánto-se-curva-la-función", R`\(\gamma\) fija cuánto se curva la función`], ["t5", "el-tiempo-de-ajuste-crece-más-rápido-que-n", R`El tiempo de ajuste crece más rápido que \(n\)`], ["t5", "qué-aporta-una-svm-frente-a-modelos-lineales-y-árboles", "Qué aporta una SVM frente a modelos lineales y árboles"]],
     vocab: ["vectores", "nucleo", "estandarizar"],
-    materiales: ["plan"] },
+    materiales: ["t5", "m5"] },
   { id: "svc", tarea: ["clas"], fam: "f_svm", label: "SVC (clasificación)", tema: "T5",
-    sesion: ["T5 17 nov", "P5 19 nov (E3)"],
+    sesion: ["T5 17 nov", "P5 19 nov"],
     porque: R`Clasifica fijándose solo en las observaciones difíciles, las que quedan cerca de la frontera o en el lado equivocado, y con un núcleo puede trazar fronteras curvas.`,
     idea: R`Calcula una puntuación \(f(x)\) y asigna la clase positiva si \(f(x)>0\). Busca la frontera con el margen más ancho, y admite con un coste algunas observaciones dentro del margen o en el lado equivocado.`,
     modelo: { formula: R`\[\min_{\beta_0,\beta}\ \tfrac12\sum_{j=1}^{p}\beta_j^2+C\sum_{i=1}^{n}\max\big(0,\ 1-\tilde y_i\,f(x_i)\big),\qquad \tilde y_i=\pm1\]`,
@@ -1257,60 +1279,67 @@ const ESTIMADORES = [
       coste: R`Como en la SVR, el tiempo de ajuste con núcleo crece entre \(n^2\) y \(n^3\). Sin calibrar, da una puntuación y una clase, pero no probabilidades.`
     },
     sklearn: [["SVC", "sklearn.svm", "Clasificación con núcleo"], ["LinearSVC", "sklearn.svm", "Clasificación lineal para muchas observaciones"]],
-    hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`, R`Al aumentarlo, las violaciones del margen pesan más y la frontera puede ser más flexible.`],
-         [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`, R`Al aumentarla, la frontera es más flexible.`],
+    hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`, R`Al aumentarlo, las pérdidas pesan más y el margen se estrecha.`],
+         [R`Parámetro del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`, R`Al aumentarlo, el alcance de la semejanza se acorta y la frontera se curva más.`],
          [R`Grado del núcleo polinómico`, R`<code>degree</code>`, R`Al aumentarlo, la frontera recoge interacciones de mayor orden.`]],
     args: [["kernel", R`<code>"rbf"</code> (por defecto), <code>"linear"</code> o <code>"poly"</code>`, R`Núcleo: fija la forma de la frontera.`], ["class_weight", R`<code>None</code> o <code>"balanced"</code>`, R`Multiplica el coste \(C\) de los errores de cada clase.`]],
     links: [
-      ["d_sesgo", R`\(C\) y \(\gamma\) controlan la complejidad de la frontera.`],
-      ["d_hiper", R`\(C\) y \(\gamma\) se eligen juntos por validación cruzada.`],
+      ["d_sesgo", R`\(C\) y \(\gamma\) controlan la complejidad de la frontera. Con \(\gamma\) grande, la frontera rodea observaciones concretas y sobreajusta.`, ["t5", "gamma-fija-cuánto-se-curva-la-frontera", R`\(\gamma\) fija cuánto se curva la frontera`]],
+      ["d_hiper", R`\(C\) y \(\gamma\) se eligen juntos por validación cruzada.`, ["t5", "hiperparámetros-de-la-svm", "Hiperparámetros de la SVM"]],
       ["d_cv", R`Se compara con los demás clasificadores usando las mismas particiones estratificadas.`],
-      ["d_prep", V({ py: R`Los predictores se estandarizan dentro del <code>Pipeline</code>.`, r: R`Los predictores se estandarizan. kernlab y e1071 lo hacen por defecto.` })],
-      ["d_mclas", R`Sin calibrar, la SVC da una clase y una puntuación que sirve para ordenar las observaciones. La exactitud es adecuada si los dos tipos de error cuestan lo mismo.`, ["t5", "la-svc-lineal-frente-al-clasificador-nulo", "La SVC lineal frente al clasificador nulo"]],
+      ["d_prep", V({ py: R`Los predictores se estandarizan dentro del <code>Pipeline</code>.`, r: R`Los predictores se estandarizan. kernlab y e1071 lo hacen por defecto.` }), ["t5", "escalar-antes-de-medir-distancias", "Escalar antes de medir distancias"]],
+      ["d_mclas", R`Sin calibrar, la SVC da una clase y una puntuación que sirve para ordenar las observaciones. La exactitud es adecuada si los dos tipos de error cuestan lo mismo.`, ["t5", "qué-aporta-una-svm-frente-a-modelos-lineales-y-árboles", "Qué aporta una SVM frente a modelos lineales y árboles"]],
       ["d_deseq", V({ py: R`<code>class_weight</code> encarece los errores de la clase rara.`, r: R`Los pesos de clase (<code>class.weights</code> en kernlab y e1071) encarecen los errores de la clase rara.` })],
       ["d_train", R`Minimiza la pérdida bisagra más una penalización de los coeficientes.`, ["t5", "la-pérdida-bisagra", "La pérdida bisagra"]]
     ],
-    slides: [["t5", "el-margen", "El margen"]],
+    slides: [["t5", "cada-recta-que-separa-deja-un-margen", "Cada recta que separa deja un margen"], ["t5", "margen-duro-y-margen-blando", "Margen duro y margen blando"], ["t5", "el-coste-de-las-pérdidas-fija-la-anchura-del-margen", "El coste de las pérdidas fija la anchura del margen"], ["t5", "el-núcleo-rbf-sustituye-a-columnas-de-todos-los-grados", "El núcleo RBF sustituye a columnas de todos los grados"]],
     vocab: ["vectores", "nucleo", "margen"],
-    materiales: ["plan"] },
+    materiales: ["t5", "m5"] },
 
   /* ---------- Tema 6 ---------- */
-  { id: "mlp", tarea: ["reg", "clas"], fam: "f_nn", label: "Perceptrón multicapa (MLP)", tema: "T6", pendiente: true,
-    sesion: ["T6 24 nov", "P6 26 nov", "T6 1 dic", "P6 3 dic (E4)"],
-    porque: R`Aprende por sí mismo transformaciones no lineales de los predictores. Encadena capas de funciones sencillas y, con suficientes neuronas, puede representar relaciones muy complejas. Es la base del aprendizaje profundo.`,
-    idea: R`Cada neurona calcula una combinación lineal de sus entradas y le aplica una función de activación no lineal. Las neuronas se organizan en capas, y la salida de una capa es la entrada de la siguiente.`,
-    modelo: { formula: R`\[h=\sigma\big(W_1x+b_1\big),\qquad \hat y=W_2\,h+b_2\]`,
-      texto: R`La fórmula corresponde a una red con una capa oculta, donde \(\sigma\) es la función de activación. Se estiman los pesos \(W\) y los términos constantes \(b\) de todas las capas minimizando una pérdida por descenso del gradiente, con el gradiente calculado mediante backpropagation.` },
+  { id: "mlp", tarea: ["reg", "clas"], fam: "f_nn", label: "Perceptrón multicapa (MLP)", tema: "T6", implTitulo: "En Keras",
+    sesion: ["T6 24 nov", "P6 26 nov (H5)", "T6 1 dic", "P6 3 dic", "E3 10 dic"],
+    porque: R`Construye por sí mismo variables nuevas, las neuronas, a partir de los predictores, y predice con una combinación de ellas. Con suficientes neuronas puede aproximar relaciones muy complejas. Es la base del aprendizaje profundo.`,
+    idea: R`Cada neurona calcula una combinación lineal de sus entradas y le aplica una función de activación no lineal. Con la activación ReLU, cada neurona aporta una línea con un codo, y la predicción suma esos codos. Las neuronas se organizan en capas: cada capa construye variables a partir de las de la capa anterior, y la capa de salida les aplica una regresión lineal, logística o multinomial, según el tipo de respuesta.`,
+    modelo: { formula: R`\[h_k(x)=g\Big(w_{0k}+\sum_{j=1}^{p}w_{jk}\,x_j\Big),\qquad f(x)=\beta_0+\sum_{k=1}^{K}\beta_k\,h_k(x)\]`,
+      texto: R`La fórmula corresponde a una red de regresión con una capa oculta de \(K\) neuronas, donde \(g\) es la función de activación, por ejemplo la ReLU, \(g(z)=\max(0,z)\). Se estiman a la vez los pesos de las dos capas, <span class="nw">\((p+1)K+K+1\)</span> en esta red, minimizando una pérdida por descenso del gradiente: el error cuadrático en regresión y la log-loss en clasificación, con salida sigmoide para dos clases y softmax para más. La retropropagación calcula el gradiente de todos los pesos. Una red con más de una capa oculta se llama profunda, y cada capa aplica la misma operación a las salidas de la anterior, \(h^{(l)}=g\big(W^{(l)}h^{(l-1)}+w_0^{(l)}\big)\).` },
     peculiar: {
-      supuestos: R`Es un modelo paramétrico con muchos pesos. Necesita predictores estandarizados para que el descenso del gradiente funcione bien.`,
-      flexibilidad: R`Muy alta. Se controla con la arquitectura (capas y neuronas), la penalización L2, la parada temprana y, en Keras, el dropout.`,
-      interpretabilidad: R`Baja.`,
-      coste: R`Se entrena de forma iterativa, por minilotes y epochs. Para redes pequeñas basta un ordenador sin GPU.`
+      supuestos: R`Es un modelo paramétrico con muchos pesos. Los predictores deben estar estandarizados, porque con escalas muy distintas el descenso del gradiente avanza mal. Su pérdida no es convexa, así que dos entrenamientos con distinta semilla acaban en redes distintas.`,
+      flexibilidad: R`Muy alta. Una sola capa oculta con suficientes neuronas puede aproximar cualquier función continua, y la profundidad consigue formas complejas con menos neuronas. Se limita con el tamaño de la red, la parada temprana, la penalización L2 y el dropout.`,
+      interpretabilidad: R`Baja. Sin capa oculta, la red equivale a una regresión lineal, logística o multinomial, pero con capas ocultas sus pesos no se interpretan uno a uno.`,
+      coste: R`Se entrena de forma iterativa, por minilotes y épocas, y cada ajuste cuesta mucho más que el de un modelo lineal. Elegir la arquitectura y la regularización exige validar varias redes. La parada temprana abarata el ajuste de las redes grandes.`
     },
-    sklearn: [["MLPRegressor", "sklearn.neural_network", "Regresión"], ["MLPClassifier", "sklearn.neural_network", "Clasificación"], ["Sequential", "tensorflow.keras", "Red definida capa a capa en Keras (con layers.Dense)"]],
-    hp: [[R`Arquitectura (capas y neuronas)`, R`<code>hidden_layer_sizes</code>; en Keras, las capas <code>Dense</code>`, R`Con más capas o neuronas, la red es más flexible.`],
-         [R`Penalización L2`, R`<code>alpha</code>`, R`Al aumentarla, los pesos se contraen y la red es menos flexible.`],
-         [R`Tasa de aprendizaje`, R`<code>learning_rate_init</code>; en Keras, el optimizador`, R`Al aumentarla, cada paso del descenso del gradiente es mayor.`],
-         [R`Tamaño del minilote`, R`<code>batch_size</code>`, R`Al aumentarlo, cada paso usa más observaciones y el gradiente es menos ruidoso.`],
-         [R`Dropout`, R`capa <code>Dropout</code> (Keras)`, R`Al aumentarlo, se desactivan más neuronas en cada paso y la red se regulariza más.`]],
-    args: [["activation", R`<code>"relu"</code>, <code>"logistic"</code>…`, R`Función de activación de las neuronas ocultas.`], ["solver", R`<code>"adam"</code> (por defecto) o <code>"sgd"</code>`, R`Algoritmo de optimización.`], ["max_iter (epochs en Keras)", "número entero", R`Máximo de pasadas completas por los datos.`], ["early_stopping", R`<code>True</code> o <code>False</code>`, R`Activa la parada temprana con un conjunto de validación interno (<code>validation_fraction</code>, <code>n_iter_no_change</code>).`]],
+    sklearn: [["Sequential", "keras", "Red definida capa a capa"], ["Dense", "keras.layers", "Capa densa: cada neurona recibe todas las salidas de la capa anterior"], ["Dropout", "keras.layers", "Capa que apaga neuronas al azar durante el entrenamiento"], ["EarlyStopping", "keras.callbacks", "Parada temprana"], ["SKLearnRegressor", "keras.wrappers", "Permite usar una red de regresión en un Pipeline y en cross_validate"], ["SKLearnClassifier", "keras.wrappers", "Lo mismo para una red de clasificación"], ["MLPRegressor", "sklearn.neural_network", "Red densa de scikit-learn para regresión"], ["MLPClassifier", "sklearn.neural_network", "Red densa de scikit-learn para clasificación"]],
+    hp: [[R`Neuronas de cada capa`, R`<code>units</code> de cada <code>Dense</code>, una por capa oculta`, R`Con más neuronas o más capas, la red es más flexible.`],
+         [R`Tasa de aprendizaje (\(\eta\))`, R`<code>learning_rate</code> del optimizador`, R`Al aumentarla, cada paso del descenso del gradiente es mayor.`],
+         [R`Épocas`, R`<code>epochs</code> de <code>fit</code>`, R`Con más épocas, la red se ajusta más al conjunto de entrenamiento.`],
+         [R`Tamaño del minilote`, R`<code>batch_size</code> de <code>fit</code>`, R`Al aumentarlo, cada paso usa más observaciones y el gradiente es menos ruidoso.`],
+         [R`Penalización L2 (\(\lambda\))`, R`<code>kernel_regularizer=keras.regularizers.L2(λ)</code> en cada <code>Dense</code>`, R`Al aumentarla, los pesos se encogen y la red se ajusta menos al entrenamiento.`],
+         [R`Dropout`, R`capa <code>Dropout(rate)</code> tras cada <code>Dense</code>`, R`Al aumentarlo, se apagan más neuronas en cada paso y la red se regulariza más.`],
+         [R`Paciencia de la parada temprana`, R`<code>patience</code> de <code>EarlyStopping</code>`, R`Al aumentarla, se esperan más épocas sin mejora antes de parar.`]],
+    args: [["activation", R`<code>"relu"</code>, <code>"sigmoid"</code>, <code>"tanh"</code> o <code>"softmax"</code>. Por defecto, <code>None</code> (identidad)`, R`Función de activación de cada capa <code>Dense</code>. La de la última capa depende del tipo de respuesta.`],
+           ["loss", R`<code>"mse"</code>, una entropía cruzada…`, R`Pérdida que se minimiza. Se fija en <code>compile</code> junto con el optimizador.`],
+           ["optimizer", R`<code>SGD</code> (con <code>momentum</code>) o <code>Adam</code>`, R`Algoritmo que da cada paso del descenso del gradiente.`],
+           ["kernel_initializer", R`<code>"glorot_uniform"</code> (por defecto) o <code>"he_normal"</code>`, R`Escala de los pesos iniciales de cada capa.`],
+           ["validation_split", "fracción entre 0 y 1", R`Parte de cada ajuste que se aparta para vigilar el error de validación y decidir la parada temprana.`],
+           ["restore_best_weights", R`<code>True</code> o <code>False</code> (por defecto)`, R`Al parar, recupera los pesos de la mejor época.`]],
     links: [
-      ["d_sesgo", R`La arquitectura, la penalización, el dropout y la parada temprana controlan la complejidad.`, ["t1a", "controlar-la-complejidad", "Controlar la complejidad"]],
-      ["d_hiper", R`La arquitectura, la tasa de aprendizaje y la regularización se eligen con datos de validación.`],
-      ["d_cv", R`Se compara con los demás modelos con la misma evaluación.`],
-      ["d_part", R`La parada temprana usa un conjunto de validación interno, separado del test.`],
-      ["d_prep", R`Los predictores se estandarizan para que el descenso del gradiente funcione bien.`, ["t1a", "descenso-del-gradiente-aspectos-prácticos", "Descenso del gradiente: aspectos prácticos"]],
-      ["d_train", R`Se entrena con descenso del gradiente por minilotes, con los epochs y la tasa de aprendizaje vistos en el tema 1.`, ["t1a", "lotes-estocástico-y-minilotes", "Lotes, estocástico y minilotes"]],
-      ["d_mreg", R`En regresión se evalúa con la métrica del problema.`],
-      ["d_mclas", R`En clasificación se evalúa con la métrica del problema.`]
+      ["d_sesgo", R`El tamaño de la red, la penalización, el dropout y la parada temprana controlan la complejidad. Una red grande sin regularizar puede tener un error de entrenamiento muy bajo y un error de validación peor que el de una red pequeña.`, ["t6a", "más-pesos-bajan-la-log-loss-de-entrenamiento", "Más pesos bajan la log-loss de entrenamiento"]],
+      ["d_hiper", R`La arquitectura y la regularización se eligen por validación cruzada, lo que exige ajustar varias redes.`, ["t6b", "hiperparámetros-de-entrenamiento-y-regularización", "Hiperparámetros de entrenamiento y regularización"]],
+      ["d_cv", V({ py: R`Keras valida con una sola división del entrenamiento (<code>validation_split</code>), y el resultado depende de esa división. Para comparar la red con los demás modelos se usa la validación cruzada, con el envoltorio de scikit-learn.`, r: R`Una sola división en entrenamiento y validación da un error que depende de esa división. La red se compara con los demás modelos por validación cruzada, con las mismas particiones.` }), ["t6a", "validar-una-red-de-keras", "Validar una red de Keras"]],
+      ["d_part", R`La parada temprana aparta una parte de cada ajuste para elegir la época. Esa parte es distinta de las particiones de la validación cruzada y del test.`, ["t6b", "parada-temprana", "Parada temprana"]],
+      ["d_prep", enPipe(p => R`Los predictores se estandarizan ${p}, antes de la red, para que el descenso del gradiente avance bien.`), ["t6a", "escalar-los-predictores", "Escalar los predictores"]],
+      ["d_train", R`Se entrena con descenso del gradiente por minilotes. La retropropagación calcula el gradiente de cada peso desde la salida hacia la entrada, y el momento y Adam cambian el paso.`, ["t6b", "el-algoritmo-de-retropropagación", "El algoritmo de retropropagación"]],
+      ["d_mreg", R`En regresión, la capa de salida usa la identidad y la pérdida es el error cuadrático. La red se compara con los demás modelos con el RMSE de validación cruzada.`, ["t6a", "la-capa-de-salida-según-el-problema", "La capa de salida según el problema"]],
+      ["d_mclas", R`En clasificación, la salida da probabilidades y la pérdida es la log-loss. Una red sin regularizar puede mejorar la exactitud de la regresión logística y empeorar su log-loss, y la parada temprana lo corrige.`, ["t6b", "parada-temprana-en-clasificación", "Parada temprana en clasificación"]]
     ],
-    slides: [],
-    vocab: ["activacion", "epoch", "minilote", "dropout", "paradatemprana"],
-    materiales: ["plan"] },
+    slides: [["t6a", "una-neurona-dobla-una-combinación-lineal", "Una neurona dobla una combinación lineal"], ["t6a", "la-predicción-es-una-suma-de-codos", "La predicción es una suma de codos"], ["t6a", "la-profundidad-multiplica-los-tramos", "La profundidad multiplica los tramos"], ["t6b", "problemas-y-correcciones", "Problemas al entrenar una red y correcciones"], ["t6b", "penalizar-los-pesos", "Penalizar los pesos"], ["t6b", "dropout-apagar-neuronas-al-azar", "Dropout: apagar neuronas al azar"]],
+    vocab: ["activacion", "relu", "retroprop", "epoch", "minilote", "paradatemprana", "dropout"],
+    materiales: ["t6a", "t6b", "m6"] },
 
   /* ---------- Tema 7 ---------- */
   { id: "doubleml", tarea: [], fam: "f_causal", label: "DoubleML", tema: "T7", pendiente: true,
-    sesion: ["P7 10 dic (E5)", "T7 15 dic"],
+    sesion: ["T7 15 dic"],
     porque: R`Responde a una pregunta distinta de la predicción: cuánto cambia la respuesta por efecto de una intervención, como una campaña de retención. Usa modelos de aprendizaje automático como herramienta dentro de esa estimación.`,
     idea: R`Estima el efecto causal de una intervención combinando modelos de aprendizaje automático con dos técnicas, la ortogonalización y el cross-fitting.`,
     modelo: { formula: "", texto: R`El objetivo es estimar un efecto: comparar qué ocurriría con la intervención y sin ella. El contenido se publicará en el tema 7.` },
@@ -1367,9 +1396,9 @@ const R_IMPL = {
     tidymodels: { fn: [["step_poly()", "recipes", "Crea las potencias (paso de la receta)"], ["linear_reg()", "parsnip", "Ajusta la regresión"]],
       hp: [[R`Grado del polinomio (\(d\))`, R`<code>degree</code> (en <code>step_poly()</code>)`]],
       nota: R`Por defecto, <code>step_poly()</code> crea polinomios ortogonales. Las predicciones coinciden con las de las potencias \(x, x^2, \dots\), pero los coeficientes no. Para usar las potencias se añade <code>options = list(raw = TRUE)</code>.` },
-    caret: { fn: [["poly(x, degree)", "stats", "Potencias dentro de la fórmula"], [`train(..., method = "lm")`, "caret", "Ajusta la regresión"]],
+    caret: { fn: [["poly(x, degree, raw = TRUE)", "stats", "Potencias dentro de la fórmula"], [`train(..., method = "lm")`, "caret", "Ajusta la regresión"]],
       hp: [[R`Grado del polinomio (\(d\))`, R`<code>degree</code> (en <code>poly()</code>)`]],
-      nota: R`La rejilla de <code>train()</code> no incluye el grado. Se ajusta un modelo por grado con las mismas particiones y se comparan con <code>resamples()</code>.` },
+      nota: R`Con <code>raw = TRUE</code>, <code>poly()</code> crea las potencias \(x, x^2, \dots\). Sin ese argumento crea polinomios ortogonales: las predicciones coinciden, pero los coeficientes no. La rejilla de <code>train()</code> no incluye el grado. Se ajusta un modelo por grado con las mismas particiones y se comparan con <code>resamples()</code>.` },
     mlr3: { fn: [[`po("mutate")`, "mlr3pipelines", "Crea las potencias"], [`lrn("regr.lm")`, "mlr3learners", "Ajusta la regresión"]],
       hp: [[R`Grado del polinomio (\(d\))`, R`fórmulas de <code>mutation</code>, por ejemplo <code>list(x2 = ~ x^2)</code>`]],
       lib: ["mlr3pipelines"],
@@ -1432,10 +1461,10 @@ const R_IMPL = {
     tidymodels: { fn: [["linear_reg()", "parsnip", "Especificación del modelo"], [`set_engine("glm", family = Gamma(link = "log"))`, "stats", "GLM Gamma con enlace logarítmico"]],
       sinHp: R`Con el motor glm no tiene hiperparámetros. glmnet admite la familia Gamma (<code>family = Gamma(link = "log")</code>) si se necesita penalizar.` },
     caret: { fn: [[`train(..., method = "glm", family = Gamma(link = "log"))`, "caret", "GLM Gamma con enlace logarítmico"]],
-      sinHp: R`Con <code>method = "glm"</code> no tiene hiperparámetros.` },
-    mlr3: { fn: [[`lrn("regr.glm", family = "Gamma")`, "mlr3extralearners", "GLM Gamma"]], lib: ["mlr3extralearners"],
-      sinHp: R`No tiene hiperparámetros.`,
-      nota: R`mlr3learners no incluye la familia Gamma: <code>regr.glmnet</code> solo admite <code>"gaussian"</code> y <code>"poisson"</code>. El learner <code>regr.glm</code> está en mlr3extralearners, que no está en CRAN y se instala desde r-universe o GitHub.` }
+      sinHp: R`Con <code>method = "glm"</code> no tiene hiperparámetros. Si se necesita penalizar, <code>method = "glmnet"</code> admite <code>family = Gamma(link = "log")</code>.` },
+    mlr3: { fn: [[`lrn("regr.glm", family = "Gamma", link = "log")`, "mlr3extralearners", "GLM Gamma con enlace logarítmico"]], lib: ["mlr3extralearners"],
+      sinHp: R`No tiene hiperparámetros. En mlr3 no hay un learner que penalice un GLM Gamma.`,
+      nota: R`Hay que indicar <code>link = "log"</code>, porque el enlace por defecto de la familia Gamma es el inverso. mlr3learners no incluye la familia Gamma: <code>regr.glmnet</code> solo admite <code>"gaussian"</code> y <code>"poisson"</code>. El learner <code>regr.glm</code> está en mlr3extralearners, que no está en CRAN y se instala desde r-universe o GitHub.` }
   },
   poisson: {
     tidymodels: { fn: [["poisson_reg()", "poissonreg", "GLM Poisson"], [`set_engine("glm")`, "stats", "Sin penalización"], [`set_engine("glmnet")`, "glmnet", "Con penalización"]], lib: ["poissonreg"],
@@ -1549,34 +1578,34 @@ const R_IMPL = {
   },
   svr: {
     tidymodels: { fn: [["svm_rbf()", "parsnip", "Núcleo RBF"], ["svm_linear()", "parsnip", "Núcleo lineal"], ["svm_poly()", "parsnip", "Núcleo polinómico"], [`set_engine("kernlab")`, "kernlab", "Ajuste"]],
-      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del tubo (\(\varepsilon\))`, R`<code>margin</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>rbf_sigma</code> (\(\sigma\) en kernlab)`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>svm_poly()</code>)`]], nota: NOTA_KERNLAB },
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del tubo (\(\varepsilon\))`, R`<code>margin</code>`], [R`Parámetro del núcleo RBF (\(\gamma\))`, R`<code>rbf_sigma</code> (\(\sigma\) en kernlab)`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>svm_poly()</code>)`]], nota: NOTA_KERNLAB },
     caret: { fn: [[`train(..., method = "svmRadial")`, "caret", "Núcleo RBF (kernlab)"], [`train(..., method = "svmLinear")`, "caret", "Núcleo lineal"], [`train(..., method = "svmPoly")`, "caret", "Núcleo polinómico"]],
-      hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>sigma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>"svmPoly"</code>)`]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`], [R`Parámetro del núcleo RBF (\(\gamma\))`, R`<code>sigma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>"svmPoly"</code>)`]],
       args: [["epsilon", R`número positivo (0,1 por defecto)`, R`Anchura del tubo \(\varepsilon\). No está en la rejilla y se pasa como argumento fijo.`]], nota: NOTA_KERNLAB },
     mlr3: { fn: [[`lrn("regr.svm", type = "eps-regression", kernel = "radial")`, "mlr3learners", "Regresión (paquete e1071)"]],
-      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del tubo (\(\varepsilon\))`, R`<code>epsilon</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code>`]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del tubo (\(\varepsilon\))`, R`<code>epsilon</code>`], [R`Parámetro del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code>`]],
       args: [["kernel", R`<code>"radial"</code> (por defecto), <code>"linear"</code> o <code>"polynomial"</code>`, R`Núcleo: fija la forma de la función que se puede ajustar.`], ["type", R`<code>"eps-regression"</code>`, R`Tipo de SVM. Con <code>"eps-regression"</code> usa la pérdida insensible a \(\varepsilon\).`]], nota: R`mlr3 solo deja fijar <code>cost</code> y <code>epsilon</code> si se ha indicado <code>type</code>, y <code>gamma</code> o <code>degree</code> si se ha indicado <code>kernel</code>. ` + NOTA_E1071 }
   },
   svc: {
     tidymodels: { fn: [["svm_rbf()", "parsnip", "Núcleo RBF"], ["svm_linear()", "parsnip", "Núcleo lineal"], ["svm_poly()", "parsnip", "Núcleo polinómico"], [`set_engine("kernlab")`, "kernlab", "Ajuste"]],
-      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>rbf_sigma</code> (\(\sigma\) en kernlab)`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>svm_poly()</code>)`]], nota: NOTA_KERNLAB },
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Parámetro del núcleo RBF (\(\gamma\))`, R`<code>rbf_sigma</code> (\(\sigma\) en kernlab)`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>svm_poly()</code>)`]], nota: NOTA_KERNLAB },
     caret: { fn: [[`train(..., method = "svmRadial")`, "caret", "Núcleo RBF (kernlab)"], [`train(..., method = "svmLinear")`, "caret", "Núcleo lineal"], [`train(..., method = "svmPoly")`, "caret", "Núcleo polinómico"]],
-      hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>sigma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>"svmPoly"</code>)`]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>C</code>`], [R`Parámetro del núcleo RBF (\(\gamma\))`, R`<code>sigma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code> (en <code>"svmPoly"</code>)`]],
       nota: R`Para obtener probabilidades hay que indicar <code>classProbs = TRUE</code> en <code>trainControl()</code>. ` + NOTA_KERNLAB },
     mlr3: { fn: [[`lrn("classif.svm", type = "C-classification", kernel = "radial")`, "mlr3learners", "Clasificación (paquete e1071)"]],
-      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Anchura del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code>`]],
+      hp: [[R`Coste de los errores (\(C\))`, R`<code>cost</code>`], [R`Parámetro del núcleo RBF (\(\gamma\))`, R`<code>gamma</code>`], ["Grado del núcleo polinómico", R`<code>degree</code>`]],
       args: [["kernel", R`<code>"radial"</code> (por defecto), <code>"linear"</code> o <code>"polynomial"</code>`, R`Núcleo: fija la forma de la frontera.`], ["class.weights", "un peso por clase", R`Encarece los errores de la clase rara.`]], nota: R`mlr3 solo deja fijar <code>cost</code> si se ha indicado <code>type</code>, y <code>gamma</code> o <code>degree</code> si se ha indicado <code>kernel</code>. ` + NOTA_E1071 }
   },
   mlp: {
     tidymodels: { fn: [["mlp()", "parsnip", "Especificación del modelo"], [`set_engine("nnet")`, "nnet", "Una capa oculta"], [`set_engine("keras")`, "keras", "Una capa oculta, con dropout"]],
-      hp: [["Arquitectura (capas y neuronas)", R`<code>hidden_units</code>`], ["Penalización L2", R`<code>penalty</code>`], ["Tasa de aprendizaje", R`<code>learn_rate</code> (motor brulee)`], ["Dropout", R`<code>dropout</code> (motores keras y brulee)`]],
-      args: [["epochs", "número entero", R`Número de epochs (<code>maxit</code> en nnet).`], ["activation", R`<code>"relu"</code>, <code>"sigmoid"</code>…`, R`Función de activación de las neuronas ocultas (motores keras y brulee).`]],
-      nota: R`Con los motores nnet y keras, la red tiene una sola capa oculta. El motor brulee_two_layer admite dos, y para más capas se usa directamente el paquete keras.` },
+      hp: [["Neuronas de cada capa", R`<code>hidden_units</code>`], [R`Tasa de aprendizaje (\(\eta\))`, R`<code>learn_rate</code> (motor brulee)`], ["Épocas", R`<code>epochs</code>`], [R`Penalización L2 (\(\lambda\))`, R`<code>penalty</code>`], ["Dropout", R`<code>dropout</code> (motores keras y brulee)`]],
+      args: [["activation", R`<code>"relu"</code>, <code>"sigmoid"</code>…`, R`Función de activación de las neuronas ocultas (motores keras y brulee).`]],
+      nota: R`Con los motores nnet y keras, la red tiene una sola capa oculta. El motor brulee_two_layer admite dos, y para más capas se usa directamente el paquete keras. En nnet, <code>epochs</code> corresponde a <code>maxit</code>.` },
     caret: { fn: [[`train(..., method = "nnet")`, "caret", "Una capa oculta (paquete nnet)"]],
-      hp: [["Arquitectura (capas y neuronas)", R`<code>size</code> (neuronas de la capa oculta)`], ["Penalización L2", R`<code>decay</code>`]],
+      hp: [["Neuronas de cada capa", R`<code>size</code> (neuronas de la única capa oculta)`], [R`Penalización L2 (\(\lambda\))`, R`<code>decay</code>`]],
       args: [["maxit", "número entero (100 por defecto)", R`Máximo de iteraciones.`], ["linout", R`<code>TRUE</code> en regresión`, R`Salida lineal en lugar de logística.`]] },
     mlr3: { fn: [[`lrn("regr.nnet")`, "mlr3learners", "Regresión (paquete nnet)"], [`lrn("classif.nnet")`, "mlr3learners", "Clasificación"]],
-      hp: [["Arquitectura (capas y neuronas)", R`<code>size</code> (neuronas de la capa oculta)`], ["Penalización L2", R`<code>decay</code>`]],
+      hp: [["Neuronas de cada capa", R`<code>size</code> (neuronas de la única capa oculta)`], [R`Penalización L2 (\(\lambda\))`, R`<code>decay</code>`]],
       args: [["maxit", "número entero", R`Máximo de iteraciones.`]] }
   }
 };
@@ -1739,13 +1768,6 @@ function makeNode(n) {
     else el.classList.add("nocmp");
     const t = document.createElement("span");
     t.className = "tema"; t.textContent = n.tema; el.appendChild(t);
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "sim"; b.disabled = true;
-    b.dataset.simulador = n.id;
-    b.textContent = "Simular";
-    b.title = "Simulador: se activará en una fase posterior";
-    b.setAttribute("aria-label", "Simular " + n.label + " (no disponible todavía)");
-    el.appendChild(b);
   }
   if (n.type === "objetivo" || n.type === "familia" || n.type === "hub") {
     const t = document.createElement("button");
@@ -1849,7 +1871,7 @@ function layout() {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const [id, p] of pos) { if (!visible(id)) continue; minX = Math.min(minX, p.x); minY = Math.min(minY, p.y); maxX = Math.max(maxX, p.x + p.w); maxY = Math.max(maxY, p.y + p.h); }
   const PAD = 40, spineX = x.dec + D.dec + 26;
-  maxX = Math.max(maxX, spineX + 4);
+  if (visible(DECISIONES[0].id)) maxX = Math.max(maxX, spineX + 4);
   const ox = PAD - minX, oy = PAD - minY;
   for (const [id, p] of pos) { p.x += ox; p.y += oy; const el = els.get(id); el.style.left = p.x + "px"; el.style.top = p.y + "px"; }
   G = { pos, W: maxX - minX + PAD * 2, H: maxY - minY + PAD * 2, spineX: spineX + ox };
@@ -1984,14 +2006,14 @@ const fmtHp = t => t.replace(/\((\\\(.+?\\\))\)/g, '<span class="nw">($1)</span>
 // Sección de código del estimador («En scikit-learn» o «En R con …»), hiperparámetros y otros argumentos.
 function implHTML(n) {
   const I = INFRAS[state.infra], im = impl(n);
-  let b = `<h3>${I.titulo}</h3>`;
+  let b = `<h3>${(state.infra === "py" && n.implTitulo) || I.titulo}</h3>`;
   if (!im) return b + `<p class="note">Sin implementación en ${I.nombre} en el mapa${n.pendiente ? ", porque la ficha es provisional" : ""}.</p>`;
   if (state.infra === "py") {
     const mods = {};
     im.fn.forEach(([c, m]) => (mods[m] = mods[m] || []).push(c));
     b += `<div class="tw"><table class="hp"><thead><tr><th>Clase</th><th>Módulo</th><th>Uso</th></tr></thead><tbody>` +
       im.fn.map(r => `<tr><td><code class="nw">${r[0]}</code></td><td><code class="nw">${r[1]}</code></td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>` +
-      `<pre class="imp">` + Object.entries(mods).map(([m, cs]) => m === "tensorflow.keras" ? `from tensorflow import keras` : `from ${m} import ${cs.join(", ")}`).join("\n") + `</pre>`;
+      `<pre class="imp">` + Object.entries(mods).map(([m, cs]) => m === "keras" ? `import keras` : `from ${m} import ${cs.join(", ")}`).join("\n") + `</pre>`;
   } else {
     b += `<div class="tw"><table class="hp"><thead><tr><th>Código</th><th>Paquete</th><th>Uso</th></tr></thead><tbody>` +
       im.fn.map(r => `<tr><td><code class="nw">${r[0]}</code></td><td><code class="nw">${r[1]}</code></td><td>${r[2]}</td></tr>`).join("") + `</tbody></table></div>` +
@@ -2053,18 +2075,78 @@ function openPanel(id) {
   if (n.slides && n.slides.length) b += `<h3>Para verlo en las slides</h3>` + (state.infra !== "py" ? `<p class="note">Las slides del curso usan Python. Los conceptos son los mismos.</p>` : "") + `<ul class="slides">` + n.slides.map(r => `<li>${slideLink(r)}</li>`).join("") + `</ul>`;
   if (n.vocab && n.vocab.length) b += `<h3>Vocabulario</h3><dl class="vocab">` + n.vocab.map(k => `<dt>${VOCAB[k][0]}</dt><dd>${VOCAB[k][1]}</dd>`).join("") + `</dl>`;
   b += matLinks(n.materiales);
-  if (n.type === "estimador") {
-    b += `<div class="simbox"><button type="button" disabled data-simulador="${n.id}" aria-label="Simular ${n.label} (no disponible todavía)">Simular</button>El simulador de este estimador se activará en una fase posterior.</div>`;
-  }
   $("#phead").innerHTML = head;
   $("#pbody").innerHTML = b;
+  addToc();
   $("#pbody").scrollTop = 0;
   $("#pclose").addEventListener("click", closePanel);
+  closeHelp();
   document.body.classList.remove("cmp-open");
   document.body.classList.add("panel-open");
   renderMath($("#panel"));
 }
+/* Ayuda: cómo usar el mapa. Se abre con el botón «?», con la tecla ? y con #ayuda en la URL. */
+const AYUDA = `
+  <p class="idea">El mapa resume la asignatura en dos grupos de nodos: los <b>estimadores</b>, en azul y ordenados por familias, y las <b>decisiones</b> que se toman con cualquiera de ellos, en terracota, como la validación cruzada o la elección de hiperparámetros. Las líneas del centro unen cada estimador con las decisiones que le afectan.</p>
+  <h3>Cómo moverse</h3>
+  <ul>
+    <li>Al pulsar un nodo se abre su ficha y se resaltan sus vínculos. Al pulsarlo otra vez, la ficha se cierra.</li>
+    <li>Un estimador sangrado bajo otro es una variante suya. Ridge, por ejemplo, extiende la regresión lineal.</li>
+    <li>El buscador encuentra estimadores, decisiones y términos, como «poda» o «AUC».</li>
+    <li>El selector <b>Código</b> cambia los ejemplos entre Python y tres marcos de R. Las explicaciones son las mismas.</li>
+    <li><b>Lista</b> muestra los mismos nodos en una lista y una tabla que resume todos los estimadores.</li>
+  </ul>
+  <h3>Tres formas de estudiar con el mapa</h3>
+  <ul>
+    <li><b>Repasar un tema.</b> Abre la familia del tema y recorre sus fichas de arriba abajo. Cada ficha enlaza las slides en las que se explica.</li>
+    <li><b>Partir de una decisión.</b> Abre, por ejemplo, <button type="button" class="chip" data-go="d_cv">Validación cruzada</button> y comprueba cómo se aplica en cada estimador.</li>
+    <li><b>Comparar dos estimadores.</b> Pulsa <b>Comparar</b> y elige dos, por ejemplo Ridge y Lasso. El panel indica en qué coinciden y en qué se diferencian.</li>
+  </ul>
+  <h3>Cómo interpretar una ficha</h3>
+  <ul>
+    <li><b>Por qué este modelo</b> indica qué problema resuelve y cuándo conviene.</li>
+    <li><b>Especificación</b> muestra la fórmula y qué se estima.</li>
+    <li><b>Qué lo hace peculiar</b> describe sus supuestos, su flexibilidad, su interpretabilidad y su coste.</li>
+    <li>Las tablas de código recogen las clases o funciones, los <b>hiperparámetros</b> y el efecto de aumentar cada uno.</li>
+    <li><b>Decisiones vinculadas</b> explica cómo se aplica cada decisión a ese estimador.</li>
+  </ul>
+  <p class="note">Las etiquetas de sesión siguen la planificación: T es una sesión de teoría, P una práctica, E una entrega y H un hito del proyecto.</p>
+  <h3>Teclado</h3>
+  <ul>
+    <li><b>+</b> y <b>−</b> acercan y alejan, y <b>0</b> ajusta el mapa a la pantalla.</li>
+    <li><b>F</b> activa la pantalla completa, <b>C</b> la comparación y <b>?</b> esta ayuda.</li>
+    <li><b>Esc</b> cierra el panel. Con el tabulador se recorren los nodos, e <b>Intro</b> abre la ficha del nodo con el foco.</li>
+  </ul>`;
+const helpOpen = () => document.body.classList.contains("help-open");
+function openHelp() {
+  if (state.cmpMode) leaveCompare();
+  if (state.sel) { state.sel = null; applyFocus(); }
+  $("#phead").innerHTML = `<div class="p-kind objetivo">Ayuda</div><h2>Cómo usar el mapa</h2><button type="button" class="p-close" id="pclose" aria-label="Cerrar panel">×</button>`;
+  $("#pbody").innerHTML = AYUDA;
+  $("#pbody").scrollTop = 0;
+  $("#pclose").addEventListener("click", closePanel);
+  document.body.classList.remove("cmp-open");
+  document.body.classList.add("panel-open", "help-open");
+  $("#helpBtn").setAttribute("aria-pressed", "true");
+  try { history.replaceState(null, "", "#ayuda"); } catch (e) { /* iframe sandbox */ }
+}
+function closeHelp() { document.body.classList.remove("help-open"); $("#helpBtn").setAttribute("aria-pressed", "false"); }
+// Índice de secciones al principio de una ficha larga.
+function addToc() {
+  const body = $("#pbody"), hs = [...body.querySelectorAll(":scope > h3, :scope > .porque > h3")];
+  if (hs.length < 4) return;
+  const nav = document.createElement("nav");
+  nav.className = "toc"; nav.setAttribute("aria-label", "Secciones de la ficha");
+  hs.forEach((h, i) => {
+    h.id = "sec-" + i;
+    const b = document.createElement("button");
+    b.type = "button"; b.dataset.sec = h.id; b.textContent = h.textContent;
+    nav.appendChild(b);
+  });
+  body.prepend(nav);
+}
 function closePanel() {
+  closeHelp();
   if (state.cmpMode) leaveCompare();
   document.body.classList.remove("panel-open", "cmp-open");
   select(null);
@@ -2392,11 +2474,10 @@ viewport.addEventListener("click", e => {
   if (moved) { moved = false; return; }
   const tog = e.target.closest(".tog");
   if (tog) { toggle(tog.dataset.tog); return; }
-  if (e.target.closest(".sim")) return;
   const node = e.target.closest(".node");
   if (state.cmpMode) { if (node) toggleCmp(node.dataset.id); return; }
   if (node) { const id = node.dataset.id; if (state.sel === id) closePanel(); else select(id); return; }
-  if (state.sel) closePanel();
+  if (state.sel || helpOpen()) closePanel();
 });
 viewport.addEventListener("dblclick", e => {
   const node = e.target.closest(".node.familia, .node.hub, .node.objetivo");
@@ -2405,6 +2486,8 @@ viewport.addEventListener("dblclick", e => {
 viewport.addEventListener("keydown", e => {
   const node = e.target.closest(".node");
   if (!node) return;
+  // Los botones de plegar reciben su propio clic: Intro y Espacio no deben seleccionar el nodo.
+  if (e.target !== node && e.target.closest("button")) return;
   if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (state.cmpMode) toggleCmp(node.dataset.id); else select(node.dataset.id); }
 });
 stage.addEventListener("pointerover", e => {
@@ -2430,6 +2513,8 @@ function toggle(id) {
    PANEL: navegación entre nodos
    ===================================================================== */
 $("#panel").addEventListener("click", e => {
+  const sec = e.target.closest("[data-sec]");
+  if (sec) { document.getElementById(sec.dataset.sec).scrollIntoView({ block: "start", behavior: "smooth" }); return; }
   const c = e.target.closest("[data-cmp]");
   if (c) { enterCompare(c.dataset.cmp); return; }
   const go = e.target.closest("[data-go]");
@@ -2445,6 +2530,7 @@ document.addEventListener("keydown", e => {
   if (document.body.classList.contains("list-mode")) {
     if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
     if (e.key === "c" || e.key === "C") { e.preventDefault(); toggleCompareMode(); }
+    if (e.key === "?") { e.preventDefault(); toggleHelp(); }
     return;
   }
   const { w, h } = visibleArea();
@@ -2453,9 +2539,10 @@ document.addEventListener("keydown", e => {
   else if (e.key === "0") { e.preventDefault(); fit(); }
   else if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFullscreen(); }
   else if (e.key === "c" || e.key === "C") { e.preventDefault(); toggleCompareMode(); }
+  else if (e.key === "?") { e.preventDefault(); toggleHelp(); }
 });
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { if ($("#results").classList.contains("show")) hideResults(); else if (state.sel || state.cmpMode) closePanel(); }
+  if (e.key === "Escape") { if ($("#results").classList.contains("show")) hideResults(); else if (state.sel || state.cmpMode || helpOpen()) closePanel(); }
 });
 
 /* =====================================================================
@@ -2481,7 +2568,7 @@ let active = -1, current = [];
 function search(q) {
   const t = norm(q.trim());
   state.query = t;
-  if (t.length < 2) { document.body.classList.remove("searching"); els.forEach(el => el.classList.remove("match")); hideResults(); return; }
+  if (t.length < 2) { document.body.classList.remove("searching"); els.forEach(el => el.classList.remove("match")); current = []; active = -1; hideResults(); return; }
   const words = t.split(/\s+/);
   current = INDEX.map(it => {
     let score = 0;
@@ -2528,6 +2615,17 @@ function goResult(id) {
 /* =====================================================================
    VISTA EN LISTA
    ===================================================================== */
+// Tabla resumen de los estimadores: tarea, hiperparámetros y niveles orientativos (NIVELES).
+function resumenHTML() {
+  const tarea = e => e.tarea.length === 2 ? "Regresión y clasificación" : e.tarea[0] === "reg" ? "Regresión" : "Clasificación";
+  const nivel = (k, v) => `<td>${meter("a", v)}<span class="niv">${nivTxt(k, v)}</span></td>`;
+  return `<details class="resumen"${isNarrow() ? "" : " open"}><summary>Resumen de los estimadores</summary>
+    <p class="note">Pulsa un estimador para abrir su ficha. Los niveles son orientativos y resumen la sección «Qué lo hace peculiar» de cada ficha. Varias casillas marcadas indican que el nivel depende de los hiperparámetros.</p>
+    <div class="tw"><table class="hp res"><thead><tr><th>Estimador</th><th>Respuesta</th><th>Hiperparámetros</th><th>Flexibilidad</th><th>Interpretabilidad</th><th>Coste</th></tr></thead><tbody>` +
+    ESTIMADORES.filter(e => comparable(e.id)).map(e => { const N = NIVELES[e.id], hp = hpOf(e);
+      return `<tr><td><button type="button" class="chip est" data-go="${e.id}">${e.label}</button><small>${e.tema}</small></td><td>${tarea(e)}</td><td>${hp.length ? hp.map(r => fmtHp(r[0])).join("<br>") : "Ninguno"}</td>${nivel("flex", N.flex)}${nivel("interp", N.interp)}${nivel("coste", N.coste)}</tr>`; }).join("") +
+    `</tbody></table></div></details>`;
+}
 function buildOutline() {
   const w = $("#outline .wrap");
   let h = `<button type="button" class="rootbtn" data-go="${ROOT.id}">${ROOT.label}<small>${ROOT.sub}</small></button>`;
@@ -2536,9 +2634,11 @@ function buildOutline() {
       f.children.map(c => { const e = NODES.get(c); return `<li style="padding-left:${e.depth * 18}px"><button type="button" data-go="${c}"><span>${e.depth ? "↳ " : ""}${e.label}</span><small>${e.tema}${e.pendiente ? " · por publicar" : ""}</small></button></li>`; }).join("") +
       `</ul></details>`;
   });
+  h = h.replace("</button>", "</button>" + resumenHTML());
   h += `<details class="hub" open><summary>${HUB.label}</summary><ul>` +
     DECISIONES.map(d => `<li><button type="button" data-go="${d.id}"><span>${T(d.label)}</span><small>${d.back.length} estimadores</small></button></li>`).join("") + `</ul></details>`;
   w.innerHTML = h;
+  renderMath(w);
 }
 buildOutline();
 $("#outline").addEventListener("click", e => {
@@ -2553,7 +2653,11 @@ function toggleList(force) {
   document.body.classList.toggle("list-mode", on);
   $("#listBtn").setAttribute("aria-pressed", on);
   $("#listBtn").textContent = on ? "Mapa" : "Lista";
-  if (!on) { layout(); if (state.sel) centerOn(state.sel); else fit(); }
+  if (!on) {
+    // select() despliega la rama del nodo elegido en la lista antes de centrarlo.
+    if (state.sel && !state.cmpMode) { const top = $("#pbody").scrollTop; select(state.sel, { center: true }); $("#pbody").scrollTop = top; }
+    else { layout(); fit(); }
+  }
 }
 $("#listBtn").addEventListener("click", () => toggleList());
 // Cambio de infraestructura: se recuerda en la URL (?infra=) y, si se puede, en el navegador.
@@ -2565,7 +2669,7 @@ function setInfra(k) {
   try { localStorage.setItem("tap-mapa-infra", k); } catch (e) { /* sin almacenamiento */ }
   try {
     const u = new URL(location.href);
-    if (k === "py") u.searchParams.delete("infra"); else u.searchParams.set("infra", k);
+    u.searchParams.set("infra", k); // también con Python: así el enlace fija la opción elegida para quien lo reciba
     history.replaceState(null, "", u.pathname + u.search + u.hash);
   } catch (e) { /* iframe sandbox */ }
   let relabel = false;
@@ -2577,6 +2681,8 @@ function setInfra(k) {
 $("#infra").value = state.infra;
 document.documentElement.dataset.infra = state.infra;
 $("#infra").addEventListener("change", e => setInfra(e.target.value));
+function toggleHelp() { if (helpOpen()) closePanel(); else openHelp(); }
+$("#helpBtn").addEventListener("click", toggleHelp);
 function toggleCompareMode() { if (state.cmpMode) closePanel(); else enterCompare(state.sel); }
 $("#cmpBtn").addEventListener("click", toggleCompareMode);
 
@@ -2630,11 +2736,12 @@ fit({ readable: true });
 (function fromHash() {
   const c = /comparar=([\w-]*),?([\w-]*)/.exec(location.hash);
   if (c) { state.cmp = [c[1], c[2]].map(id => comparable(id) ? id : null); enterCompare(); return; }
+  if (location.hash === "#ayuda") { openHelp(); return; }
   const m = /nodo=([\w-]+)/.exec(location.hash);
   if (m && NODES.has(m[1])) select(m[1], { center: true });
 })();
 // KaTeX se carga con defer: si el panel ya estaba abierto, se renderiza al llegar
-window.addEventListener("load", () => { if (document.body.classList.contains("panel-open")) renderMath($("#panel")); });
+window.addEventListener("load", () => { renderMath($("#outline")); if (document.body.classList.contains("panel-open")) renderMath($("#panel")); });
 </script>
 </body>
 </html>
