@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -21,8 +21,9 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -57,22 +58,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-702e08239ac3b5eeb6a3c2a3f2bd3066.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3a9777ff9cfa416bd97a54f94a068a98.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -87,7 +90,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "Sin resultados",
+    "search-no-results-text": "No se han encontrado resultados",
     "search-matching-documents-text": "documentos encontrados",
     "search-copy-link-title": "Copiar el enlace en la búsqueda",
     "search-hide-matches-text": "Ocultar resultados adicionales",
@@ -100,7 +103,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Buscar"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -118,7 +121,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -136,7 +139,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -217,7 +220,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Versión resuelta
+<span class="screen-reader-only">Nota</span>Versión resuelta
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -241,8 +244,8 @@ Versión resuelta
 <section id="preparación" class="level2">
 <h2 class="anchored" data-anchor-id="preparación">0. Preparación</h2>
 <p>Usa el entorno <code>tap</code> del curso.</p>
-<div id="4bf28b16" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:11.595006Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:11.594907Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:13.380773Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:13.380287Z&quot;}" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<div id="4bf28b16" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:11.595006Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:11.594907Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:13.380773Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:13.380287Z&quot;}}" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> display</span>
@@ -260,13 +263,13 @@ Versión resuelta
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    confusion_matrix, ConfusionMatrixDisplay,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>SEMILLA <span class="op">=</span> <span class="dv">42</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>SEMILLA <span class="op">=</span> <span class="dv">42</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="datos-y-población" class="level3">
 <h3 class="anchored" data-anchor-id="datos-y-población">Datos y población</h3>
 <p>Cargamos la EES 2022 desde la web del curso y conservamos la población de los temas 2 y 3: salario positivo y hasta el percentil 99. Trabajamos con 10 000 trabajadores elegidos al azar. La celda tarda unos segundos porque descarga los datos.</p>
-<div id="4c85df3d" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:13.382400Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:13.382265Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.115433Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.114814Z&quot;}" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos de la EES 2022 en la web del curso (separador: tabulación).</span></span>
+<div id="4c85df3d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:13.382400Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:13.382265Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.115433Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.114814Z&quot;}}" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos de la EES 2022 en la web del curso (separador: tabulación).</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> <span class="st">"https://juandmontoro.github.io/tap/data/EES_2022.tab"</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(URL_DATOS, sep<span class="op">=</span><span class="st">"</span><span class="ch">\t</span><span class="st">"</span>, low_memory<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> df.columns.<span class="bu">str</span>.replace(<span class="st">'"'</span>, <span class="st">""</span>).<span class="bu">str</span>.strip()</span>
@@ -278,7 +281,7 @@ Versión resuelta
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 10 000 trabajadores elegidos al azar.</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> limpio.sample(n<span class="op">=</span><span class="dv">10000</span>, random_state<span class="op">=</span>SEMILLA).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Observaciones:"</span>, <span class="bu">len</span>(datos))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Observaciones:"</span>, <span class="bu">len</span>(datos))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Observaciones: 10000</code></pre>
 </div>
@@ -345,8 +348,8 @@ Versión resuelta
 </table>
 <p><strong>El árbol trata los códigos como números.</strong> Un corte como <code>ESTU &lt;= 5.5</code> separa los códigos 1 a 5 (sin título universitario) de los códigos 6 y 7 (con título universitario). Esto tiene sentido cuando los códigos siguen un orden (<code>ESTU</code>, <code>ANOS2</code>) o cuando la variable solo tiene dos valores. La ocupación (<code>CNO1</code>), el sector (<code>CNACE</code>) o la región (<code>NUTS1</code>) tienen códigos sin orden: un corte agruparía categorías al azar, y habría que crear columnas indicadoras como en los temas 2 y 3. Las dejamos fuera para que el árbol se lea con facilidad.</p>
 <p>Los árboles tampoco necesitan escalar los predictores: un corte depende solo del orden de los valores. Por eso aquí no hay <code>Pipeline</code> ni preprocesador.</p>
-<div id="7c200bc4" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.116864Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.116758Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.120422Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.120031Z&quot;}" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>PREDICTORES <span class="op">=</span> [<span class="st">"ESTU"</span>, <span class="st">"ANOS2"</span>, <span class="st">"ANOANTI"</span>, <span class="st">"JAP"</span>, <span class="st">"SEXO"</span>, <span class="st">"TIPOJOR"</span>, <span class="st">"TIPOCON"</span>, <span class="st">"RESPONSA"</span>]</span>
+<div id="7c200bc4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.116864Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.116758Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.120422Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.120031Z&quot;}}" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>PREDICTORES <span class="op">=</span> [<span class="st">"ESTU"</span>, <span class="st">"ANOS2"</span>, <span class="st">"ANOANTI"</span>, <span class="st">"JAP"</span>, <span class="st">"SEXO"</span>, <span class="st">"TIPOJOR"</span>, <span class="st">"TIPOCON"</span>, <span class="st">"RESPONSA"</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># X contiene los predictores e y, el salario.</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> datos[PREDICTORES]</span>
@@ -354,7 +357,7 @@ Versión resuelta
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Una sola división: 80 % entrenamiento y 20 % test.</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span>SEMILLA)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento:"</span>, <span class="bu">len</span>(X_train), <span class="st">"| test:"</span>, <span class="bu">len</span>(X_test))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento:"</span>, <span class="bu">len</span>(X_train), <span class="st">"| test:"</span>, <span class="bu">len</span>(X_test))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Entrenamiento: 8000 | test: 2000</code></pre>
 </div>
@@ -369,15 +372,15 @@ Versión resuelta
 <blockquote class="blockquote">
 <p><strong>Python que usamos aquí</strong> - <code>DecisionTreeRegressor(max_depth=2, random_state=SEMILLA)</code> crea un árbol de regresión con dos niveles de cortes. <code>random_state</code> decide los empates entre cortes igual de buenos. - <code>plot_tree(arbol, feature_names=..., filled=True, rounded=True, precision=1)</code> dibuja el árbol. <code>filled=True</code> colorea cada caja según su predicción y <code>precision=1</code> muestra las cifras con un decimal.</p>
 </blockquote>
-<div id="fada8c12" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.121592Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.121515Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.260778Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.260375Z&quot;}" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Árbol de regresión con dos niveles de cortes.</span></span>
+<div id="fada8c12" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.121592Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.121515Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.260778Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.260375Z&quot;}}" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Árbol de regresión con dos niveles de cortes.</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>arbol_corto <span class="op">=</span> DecisionTreeRegressor(max_depth<span class="op">=</span><span class="dv">2</span>, random_state<span class="op">=</span>SEMILLA)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>arbol_corto.fit(X_train, y_train)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Dibujo del árbol ajustado.</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plot_tree(arbol_corto, feature_names<span class="op">=</span>PREDICTORES, filled<span class="op">=</span><span class="va">True</span>, rounded<span class="op">=</span><span class="va">True</span>, precision<span class="op">=</span><span class="dv">1</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -401,8 +404,8 @@ Versión resuelta
 <p>Después repite el mismo cálculo dentro de cada grupo, y así hasta llegar a <code>max_depth</code>. Cada corte se elige sin mirar los cortes siguientes: es un algoritmo <strong>codicioso</strong> (<em>greedy</em>).</p>
 <p>Hacemos el cálculo para el primer corte con <code>ESTU</code>. Lo expresamos como el porcentaje de la RSS del nodo raíz (sin ningún corte) que elimina cada corte.</p>
 <p><strong>Ejecuta y mira el resultado.</strong></p>
-<div id="1634db9e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.262305Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.262209Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.271128Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.270642Z&quot;}" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># RSS del nodo raíz: todos los trabajadores predichos con el salario medio.</span></span>
+<div id="1634db9e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.262305Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.262209Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.271128Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.270642Z&quot;}}" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># RSS del nodo raíz: todos los trabajadores predichos con el salario medio.</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>rss_raiz <span class="op">=</span> ((y_train <span class="op">-</span> y_train.mean()) <span class="op">**</span> <span class="dv">2</span>).<span class="bu">sum</span>()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Valores distintos de ESTU en el entrenamiento, ordenados.</span></span>
@@ -426,12 +429,12 @@ Versión resuelta
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"obs. derecha"</span>: <span class="bu">len</span>(derecha), <span class="st">"reducción de la RSS (%)"</span>: <span class="bu">round</span>(reduccion, <span class="dv">1</span>)})</span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>tabla_cortes <span class="op">=</span> pd.DataFrame(filas)</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>tabla_cortes</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>tabla_cortes</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -443,42 +446,42 @@ Versión resuelta
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>1.5</td>
 <td>46</td>
 <td>7954</td>
 <td>0.3</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>2.5</td>
 <td>1213</td>
 <td>6787</td>
 <td>4.2</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>3.5</td>
 <td>3085</td>
 <td>4915</td>
 <td>11.8</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>4.5</td>
 <td>4708</td>
 <td>3292</td>
 <td>16.8</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>5.5</td>
 <td>5487</td>
 <td>2513</td>
 <td>17.9</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>6.5</td>
 <td>6688</td>
 <td>1312</td>
@@ -495,12 +498,12 @@ Versión resuelta
 <section id="la-predicción-es-la-media-de-la-hoja" class="level2">
 <h2 class="anchored" data-anchor-id="la-predicción-es-la-media-de-la-hoja">1.3 La predicción es la media de la hoja</h2>
 <p>Comprobamos la hoja de la izquierda: trabajadores sin título universitario (<code>ESTU &lt;= 5.5</code>) y con jornada completa (<code>TIPOJOR &lt;= 1.5</code>).</p>
-<div id="4aea6c12" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.272408Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.272334Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.275100Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.274572Z&quot;}" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Trabajadores del entrenamiento que cumplen las dos condiciones de la hoja.</span></span>
+<div id="4aea6c12" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.272408Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.272334Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.275100Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.274572Z&quot;}}" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Trabajadores del entrenamiento que cumplen las dos condiciones de la hoja.</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>en_hoja <span class="op">=</span> (X_train[<span class="st">"ESTU"</span>] <span class="op">&lt;=</span> <span class="fl">5.5</span>) <span class="op">&amp;</span> (X_train[<span class="st">"TIPOJOR"</span>] <span class="op">&lt;=</span> <span class="fl">1.5</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Trabajadores en la hoja:"</span>, en_hoja.<span class="bu">sum</span>())</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Salario medio en la hoja:"</span>, <span class="bu">round</span>(y_train[en_hoja].mean()), <span class="st">"euros"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Salario medio en la hoja:"</span>, <span class="bu">round</span>(y_train[en_hoja].mean()), <span class="st">"euros"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Trabajadores en la hoja: 4331
 Salario medio en la hoja: 24717 euros</code></pre>
@@ -512,8 +515,8 @@ Salario medio en la hoja: 24717 euros</code></pre>
 <p>Una trabajadora con licenciatura (<code>ESTU = 7</code>), 10 años de antigüedad (<code>ANOANTI = 10</code>) y jornada completa (<code>TIPOJOR = 1</code>). Recorre a mano el árbol del apartado 1.1. ¿En qué hoja cae y qué salario predice? ¿Influye su jornada en la predicción?</p>
 <p><strong>Solución.</strong> <code>ESTU = 7</code> no cumple <code>ESTU &lt;= 5.5</code>: va a la derecha. Allí el corte es <code>ANOANTI &lt;= 1.5</code>, que no se cumple con 10 años: va otra vez a la derecha. Cae en la última hoja, y la predicción es su <code>value</code>. La jornada no influye, porque <code>TIPOJOR</code> solo aparece en la rama izquierda. Las variables que no están en el camino de una observación no cambian su predicción.</p>
 <p>Comprueba tu respuesta: la celda siguiente crea la trabajadora a partir de la primera fila del test y pide la predicción a <code>arbol_corto</code>.</p>
-<div id="98296c9e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.276335Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.276247Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.279059Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.278632Z&quot;}" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copia de la primera fila del test (doble corchete: se conserva como tabla).</span></span>
+<div id="98296c9e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.276335Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.276247Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.279059Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.278632Z&quot;}}" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copia de la primera fila del test (doble corchete: se conserva como tabla).</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>trabajadora <span class="op">=</span> X_test.iloc[[<span class="dv">0</span>]].copy()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Valores del enunciado.</span></span>
@@ -523,7 +526,7 @@ Salario medio en la hoja: 24717 euros</code></pre>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Predicción del árbol corto.</span></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>prediccion_trabajadora <span class="op">=</span> arbol_corto.predict(trabajadora)</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predicción:"</span>, <span class="bu">round</span>(prediccion_trabajadora[<span class="dv">0</span>]), <span class="st">"euros"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predicción:"</span>, <span class="bu">round</span>(prediccion_trabajadora[<span class="dv">0</span>]), <span class="st">"euros"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Predicción: 42530 euros</code></pre>
 </div>
@@ -536,8 +539,8 @@ Salario medio en la hoja: 24717 euros</code></pre>
 <blockquote class="blockquote">
 <p><strong>Python que usamos aquí</strong> - <code>DummyRegressor(strategy="mean")</code> es el modelo de referencia: predice para todas las filas la media de la respuesta de su entrenamiento.</p>
 </blockquote>
-<div id="51756975" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.280144Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.280059Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.284483Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.284120Z&quot;}" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo de referencia: predice a todos el salario medio del entrenamiento.</span></span>
+<div id="51756975" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.280144Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.280059Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.284483Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.284120Z&quot;}}" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo de referencia: predice a todos el salario medio del entrenamiento.</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>referencia <span class="op">=</span> DummyRegressor(strategy<span class="op">=</span><span class="st">"mean"</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>referencia.fit(X_train, y_train)</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>rmse_referencia_test <span class="op">=</span> root_mean_squared_error(y_test, referencia.predict(X_test))</span>
@@ -547,7 +550,7 @@ Salario medio en la hoja: 24717 euros</code></pre>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>rmse_corto_test <span class="op">=</span> root_mean_squared_error(y_test, arbol_corto.predict(X_test))</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Árbol corto  | RMSE entrenamiento:"</span>, <span class="bu">round</span>(rmse_corto_train), <span class="st">"| RMSE test:"</span>, <span class="bu">round</span>(rmse_corto_test))</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Referencia   | RMSE test:"</span>, <span class="bu">round</span>(rmse_referencia_test))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Referencia   | RMSE test:"</span>, <span class="bu">round</span>(rmse_referencia_test))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Árbol corto  | RMSE entrenamiento: 15131 | RMSE test: 15217
 Referencia   | RMSE test: 18148</code></pre>
@@ -564,8 +567,8 @@ Referencia   | RMSE test: 18148</code></pre>
 <blockquote class="blockquote">
 <p><strong>Python que usamos aquí</strong> - <code>arbol.get_depth()</code> devuelve la profundidad del árbol ajustado y <code>arbol.get_n_leaves()</code>, su número de hojas.</p>
 </blockquote>
-<div id="352b62e6" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.285623Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.285557Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.305800Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.305341Z&quot;}" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Árbol con los valores por defecto: sin límite de profundidad.</span></span>
+<div id="352b62e6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.285623Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.285557Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.305800Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.305341Z&quot;}}" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Árbol con los valores por defecto: sin límite de profundidad.</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>arbol_profundo <span class="op">=</span> DecisionTreeRegressor(random_state<span class="op">=</span>SEMILLA)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>arbol_profundo.fit(X_train, y_train)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Profundidad:"</span>, arbol_profundo.get_depth(), <span class="st">"| hojas:"</span>, arbol_profundo.get_n_leaves())</span>
@@ -576,7 +579,7 @@ Referencia   | RMSE test: 18148</code></pre>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Árbol profundo | RMSE entrenamiento:"</span>, <span class="bu">round</span>(rmse_profundo_train), <span class="st">"| RMSE test:"</span>, <span class="bu">round</span>(rmse_profundo_test))</span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Árbol corto    | RMSE entrenamiento:"</span>, <span class="bu">round</span>(rmse_corto_train), <span class="st">"| RMSE test:"</span>, <span class="bu">round</span>(rmse_corto_test))</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Referencia     | RMSE test:"</span>, <span class="bu">round</span>(rmse_referencia_test))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Referencia     | RMSE test:"</span>, <span class="bu">round</span>(rmse_referencia_test))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Profundidad: 29 | hojas: 7477
 Árbol profundo | RMSE entrenamiento: 2861 | RMSE test: 17461
@@ -589,12 +592,12 @@ Referencia     | RMSE test: 18148</code></pre>
 <section id="dibujo-de-los-primeros-niveles" class="level2">
 <h2 class="anchored" data-anchor-id="dibujo-de-los-primeros-niveles">2.2 Dibujo de los primeros niveles</h2>
 <p>Un dibujo con miles de hojas no se puede leer. Con <code>plot_tree(..., max_depth=2)</code> dibujamos solo los dos primeros niveles. Las cajas <code>(...)</code> indican ramas que siguen por debajo.</p>
-<div id="a7bd59bc" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.306887Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.306820Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.418984Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.418601Z&quot;}" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Solo los dos primeros niveles del árbol profundo.</span></span>
+<div id="a7bd59bc" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.306887Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.306820Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.418984Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.418601Z&quot;}}" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Solo los dos primeros niveles del árbol profundo.</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>plot_tree(arbol_profundo, max_depth<span class="op">=</span><span class="dv">2</span>, feature_names<span class="op">=</span>PREDICTORES, filled<span class="op">=</span><span class="va">True</span>, rounded<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>          precision<span class="op">=</span><span class="dv">1</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -609,8 +612,8 @@ Referencia     | RMSE test: 18148</code></pre>
 <h2 class="anchored" data-anchor-id="error-y-profundidad">2.3 Error y profundidad</h2>
 <p>Ajustamos árboles con <code>max_depth</code> de 1 a 20 y anotamos el RMSE en entrenamiento y en test. Aquí usamos un bucle porque queremos el error en nuestro conjunto de test, y las funciones de scikit-learn que recorren un hiperparámetro (<code>validation_curve</code>, <code>GridSearchCV</code>) usan validación cruzada. La celda tarda unos segundos.</p>
 <p><strong>Ejecuta y mira el resultado.</strong></p>
-<div id="4630cb79" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.420277Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.420184Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.678680Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.678237Z&quot;}" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>profundidades <span class="op">=</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">21</span>)</span>
+<div id="4630cb79" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.420277Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.420184Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.678680Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.678237Z&quot;}}" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>profundidades <span class="op">=</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">21</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>filas <span class="op">=</span> []</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> profundidad <span class="kw">in</span> profundidades:</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Árbol con la profundidad de esta vuelta.</span></span>
@@ -639,7 +642,7 @@ Referencia     | RMSE test: 18148</code></pre>
 <span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Profundidad con menor RMSE de test.</span></span>
 <span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>fila_minimo <span class="op">=</span> tabla_profundidad[<span class="st">"RMSE test"</span>].idxmin()</span>
 <span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Menor RMSE de test con max_depth ="</span>, tabla_profundidad.loc[fila_minimo, <span class="st">"max_depth"</span>],</span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">"y"</span>, tabla_profundidad.loc[fila_minimo, <span class="st">"hojas"</span>], <span class="st">"hojas:"</span>, <span class="bu">round</span>(tabla_profundidad.loc[fila_minimo, <span class="st">"RMSE test"</span>]), <span class="st">"euros"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">"y"</span>, tabla_profundidad.loc[fila_minimo, <span class="st">"hojas"</span>], <span class="st">"hojas:"</span>, <span class="bu">round</span>(tabla_profundidad.loc[fila_minimo, <span class="st">"RMSE test"</span>]), <span class="st">"euros"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -722,8 +725,8 @@ Respuesta
 <section id="ejercicio-2" class="level3">
 <h3 class="anchored" data-anchor-id="ejercicio-2">Ejercicio 2</h3>
 <p>Limita el árbol con <code>min_samples_leaf=50</code> en lugar de <code>max_depth</code>. Calcula su profundidad, sus hojas y su RMSE en entrenamiento y en test.</p>
-<div id="26b24195" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.680031Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.679939Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.692120Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.691675Z&quot;}" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: árbol con al menos 50 observaciones en cada hoja.</span></span>
+<div id="26b24195" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.680031Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.679939Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.692120Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.691675Z&quot;}}" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: árbol con al menos 50 observaciones en cada hoja.</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>arbol_hoja50 <span class="op">=</span> DecisionTreeRegressor(min_samples_leaf<span class="op">=</span><span class="dv">50</span>, random_state<span class="op">=</span>SEMILLA)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>arbol_hoja50.fit(X_train, y_train)</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Profundidad:"</span>, arbol_hoja50.get_depth(), <span class="st">"| hojas:"</span>, arbol_hoja50.get_n_leaves())</span>
@@ -731,7 +734,7 @@ Respuesta
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: RMSE en entrenamiento y en test.</span></span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>rmse_hoja50_train <span class="op">=</span> root_mean_squared_error(y_train, arbol_hoja50.predict(X_train))</span>
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>rmse_hoja50_test <span class="op">=</span> root_mean_squared_error(y_test, arbol_hoja50.predict(X_test))</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"RMSE entrenamiento:"</span>, <span class="bu">round</span>(rmse_hoja50_train), <span class="st">"| RMSE test:"</span>, <span class="bu">round</span>(rmse_hoja50_test))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"RMSE entrenamiento:"</span>, <span class="bu">round</span>(rmse_hoja50_train), <span class="st">"| RMSE test:"</span>, <span class="bu">round</span>(rmse_hoja50_test))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Profundidad: 12 | hojas: 120
 RMSE entrenamiento: 12089 | RMSE test: 12534</code></pre>
@@ -756,14 +759,14 @@ Respuesta
 <section id="respuesta-binaria-salario-alto" class="level2">
 <h2 class="anchored" data-anchor-id="respuesta-binaria-salario-alto">4.1 Respuesta binaria: salario alto</h2>
 <p>Un trabajador tiene salario alto (1, un <strong>positivo</strong>) si su salario supera el <strong>percentil 75 del entrenamiento</strong>, y 0 en otro caso, como en la entrega E1. El umbral se calcula solo con el entrenamiento y se aplica también al test. El salario no está entre los predictores.</p>
-<div id="2113607f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.693343Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.693275Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.695966Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.695545Z&quot;}" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Umbral: percentil 75 del salario en el entrenamiento.</span></span>
+<div id="2113607f" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.693343Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.693275Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.695966Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.695545Z&quot;}}" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Umbral: percentil 75 del salario en el entrenamiento.</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>p75 <span class="op">=</span> y_train.quantile(<span class="fl">0.75</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Respuesta binaria en entrenamiento y en test, con el mismo umbral.</span></span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>alto_train <span class="op">=</span> (y_train <span class="op">&gt;</span> p75).astype(<span class="bu">int</span>)</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>alto_test <span class="op">=</span> (y_test <span class="op">&gt;</span> p75).astype(<span class="bu">int</span>)</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"P75:"</span>, <span class="bu">round</span>(p75), <span class="st">"euros | proporción de positivos en el entrenamiento:"</span>, <span class="bu">round</span>(alto_train.mean(), <span class="dv">3</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"P75:"</span>, <span class="bu">round</span>(p75), <span class="st">"euros | proporción de positivos en el entrenamiento:"</span>, <span class="bu">round</span>(alto_train.mean(), <span class="dv">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>P75: 34851 euros | proporción de positivos en el entrenamiento: 0.25</code></pre>
 </div>
@@ -775,15 +778,15 @@ Respuesta
 <blockquote class="blockquote">
 <p><strong>Python que usamos aquí</strong> - <code>plot_tree(..., class_names=["no alto", "alto"])</code> pone nombre a las clases 0 y 1 en el dibujo.</p>
 </blockquote>
-<div id="37db60de" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.697180Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.697119Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.777831Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.777369Z&quot;}" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Árbol de clasificación con dos niveles de cortes.</span></span>
+<div id="37db60de" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.697180Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.697119Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.777831Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.777369Z&quot;}}" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Árbol de clasificación con dos niveles de cortes.</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>arbol_clas <span class="op">=</span> DecisionTreeClassifier(max_depth<span class="op">=</span><span class="dv">2</span>, random_state<span class="op">=</span>SEMILLA)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>arbol_clas.fit(X_train, alto_train)</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>plot_tree(arbol_clas, feature_names<span class="op">=</span>PREDICTORES, class_names<span class="op">=</span>[<span class="st">"no alto"</span>, <span class="st">"alto"</span>],</span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>          filled<span class="op">=</span><span class="va">True</span>, rounded<span class="op">=</span><span class="va">True</span>, precision<span class="op">=</span><span class="dv">3</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -800,10 +803,10 @@ Respuesta
 <li><code>class</code>: la clase más frecuente del nodo. En las hojas, es la <strong>clase predicha</strong>.</li>
 </ul>
 <p>La <strong>probabilidad predicha</strong> de salario alto es la proporción de positivos de la hoja: el segundo número de <code>value</code> dividido entre <code>samples</code>. Con cuatro hojas, el árbol solo puede dar cuatro probabilidades distintas.</p>
-<div id="d4086d0e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.779024Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.778941Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.781956Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.781560Z&quot;}" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Probabilidades de salario alto en el entrenamiento: columna 1 de predict_proba.</span></span>
+<div id="d4086d0e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.779024Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.778941Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.781956Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.781560Z&quot;}}" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Probabilidades de salario alto en el entrenamiento: columna 1 de predict_proba.</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>prob_alto_train <span class="op">=</span> arbol_clas.predict_proba(X_train)[:, <span class="dv">1</span>]</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Probabilidades distintas:"</span>, np.unique(prob_alto_train).<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Probabilidades distintas:"</span>, np.unique(prob_alto_train).<span class="bu">round</span>(<span class="dv">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Probabilidades distintas: [0.098 0.334 0.367 0.697]</code></pre>
 </div>
@@ -815,8 +818,8 @@ Respuesta
 <blockquote class="blockquote">
 <p><strong>Python que usamos aquí</strong> - <code>DummyClassifier(strategy="most_frequent")</code> predice para todas las filas la clase más frecuente de su entrenamiento.</p>
 </blockquote>
-<div id="f9f62111" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.782988Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.782922Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.817087Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.816750Z&quot;}" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clase predicha por el árbol en el test.</span></span>
+<div id="f9f62111" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.782988Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.782922Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.817087Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.816750Z&quot;}}" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clase predicha por el árbol en el test.</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>pred_clas_test <span class="op">=</span> arbol_clas.predict(X_test)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Clasificador de referencia: predice a todos la clase más frecuente.</span></span>
@@ -832,7 +835,7 @@ Respuesta
 <span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Matriz de confusión en test: filas = observado, columnas = predicho.</span></span>
 <span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>matriz_corto <span class="op">=</span> confusion_matrix(alto_test, pred_clas_test)</span>
 <span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay(matriz_corto, display_labels<span class="op">=</span>[<span class="st">"no alto"</span>, <span class="st">"alto"</span>]).plot(cmap<span class="op">=</span><span class="st">"Blues"</span>, colorbar<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Árbol      | exactitud test: 0.824 | sensibilidad test: 0.428
 Referencia | exactitud test: 0.763</code></pre>
@@ -849,8 +852,8 @@ Referencia | exactitud test: 0.763</code></pre>
 </section>
 <section id="árbol-de-clasificación-profundo" class="level2">
 <h2 class="anchored" data-anchor-id="árbol-de-clasificación-profundo">4.4 Árbol de clasificación profundo</h2>
-<div id="6650480c" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.818491Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.818396Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.836580Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.836201Z&quot;}" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Árbol de clasificación sin límite de profundidad.</span></span>
+<div id="6650480c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.818491Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.818396Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.836580Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.836201Z&quot;}}" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Árbol de clasificación sin límite de profundidad.</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>arbol_clas_profundo <span class="op">=</span> DecisionTreeClassifier(random_state<span class="op">=</span>SEMILLA)</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>arbol_clas_profundo.fit(X_train, alto_train)</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Profundidad:"</span>, arbol_clas_profundo.get_depth(), <span class="st">"| hojas:"</span>, arbol_clas_profundo.get_n_leaves())</span>
@@ -859,7 +862,7 @@ Referencia | exactitud test: 0.763</code></pre>
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>exactitud_prof_train <span class="op">=</span> accuracy_score(alto_train, arbol_clas_profundo.predict(X_train))</span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>exactitud_prof_test <span class="op">=</span> accuracy_score(alto_test, arbol_clas_profundo.predict(X_test))</span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Árbol profundo | exactitud entrenamiento:"</span>, <span class="bu">round</span>(exactitud_prof_train, <span class="dv">3</span>), <span class="st">"| exactitud test:"</span>, <span class="bu">round</span>(exactitud_prof_test, <span class="dv">3</span>))</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Árbol corto    | exactitud test:"</span>, <span class="bu">round</span>(accuracy_score(alto_test, pred_clas_test), <span class="dv">3</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Árbol corto    | exactitud test:"</span>, <span class="bu">round</span>(accuracy_score(alto_test, pred_clas_test), <span class="dv">3</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Profundidad: 26 | hojas: 1740
 Árbol profundo | exactitud entrenamiento: 0.989 | exactitud test: 0.794
@@ -890,8 +893,8 @@ Respuesta
 <h1>Ampliación (opcional)</h1>
 <p>Fuera de los 45 minutos de la práctica.</p>
 <p>En el tema 2 vimos que los pesos de estimación cambian el modelo cuando una clase es poco frecuente. Ajusta el árbol de dos niveles con <code>class_weight="balanced"</code>, que da más peso a los positivos. Dibújalo y calcula su sensibilidad en test y su matriz de confusión.</p>
-<div id="78601ea4" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.837859Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.837787Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.948775Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.948361Z&quot;}" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: árbol de dos niveles con pesos equilibrados.</span></span>
+<div id="78601ea4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-28T14:05:21.837859Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-28T14:05:21.837787Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-28T14:05:21.948775Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-28T14:05:21.948361Z&quot;}}" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: árbol de dos niveles con pesos equilibrados.</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>arbol_clas_pesos <span class="op">=</span> DecisionTreeClassifier(max_depth<span class="op">=</span><span class="dv">2</span>, class_weight<span class="op">=</span><span class="st">"balanced"</span>, random_state<span class="op">=</span>SEMILLA)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>arbol_clas_pesos.fit(X_train, alto_train)</span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -908,7 +911,7 @@ Respuesta
 <span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: matriz de confusión en test.</span></span>
 <span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>matriz_pesos <span class="op">=</span> confusion_matrix(alto_test, pred_pesos_test)</span>
 <span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay(matriz_pesos, display_labels<span class="op">=</span>[<span class="st">"no alto"</span>, <span class="st">"alto"</span>]).plot(cmap<span class="op">=</span><span class="st">"Blues"</span>, colorbar<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -935,241 +938,248 @@ Respuesta
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
       }
+      return false;
     }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copiado");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copiado");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
       }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/juandmontoro\.github\.io\/tap\/");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-          // target, if specified
-          link.setAttribute("target", "_blank");
-          if (link.getAttribute("rel") === null) {
-            link.setAttribute("rel", "noopener");
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/juandmontoro\.github\.io\/tap\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
           }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
         }
       }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
     }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
         }
-        return container.innerHTML
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1177,185 +1187,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
