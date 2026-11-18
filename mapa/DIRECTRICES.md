@@ -42,6 +42,7 @@ Al final se recogen los errores detectados en la primera versión, como ejemplos
 - El contenido de una ficha debe aparecer en las slides, es decir, en el texto que ven los estudiantes. Las notas del profesor (bloques `{.notes}`) solo sirven para entender una slide. Ninguna afirmación del mapa debe apoyarse únicamente en una nota.
 - Si algo no aparece en los materiales, no se añade. Se anota en la descripción del pull request.
 - Cuando un tema no tiene material, su ficha se marca como provisional (`pendiente: true`) y se limita a lo que dice la planificación.
+- Excepción: el código en R (sección 7.4). Los materiales del curso usan Python, así que la versión en R se basa en la documentación oficial de cada paquete y se comprueba ejecutando código (7.4). El contenido conceptual de las fichas no cambia.
 
 ### 2.3 Qué no se sube al repositorio
 
@@ -99,7 +100,7 @@ Cada estimador debe tener estos campos, que el panel muestra en este orden:
 | `slides` | «Para verlo en las slides» | Enlaces a las slides que muestran las figuras o ejemplos clave (sección 8). |
 | `vocab` | «Vocabulario» | Términos técnicos que usa la ficha y que un estudiante nuevo puede no conocer. Cada término se define una vez en el diccionario `VOCAB`. |
 | `tarea` | (no se muestra) | `["reg"]`, `["clas"]` o ambas, según el estimador se use en regresión, en clasificación o en las dos. Vacía si el estimador no predice (en TAP, DoubleML). Decide a qué decisiones universales se vincula (5.3). |
-| `sesion`, `tema` | Cabecera | Sesiones de teoría y práctica donde se ve el estimador, tomadas de la planificación. |
+| `tema` | Cabecera | Tema o temas en los que se ve el estimador (`"T4"`, `"T1–T3"`). El mapa no muestra fechas ni sesiones, para que sirva en cursos sucesivos sin tocarlo. |
 | `materiales` | «Materiales del tema» | Enlaces a los decks y a la página de materiales. |
 
 ### 4.2 El campo «Por qué este modelo»
@@ -108,9 +109,9 @@ Cada estimador debe tener estos campos, que el panel muestra en este orden:
 - Ejemplo correcto (regresión polinómica): «Permite capturar relaciones no lineales entre un predictor y la respuesta sin abandonar el marco de la regresión lineal».
 - Ejemplo incorrecto: «Es una regresión lineal sobre potencias de $x$». Esto describe cómo funciona, pero no por qué se usa, así que corresponde al campo `idea`.
 
-### 4.3 Botón «Simular»
+### 4.3 Simuladores
 
-Cada nodo de estimador debe llevar un botón «Simular» desactivado con `data-simulador="<id del estimador>"`. El panel repite el botón con el mismo atributo. No se implementan simuladores hasta que el profesor lo pida.
+El mapa no muestra botones «Simular» mientras no existan los simuladores: un botón desactivado en cada nodo ocupa espacio y no enseña nada. Cuando el profesor pida implementarlos, cada estimador con simulador llevará un botón en su nodo y en su ficha, con `data-simulador="<id del estimador>"`.
 
 ### 4.4 Niveles para el comparador
 
@@ -150,11 +151,12 @@ El nodo «Decisiones de aprendizaje supervisado» debe incluir al menos estas de
 
 ### 5.3 Decisiones universales y específicas
 
-- Una decisión es **universal** si se aplica a todo estimador de su alcance, aunque los materiales no lo digan para cada uno. Si no se vinculara a todos, el mapa sugeriría que algunos estimadores no la necesitan. En TAP son universales la partición de los datos y la validación cruzada (alcance `"todos"`: todos los modelos predictivos), las métricas de regresión (alcance `"regresion"`) y las métricas de clasificación (alcance `"clasificacion"`).
+- Una decisión es **universal** si se aplica a todo estimador de su alcance, aunque los materiales no lo digan para cada uno. Si no se vinculara a todos, el mapa sugeriría que algunos estimadores no la necesitan. En TAP son universales la partición de los datos, la validación cruzada y la interpretación (alcance `"todos"`: todos los modelos predictivos), las métricas de regresión (alcance `"regresion"`) y las métricas de clasificación (alcance `"clasificacion"`).
 - Una decisión universal declara `alcance` y `generico`, que es el motivo que se muestra en los estimadores sin vínculo específico. El código crea esos vínculos a partir del campo `tarea` de cada estimador. Si el estimador ya tiene un vínculo escrito a mano con esa decisión, se conserva el escrito a mano.
 - Los vínculos genéricos no se dibujan con el mapa en reposo, para no llenarlo de líneas. Aparecen al seleccionar o señalar el estimador o la decisión. El nodo de la decisión lleva una etiqueta con su alcance («Todos los modelos predictivos»).
-- Una decisión es **específica** si solo afecta a algunos estimadores: preprocesado, clases desequilibradas, interpretación, minimizar una pérdida, equilibrio sesgo-varianza y selección de hiperparámetros. Sus vínculos se escriben a mano, siempre con un motivo concreto.
-- Para decidir si una decisión nueva es universal hay que preguntarse si un estudiante podría aplicar correctamente cualquier estimador del alcance sin tenerla en cuenta. Si la respuesta es no, es universal.
+- La interpretación es universal porque la importancia por permutación, la dependencia parcial y los valores de Shapley sirven para cualquier modelo. Si solo se vinculara a los árboles, el mapa sugeriría que una SVM o una red neuronal no pueden interpretarse. Las herramientas propias de un tipo de modelo (coeficientes, importancia por ganancia) se indican como tales en la ficha de la decisión, y los estimadores sin coeficientes interpretables llevan un vínculo específico que dice con qué se interpretan.
+- Una decisión es **específica** si solo afecta a algunos estimadores: preprocesado, clases desequilibradas, minimizar una pérdida, equilibrio sesgo-varianza y selección de hiperparámetros. Sus vínculos se escriben a mano, siempre con un motivo concreto.
+- Para decidir si una decisión nueva es universal hay que preguntarse si un estudiante podría aplicar correctamente cualquier estimador del alcance sin tenerla en cuenta. Si la respuesta es no, es universal. También lo es si sus herramientas se aplican a cualquier modelo y vincularla solo a algunos daría una idea falsa.
 
 ## 6. Redacción
 
@@ -164,7 +166,15 @@ El nodo «Decisiones de aprendizaje supervisado» debe incluir al menos estas de
 - Todo término técnico se define en su primer uso dentro de la ficha o en su «Vocabulario».
 - Las ideas se explican con su consecuencia. Por ejemplo, en lugar de «más $\lambda$, más sesgo», se escribe «al aumentar $\lambda$, los coeficientes se contraen y el modelo gana sesgo a cambio de menos varianza».
 
-### 6.2 Terminología fija
+### 6.2 Fichas autónomas
+
+- Cada ficha debe entenderse sin haber abierto ninguna otra. Quien abre la SVC o el random forest tiene que encontrar allí qué hace el modelo, sin frases que remitan a otra ficha.
+- Estructuras que hay que evitar: «los del bagging», «como en la SVR», «igual que el árbol de regresión», «tiene la misma forma que en…», «se interpretan como en MCO». En su lugar se escribe el contenido, aunque se repita en dos fichas.
+- Nombrar otro modelo sí está permitido cuando la frase se entiende sin conocerlo, por ejemplo «la penalización L2 (la de Ridge), que contrae los coeficientes sin anularlos».
+- La relación con otros modelos va al final, como nota («Relación con otros modelos: …»), después de la explicación completa. Así se escriben, por ejemplo, la relación entre SVC y SVR, entre SVR y Ridge, y entre las redes neuronales y las SVM (la red aprende de los datos la representación de los predictores que en una SVM fija el núcleo).
+- Una explicación larga se parte en párrafos dentro del mismo campo con `</p><p>`, y la nota final con `</p><p class="note">`.
+
+### 6.3 Terminología fija
 
 | Usar | No usar | Motivo |
 |:--|:--|:--|
@@ -174,13 +184,13 @@ El nodo «Decisiones de aprendizaje supervisado» debe incluir al menos estas de
 | coste computacional | coste (a secas, si puede confundirse con el coste $C$ de las SVM o con el coste de los errores) | Ambigüedad |
 | la notación de los decks: $y$, $X$, $\epsilon$, $\hat f$, $\lambda$, $\nu$, $\gamma$, $C$ | otras notaciones | Coherencia con las slides |
 
-### 6.3 Ejemplos
+### 6.4 Ejemplos
 
 - Los ejemplos deben ser generales de empresa y negocio: ventas, abandono de clientes, impago de un préstamo, importes, número de compras o de visitas.
 - No se usan los conjuntos de datos concretos de los decks (en TAP, Airbnb Valencia o la EES 2022), ni sus variables, ni las cifras que dan sobre ellos (RMSE, número de hojas, porcentajes). Esas cifras se ven en la slide enlazada.
 - Sí se pueden usar cifras que ilustran una propiedad general, por ejemplo que con $R_j^2=0{,}9$ la varianza de un coeficiente se multiplica por 10.
 
-### 6.4 Reglas de estilo
+### 6.5 Reglas de estilo
 
 Estas reglas adaptan al castellano las reglas anti-IA del autor:
 
@@ -212,9 +222,27 @@ Estas reglas adaptan al castellano las reglas anti-IA del autor:
 - Los argumentos que no son hiperparámetros van en una tabla aparte, «Otros argumentos», con las columnas **Argumento**, **Valores** y **Para qué sirve**. Son argumentos que no se eligen por validación: la pérdida (`criterion`, `loss`), la estrategia del modelo nulo (`strategy`), la semilla (`random_state`), el número máximo de iteraciones (`max_iter`) o los pesos de clase (`class_weight`).
 - Ejemplo correcto: `criterion` · `"squared_error"` (por defecto) · «Medida de error que minimiza cada corte».
 
+### 7.4 Infraestructuras de R: tidymodels, caret y mlr3
+
+El selector «Código» de la cabecera cambia entre Python (scikit-learn) y tres marcos de R. Solo cambia lo que depende del código. Los textos conceptuales, los niveles del comparador, los vínculos y los enlaces a slides son los mismos en las cuatro opciones.
+
+- **Implementación de cada estimador:** va en `R_IMPL`, con una entrada por marco (`tidymodels`, `caret`, `mlr3`). Cada entrada tiene:
+  - `fn`: filas [código, paquete, uso], por ejemplo `linear_reg(mixture = 0)` · `parsnip` · Regresión con penalización L2;
+  - `hp`: filas [nombre del hiperparámetro, argumento]. Si el nombre coincide con uno de la ficha, el efecto se toma de la ficha. Si no coincide, la fila lleva un tercer elemento con su efecto;
+  - `args`, `lib`, `nota` y `sinHp`, si hacen falta.
+- **Nombres de los hiperparámetros:** el argumento es el del marco, no el del paquete motor. En tidymodels, `penalty`, y no `lambda`. Cuando el motor lo llama de otra forma, se añade entre paréntesis: `min_n` (`minsplit` en rpart).
+- **Textos que citan código:** se escriben con `V({ py, r, tidymodels, caret, mlr3 })`. La clave `r` sirve para los tres marcos cuando el texto es el mismo. Si falta la variante de un marco, se usa la de `r` y, si tampoco existe, la de `py`. Para los textos que citan el `Pipeline` se usa `enPipe()`.
+- **Diferencias que hay que señalar en la nota:**
+  - glmnet usa `alpha` para la mezcla, y scikit-learn para la intensidad;
+  - glmnet, kernlab y e1071 estandarizan por defecto;
+  - el `rsq` de yardstick y el `Rsquared` de caret son el cuadrado de la correlación, no el R² de las slides;
+  - caret exige en la rejilla todos los parámetros del método.
+- **Si un marco no tiene el estimador:** se indica qué usar en su lugar y por qué. Por ejemplo, parsnip no tiene motor para gbm, así que se usa xgboost. Lo que no se ha podido ejecutar se marca en la nota y en `REGISTRO.md`.
+- **Comprobación:** cada función, argumento y valor por defecto se comprueba en R antes de escribirlo: `translate()` en parsnip, `modelLookup()` en caret y `lrn(...)$param_set` en mlr3. En `REGISTRO.md` se anotan las versiones de los paquetes con las que se comprobó.
+
 ## 8. Enlaces a las slides
 
-- Los decks se declaran una vez en el objeto `DECKS`, con su título, su ruta y la fecha de la sesión. Un deck no publicado tiene `url: null`, y sus enlaces se muestran como texto con la indicación «por publicar». Cuando se publique, basta con poner su ruta.
+- Los decks se declaran una vez en el objeto `DECKS`, con su título y su ruta, sin fechas. Un deck no publicado tiene `url: null`, y sus enlaces se muestran como texto con la indicación «por publicar». Cuando se publique, basta con poner su ruta.
 - Un enlace a una slide es `[clave del deck, id de la slide, texto del enlace]`. El enlace se construye como `<url del deck>#/<id>`, porque los decks de Quarto usan `hash: true`.
 - El id de una slide se toma del atributo `id` de su `<section>` en el HTML publicado. Para un deck no publicado, se calcula a partir del título con la regla de Pandoc: minúsculas; se eliminan los signos que no sean letras, números, guiones o guiones bajos; los espacios se sustituyen por guiones; se conservan las tildes. Por ejemplo, «Tasa de aprendizaje y número de árboles» da `tasa-de-aprendizaje-y-número-de-árboles`. Cuando el deck se publique, hay que comprobar los ids contra el HTML.
 - No se enlazan slides cuyo título contiene fórmulas, porque su id no es predecible.
@@ -226,14 +254,17 @@ Estas reglas adaptan al castellano las reglas anti-IA del autor:
 - Un color por tipo de nodo: marino para el objetivo, azul para familias y estimadores, y terracota para las decisiones. La salvia marca la selección y las coincidencias del buscador. El borde discontinuo marca las fichas provisionales.
 - El panel lateral ocupa el 40 % del ancho de la ventana, entre 460 px y 760 px. En pantallas de menos de 760 px de ancho, el panel se muestra como una hoja inferior a pantalla completa de ancho. Las tablas del panel no deben partir los nombres de clases ni de argumentos. Si no caben, la tabla se desplaza en horizontal.
 - Interacción: los nodos con hijos se pliegan y despliegan. Al pulsar un estimador se resaltan sus vínculos con las decisiones y se abre el panel. Hay buscador, vista en lista y enlaces directos `#nodo=<id>`.
+- Ayudas para el estudio: una ficha larga empieza con un índice de sus secciones; la vista en lista incluye una tabla resumen de los estimadores, generada a partir de las fichas y de `NIVELES`; y el botón «?» abre una ayuda con el modo de uso del mapa (`#ayuda`). El texto de la ayuda debe actualizarse si cambia la interacción.
+- Accesibilidad: el panel cerrado no debe quedar en el orden de tabulación (`visibility: hidden`), y las teclas Intro y Espacio sobre un botón interior de un nodo deben activar ese botón y no seleccionar el nodo.
 - Comparador: botón «Comparar» en la cabecera, tecla C y botón «Comparar con otro estimador» en cada ficha. Mientras está abierto, pulsar un estimador lo marca como A o B. Si ya hay dos, el nuevo sustituye al B. El panel de comparación ocupa el 55 % del ancho, entre 600 px y 1040 px, porque muestra dos columnas. Contiene el resumen (4.4), la escala orientativa, las secciones comunes de las fichas en paralelo y las decisiones vinculadas a los dos, solo a A y solo a B. El enlace directo es `#comparar=<id A>,<id B>`. A se marca en marino y B en salvia oscuro (`#3F7A5E`), que da más contraste que la salvia de la paleta.
+- Selector «Código» en la cabecera: Python, tidymodels, caret o mlr3. La elección se guarda en la URL (`?infra=caret`, y también `?infra=py`) y, si el navegador lo permite, en `localStorage`. El parámetro de la URL tiene prioridad sobre la preferencia guardada, así que un enlace con `?infra=` muestra la misma versión a quien lo reciba. Al elegir R, la sección de slides indica que las slides usan Python.
 - Pantalla completa, como en reveal.js: botón en la cabecera y tecla F; se sale con F o Esc. Los atajos + y − acercan y alejan, y 0 ajusta el mapa a la pantalla. Dentro de un `<iframe>` hace falta el atributo `allowfullscreen`; si el navegador no lo permite, el botón abre el mapa en una pestaña nueva.
 
 ## 10. Implementación
 
 - El mapa es un único archivo HTML con el CSS y el JS en línea. La única dependencia externa permitida es KaTeX desde cdnjs, con versión fija. Si no carga, las fórmulas se ven como texto LaTeX y el resto funciona.
 - Debe funcionar dentro de un `<iframe>` (Moodle) y en GitHub Pages, sin `localStorage` obligatorio ni acceso a la ventana padre.
-- Todo el contenido está en el bloque `CONTENIDO` del `<script>`: `DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES`, `ESTIMADORES`, `NIVELES` y `ESCALAS`. El mapa, los resaltados y los paneles se generan a partir de esos objetos. No se escribe contenido en el código de presentación.
+- Todo el contenido está en el bloque `CONTENIDO` del `<script>`: `DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES`, `ESTIMADORES`, `NIVELES`, `ESCALAS` y `R_IMPL`. El mapa, los resaltados y los paneles se generan a partir de esos objetos. No se escribe contenido en el código de presentación.
 - Los textos con fórmulas usan ``String.raw`...` `` (alias `R`), para conservar las barras invertidas de LaTeX. Las fórmulas en línea van entre `\(` y `\)`, y las de bloque entre `\[` y `\]`.
 - `_quarto.yml` debe incluir `mapa/**` en `resources`, y `materiales.qmd` debe tener un botón `tap-btn` que abra el mapa.
 
@@ -243,9 +274,10 @@ Estas reglas adaptan al castellano las reglas anti-IA del autor:
 2. Hacer capturas con el mapa completo, con un estimador seleccionado, con una decisión seleccionada, con el buscador en uso, con las familias plegadas y con la vista en lista. Revisar las capturas y corregir lo que no se vea bien antes de seguir.
 3. Comprobar que todos los ids de `links`, `slides`, `base` y `vocab` existen. El script los valida al cargar y escribe un error en la consola si alguno falta.
 4. Comprobar que los ids de las slides de los decks publicados existen en el HTML.
-5. Buscar en el texto del mapa las palabras y estructuras prohibidas de la sección 6: «compromiso», «leer», «legible», «columna» (revisar cada caso), el nombre de los conjuntos de datos de los decks y « no … sino ».
-6. Comprobar que hay 1 botón «Simular» por estimador en el mapa.
+5. Comprobar que cada ficha se entiende por separado (6.2): buscar «como en», «igual que», «los del», «misma forma» y revisar cada caso. Buscar también las palabras y estructuras prohibidas de la sección 6: «compromiso», «leer», «legible», «columna» (revisar cada caso), el nombre de los conjuntos de datos de los decks y « no … sino ».
+6. Comprobar con el teclado que el panel cerrado no recibe el foco, que Intro sobre el botón de plegar pliega la rama, y que al volver de la lista al mapa se ve el nodo elegido.
 7. Generar el comparador para todas las parejas de estimadores predictivos y comprobar que no hay errores. Leer el resumen de varias parejas de familias distintas, de una variante con su modelo base y de dos variantes del mismo modelo, y comprobar que cada frase coincide con las fichas.
+8. Con cada opción del selector, abrir todos los nodos y comprobar que no aparece `undefined` ni restos de código de otra infraestructura. Con Python, comparar el texto de todos los paneles con la versión anterior: un cambio en R no debe alterar la versión Python.
 
 ## 12. Adaptar el mapa a otra asignatura
 
@@ -263,10 +295,10 @@ Estos errores se corrigieron y sirven como ejemplos de lo que hay que evitar:
 
 | Error | Ejemplo | Regla |
 |:--|:--|:--|
-| Ejemplos ligados a un conjunto de datos | «el precio anunciado de un alojamiento», «ser superanfitrión» | 6.3 |
-| Contraste binario con punto y coma | «Sesgo y varianza son reducibles; $\sigma^2$ no» | 6.4 |
-| Redacción comprimida | «Buena con grado bajo; los coeficientes de grado alto no se leen» | 6.4 |
-| «Leer» por «interpretar» y «columna» por «predictor» | «cada columna tiene un coeficiente que se puede leer directamente» | 6.2 |
+| Ejemplos ligados a un conjunto de datos | «el precio anunciado de un alojamiento», «ser superanfitrión» | 6.4 |
+| Contraste binario con punto y coma | «Sesgo y varianza son reducibles; $\sigma^2$ no» | 6.5 |
+| Redacción comprimida | «Buena con grado bajo; los coeficientes de grado alto no se leen» | 6.5 |
+| «Leer» por «interpretar» y «columna» por «predictor» | «cada columna tiene un coeficiente que se puede leer directamente» | 6.3 |
 | Referencia a una figura sin enlace | «el haz de curvas que resulta al cambiar de muestra» | 5.2 y 8 |
 | Falta la especificación del modelo | La ficha de MCO no escribía $y=\beta_0+\beta_1x_1+\dots$ ni qué se estima | 4.1 |
 | Falta la justificación del estimador | Ninguna ficha explicaba qué añade el modelo frente a los anteriores | 4.2 |

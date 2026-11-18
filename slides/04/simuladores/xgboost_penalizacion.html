@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulador de la penalización de XGBoost</title>
+<!--
+  Simulador del deck de boosting (tema 4, semana 2). Adaptado el 22-10-2026 de xgboost_regularizacion_mejorado.html
+  (simuladores_gbm_xgboost_mejorados_quarto.zip, original en ../legacy/) al aspecto y la notación del deck:
+  fondo claro, colores del curso, letra legible en el aula, w = Σr/(n + λ) en lugar de −G/(H + λ), sin el recuadro
+  de «bloqueo». El modelo no cambia: árboles exactos con la ganancia de XGBoost para pérdida cuadrática,
+  profundidad máxima 3, al menos 2 observaciones por hoja, tasa 0,3.
+  23-10-2026 (auditoría): la ganancia se calcula sin el ½ del artículo, que es la escala con la que la
+  biblioteca compara `gamma`; el deslizador de γ pasa de 0-15 (paso 0,5) a 0-30 (paso 1), con los mismos árboles
+  para el doble de γ. Títulos de los paneles con «observaciones simuladas», «pérdida cuadrática» y «escala de gamma».
+  Parámetros iniciales por URL: ?arboles=10&lambda=0&gamma=0
+-->
+<style>
+:root {
+  --azul: #447099; --azul-oscuro: #1F3A5F; --naranja: #E07A5F; --salvia: #81B29A; --gris: #6C757D;
+  --fondo: #FFFFFF; --panel: #F4F7FA; --borde: #D5DEE8;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--fondo); color: var(--azul-oscuro);
+  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif; }
+body { padding: 4px; font-size: 22px; }
+.fila { display: grid; gap: 16px; }
+.fila.arriba { grid-template-columns: 1.3fr 1fr; }
+.fila.abajo { grid-template-columns: 0.95fr 1.25fr 0.9fr; margin-top: 12px; }
+.panel { background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 8px 14px; min-width: 0; }
+.titulo-panel { font-weight: 600; font-size: 23px; margin: 0 0 2px; }
+svg { width: 100%; height: auto; display: block; }
+.leyenda { display: flex; gap: 22px; flex-wrap: wrap; font-size: 21px; margin-top: 2px; }
+.leyenda span { display: inline-flex; align-items: center; gap: 8px; }
+.marca { display: inline-block; width: 28px; height: 5px; border-radius: 3px; }
+.marca.discontinua { height: 0; border-top: 4px dashed var(--azul-oscuro); background: none; }
+.marca.punto { width: 13px; height: 13px; border-radius: 50%; }
+.marca.hueco { background: transparent !important; border: 3px solid var(--azul); }
+.marca.barra { width: 16px; height: 16px; border-radius: 3px; }
+.mando { margin-bottom: 12px; }
+.mando label { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; font-size: 23px; margin-bottom: 2px; }
+.mando label span { font-weight: 400; font-size: 20px; color: var(--gris); }
+.mando output { font-size: 28px; font-weight: 700; color: var(--naranja); font-variant-numeric: tabular-nums; min-width: 2.2em; text-align: right; }
+input[type=range] { width: 100%; height: 28px; accent-color: var(--azul); cursor: pointer; }
+input:focus-visible { outline: 3px solid var(--naranja); outline-offset: 2px; }
+.tarjeta { padding: 6px 0 10px; border-bottom: 1px solid var(--borde); }
+.tarjeta:last-child { border-bottom: 0; }
+.tarjeta small { display: block; font-size: 20px; color: var(--gris); }
+.tarjeta strong { font-size: 30px; font-variant-numeric: tabular-nums; }
+.tarjeta div { font-size: 21px; }
+</style>
+</head>
+<body>
+<section class="fila arriba" aria-label="Predicción y corrección del último árbol">
+  <div class="panel">
+    <p class="titulo-panel">Predicción tras B árboles (observaciones simuladas, pérdida cuadrática)</p>
+    <svg id="grafPred" viewBox="0 0 640 250" role="img" aria-label="Predicción con y sin penalización sobre observaciones simuladas"></svg>
+    <div class="leyenda">
+      <span><i class="marca punto" style="background:var(--gris)"></i>entrenamiento</span>
+      <span><i class="marca punto hueco"></i>validación</span>
+      <span><i class="marca discontinua"></i>sin penalización (λ = γ = 0)</span>
+      <span><i class="marca" style="background:var(--naranja)"></i>con penalización</span>
+    </div>
+  </div>
+  <div class="panel">
+    <p class="titulo-panel">Corrección del último árbol (cada escalón es una hoja)</p>
+    <svg id="grafCorr" viewBox="0 0 470 250" role="img" aria-label="Corrección del último árbol con y sin penalización"></svg>
+    <div class="leyenda">
+      <span><i class="marca discontinua"></i>sin penalización</span>
+      <span><i class="marca" style="background:var(--naranja)"></i>con penalización</span>
+    </div>
+  </div>
+</section>
+<section class="fila abajo" aria-label="Mandos, ganancia de los cortes y resultados">
+  <div class="panel">
+    <div class="mando"><label for="arboles">Árboles B <output id="valorArboles">10</output></label>
+      <input id="arboles" type="range" min="1" max="30" step="1" value="10"></div>
+    <div class="mando"><label for="lambda">λ <span>encoge el valor de las hojas</span><output id="valorLambda">0</output></label>
+      <input id="lambda" type="range" min="0" max="30" step="1" value="0"></div>
+    <div class="mando"><label for="gamma">γ <span>coste de cada hoja</span><output id="valorGamma">0</output></label>
+      <input id="gamma" type="range" min="0" max="30" step="1" value="0"></div>
+  </div>
+  <div class="panel">
+    <p class="titulo-panel">Ganancia del mejor primer corte de cada árbol (escala de <code>gamma</code>)</p>
+    <svg id="grafGanancia" viewBox="0 0 640 190" role="img" aria-label="Ganancia del mejor primer corte de cada árbol frente a γ, en la escala del parámetro gamma de XGBoost"></svg>
+    <div class="leyenda">
+      <span><i class="marca barra" style="background:var(--salvia)"></i>supera γ: se corta</span>
+      <span><i class="marca barra" style="background:#C9CED3"></i>no supera γ</span>
+      <span><i class="marca" style="background:var(--naranja)"></i>γ</span>
+    </div>
+  </div>
+  <div class="panel" aria-live="polite">
+    <div class="tarjeta"><small>Sin penalización, último árbol</small><strong id="hojasSin">—</strong><div id="rmseSin">—</div></div>
+    <div class="tarjeta"><small>Con penalización, último árbol</small><strong id="hojasCon" style="color:var(--naranja)">—</strong><div id="rmseCon">—</div></div>
+  </div>
+</section>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const MAX_ARBOLES = 30, TASA = 0.3;
+  const COLOR = { azul: '#447099', azulOscuro: '#1F3A5F', naranja: '#E07A5F', salvia: '#81B29A', gris: '#6C757D',
+                  grisClaro: '#C9CED3', rejilla: '#DCE3EA', fondo: '#FFFFFF' };
+  const estado = { arboles: 10, lambda: 0, gamma: 0 };
+  const params = new URLSearchParams(location.search);
+  for (const clave of ['arboles', 'lambda', 'gamma']) if (params.has(clave)) estado[clave] = +params.get(clave);
+
+  // Observaciones simuladas fijas: 34 de entrenamiento y 25 de validación (semilla fija)
+  function generador(semilla) { let v = semilla >>> 0; return () => { v = (1664525 * v + 1013904223) >>> 0; return v / 4294967296; }; }
+  const azar = generador(87017);
+  const ruido = () => ((azar() + azar() + azar() + azar()) - 2) * 1.75;
+  const verdad = x => 3.7 + 2.3 * x + 1.25 * Math.sin(6 * Math.PI * x) + 1.6 * (x > 0.56) + 0.85 * Math.exp(-Math.pow((x - 0.32) / 0.045, 2));
+  const entreno = Array.from({ length: 34 }, (_, i) => { const x = (i + 0.55) / 34; return { x, y: verdad(x) + ruido() }; });
+  const valida = Array.from({ length: 25 }, (_, i) => { const x = (i + 0.2) / 25; return { x, y: verdad(x) + ruido() }; });
+  const rejilla = Array.from({ length: 300 }, (_, i) => i / 299);
+  const media = a => a.reduce((s, v) => s + v, 0) / a.length;
+  const rmse = (filas, pred) => Math.sqrt(media(filas.map((f, i) => (f.y - pred[i]) ** 2)));
+
+  // Árbol de XGBoost con pérdida cuadrática: hoja w = Σr / (n + λ); un corte se hace si su ganancia supera γ,
+  // con ganancia = S_izq² / (n_izq + λ) + S_der² / (n_der + λ) − S² / (n + λ), S = suma de residuos.
+  // Es la ganancia que la biblioteca compara con `gamma` (sin el ½ de la ecuación 7 de Chen y Guestrin, 2016):
+  // comprobado con xgboost 3.2.0 el 23-10-2026 (residuos −1, −1, 1, 1: ganancia 4 con λ = 0 y 8/3 con λ = 1).
+  function arbolXGB(filas, lambda, gamma, profMax = 3, minHoja = 2) {
+    function nodo(datos, prof) {
+      const S = datos.reduce((s, d) => s + d.r, 0), n = datos.length, w = S / (n + lambda);
+      let mejor = null;
+      if (prof < profMax && n >= 2 * minHoja) {
+        const orden = [...datos].sort((a, b) => a.x - b.x);
+        let Sizq = 0;
+        for (let i = 0; i < orden.length - 1; i++) {
+          Sizq += orden[i].r;
+          const nIzq = i + 1, nDer = n - nIzq, Sder = S - Sizq;
+          if (nIzq < minHoja || nDer < minHoja || orden[i].x === orden[i + 1].x) continue;
+          const ganancia = Sizq ** 2 / (nIzq + lambda) + Sder ** 2 / (nDer + lambda) - S ** 2 / (n + lambda);
+          if (mejor === null || ganancia > mejor.ganancia + 1e-10)
+            mejor = { ganancia, corte: (orden[i].x + orden[i + 1].x) / 2, izq: orden.slice(0, nIzq), der: orden.slice(nIzq) };
+        }
+      }
+      const gananciaMax = mejor === null ? 0 : Math.max(0, mejor.ganancia);
+      if (mejor && mejor.ganancia > gamma + 1e-10)
+        return { hoja: false, corte: mejor.corte, izq: nodo(mejor.izq, prof + 1), der: nodo(mejor.der, prof + 1), gananciaMax };
+      return { hoja: true, w, gananciaMax };
+    }
+    return nodo(filas, 0);
+  }
+  function predecir(t, x) { while (!t.hoja) t = x <= t.corte ? t.izq : t.der; return t.w; }
+  function hojas(t) { return t.hoja ? 1 : hojas(t.izq) + hojas(t.der); }
+
+  const base = media(entreno.map(f => f.y));
+  function ajustar(lambda, gamma) {
+    const pe = entreno.map(() => base), arboles = [];
+    for (let b = 1; b <= MAX_ARBOLES; b++) {
+      const t = arbolXGB(entreno.map((f, i) => ({ x: f.x, r: f.y - pe[i] })), lambda, gamma);
+      arboles.push(t);
+      entreno.forEach((f, i) => { pe[i] += TASA * predecir(t, f.x); });
+    }
+    return arboles;
+  }
+  function hasta(arboles, B) {
+    const pv = valida.map(() => base), curva = rejilla.map(() => base);
+    for (let b = 0; b < B; b++) {
+      valida.forEach((f, i) => { pv[i] += TASA * predecir(arboles[b], f.x); });
+      rejilla.forEach((x, i) => { curva[i] += TASA * predecir(arboles[b], x); });
+    }
+    return { curva, ultimo: arboles[B - 1], rmseVal: rmse(valida, pv) };
+  }
+
+  const sinPen = ajustar(0, 0);
+  let conPen = null, clave = '';
+
+  const coma = (v, d = 2) => v.toFixed(d).replace('.', ',').replace('-', '−');
+  const n2 = v => Number(v).toFixed(2);
+  const trazo = pts => pts.map(([x, y], i) => (i ? 'L' : 'M') + n2(x) + ' ' + n2(y)).join(' ');
+  const texto = (x, y, t, ancla = 'middle', color = COLOR.azulOscuro) => `<text x="${x}" y="${y}" fill="${color}" font-size="15" font-family="Roboto, system-ui, sans-serif" text-anchor="${ancla}">${t}</text>`;
+  const ys = entreno.concat(valida).map(p => p.y);
+  const limY = [Math.floor(Math.min(...ys) - 0.5), Math.ceil(Math.max(...ys) + 0.5)];
+
+  function ejes(w, h, x0, x1, y0, y1, lo, hi, dec) {
+    const X = x => x0 + x * (x1 - x0), Y = v => y1 - (v - lo) / (hi - lo) * (y1 - y0);
+    let s = `<rect width="${w}" height="${h}" fill="${COLOR.fondo}"/>`;
+    for (let j = 0; j <= 4; j++) {
+      const v = lo + (hi - lo) * j / 4, yy = Y(v);
+      s += `<line x1="${x0}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="${COLOR.rejilla}"/>` + texto(x0 - 8, yy + 5, coma(v, dec), 'end');
+    }
+    for (let j = 0; j <= 5; j++) s += texto(X(j / 5), h - 4, coma(j / 5, 1));
+    return { s, X, Y };
+  }
+
+  function dibujarPred(sin, con) {
+    const a = ejes(640, 250, 50, 628, 8, 222, limY[0], limY[1], 1);
+    let s = a.s;
+    for (const p of valida) s += `<circle cx="${n2(a.X(p.x))}" cy="${n2(a.Y(p.y))}" r="5" fill="${COLOR.fondo}" stroke="${COLOR.azul}" stroke-width="2.5"/>`;
+    for (const p of entreno) s += `<circle cx="${n2(a.X(p.x))}" cy="${n2(a.Y(p.y))}" r="4.5" fill="${COLOR.gris}" fill-opacity="0.7"/>`;
+    s += `<path d="${trazo(sin.curva.map((v, i) => [a.X(rejilla[i]), a.Y(v)]))}" fill="none" stroke="${COLOR.azulOscuro}" stroke-width="3" stroke-dasharray="8 6"/>`;
+    s += `<path d="${trazo(con.curva.map((v, i) => [a.X(rejilla[i]), a.Y(v)]))}" fill="none" stroke="${COLOR.naranja}" stroke-width="4"/>`;
+    $('grafPred').innerHTML = s;
+  }
+
+  function dibujarCorr(sin, con) {
+    const cSin = rejilla.map(x => predecir(sin.ultimo, x)), cCon = rejilla.map(x => predecir(con.ultimo, x));
+    const ext = Math.max(0.5, ...cSin.map(Math.abs), ...cCon.map(Math.abs));
+    const tope = Math.ceil((ext + 0.1) * 2) / 2;
+    const a = ejes(470, 250, 50, 458, 8, 222, -tope, tope, 1);
+    let s = a.s + `<line x1="50" y1="${a.Y(0)}" x2="458" y2="${a.Y(0)}" stroke="${COLOR.gris}" stroke-width="1.5"/>`;
+    s += `<path d="${trazo(cSin.map((v, i) => [a.X(rejilla[i]), a.Y(v)]))}" fill="none" stroke="${COLOR.azulOscuro}" stroke-width="3" stroke-dasharray="8 6"/>`;
+    s += `<path d="${trazo(cCon.map((v, i) => [a.X(rejilla[i]), a.Y(v)]))}" fill="none" stroke="${COLOR.naranja}" stroke-width="4"/>`;
+    $('grafCorr').innerHTML = s;
+  }
+
+  function dibujarGanancia(arboles, B, gamma) {
+    const W = 640, H = 190, x0 = 48, x1 = 628, y0 = 8, y1 = 164;
+    const vistos = arboles.slice(0, B), maxG = Math.max(1, gamma, ...vistos.map(t => t.gananciaMax)), tope = maxG * 1.15;
+    const X = j => x0 + (j - 0.5) * (x1 - x0) / MAX_ARBOLES, Y = g => y1 - g / tope * (y1 - y0);
+    let s = `<rect width="${W}" height="${H}" fill="${COLOR.fondo}"/>`;
+    for (let k = 0; k <= 3; k++) {
+      const v = k * tope / 3, yy = Y(v);
+      s += `<line x1="${x0}" y1="${n2(yy)}" x2="${x1}" y2="${n2(yy)}" stroke="${COLOR.rejilla}"/>` + texto(x0 - 7, yy + 5, coma(v, 0), 'end');
+    }
+    for (const k of [1, 10, 20, 30]) s += texto(X(k), H - 4, k);
+    vistos.forEach((t, i) => {
+      const cx = X(i + 1), alto = Math.max(0, Y(0) - Y(t.gananciaMax));
+      const relleno = t.hoja ? COLOR.grisClaro : COLOR.salvia;
+      s += `<rect x="${n2(cx - 7)}" y="${n2(Y(t.gananciaMax))}" width="14" height="${n2(Math.max(alto, 2))}" rx="2" fill="${relleno}"/>`;
+    });
+    const yg = Y(gamma);
+    s += `<line x1="${x0}" y1="${n2(yg)}" x2="${x1}" y2="${n2(yg)}" stroke="${COLOR.naranja}" stroke-width="3" stroke-dasharray="8 5"/>`;
+    s += texto(x1 - 4, Math.max(18, yg - 7), `γ = ${coma(gamma, 0)}`, 'end', COLOR.naranja);
+    $('grafGanancia').innerHTML = s;
+  }
+
+  function actualizar() {
+    const k = `${estado.lambda}|${estado.gamma}`;
+    if (k !== clave) { conPen = ajustar(estado.lambda, estado.gamma); clave = k; }
+    const sin = hasta(sinPen, estado.arboles), con = hasta(conPen, estado.arboles);
+    dibujarPred(sin, con); dibujarCorr(sin, con); dibujarGanancia(conPen, estado.arboles, estado.gamma);
+    $('valorArboles').textContent = estado.arboles; $('arboles').value = estado.arboles;
+    $('valorLambda').textContent = estado.lambda; $('lambda').value = estado.lambda;
+    $('valorGamma').textContent = coma(estado.gamma, 1).replace(',0', ''); $('gamma').value = estado.gamma;
+    const hSin = hojas(sin.ultimo), hCon = hojas(con.ultimo);
+    $('hojasSin').textContent = `${hSin} ${hSin === 1 ? 'hoja' : 'hojas'}`;
+    $('hojasCon').textContent = `${hCon} ${hCon === 1 ? 'hoja' : 'hojas'}`;
+    $('rmseSin').textContent = `RMSE de validación: ${coma(sin.rmseVal)}`;
+    $('rmseCon').textContent = `RMSE de validación: ${coma(con.rmseVal)}`;
+  }
+
+  for (const [id, campo] of [['arboles', 'arboles'], ['lambda', 'lambda'], ['gamma', 'gamma']])
+    $(id).addEventListener('input', ev => { estado[campo] = +ev.target.value; actualizar(); });
+  actualizar();
+
+  // Dentro del deck: las teclas de avance pasan a Reveal (API postMessage), salvo las flechas sobre un deslizador
+  document.addEventListener('keydown', ev => {
+    if (window.parent === window) return;
+    const enDeslizador = ev.target instanceof HTMLInputElement && ev.target.type === 'range';
+    const enBoton = ev.target instanceof HTMLButtonElement;
+    const metodos = { PageDown: 'next', PageUp: 'prev', ArrowRight: 'next', ArrowLeft: 'prev', ArrowDown: 'next', ArrowUp: 'prev', ' ': 'next' };
+    const metodo = metodos[ev.key];
+    if (!metodo) return;
+    if (enDeslizador && ev.key.startsWith('Arrow')) return;
+    if (enBoton && ev.key === ' ') return;
+    window.parent.postMessage(JSON.stringify({ method: metodo }), '*');
+    ev.preventDefault();
+  });
+})();
+</script>
+</body>
+</html>
