@@ -1,0 +1,40 @@
+# Mapa mental de la asignatura
+
+`mapa_mental_tap.html` es un mapa interactivo de *Técnicas Avanzadas de Predicción en Negocios*: el objetivo del aprendizaje supervisado (aproximar $f(X)$ para predecir $y$), todos los estimadores del curso agrupados por familias y las decisiones transversales que los conectan.
+
+- Es un único archivo autocontenido (CSS y JS en línea). La única dependencia externa es KaTeX (cdnjs) para las fórmulas del panel; sin conexión a cdnjs, las fórmulas se ven como texto LaTeX y todo lo demás funciona.
+- Se publica con la web del curso (`mapa/**` está en `resources` de `_quarto.yml`): <https://juandmontoro.github.io/tap/mapa/mapa_mental_tap.html>
+- El botón **?** (o la tecla ?) abre una ayuda para el estudiante: cómo moverse por el mapa, tres formas de estudiar con él y cómo interpretar una ficha. Se enlaza con `#ayuda`.
+- El botón **Lista** muestra los nodos en una lista y una tabla que resume todos los estimadores: tipo de respuesta, hiperparámetros y niveles orientativos de flexibilidad, interpretabilidad y coste.
+- Los simuladores no forman parte de esta versión. Quedan como trabajo futuro (ver [`REGISTRO.md`](REGISTRO.md)).
+- Se puede enlazar directamente a un nodo con `#nodo=<id>`, por ejemplo `mapa_mental_tap.html#nodo=lasso` o `#nodo=d_cv`.
+- El selector **Código** cambia los ejemplos de código entre Python (scikit-learn) y R con tidymodels, caret o mlr3. El contenido conceptual es el mismo. Para fijar una versión se añade `?infra=` a la URL: `mapa_mental_tap.html?infra=py`, `?infra=tidymodels`, `?infra=caret` o `?infra=mlr3`. Sin ese parámetro, el mapa se abre con la última opción que eligió cada persona en su navegador, y con Python la primera vez. Para que un enlace muestre Python a todo el mundo hay que escribir `?infra=py`.
+- El botón **Comparar** (o la tecla C) enfrenta dos estimadores: un resumen generado a partir de sus fichas, una escala orientativa de flexibilidad, interpretabilidad y coste, y las secciones comunes de las fichas en paralelo. Se puede enlazar directamente a una comparación con `#comparar=<id A>,<id B>`, por ejemplo `mapa_mental_tap.html#comparar=ridge,lasso`.
+
+## Insertar en Moodle
+
+En el editor de Moodle (Aula Virtual), cambia a la vista de código HTML (botón `</>`) y pega:
+
+```html
+<iframe src="https://juandmontoro.github.io/tap/mapa/mapa_mental_tap.html"
+        title="Mapa mental de Técnicas Avanzadas de Predicción en Negocios"
+        width="100%" height="720" style="border:1px solid #d5dee8; border-radius:8px; max-width:100%;"
+        loading="lazy" allowfullscreen></iframe>
+<p><a href="https://juandmontoro.github.io/tap/mapa/mapa_mental_tap.html" target="_blank" rel="noopener">Abrir el mapa a pantalla completa</a></p>
+```
+
+Para abrir el iframe directamente en un nodo, añade el ancla a la URL, por ejemplo `.../mapa_mental_tap.html#nodo=rf`, con los identificadores de la tabla siguiente. Para una asignatura en R, añade además la infraestructura: `.../mapa_mental_tap.html?infra=tidymodels#nodo=rf`.
+
+## Identificadores de los nodos
+
+| Tipo | Identificadores |
+|:--|:--|
+| Objetivo | `objetivo` |
+| Estimadores | `nulo`, `mco`, `poli`, `ridge`, `lasso`, `enet`, `mpl`, `logit`, `multinomial`, `gamma`, `poisson`, `arbol_reg`, `arbol_clas`, `bagging`, `rf`, `gb`, `xgb`, `voting`, `stacking`, `svr`, `svc`, `mlp`, `doubleml` |
+| Decisiones | `decisiones`, `d_sesgo`, `d_hiper`, `d_cv`, `d_part`, `d_prep`, `d_train`, `d_mreg`, `d_mclas`, `d_deseq`, `d_interp` |
+
+## Mantenimiento
+
+Las decisiones tomadas, los pendientes y el historial están en [`REGISTRO.md`](REGISTRO.md). Las reglas para elaborar, ampliar o rehacer el mapa están en [`DIRECTRICES.md`](DIRECTRICES.md): fuentes, inventario de estimadores, estructura de cada ficha, redacción, tablas de scikit-learn, enlaces a slides, diseño y verificación. Sirven también para crear el mapa de otra asignatura.
+
+El contenido está en el bloque `CONTENIDO` del `<script>` (`DECKS`, `VOCAB`, `ROOT`, `HUB`, `FAMILIAS`, `DECISIONES`, `ESTIMADORES`, `NIVELES` y `R_IMPL`). Todos los decks de los temas 1 a 6 están enlazados. Cuando se publique el del tema 7, hay que añadirlo a `DECKS` y redactar la ficha de DoubleML, la única que sigue con `pendiente: true`.
