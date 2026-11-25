@@ -27,6 +27,7 @@ Instrucciones de las sesiones de los hitos. El enunciado, las normas y la rúbri
 |:--|:--|:--|
 | Instrucciones del hito 3: modelo base | 29 oct (H3) | <a class="tap-btn" href="proyecto2627/hitos/S06_modelo_base.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
 | Instrucciones del hito 4: ensambles | 12 nov (H4) | <a class="tap-btn" href="proyecto2627/hitos/S08_ensambles.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+| Instrucciones del hito 5: revisión de los modelos | 26 nov (H5) | <a class="tap-btn" href="proyecto2627/hitos/S10_revision.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
 
 ## Tema 1. Fundamentos y regresión regularizada {#tema-1}
 
@@ -92,7 +93,7 @@ Instrucciones de las sesiones de los hitos. El enunciado, las normas y la rúbri
 | Introducción a los árboles de decisión (práctica, 29 oct) | <a class="tap-btn" href="clabs/04/tema_04_arboles.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_arboles.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/04/tema_04_arboles.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
 | Bagging y random forest (práctica, 29 oct) | <a class="tap-btn" href="clabs/04/tema_04_bosques.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_bosques.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/04/tema_04_bosques.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
 | XGBoost (práctica, 5 nov) | <a class="tap-btn" href="clabs/04/tema_04_xgboost.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_xgboost.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/04/tema_04_xgboost.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
-| Interpretación de modelos (práctica, 12 nov) | <a class="tap-btn" href="clabs/04/tema_04_interpretacion.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_interpretacion.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | Se publica el 19 nov |
+| Interpretación de modelos (práctica, 12 nov) | <a class="tap-btn" href="clabs/04/tema_04_interpretacion.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_interpretacion.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/04/tema_04_interpretacion.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
 | Entrega E2: random forest y XGBoost para clasificación (5 nov) | <a class="tap-btn" href="clabs/04/tema_04_entrega_E2.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_entrega_E2.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | Sin versión resuelta |
 
 ## Tema 5. Máquinas de vectores de soporte {#tema-5}
@@ -102,6 +103,12 @@ Instrucciones de las sesiones de los hitos. El enunciado, las normas y la rúbri
 | Presentación | Sesión | |
 |:--|:--|:--|
 | Máquinas de vectores de soporte: clasificación, núcleos y regresión | 17 nov (T5) | <a class="tap-btn" href="slides/05/05_svm_sn.html" target="_blank"><i class="bi bi-easel"></i> Abrir</a> |
+
+### Cuadernos
+
+| Cuaderno | Sin resultados | Versión resuelta |
+|:--|:--|:--|
+| Máquinas de vectores de soporte (práctica, 19 nov) | <a class="tap-btn" href="clabs/05/tema_05_svm.ipynb" download><i class="bi bi-download"></i> Descargar</a><a class="tap-btn" href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/05/tema_05_svm.ipynb" target="_blank"><i class="bi bi-google"></i> Abrir en Colab</a> | <a class="tap-btn" href="resueltos/05/tema_05_svm.ipynb"><i class="bi bi-check2-square"></i> Ver resuelto</a> |
 
 ## Tema 6. Redes neuronales {#tema-6}
 
