@@ -1,0 +1,2345 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Tema 4. Interpretación de modelos – Técnicas Avanzadas de Predicción</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-3a9777ff9cfa416bd97a54f94a068a98.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Técnicas Avanzadas de Predicción</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../planificacion.html"> 
+<span class="menu-text">Planificación</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../materiales.html"> 
+<span class="menu-text">Materiales</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../proyecto.html"> 
+<span class="menu-text">Proyecto</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/juanDmontoro/tap"> <i class="bi bi-github" role="img" aria-label="Repositorio en GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Tema 4. Interpretación de modelos</h1>
+<p class="subtitle lead">Versión resuelta, con resultados</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled" title="Versión resuelta">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Versión resuelta
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Incluye las soluciones de los ejercicios y los resultados de ejecutar cada celda. Para trabajar con el cuaderno, <a href="../../clabs/04/tema_04_interpretacion.ipynb" download="">descárgalo sin resultados</a> o <a href="https://colab.research.google.com/github/juanDmontoro/tap/blob/main/clabs/04/tema_04_interpretacion.ipynb">ábrelo en Colab</a>.</p>
+</div>
+</div>
+<p><strong>Técnicas Avanzadas de Predicción en Negocios · Cuaderno de práctica (nivel avanzado)</strong></p>
+<p>Datos: Encuesta Cuatrienal de Estructura Salarial 2022 (INE), microdatos.</p>
+<section id="qué-vamos-a-hacer" class="level2">
+<h2 class="anchored" data-anchor-id="qué-vamos-a-hacer">Qué vamos a hacer</h2>
+<p>Predecimos el salario de los trabajadores de la EES con XGBoost y nos preguntamos <strong>cómo</strong> lo predice.</p>
+<ul>
+<li>Una regresión lineal permite interpretar sus coeficientes: cada uno dice cuánto cambia la predicción con su predictor.</li>
+<li>Los modelos que hemos visto en este bloque agregan predicciones de árboles y no tienen coeficientes. Para entender qué hacen necesitamos otras herramientas, y cada una responde a una pregunta distinta.</li>
+</ul>
+<ol start="0" type="1">
+<li><strong>Preparación.</strong> Datos, predictores, preprocesador, particiones y regresión lineal de referencia.</li>
+<li>Introducimos un <strong>XGBoost con submuestreo.</strong> Llevamos al boosting la aleatoriedad del bagging, que elige al azar las filas y las columnas de cada árbol, y elegimos el modelo que vamos a interpretar.</li>
+</ol>
+<p>Después vienen tres tipos de interpretaciones, una en cada bloque:</p>
+<ol start="2" type="1">
+<li><strong>¿Qué predictores pesan en las predicciones?</strong> Importancia por ganancia y por permutación.</li>
+<li><strong>¿Cómo cambia la predicción con un predictor?</strong> Dependencia parcial y curvas ICE.</li>
+<li><strong>¿Por qué el modelo predice este salario para este trabajador?</strong> Valores de Shapley: para una observación, agregando todas y para un predictor. Al final, un explicador que sirve para cualquier modelo.</li>
+</ol>
+<p>Al final hay dos <strong>tareas opcionales</strong>: combinar modelos con voting y stacking, e interpretar los coeficientes de una regresión lineal con <code>statsmodels</code>.</p>
+<ul>
+<li>Hay cinco ejercicios y cinco «Para pensar» con la respuesta plegada. Las tareas opcionales añaden dos ejercicios y un «Para pensar».</li>
+<li>En cada ejercicio, la celda empieza vacía. El enunciado dice qué hacer y qué funciones usar, y casi siempre basta con adaptar una celda anterior.</li>
+</ul>
+</section>
+<section id="preparación" class="level2">
+<h2 class="anchored" data-anchor-id="preparación">0. Preparación</h2>
+<p>Usa el entorno <code>tap</code> del curso.</p>
+<p><strong>Núcleos del procesador.</strong></p>
+<ul>
+<li>Un núcleo es una parte del procesador que realiza cálculos. Cuando hay varios, pueden trabajar a la vez.</li>
+<li>Para aprovechar esta capacidad, consultamos con <code>os.cpu_count()</code> cuántas unidades de procesamiento reconoce el sistema.</li>
+<li>En el siguiente bloque de código guardamos ese número menos uno en <code>N_NUCLEOS</code>, para dejar margen a otras tareas del ordenador.</li>
+<li>Más adelante usaremos esta variable como valor del argumento <code>n_jobs</code>, que controla cuántas tareas se ejecutan en paralelo. Así podremos reducir el tiempo de cálculo repartiendo tareas independientes, como los ajustes de la validación cruzada.</li>
+</ul>
+<div id="3b01b681" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:36.644164Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:36.644020Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:38.342780Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:38.342277Z&quot;}}" data-tags="[&quot;preparacion&quot;]" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># XGBoost (con la interfaz de scikit-learn) y shap, que calcula los valores de Shapley.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> xgboost <span class="im">import</span> XGBRegressor</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shap</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Regresión lineal y preprocesado de los predictores.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, OneHotEncoder</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># División, validación cruzada y RMSE.</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, KFold, cross_val_score</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> root_mean_squared_error</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Herramientas de interpretación de scikit-learn.</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.inspection <span class="im">import</span> permutation_importance, PartialDependenceDisplay</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>SEMILLA <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Núcleos para repartir el trabajo: todos los del ordenador menos uno (al menos uno).</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>N_NUCLEOS <span class="op">=</span> <span class="bu">max</span>(<span class="dv">1</span>, os.cpu_count() <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Núcleos para los cálculos en paralelo:"</span>, N_NUCLEOS)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Núcleos para los cálculos en paralelo: 17</code></pre>
+</div>
+</div>
+<section id="datos-predictores-y-división" class="level3">
+<h3 class="anchored" data-anchor-id="datos-predictores-y-división">Datos, predictores y división</h3>
+<ul>
+<li>Cargamos los microdatos de la EES 2022 y nos quedamos con los trabajadores que tienen un salario positivo y no superior al percentil 99.</li>
+<li>De ellos elegimos al azar 10 000, con la semilla 42.</li>
+<li>Usamos 16 predictores, 14 categóricos y 2 numéricos: la antigüedad en la empresa (<code>ANOANTI</code>, en años) y la jornada anual pactada (<code>JAP</code>, en horas).</li>
+<li>Dividimos los datos en entrenamiento (80 %) y test (20 %).</li>
+</ul>
+<div id="69e1dde7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:38.344450Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:38.344301Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:40.352543Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:40.352121Z&quot;}}" data-tags="[&quot;preparacion&quot;]" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos de la EES 2022 en la web del curso (separador: tabulación).</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>URL_DATOS <span class="op">=</span> <span class="st">"https://juandmontoro.github.io/tap/data/EES_2022.tab"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(URL_DATOS, sep<span class="op">=</span><span class="st">"</span><span class="ch">\t</span><span class="st">"</span>, low_memory<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> df.columns.<span class="bu">str</span>.replace(<span class="st">'"'</span>, <span class="st">""</span>).<span class="bu">str</span>.strip()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Trabajadores con salario positivo y no superior al percentil 99.</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>tope <span class="op">=</span> df[<span class="st">"RETRINOIN"</span>].quantile(<span class="fl">0.99</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>salario_admitido <span class="op">=</span> (df[<span class="st">"RETRINOIN"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"RETRINOIN"</span>] <span class="op">&lt;=</span> tope)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>limpio <span class="op">=</span> df[salario_admitido]</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 10 000 trabajadores elegidos al azar.</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> limpio.sample(n<span class="op">=</span><span class="dv">10000</span>, random_state<span class="op">=</span>SEMILLA).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Observaciones:"</span>, <span class="bu">len</span>(datos))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Observaciones: 10000</code></pre>
+</div>
+</div>
+<div id="638901ed" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:40.354018Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:40.353923Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:40.362030Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:40.361509Z&quot;}}" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>PRED_CATEGORICOS <span class="op">=</span> [</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SEXO"</span>, <span class="st">"ESTU"</span>, <span class="st">"ANOS2"</span>, <span class="st">"TIPOCON"</span>, <span class="st">"TIPOJOR"</span>, <span class="st">"CNO1"</span>, <span class="st">"CNACE"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CONTROL"</span>, <span class="st">"MERCADO"</span>, <span class="st">"REGULACION"</span>, <span class="st">"RESPONSA"</span>, <span class="st">"NUTS1"</span>, <span class="st">"TIPOPAIS"</span>, <span class="st">"ESTRATO2"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>PRED_NUMERICOS <span class="op">=</span> [<span class="st">"ANOANTI"</span>, <span class="st">"JAP"</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># X contiene los 16 predictores: categóricos como categorías y numéricos como decimales (float).</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> datos[PRED_CATEGORICOS <span class="op">+</span> PRED_NUMERICOS].copy()</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>X[PRED_CATEGORICOS] <span class="op">=</span> X[PRED_CATEGORICOS].astype(<span class="st">"category"</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>X[PRED_NUMERICOS] <span class="op">=</span> X[PRED_NUMERICOS].astype(<span class="bu">float</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># y es el salario.</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> datos[<span class="st">"RETRINOIN"</span>]</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># División: 80 % entrenamiento y 20 % test.</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span>SEMILLA)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento:"</span>, <span class="bu">len</span>(X_train), <span class="st">"| test:"</span>, <span class="bu">len</span>(X_test))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Entrenamiento: 8000 | test: 2000</code></pre>
+</div>
+</div>
+<p>Códigos que aparecerán en las interpretaciones:</p>
+<ul>
+<li><code>ESTU</code> (estudios): 1, menos que primaria; 2, primaria; 3, primera etapa de secundaria; 4, segunda etapa de secundaria; 5, formación profesional de grado superior; 6, diplomatura universitaria; 7, licenciatura o doctorado.</li>
+<li><code>TIPOJOR</code> (tipo de jornada): 1, tiempo completo; 2, tiempo parcial.</li>
+<li><code>CNO1</code> (ocupación): A0, directores y gerentes; C0, otros técnicos y profesionales científicos e intelectuales; E0, empleados de oficina que no atienden al público.</li>
+<li><code>SEXO</code>: 1, hombre; 6, mujer. <code>RESPONSA</code> (responsabilidad de organización o supervisión): 1, sí; 0, no.</li>
+</ul>
+</section>
+<section id="preprocesador-particiones-y-modelo-base" class="level3">
+<h3 class="anchored" data-anchor-id="preprocesador-particiones-y-modelo-base">Preprocesador, particiones y modelo base</h3>
+<ul>
+<li>Usamos un preprocesador que aplica transformaciones distintas a predictores categóricos y a numéricos. Para los modelos de árboles, como XGBoost, el argumento <code>escalar=False</code> evita el escalado de los numéricos, que no les hace falta.</li>
+<li>Cada predictor categórico se convierte en una columna por categoría, con un 1 si el trabajador la tiene y un 0 si no. Las categorías con menos del 1 % de los trabajadores se agrupan en una sola columna.</li>
+<li>Las particiones <code>cv5</code> son las mismas en todo el cuaderno.</li>
+<li>Como referencia calculamos el RMSE de validación cruzada de la regresión lineal, el modelo base. <code>cross_val_score</code> ajusta el modelo cinco veces, una por partición de <code>cv5</code>, y con <code>scoring="neg_root_mean_squared_error"</code> devuelve los cinco RMSE de validación con el signo cambiado.</li>
+</ul>
+<div id="2d2341f3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:40.363291Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:40.363222Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:40.365571Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:40.365119Z&quot;}}" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Devuelve un preprocesador nuevo, sin ajustar, en cada llamada.</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> crear_preprocesador(escalar<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Numéricas: escaladas, o sin cambios con "passthrough".</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> escalar:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        numericas <span class="op">=</span> StandardScaler()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        numericas <span class="op">=</span> <span class="st">"passthrough"</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Categóricas: una columna por categoría (las de menos del 1 % de los trabajadores se agrupan en una).</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ColumnTransformer([</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"numericas"</span>, numericas, PRED_NUMERICOS),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"categoricas"</span>, OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">"ignore"</span>, min_frequency<span class="op">=</span><span class="fl">0.01</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                                      sparse_output<span class="op">=</span><span class="va">False</span>), PRED_CATEGORICOS),</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Cinco particiones del entrenamiento, barajadas con la semilla.</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>cv5 <span class="op">=</span> KFold(n_splits<span class="op">=</span><span class="dv">5</span>, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span>SEMILLA)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="4284b820" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:40.366580Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:40.366503Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:41.759228Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:41.758572Z&quot;}}" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo base: preprocesador con escalado y regresión lineal.</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>lineal <span class="op">=</span> Pipeline([</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocesado"</span>, crear_preprocesador()),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"modelo"</span>, LinearRegression()),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>puntuaciones_lineal <span class="op">=</span> cross_val_score(lineal, X_train, y_train, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                                      cv<span class="op">=</span>cv5, n_jobs<span class="op">=</span>N_NUCLEOS)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># scikit-learn devuelve el RMSE con el signo cambiado: lo pasamos a positivo.</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Regresión lineal | RMSE de validación cruzada:"</span>, <span class="bu">round</span>(<span class="op">-</span>puntuaciones_lineal.mean()), <span class="st">"euros"</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">"| error típico:"</span>, <span class="bu">round</span>(puntuaciones_lineal.std() <span class="op">/</span> np.sqrt(<span class="dv">5</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Regresión lineal | RMSE de validación cruzada: 11956 euros | error típico: 222</code></pre>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>La regresión lineal tiene un RMSE de validación cruzada de 11 956 euros, con un error típico de 222 euros.</li>
+<li>Es la referencia que XGBoost tiene que mejorar.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="bloque-1.-xgboost-con-submuestreo" class="level1">
+<h1>Bloque 1. XGBoost con submuestreo</h1>
+<section id="xgboost-sin-azar" class="level2">
+<h2 class="anchored" data-anchor-id="xgboost-sin-azar">1.1 XGBoost sin azar</h2>
+<p>XGBoost ajusta árboles uno detrás de otro.</p>
+<ul>
+<li>Cada árbol nuevo intenta corregir los errores de la predicción acumulada hasta ese momento, y su aportación se multiplica por la tasa de aprendizaje (<code>learning_rate</code>) antes de sumarse.</li>
+<li>Usamos 300 árboles, tasa de aprendizaje 0,1 y profundidad 4, valores que una búsqueda con validación cruzada eligió para estos datos.</li>
+<li>Con los valores por defecto de <code>subsample</code> y <code>colsample_bytree</code> (los dos, 1), cada árbol se ajusta con todos los trabajadores del entrenamiento y puede usar todas las columnas. Por eso dos ajustes con los mismos datos dan el mismo modelo: lo llamamos <strong>determinista</strong>.</li>
+<li>El argumento <code>importance_type="total_gain"</code> no cambia el ajuste. Fija cómo se mide la importancia por ganancia, que usaremos en el bloque 2.</li>
+</ul>
+<div id="19eb5405" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:41.760805Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:41.760688Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:42.925403Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:42.924867Z&quot;}}" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># XGBoost determinista: 300 árboles, tasa 0,1 y profundidad 4; cada árbol usa todas las filas y columnas.</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>xgb_det <span class="op">=</span> Pipeline([</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocesado"</span>, crear_preprocesador(escalar<span class="op">=</span><span class="va">False</span>)),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"modelo"</span>, XGBRegressor(n_estimators<span class="op">=</span><span class="dv">300</span>, learning_rate<span class="op">=</span><span class="fl">0.1</span>, max_depth<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                            importance_type<span class="op">=</span><span class="st">"total_gain"</span>, random_state<span class="op">=</span>SEMILLA)),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>puntuaciones_det <span class="op">=</span> cross_val_score(xgb_det, X_train, y_train, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                                   cv<span class="op">=</span>cv5, n_jobs<span class="op">=</span>N_NUCLEOS)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"XGBoost determinista | RMSE de validación cruzada:"</span>, <span class="bu">round</span>(<span class="op">-</span>puntuaciones_det.mean()), <span class="st">"euros"</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">"| error típico:"</span>, <span class="bu">round</span>(puntuaciones_det.std() <span class="op">/</span> np.sqrt(<span class="dv">5</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>XGBoost determinista | RMSE de validación cruzada: 10991 euros | error típico: 196</code></pre>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>El XGBoost determinista tiene un RMSE de validación cruzada de unos 11 000 euros, unos 1 000 menos que la regresión lineal.</li>
+<li>Su error típico, de unos 200 euros, es parecido al de la regresión lineal.</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Cifras en otro ordenador.</strong> XGBoost puede dar en tu ordenador RMSE que se separan unas decenas de euros de los del texto: el resultado depende del ordenador y de la versión de xgboost. Por eso el texto da sus cifras redondeadas. Las comparaciones entre modelos se mantienen.</p>
+</blockquote>
+<hr>
+</section>
+<section id="xgboost-estocástico" class="level2">
+<h2 class="anchored" data-anchor-id="xgboost-estocástico">1.2 XGBoost estocástico</h2>
+<p>El <strong>bagging</strong> ajusta cada árbol con una muestra distinta de los datos, y el <strong>random forest</strong> añade una selección al azar de las columnas en cada corte. Así los árboles se parecen menos entre sí. XGBoost puede llevar esa aleatoriedad al boosting con dos argumentos:</p>
+<ul>
+<li><code>subsample</code> es la fracción de trabajadores con la que se ajusta cada árbol. Antes de ajustar un árbol, XGBoost elige al azar, sin reemplazamiento, esa fracción del entrenamiento. Con 0,8, cada árbol ve un 80 % distinto de los trabajadores.</li>
+<li><code>colsample_bytree</code> es la fracción de columnas que puede usar cada árbol. Antes de ajustar un árbol, XGBoost elige al azar esa fracción de las 88 columnas del preprocesado, y el árbol solo puede cortar por ellas. Con 0,5, cada árbol ve la mitad.</li>
+<li><code>colsample_bytree</code> elige las columnas una vez por árbol. El random forest las elige en cada corte (<code>max_features</code>), y su equivalente en XGBoost es <code>colsample_bynode</code>.</li>
+</ul>
+<p>Con una fracción por debajo de 1, el azar entra en el ajuste: <strong>la semilla (<code>random_state</code>) cambia el modelo</strong>, porque cambia qué trabajadores y qué columnas ve cada árbol. Este método se llama <em>stochastic gradient boosting</em> (boosting estocástico).</p>
+<p>Ajustamos el mismo XGBoost con <code>subsample=0.8</code> y <code>colsample_bytree=0.5</code>.</p>
+<div id="7074e352" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:42.927324Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:42.927207Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:44.135422Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:44.134871Z&quot;}}" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># XGBoost estocástico: cada árbol ve el 80 % de los trabajadores y la mitad de las columnas, elegidos al azar.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>xgb <span class="op">=</span> Pipeline([</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocesado"</span>, crear_preprocesador(escalar<span class="op">=</span><span class="va">False</span>)),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"modelo"</span>, XGBRegressor(n_estimators<span class="op">=</span><span class="dv">300</span>, learning_rate<span class="op">=</span><span class="fl">0.1</span>, max_depth<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                            subsample<span class="op">=</span><span class="fl">0.8</span>, colsample_bytree<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                            importance_type<span class="op">=</span><span class="st">"total_gain"</span>, random_state<span class="op">=</span>SEMILLA)),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>puntuaciones_xgb <span class="op">=</span> cross_val_score(xgb, X_train, y_train, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                                   cv<span class="op">=</span>cv5, n_jobs<span class="op">=</span>N_NUCLEOS)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"XGBoost estocástico | RMSE de validación cruzada:"</span>, <span class="bu">round</span>(<span class="op">-</span>puntuaciones_xgb.mean()), <span class="st">"euros"</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">"| error típico:"</span>, <span class="bu">round</span>(puntuaciones_xgb.std() <span class="op">/</span> np.sqrt(<span class="dv">5</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>XGBoost estocástico | RMSE de validación cruzada: 10873 euros | error típico: 189</code></pre>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>El XGBoost estocástico tiene un RMSE de validación cruzada de unos 10 900 euros, unos 100 euros menos que el determinista.</li>
+<li>La diferencia es menor que el error típico de cualquiera de los dos (unos 190-200 euros).</li>
+<li>Este resultado corresponde a una semilla. Con otra, el estocástico sería otro modelo y su RMSE cambiaría. ¿Cuánto?</li>
+</ul>
+<hr>
+<section id="ejercicio-1.-cuánto-mueve-la-semilla-el-rmse" class="level3">
+<h3 class="anchored" data-anchor-id="ejercicio-1.-cuánto-mueve-la-semilla-el-rmse">Ejercicio 1. ¿Cuánto mueve la semilla el RMSE?</h3>
+<ol type="1">
+<li>Calcula el RMSE de validación cruzada del XGBoost estocástico con las semillas 1, 2, 3, 4 y 5. Crea el <code>Pipeline</code> de 1.2 con <code>random_state=semilla</code> dentro de un bucle <code>for</code>, y guarda los cinco RMSE en una lista.
+<ul>
+<li>Llama <code>semilla</code> (en minúscula) a la variable del bucle y <code>xgb_semilla</code> al modelo.</li>
+<li>Si reutilizas <code>SEMILLA</code> o <code>xgb</code>, el resto del cuaderno interpretará otro modelo, el de la última semilla del bucle.</li>
+</ul></li>
+<li>Calcula la media de los cinco RMSE y su recorrido (el máximo menos el mínimo).</li>
+<li>¿Es la mejora del estocástico frente al determinista mayor que lo que mueve la semilla? ¿Y que el error típico? ¿Qué concluyes sobre el submuestreo en estos datos?</li>
+</ol>
+<div id="523e4458" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:44.136784Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:44.136663Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:47.101997Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:47.101516Z&quot;}}" data-tags="[&quot;ejercicio&quot;]" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1. RMSE de validación cruzada del XGBoost estocástico con cinco semillas.</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>rmse_semillas <span class="op">=</span> []</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> semilla <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]:</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    xgb_semilla <span class="op">=</span> Pipeline([</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"preprocesado"</span>, crear_preprocesador(escalar<span class="op">=</span><span class="va">False</span>)),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"modelo"</span>, XGBRegressor(n_estimators<span class="op">=</span><span class="dv">300</span>, learning_rate<span class="op">=</span><span class="fl">0.1</span>, max_depth<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                                subsample<span class="op">=</span><span class="fl">0.8</span>, colsample_bytree<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span>semilla)),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    puntuaciones <span class="op">=</span> cross_val_score(xgb_semilla, X_train, y_train, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                                   cv<span class="op">=</span>cv5, n_jobs<span class="op">=</span>N_NUCLEOS)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    rmse_semillas.append(<span class="op">-</span>puntuaciones.mean())</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2. Los cinco RMSE, su media y su recorrido.</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>rmse_semillas <span class="op">=</span> pd.Series(rmse_semillas, index<span class="op">=</span>[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(rmse_semillas.<span class="bu">round</span>(<span class="dv">0</span>))</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Media:"</span>, <span class="bu">round</span>(rmse_semillas.mean()), <span class="st">"euros | recorrido:"</span>,</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>      <span class="bu">round</span>(rmse_semillas.<span class="bu">max</span>() <span class="op">-</span> rmse_semillas.<span class="bu">min</span>()), <span class="st">"euros"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>1    10922.0
+2    10860.0
+3    10892.0
+4    10873.0
+5    10869.0
+dtype: float64
+Media: 10883 euros | recorrido: 62 euros</code></pre>
+</div>
+</div>
+<p>Paso 3. ¿Es la mejora del estocástico frente al determinista mayor que lo que mueve la semilla? ¿Y que el error típico? ¿Qué concluyes sobre el submuestreo en estos datos?</p>
+<p><strong>Solución.</strong></p>
+<ul>
+<li>Con las cinco semillas, el RMSE de validación cruzada del estocástico queda entre unos 10 860 y 10 920 euros. La semilla lo mueve unas decenas de euros (aquí, un recorrido de unos 60).</li>
+<li>La mejora media frente al determinista (unos 11 000 euros) es de unas decenas de euros, hasta unos 100. Es del mismo orden que lo que mueve la semilla: con otra semilla, o en otro ordenador, alguna puede quedar por encima del determinista.</li>
+<li>Y es menor que el error típico (unos 190 euros): la validación cruzada no separa los dos modelos.</li>
+<li>Conclusión: en estos datos, el submuestreo mejora poco, y la mejora no se distingue de lo que mueve el azar. Interpretamos el estocástico sabiendo que su ventaja es, como mucho, pequeña.</li>
+</ul>
+</section>
+<section id="para-pensar-1" class="level3">
+<h3 class="anchored" data-anchor-id="para-pensar-1">Para pensar 1</h3>
+<p>Con <code>subsample=0.8</code>, cada árbol corrige los errores de la predicción acumulada mirando solo a un 80 % de los trabajadores. ¿Por qué puede eso mejorar el error de validación, si cada árbol ve menos datos?</p>
+<details>
+<summary>
+Respuesta
+</summary>
+<ul>
+<li>En el boosting, cada árbol persigue los residuos que dejan los anteriores, y con 300 árboles el modelo acaba siguiendo también el ruido de los trabajadores del ajuste.</li>
+<li>Si cada árbol ve otro 80 %, un trabajador con un salario anómalo solo influye en una parte de los árboles, y los árboles se parecen menos entre sí.</li>
+<li>El efecto es el del bagging: la predicción depende menos de unos pocos trabajadores, y el modelo sobreajusta menos. Es una forma de regularización, como la tasa de aprendizaje o la profundidad.</li>
+<li>A cambio, cada árbol es algo peor por separado. Si la fracción es muy baja, esa pérdida pesa más que la ganancia.</li>
+</ul>
+</details>
+</section>
+</section>
+<section id="el-modelo-que-interpretamos" class="level2">
+<h2 class="anchored" data-anchor-id="el-modelo-que-interpretamos">1.3 El modelo que interpretamos</h2>
+<p>A partir de aquí interpretamos el XGBoost estocástico de 1.2, con la semilla 42.</p>
+<ul>
+<li>Lo ajustamos con todo el entrenamiento, y ajustamos también la regresión lineal.</li>
+<li>Calculamos el RMSE de test de los dos, <strong>una sola vez</strong>. El test informa del error con trabajadores nuevos y no cambia la elección.</li>
+<li>Desde aquí, el test solo sirve para <strong>describir el modelo</strong> con 2 000 trabajadores que no ha visto: las herramientas de los bloques 2, 3 y 4 se calculan con ellos.</li>
+</ul>
+<div id="14d2ca3a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:47.103452Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:47.103360Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:47.825318Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:47.824826Z&quot;}}" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajuste con todo el entrenamiento.</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>lineal.fit(X_train, y_train)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>xgb.fit(X_train, y_train)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># RMSE de test, una sola vez.</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Regresión lineal | RMSE de test:"</span>, <span class="bu">round</span>(root_mean_squared_error(y_test, lineal.predict(X_test))), <span class="st">"euros"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"XGBoost estocástico | RMSE de test:"</span>, <span class="bu">round</span>(root_mean_squared_error(y_test, xgb.predict(X_test))), <span class="st">"euros"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Regresión lineal | RMSE de test: 11860 euros
+XGBoost estocástico | RMSE de test: 10427 euros</code></pre>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>En el test, XGBoost tiene un RMSE unos 1 400 euros menor que el de la regresión lineal, que es de 11 860 euros.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="bloque-2.-qué-predictores-pesan-en-las-predicciones" class="level1">
+<h1>Bloque 2. ¿Qué predictores pesan en las predicciones?</h1>
+<section id="importancia-por-ganancia" class="level2">
+<h2 class="anchored" data-anchor-id="importancia-por-ganancia">2.1 Importancia por ganancia</h2>
+<p>Cada corte de un árbol reduce la pérdida, que aquí es el error cuadrático. Esa reducción es la <strong>ganancia</strong> del corte.</p>
+<ul>
+<li>El atributo <code>feature_importances_</code> del XGBoost ajustado suma la ganancia de todos los cortes que usan cada columna, en los 300 árboles, y la divide por el total. Así, las importancias de todas las columnas suman 1.</li>
+<li>Es lo que pide <code>importance_type="total_gain"</code>. El valor por defecto de XGBoost (<code>"gain"</code>) promedia la ganancia por corte, y da otro reparto.</li>
+</ul>
+<p>Esta medida tiene dos límites:</p>
+<ul>
+<li><strong>Mide columnas del preprocesado.</strong> Un predictor categórico se reparte entre sus columnas, una por categoría: la ocupación (<code>CNO1</code>) tiene 16, y su importancia queda dividida entre ellas.</li>
+<li><strong>Se calcula con los datos del ajuste.</strong> No dice si esos cortes ayudan a predecir a trabajadores nuevos.</li>
+</ul>
+<p>Recuperamos los nombres de las 88 columnas del preprocesado con <code>get_feature_names_out()</code> y les quitamos el prefijo del transformador (<code>numericas__</code>, <code>categoricas__</code>).</p>
+<div id="701aa597" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:47.826604Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:47.826528Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:47.908825Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:47.908298Z&quot;}}" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nombres de las columnas del preprocesado, sin el prefijo del transformador.</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>nombres <span class="op">=</span> pd.Index(xgb[<span class="st">"preprocesado"</span>].get_feature_names_out())</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>nombres <span class="op">=</span> nombres.<span class="bu">str</span>.replace(<span class="st">"numericas__"</span>, <span class="st">""</span>).<span class="bu">str</span>.replace(<span class="st">"categoricas__"</span>, <span class="st">""</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Importancia por ganancia de cada columna.</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>ganancia <span class="op">=</span> pd.Series(xgb[<span class="st">"modelo"</span>].feature_importances_, index<span class="op">=</span>nombres)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Las 15 columnas con más ganancia, en barras.</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>ganancia.sort_values().tail(<span class="dv">15</span>).plot.barh(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">5</span>))</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"importancia por ganancia (proporción del total)"</span>)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El gráfico anterior reparte la importancia de cada predictor categórico entre sus categorías: los estudios aparecen en varias barras (<code>ESTU_7</code>, <code>ESTU_6</code>…), y la ocupación, en otras tantas. Para saber cuánto pesa cada predictor completo conviene volver a agrupar sus columnas, y es lo que hacemos a continuación.</p>
+<p>Para sumar la ganancia por predictor necesitamos saber a qué predictor pertenece cada columna.</p>
+<ul>
+<li>El nombre de una columna categórica es el del predictor seguido de <code>_</code> y la categoría: <code>ESTU_7</code> es la columna de los trabajadores con licenciatura o doctorado.</li>
+<li>Las numéricas conservan su nombre (<code>ANOANTI</code>).</li>
+<li>Por eso el predictor es lo que hay antes del primer <code>_</code>. Lo guardamos en <code>predictor_de_columna</code>.</li>
+</ul>
+<div id="57212631" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:47.909988Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:47.909889Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:47.913667Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:47.913161Z&quot;}}" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predictor original de cada columna: lo que hay antes del primer "_" ("ESTU_7" -&gt; "ESTU").</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>predictor_de_columna <span class="op">=</span> pd.Series(nombres.<span class="bu">str</span>.split(<span class="st">"_"</span>).<span class="bu">str</span>[<span class="dv">0</span>], index<span class="op">=</span>nombres)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ganancia sumada por predictor original, de mayor a menor.</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>ganancia_predictor <span class="op">=</span> ganancia.groupby(predictor_de_columna).<span class="bu">sum</span>()</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>ganancia_predictor.sort_values(ascending<span class="op">=</span><span class="va">False</span>).<span class="bu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>ESTU          0.170
+ANOANTI       0.166
+TIPOJOR       0.127
+CNO1          0.126
+JAP           0.102
+RESPONSA      0.085
+CNACE         0.071
+REGULACION    0.026
+MERCADO       0.025
+ANOS2         0.024
+SEXO          0.024
+NUTS1         0.020
+ESTRATO2      0.018
+CONTROL       0.010
+TIPOCON       0.004
+TIPOPAIS      0.003
+dtype: float32</code></pre>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>Por columnas, la antigüedad (<code>ANOANTI</code>) y la licenciatura o el doctorado (<code>ESTU_7</code>) encabezan la lista. Les siguen las horas pactadas (<code>JAP</code>) y una de las dos columnas de la jornada (<code>TIPOJOR_1</code> o <code>TIPOJOR_2</code>).</li>
+<li>Por predictores, los estudios (<code>ESTU</code>), la antigüedad y la jornada (<code>TIPOJOR</code>) son los tres que más pesan, con entre unos 0,13 y 0,22 cada uno.</li>
+<li>Les siguen, con alrededor de 0,1 o algo menos cada uno, la ocupación (<code>CNO1</code>), las horas pactadas, la responsabilidad (<code>RESPONSA</code>) y la actividad de la empresa (<code>CNACE</code>).</li>
+<li>La ocupación sube al sumar: ninguna de sus 16 columnas pasa de 0,05, pero juntas quedan cerca del grupo de cabeza.</li>
+<li><strong>Las cifras cambian de un ordenador a otro</strong>, y también con la semilla del modelo. Dentro del grupo de cabeza el orden puede cambiar, así que no ordenamos predictores con importancias parecidas: lo que se mantiene es quiénes forman el grupo.</li>
+</ul>
+<hr>
+</section>
+<section id="importancia-por-permutación" class="level2">
+<h2 class="anchored" data-anchor-id="importancia-por-permutación">2.2 Importancia por permutación</h2>
+<p>La importancia por permutación mide cuánto empeora el modelo cuando pierde la información de un predictor.</p>
+<ol type="1">
+<li>Se calcula el RMSE del modelo con los trabajadores del test.</li>
+<li>Se barajan al azar los valores de un predictor entre esos trabajadores. Así se rompe su relación con el salario, y el resto de predictores no cambia.</li>
+<li>Se predice de nuevo y se mide cuánto sube el RMSE.</li>
+<li>Se repite varias veces (<code>n_repeats=10</code>) y se promedia.</li>
+</ol>
+<ul>
+<li>Como barajamos antes del <code>Pipeline</code>, se baraja el predictor original entero, con todas sus columnas a la vez. Por eso mide los 16 predictores.</li>
+<li>Usamos el test, con trabajadores que el modelo no ha visto: mide lo que el predictor aporta a predecir a trabajadores nuevos.</li>
+<li><code>permutation_importance(modelo, X, y, scoring=..., n_repeats=..., random_state=..., n_jobs=...)</code> hace todo el cálculo. Devuelve la media de las repeticiones en <code>importances_mean</code> y su desviación típica en <code>importances_std</code>.</li>
+</ul>
+<div id="3e8a00ad" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:47.914875Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:47.914804Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:49.167052Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:49.166530Z&quot;}}" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Importancia por permutación en el test: cuánto sube el RMSE al barajar cada predictor (10 repeticiones).</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>permutacion <span class="op">=</span> permutation_importance(xgb, X_test, y_test, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                                     n_repeats<span class="op">=</span><span class="dv">10</span>, random_state<span class="op">=</span>SEMILLA, n_jobs<span class="op">=</span>N_NUCLEOS)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Media y desviación típica de las 10 repeticiones, en euros de RMSE.</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>tabla_permutacion <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"media"</span>: permutacion.importances_mean,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"desviacion_tipica"</span>: permutacion.importances_std,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>}, index<span class="op">=</span>X_test.columns)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>tabla_permutacion <span class="op">=</span> tabla_permutacion.sort_values(<span class="st">"media"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>tabla_permutacion.<span class="bu">round</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">media</th>
+<th data-quarto-table-cell-role="th">desviacion_tipica</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ANOANTI</th>
+<td>2081.0</td>
+<td>97.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">ESTU</th>
+<td>2007.0</td>
+<td>73.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">CNO1</th>
+<td>1800.0</td>
+<td>84.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">CNACE</th>
+<td>1098.0</td>
+<td>97.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">TIPOJOR</th>
+<td>919.0</td>
+<td>120.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">JAP</th>
+<td>894.0</td>
+<td>79.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">RESPONSA</th>
+<td>531.0</td>
+<td>55.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">SEXO</th>
+<td>379.0</td>
+<td>44.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ANOS2</th>
+<td>331.0</td>
+<td>39.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">REGULACION</th>
+<td>328.0</td>
+<td>28.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">MERCADO</th>
+<td>287.0</td>
+<td>49.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">NUTS1</th>
+<td>251.0</td>
+<td>62.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ESTRATO2</th>
+<td>184.0</td>
+<td>29.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">CONTROL</th>
+<td>67.0</td>
+<td>13.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">TIPOCON</th>
+<td>53.0</td>
+<td>15.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">TIPOPAIS</th>
+<td>13.0</td>
+<td>26.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="1c7acc9e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:49.168498Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:49.168380Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:49.222277Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:49.221850Z&quot;}}" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Barras con la desviación típica de las repeticiones.</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>tabla_permutacion.sort_values(<span class="st">"media"</span>).plot.barh(y<span class="op">=</span><span class="st">"media"</span>, xerr<span class="op">=</span><span class="st">"desviacion_tipica"</span>, legend<span class="op">=</span><span class="va">False</span>, figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">5</span>))</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"aumento del RMSE al barajar el predictor (euros)"</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>La antigüedad y los estudios encabezan la lista, casi empatados: al barajar cualquiera de los dos, el RMSE sube unos 2 000 euros. Su diferencia es menor que la desviación típica de las repeticiones, así que no los ordenamos.</li>
+<li>Les sigue la ocupación, con unos 1 600-1 800 euros.</li>
+<li>Después vienen, muy juntos, la actividad de la empresa (<code>CNACE</code>), la jornada y las horas pactadas, con unos 800-1 200 euros cada uno.</li>
+<li>El tipo de contrato (<code>TIPOCON</code>), el control de la empresa (<code>CONTROL</code>) y el país (<code>TIPOPAIS</code>) apenas pesan.</li>
+</ul>
+<hr>
+<section id="para-pensar-2" class="level3">
+<h3 class="anchored" data-anchor-id="para-pensar-2">Para pensar 2</h3>
+<p>En la ganancia, la jornada (<code>TIPOJOR</code>) pesa tanto o más que la ocupación (<code>CNO1</code>). Pero al barajar la ocupación, el RMSE sube bastante más que al barajar la jornada. ¿Por qué pueden diferir tanto las dos medidas?</p>
+<p><strong>Pista.</strong> Piensa en lo que dicen dos de los predictores:</p>
+<ul>
+<li><code>TIPOJOR</code> dice si el trabajador está a tiempo completo (1) o a tiempo parcial (2).</li>
+<li><code>JAP</code> dice cuántas horas al año pacta en su contrato.</li>
+</ul>
+<p>Si barajamos <code>TIPOJOR</code> y dejamos <code>JAP</code> como está, ¿puede el modelo saber todavía quién trabaja a tiempo parcial?</p>
+<details>
+<summary>
+Respuesta
+</summary>
+<ul>
+<li>La ganancia cuenta todos los cortes que usaron la columna al ajustar el modelo. La permutación mide lo que el modelo pierde al quedarse sin ese predictor, con los demás intactos.</li>
+<li>Las horas pactadas llevan casi toda la información de la jornada: los trabajadores a tiempo completo pactan entre unas 1 150 y 2 000 horas al año, y la mayoría de los de tiempo parcial, muchas menos.</li>
+<li>Al barajar solo la jornada, el modelo sigue sabiendo por las horas quién trabaja a tiempo parcial, y el error apenas sube. Si se barajaran las dos a la vez, el error subiría más que la suma de las dos por separado.</li>
+<li>La ocupación no tiene un sustituto tan completo, y al barajarla el modelo pierde más.</li>
+<li>Con predictores asociados, la permutación reparte mal la importancia. Mide lo que aporta cada predictor cuando los demás siguen en el modelo. La información que comparte con otros queda fuera de su importancia, porque los demás la siguen aportando.</li>
+</ul>
+</details>
+</section>
+<section id="ejercicio-2.-es-la-importancia-del-modelo-o-de-los-datos" class="level3">
+<h3 class="anchored" data-anchor-id="ejercicio-2.-es-la-importancia-del-modelo-o-de-los-datos">Ejercicio 2. ¿Es la importancia del modelo o de los datos?</h3>
+<p>El XGBoost determinista y el estocástico se ajustan con los mismos trabajadores, y sus RMSE de validación cruzada casi no se distinguen. ¿Usan los predictores de la misma forma?</p>
+<ol type="1">
+<li>Ajusta <code>xgb_det</code> con todo el entrenamiento.</li>
+<li>Calcula su ganancia sumada por predictor original, como en 2.1, y ponla en una tabla junto a <code>ganancia_predictor</code>. Sus columnas tienen los mismos nombres que las de <code>xgb</code>.</li>
+<li>Calcula su importancia por permutación en el test, como en 2.2, y ponla en una tabla junto a la del estocástico, con una columna para la diferencia.</li>
+<li>¿Qué predictores ceden importancia en el estocástico y cuáles la ganan? Relaciónalo con <code>colsample_bytree</code> y con dos asociaciones de los datos: los estudios y la ocupación van muy unidos, y las horas pactadas separan casi por completo a los trabajadores a tiempo parcial.</li>
+</ol>
+<div id="493af0dd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:49.223634Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:49.223497Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:49.846667Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:49.846183Z&quot;}}" data-tags="[&quot;ejercicio&quot;]" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1. XGBoost determinista ajustado con todo el entrenamiento.</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>xgb_det.fit(X_train, y_train)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2. Ganancia del determinista sumada por predictor, junto a la del estocástico.</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>ganancia_det <span class="op">=</span> pd.Series(xgb_det[<span class="st">"modelo"</span>].feature_importances_, index<span class="op">=</span>nombres)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>ganancia_det_predictor <span class="op">=</span> ganancia_det.groupby(predictor_de_columna).<span class="bu">sum</span>()</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>comparacion_ganancia <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"determinista"</span>: ganancia_det_predictor,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"estocastico"</span>: ganancia_predictor,</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>comparacion_ganancia.sort_values(<span class="st">"estocastico"</span>, ascending<span class="op">=</span><span class="va">False</span>).<span class="bu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">determinista</th>
+<th data-quarto-table-cell-role="th">estocastico</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ESTU</th>
+<td>0.229</td>
+<td>0.170</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">ANOANTI</th>
+<td>0.166</td>
+<td>0.166</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">TIPOJOR</th>
+<td>0.171</td>
+<td>0.127</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">CNO1</th>
+<td>0.083</td>
+<td>0.126</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">JAP</th>
+<td>0.077</td>
+<td>0.102</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">RESPONSA</th>
+<td>0.081</td>
+<td>0.085</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">CNACE</th>
+<td>0.070</td>
+<td>0.071</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">REGULACION</th>
+<td>0.021</td>
+<td>0.026</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">MERCADO</th>
+<td>0.022</td>
+<td>0.025</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">ANOS2</th>
+<td>0.019</td>
+<td>0.024</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">SEXO</th>
+<td>0.024</td>
+<td>0.024</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">NUTS1</th>
+<td>0.016</td>
+<td>0.020</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ESTRATO2</th>
+<td>0.012</td>
+<td>0.018</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">CONTROL</th>
+<td>0.004</td>
+<td>0.010</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">TIPOCON</th>
+<td>0.002</td>
+<td>0.004</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">TIPOPAIS</th>
+<td>0.002</td>
+<td>0.003</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="f6a04b45" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:49.847871Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:49.847794Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:50.996274Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:50.995708Z&quot;}}" data-tags="[&quot;ejercicio&quot;]" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3. Permutación del determinista en el test, junto a la del estocástico.</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>permutacion_det <span class="op">=</span> permutation_importance(xgb_det, X_test, y_test, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                                         n_repeats<span class="op">=</span><span class="dv">10</span>, random_state<span class="op">=</span>SEMILLA, n_jobs<span class="op">=</span>N_NUCLEOS)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>comparacion_permutacion <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"determinista"</span>: permutacion_det.importances_mean,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"estocastico"</span>: permutacion.importances_mean,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>}, index<span class="op">=</span>X_test.columns)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>comparacion_permutacion[<span class="st">"diferencia"</span>] <span class="op">=</span> comparacion_permutacion[<span class="st">"estocastico"</span>] <span class="op">-</span> comparacion_permutacion[<span class="st">"determinista"</span>]</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>comparacion_permutacion.sort_values(<span class="st">"estocastico"</span>, ascending<span class="op">=</span><span class="va">False</span>).<span class="bu">round</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">determinista</th>
+<th data-quarto-table-cell-role="th">estocastico</th>
+<th data-quarto-table-cell-role="th">diferencia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ANOANTI</th>
+<td>2278.0</td>
+<td>2081.0</td>
+<td>-197.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">ESTU</th>
+<td>2234.0</td>
+<td>2007.0</td>
+<td>-227.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">CNO1</th>
+<td>1716.0</td>
+<td>1800.0</td>
+<td>84.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">CNACE</th>
+<td>1140.0</td>
+<td>1098.0</td>
+<td>-42.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">TIPOJOR</th>
+<td>1165.0</td>
+<td>919.0</td>
+<td>-247.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">JAP</th>
+<td>930.0</td>
+<td>894.0</td>
+<td>-35.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">RESPONSA</th>
+<td>557.0</td>
+<td>531.0</td>
+<td>-26.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">SEXO</th>
+<td>364.0</td>
+<td>379.0</td>
+<td>15.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ANOS2</th>
+<td>276.0</td>
+<td>331.0</td>
+<td>56.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">REGULACION</th>
+<td>354.0</td>
+<td>328.0</td>
+<td>-27.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">MERCADO</th>
+<td>285.0</td>
+<td>287.0</td>
+<td>2.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">NUTS1</th>
+<td>195.0</td>
+<td>251.0</td>
+<td>56.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ESTRATO2</th>
+<td>206.0</td>
+<td>184.0</td>
+<td>-22.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">CONTROL</th>
+<td>57.0</td>
+<td>67.0</td>
+<td>10.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">TIPOCON</th>
+<td>57.0</td>
+<td>53.0</td>
+<td>-5.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">TIPOPAIS</th>
+<td>31.0</td>
+<td>13.0</td>
+<td>-18.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Paso 4. ¿Qué predictores ceden importancia en el estocástico y cuáles la ganan? ¿Por qué?</p>
+<p><strong>Solución.</strong></p>
+<ul>
+<li><strong>Ganancia.</strong>
+<ul>
+<li>Los estudios bajan de unos 0,23 a 0,17, y la jornada, de unos 0,17 a 0,13.</li>
+<li>La ocupación sube de unos 0,08 a 0,13, y las horas pactadas, algo menos (de unos 0,08 a 0,10).</li>
+<li>Las cifras cambian con la semilla y con el ordenador, pero el sentido se mantiene: los estudios y la jornada ceden ganancia, y la ocupación la gana.</li>
+</ul></li>
+<li><strong>La ganancia pasa de un predictor a otro asociado con él:</strong> de los estudios a la ocupación, y de la jornada a las horas.
+<ul>
+<li>Con <code>colsample_bytree=0.5</code>, la mitad de los árboles, más o menos, no puede usar la columna <code>ESTU_7</code>, y lo mismo pasa con las de la jornada.</li>
+<li>En esos árboles, el modelo corta por el predictor que lleva una información parecida.</li>
+</ul></li>
+<li><strong>Permutación.</strong> El cambio es menos nítido, y su sentido depende de la semilla. Aquí, los estudios, la jornada y la antigüedad pierden unos 200-250 euros, y la ocupación gana algo (en torno a una desviación típica).</li>
+<li><strong>Conclusión.</strong> Dos modelos con casi el mismo error reparten la importancia de forma distinta. Por eso, la importancia describe cómo usa los predictores un modelo concreto, y puede cambiar de un modelo a otro con los mismos datos.</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="bloque-3.-cómo-cambia-la-predicción-con-un-predictor" class="level1">
+<h1>Bloque 3. ¿Cómo cambia la predicción con un predictor?</h1>
+<section id="dependencia-parcial-y-curvas-ice-de-la-antigüedad" class="level2">
+<h2 class="anchored" data-anchor-id="dependencia-parcial-y-curvas-ice-de-la-antigüedad">3.1 Dependencia parcial y curvas ICE de la antigüedad</h2>
+<ul>
+<li>La <strong>curva ICE</strong> (<em>individual conditional expectation</em>) de un trabajador es su predicción cuando solo cambia un predictor, aquí la antigüedad, y el resto de sus predictores se quedan como están.</li>
+<li>La <strong>dependencia parcial</strong> es la media de las curvas ICE de todos los trabajadores.</li>
+<li><code>PartialDependenceDisplay.from_estimator(modelo, X, [predictor], kind="both", subsample=50, random_state=...)</code> dibuja la dependencia parcial (línea discontinua) y 50 curvas ICE elegidas al azar (líneas finas).</li>
+<li>Las rayas del eje horizontal marcan los deciles del predictor: entre dos rayas hay un 10 % de los trabajadores.</li>
+<li>Con el <code>Pipeline</code>, pasamos el test sin preprocesar.</li>
+</ul>
+<div id="597a5233" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:50.997752Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:50.997643Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:51.272218Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:51.271747Z&quot;}}" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dependencia parcial y 50 curvas ICE de la antigüedad, con los trabajadores del test.</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>PartialDependenceDisplay.from_estimator(xgb, X_test, [<span class="st">"ANOANTI"</span>], kind<span class="op">=</span><span class="st">"both"</span>, subsample<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                                        random_state<span class="op">=</span>SEMILLA)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="138a940a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:51.273495Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:51.273403Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:51.276621Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:51.276170Z&quot;}}" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cuantiles de la antigüedad: valores por debajo de los que queda el 20, 50, 75, 90, 95 y 99,75 % de los trabajadores.</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>datos[<span class="st">"ANOANTI"</span>].quantile(q<span class="op">=</span>[<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">0.9</span>, <span class="fl">0.95</span>, <span class="fl">0.9975</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>0.2000     1.0
+0.5000     7.0
+0.7500    17.0
+0.9000    26.0
+0.9500    32.0
+0.9975    45.0
+Name: ANOANTI, dtype: float64</code></pre>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>La curva media sube con fuerza entre 0 y 1 año de antigüedad, de unos 17 000 a unos 25 000 euros.</li>
+<li>Después sube despacio: unos 26 000 euros con 5 años y unos 35 000 con 33.</li>
+<li>Las rayas de los deciles llegan hasta unos 25 años. Los cuantiles de la celda anterior lo confirman: la mitad de los trabajadores tiene 7 años de antigüedad o menos, el 90 %, unos 26 o menos, y solo un 0,25 % pasa de 45.</li>
+<li>El salto por encima de 45 años se basa en una extrapolación con muy pocos trabajadores, y su interpretación es arriesgada.</li>
+<li>Las curvas ICE van casi paralelas: el modelo da a todos los trabajadores un efecto parecido de la antigüedad, sobre niveles muy distintos que dependen del resto de sus predictores.</li>
+</ul>
+<hr>
+<section id="para-pensar-3" class="level3">
+<h3 class="anchored" data-anchor-id="para-pensar-3">Para pensar 3</h3>
+<p>Entre 0 y 1 año de antigüedad, la curva media sube unos 7 500-8 000 euros. ¿Quiere decir que el salario de un trabajador sube eso en su primer año en la empresa?</p>
+<details>
+<summary>
+Respuesta
+</summary>
+<ul>
+<li>No.&nbsp;La curva da, para cada valor de la antigüedad, el salario medio que predice el modelo. Describe una asociación que el modelo ha aprendido de los datos.</li>
+<li>En los datos, los trabajadores con antigüedad 0 no se diferencian de los demás solo en la antigüedad. Por ejemplo, muchos entraron en la empresa durante el año y cobraron menos meses de salario.</li>
+<li>Por eso la subida no compara a un mismo trabajador con y sin un año más en la empresa, con todo lo demás igual (<em>ceteris paribus</em>). Compara trabajadores en los que, junto con la antigüedad, cambian otras cosas que el modelo no ve (<em>mutatis mutandis</em>).</li>
+<li>La curva no mide el efecto causal de la antigüedad sobre el salario.</li>
+</ul>
+</details>
+</section>
+</section>
+<section id="un-predictor-categórico-los-estudios" class="level2">
+<h2 class="anchored" data-anchor-id="un-predictor-categórico-los-estudios">3.2 Un predictor categórico: los estudios</h2>
+<p>Con un predictor categórico, la dependencia parcial da una barra por categoría: la predicción media de todos los trabajadores cuando toman esa categoría. Se pide con <code>categorical_features</code>.</p>
+<div id="ed335672" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:51.277840Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:51.277767Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:51.348448Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:51.347932Z&quot;}}" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dependencia parcial de los estudios, una barra por código.</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>PartialDependenceDisplay.from_estimator(xgb, X_test, [<span class="st">"ESTU"</span>], categorical_features<span class="op">=</span>[<span class="st">"ESTU"</span>])</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>La predicción media sube con el nivel de estudios: unos 22 000 euros con el código 1 (menos que primaria) y unos 34 000 con el 7 (licenciatura o doctorado).</li>
+<li>El escalón mayor está entre la diplomatura (6) y la licenciatura (7).</li>
+</ul>
+<hr>
+<section id="ejercicio-3.-curvas-ice-centradas-de-las-horas-pactadas" class="level3">
+<h3 class="anchored" data-anchor-id="ejercicio-3.-curvas-ice-centradas-de-las-horas-pactadas">Ejercicio 3. Curvas ICE centradas de las horas pactadas</h3>
+<p>Cuando las curvas ICE tienen niveles muy distintos, cuesta ver si su forma cambia de un trabajador a otro. Las <strong>curvas ICE centradas</strong> restan a cada curva su valor en el primer punto de la rejilla. Así todas empiezan en 0, y cada una muestra solo cuánto cambia la predicción de ese trabajador. Se piden con <code>centered=True</code>.</p>
+<ol type="1">
+<li>Dibuja la dependencia parcial y 50 curvas ICE centradas de las horas pactadas (<code>JAP</code>).</li>
+<li>¿Es el efecto de las horas el mismo para todos los trabajadores? ¿En qué tramo de horas se separan las curvas?</li>
+</ol>
+<div id="da27d042" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:51.349562Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:51.349491Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:51.852466Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:51.851919Z&quot;}}" data-tags="[&quot;ejercicio&quot;]" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1. Dependencia parcial y 50 curvas ICE centradas de las horas pactadas.</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>PartialDependenceDisplay.from_estimator(xgb, X_test, [<span class="st">"JAP"</span>], kind<span class="op">=</span><span class="st">"both"</span>, centered<span class="op">=</span><span class="va">True</span>, subsample<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                                        random_state<span class="op">=</span>SEMILLA)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Paso 2. ¿Es el efecto de las horas el mismo para todos los trabajadores? ¿En qué tramo de horas se separan las curvas?</p>
+<p><strong>Solución.</strong></p>
+<ul>
+<li>La rejilla va de unas 720 a unas 1 830 horas al año (de los percentiles 5 al 95).</li>
+<li>Hasta unas 1 400 horas, las curvas suben juntas y a escalones, unos 3 000 euros.</li>
+<li>Por encima de unas 1 400 horas se separan: unas siguen subiendo hasta 10 000 euros o más, y otras se quedan o bajan.</li>
+<li>Las rayas de los deciles muestran que la mayoría de los trabajadores pacta más de unas 1 500 horas, justo en el tramo donde las curvas se separan.</li>
+<li>El efecto de las horas no es el mismo para todos. Depende del resto de predictores del trabajador: el modelo tiene interacciones.</li>
+</ul>
+</section>
+<section id="para-pensar-4" class="level3">
+<h3 class="anchored" data-anchor-id="para-pensar-4">Para pensar 4</h3>
+<p>Una curva ICE de un trabajador a tiempo completo recorre toda la rejilla, también 720 u 800 horas al año. ¿Hay trabajadores así en los datos? ¿Qué consecuencia tiene para la lectura de las curvas?</p>
+<details>
+<summary>
+Respuesta
+</summary>
+<ul>
+<li>Casi no hay. En el entrenamiento, los trabajadores a tiempo completo pactan entre unas 1 150 y 2 000 horas al año, con una media de unas 1 725. Los de tiempo parcial pactan de media unas 1 060.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>X_train.groupby(<span class="st">"TIPOJOR"</span>, observed<span class="op">=</span><span class="va">True</span>)[<span class="st">"JAP"</span>].describe()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>En el tramo bajo de la rejilla, la curva de un trabajador a tiempo completo pasa por combinaciones que no existen en los datos. Ahí el modelo extrapola: predice en una zona donde no ha visto ningún trabajador.</li>
+<li>La dependencia parcial promedia esas curvas, así que también mezcla combinaciones reales con combinaciones inventadas.</li>
+<li>Con predictores asociados, como la jornada y las horas, las curvas solo se leen donde hay datos.</li>
+</ul>
+</details>
+</section>
+</section>
+</section>
+<section id="bloque-4.-por-qué-el-modelo-predice-este-salario-para-este-trabajador" class="level1">
+<h1>Bloque 4. ¿Por qué el modelo predice este salario para este trabajador?</h1>
+<section id="valores-de-shapley" class="level2">
+<h2 class="anchored" data-anchor-id="valores-de-shapley">4.1 Valores de Shapley</h2>
+<p>Los <strong>valores de Shapley</strong> reparten la predicción de un trabajador entre sus predictores:</p>
+<p><span class="math display">\[\text{predicción} = \text{valor base} + \phi_1 + \phi_2 + \dots + \phi_p.\]</span></p>
+<ul>
+<li>El <strong>valor base</strong> es la predicción media del modelo.</li>
+<li>Cada <span class="math inline">\(\phi_j\)</span> es la <strong>contribución</strong> del predictor <span class="math inline">\(j\)</span>: cuánto sube (si es positiva) o baja (si es negativa) la predicción de ese trabajador respecto del valor base.</li>
+<li><span class="math inline">\(\phi_j\)</span> es la media, sobre todos los órdenes posibles en que se van añadiendo los predictores, de cuánto cambia la predicción al añadir el predictor <span class="math inline">\(j\)</span>. La idea viene de la teoría de juegos.</li>
+</ul>
+<p>Para modelos de árboles, <code>shap.TreeExplainer</code> calcula los <span class="math inline">\(\phi_j\)</span> exactos en segundos.</p>
+<ul>
+<li>Con <code>feature_perturbation="tree_path_dependent"</code>, el efecto de «añadir» un predictor se calcula con la proporción de trabajadores del ajuste que siguió cada rama de cada árbol.</li>
+<li><code>TreeExplainer</code> trabaja con el XGBoost de dentro del <code>Pipeline</code> (<code>xgb["modelo"]</code>), que recibe las 88 columnas preprocesadas. Por eso transformamos antes el test con el preprocesador ya ajustado (<code>xgb["preprocesado"]</code>).</li>
+</ul>
+<div id="02a892d3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:51.853832Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:51.853745Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:51.906784Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:51.906353Z&quot;}}" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test preprocesado: las 88 columnas que recibe XGBoost, con sus nombres.</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>X_test_prep <span class="op">=</span> pd.DataFrame(xgb[<span class="st">"preprocesado"</span>].transform(X_test), columns<span class="op">=</span>nombres, index<span class="op">=</span>X_test.index)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Valores de Shapley de los 2 000 trabajadores del test.</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>explicador <span class="op">=</span> shap.TreeExplainer(xgb[<span class="st">"modelo"</span>], feature_perturbation<span class="op">=</span><span class="st">"tree_path_dependent"</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>explicacion <span class="op">=</span> explicador(X_test_prep)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>explicacion.values <span class="op">=</span> explicacion.values.astype(<span class="bu">float</span>)  <span class="co"># en float64, para que el waterfall no duplique f(x)</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="un-trabajador-el-gráfico-waterfall" class="level2">
+<h2 class="anchored" data-anchor-id="un-trabajador-el-gráfico-waterfall">4.2 Un trabajador: el gráfico waterfall</h2>
+<p><code>shap.plots.waterfall</code> dibuja la explicación de un trabajador.</p>
+<ul>
+<li>Se lee de abajo arriba. Empieza en el valor base, <span class="math inline">\(E[f(X)]\)</span>, y cada barra suma (en rojo) o resta (en azul) el <span class="math inline">\(\phi\)</span> de una columna. Arriba está la predicción, <span class="math inline">\(f(x)\)</span>.</li>
+<li>Los <span class="math inline">\(\phi\)</span> están calculados por columnas del preprocesado, así que un predictor categórico puede aparecer en varias barras.</li>
+<li>A la izquierda de cada barra está el valor de la columna para ese trabajador. En una columna de una categoría, 1 indica que el trabajador la tiene y 0 que no: «0 = ESTU_7» quiere decir que no tiene licenciatura ni doctorado.</li>
+<li>También una categoría que el trabajador no tiene puede sumar o restar: no tener licenciatura baja la predicción respecto del valor base.</li>
+<li>Las columnas van ordenadas por el tamaño de su <span class="math inline">\(\phi\)</span>, y la última barra suma el resto.</li>
+</ul>
+<p>Dibujamos el del primer trabajador del test (posición 0).</p>
+<div id="96b0bd77" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:51.908502Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:51.908394Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:52.115951Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:52.115451Z&quot;}}" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Salario del primer trabajador del test y waterfall de su predicción.</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Salario:"</span>, <span class="bu">round</span>(y_test.iloc[<span class="dv">0</span>]), <span class="st">"euros"</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>shap.plots.waterfall(explicacion[<span class="dv">0</span>], max_display<span class="op">=</span><span class="dv">10</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Salario: 14300 euros</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-22-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>El modelo predice para este trabajador menos de 9 000 euros, frente a un salario de 14 300.</li>
+<li>Su antigüedad 0 es, con diferencia, lo que más baja la predicción: resta unos 8 000 euros al valor base.</li>
+<li>Le sigue no tener licenciatura ni doctorado (<code>ESTU_7</code> = 0), que resta unos 1 400 euros.</li>
+<li>Después vienen varias columnas que restan en torno a 1 000 euros cada una: tener estudios primarios (<code>ESTU_2</code> = 1), ser mujer (<code>SEXO_1</code> = 0, no es hombre), la actividad de la empresa (servicios administrativos y auxiliares, <code>CNACE_N0</code> = 1) y la forma de regulación laboral (<code>REGULACION_1</code> = 1). Sus cifras y su orden cambian de un ordenador a otro.</li>
+<li>Los estudios aparecen en dos barras, <code>ESTU_7</code> y <code>ESTU_2</code>: entre las dos restan más de 2 000 euros.</li>
+<li>Los <span class="math inline">\(\phi\)</span> explican <strong>esta predicción del modelo</strong> con el trabajador tal como es. No dicen qué cobraría si cambiara uno de sus rasgos.</li>
+</ul>
+<hr>
+</section>
+<section id="todos-los-trabajadores-la-distribución-de-los-phi" class="level2">
+<h2 class="anchored" data-anchor-id="todos-los-trabajadores-la-distribución-de-los-phi">4.3 Todos los trabajadores: la distribución de los <span class="math inline">\(\phi\)</span></h2>
+<p>Un waterfall explica a un trabajador. Para ver todos a la vez, <code>shap.plots.beeswarm</code> dibuja los <span class="math inline">\(\phi\)</span> de los 2 000 trabajadores del test:</p>
+<ul>
+<li>una fila por columna del preprocesado, ordenadas por la media de <span class="math inline">\(|\phi|\)</span>;</li>
+<li>un punto por trabajador, situado en el eje horizontal según su <span class="math inline">\(\phi\)</span>;</li>
+<li>el color indica el valor de la columna: rojo, alto, y azul, bajo. En una columna de una categoría, rojo es 1 (el trabajador la tiene) y azul es 0.</li>
+</ul>
+<div id="e704e956" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:52.117161Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:52.117067Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:52.328894Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:52.328451Z&quot;}}" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># φ de los 2 000 trabajadores en las 11 columnas con mayor media de |φ|; la última fila suma el resto.</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>shap.plots.beeswarm(explicacion, max_display<span class="op">=</span><span class="dv">12</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li><strong>Antigüedad.</strong> Los puntos azules (poca antigüedad) llegan a restar más de 10 000 euros, y los rojos suman hasta unos 10 000, algunos más.</li>
+<li><strong>Licenciatura o doctorado</strong> (<code>ESTU_7</code>). Los trabajadores que la tienen (rojo) suman entre unos 3 000 y 15 000 euros, y los que no, restan un poco.</li>
+<li><strong>Horas pactadas.</strong> Restan mucho cuando son pocas (azul), y su contribución se concentra cerca de 0 cuando son muchas.</li>
+<li><strong>Jornada.</strong> Aparece en dos filas, <code>TIPOJOR_2</code> (tiempo parcial) y <code>TIPOJOR_1</code> (tiempo completo), porque sus dos columnas llevan la misma información. Los trabajadores a tiempo parcial (rojo en <code>TIPOJOR_2</code>, azul en <code>TIPOJOR_1</code>) restan varios miles de euros. El modelo reparte ese efecto entre las dos columnas, y el reparto cambia de un ordenador a otro.</li>
+<li><strong>Ocupación.</strong> Aparece en varias filas, una por ocupación (<code>CNO1_C0</code>, <code>CNO1_D0</code>…). Tener esa ocupación (rojo) suma varios miles de euros.</li>
+<li><strong>Dispersión.</strong> Dentro de cada color, los puntos se dispersan: la misma categoría contribuye distinto según el resto del trabajador.</li>
+<li><strong>Columnas y predictores.</strong> Un mismo predictor aparece en varias filas: los estudios, la jornada o la ocupación. Si sumáramos los <span class="math inline">\(\phi\)</span> de las columnas de cada predictor, como hicimos con la ganancia en 2.1, tendríamos la contribución de cada predictor completo. Es una opción cuando interesa el predictor entero y no cada una de sus categorías.</li>
+</ul>
+<hr>
+<p>La media de <span class="math inline">\(|\phi|\)</span> de cada columna resume esa distribución en una <strong>importancia global</strong>: cuánto mueve, de media, cada columna las predicciones, en euros. <code>shap.plots.bar</code> la dibuja para las 15 columnas con mayor media, y la última barra suma las otras 73.</p>
+<div id="bcb8f9ca" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:52.330322Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:52.330217Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:52.425403Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:52.424954Z&quot;}}" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Media de |φ| de cada columna, en euros: las 15 primeras y, en la última barra, la suma del resto.</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>shap.plots.bar(explicacion, max_display<span class="op">=</span><span class="dv">16</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-24-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>La antigüedad y la licenciatura o doctorado (<code>ESTU_7</code>) son las dos columnas que más mueven las predicciones, con unos 3 000 euros cada una.</li>
+<li>Les siguen las horas pactadas (unos 1 600 euros) y una de las dos columnas de la jornada, con una cifra de entre unos 1 400 y 2 100 euros que cambia de un ordenador a otro.</li>
+<li>Después vienen columnas de la ocupación, el sexo, otros niveles de estudios y la responsabilidad, con menos de 1 500 euros cada una. Su orden también cambia de un ordenador a otro.</li>
+<li>La última barra es la más larga porque suma la media de <span class="math inline">\(|\phi|\)</span> de las otras 73 columnas.</li>
+</ul>
+<hr>
+<section id="para-pensar-5" class="level3">
+<h3 class="anchored" data-anchor-id="para-pensar-5">Para pensar 5</h3>
+<p>Las horas pactadas (<code>JAP</code>) tienen una sola columna, así que la media de <span class="math inline">\(|\phi|\)</span> y la permutación se refieren a lo mismo. Su media de <span class="math inline">\(|\phi|\)</span> es de unos 1 600 euros, pero al barajarlas el RMSE sube menos de 900. ¿Qué mide cada medida, y por qué pueden dar cifras tan distintas?</p>
+<details>
+<summary>
+Respuesta
+</summary>
+<ul>
+<li>La media de <span class="math inline">\(|\phi|\)</span> mide cuánto mueve el predictor <strong>las predicciones</strong> del modelo, sin mirar el salario observado.</li>
+<li>La permutación mide cuánto empeora <strong>el error</strong> cuando el predictor pierde su relación con el salario.</li>
+<li>Un predictor puede mover mucho las predicciones y aportar menos al error, por dos motivos:
+<ul>
+<li>El RMSE eleva los errores al cuadrado antes de promediarlos. Si a un error de unos 10 000 euros se le suma otro de 1 600 sin relación con él, el RMSE pasa a <span class="math inline">\(\sqrt{10\,000^2 + 1\,600^2} \approx 10\,130\)</span>: sube mucho menos que 1 600.</li>
+<li>Si otro predictor lleva parte de la misma información, el modelo la conserva al barajar el primero. Aquí, la jornada (<code>TIPOJOR</code>) sigue diciendo quién trabaja a tiempo parcial, que es donde más pesan las horas (Para pensar 2).</li>
+</ul></li>
+</ul>
+</details>
+</section>
+</section>
+<section id="un-predictor-en-todos-los-trabajadores-el-gráfico-scatter" class="level2">
+<h2 class="anchored" data-anchor-id="un-predictor-en-todos-los-trabajadores-el-gráfico-scatter">4.4 Un predictor en todos los trabajadores: el gráfico scatter</h2>
+<p><code>shap.plots.scatter</code> dibuja, para un predictor, cada trabajador como un punto: en el eje horizontal, su valor del predictor, y en el vertical, su <span class="math inline">\(\phi\)</span>.</p>
+<ul>
+<li>Se parece a la dependencia parcial, pero solo muestra trabajadores reales, con sus valores reales de los demás predictores.</li>
+<li>La dispersión vertical para un mismo valor del predictor indica que su contribución depende del resto del trabajador (interacciones).</li>
+</ul>
+<div id="1e1ea52a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:52.426689Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:52.426600Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:52.477343Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:52.476915Z&quot;}}" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># φ de la antigüedad frente a su valor, en los 2 000 trabajadores del test.</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>shap.plots.scatter(explicacion[:, <span class="st">"ANOANTI"</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-25-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>Con antigüedad 0, la contribución es muy negativa, entre unos −14 000 y −5 000 euros.</li>
+<li>Con 1 año, la contribución ya es de solo unos −2 000 euros. A partir de unos 10 años pasa a ser positiva y crece despacio, hasta unos +5 000 o +10 000 euros por encima de 30 años.</li>
+<li>La forma recuerda a la dependencia parcial del apartado 3.1.</li>
+<li>Con el mismo valor de la antigüedad, los puntos se separan varios miles de euros: el modelo da a la antigüedad contribuciones distintas según el resto del trabajador.</li>
+<li>Los <span class="math inline">\(\phi\)</span> describen cómo usa el modelo la antigüedad para predecir. Saber cuánto cambiaría el salario de un trabajador con un año más de antigüedad exige un análisis causal (Para pensar 3).</li>
+</ul>
+<hr>
+<section id="ejercicio-4.-la-explicación-de-otro-trabajador" class="level3">
+<h3 class="anchored" data-anchor-id="ejercicio-4.-la-explicación-de-otro-trabajador">Ejercicio 4. La explicación de otro trabajador</h3>
+<ol type="1">
+<li>Localiza al primer trabajador del test con licenciatura o doctorado (<code>ESTU</code> = 7). Su posición es la del primer <code>True</code> de <code>X_test["ESTU"] == 7</code>, que puedes obtener con <code>np.flatnonzero(...)[0]</code>.</li>
+<li>Imprime su salario y dibuja su waterfall, como en 4.2.</li>
+<li>Compara sus tres mayores contribuciones con las del primer trabajador del test. ¿Qué predictores pesan en los dos? ¿Tienen el mismo signo?</li>
+</ol>
+<div id="7d7385b0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:52.478715Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:52.478624Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:52.584171Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:52.583795Z&quot;}}" data-tags="[&quot;ejercicio&quot;]" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1. Posición del primer trabajador del test con licenciatura o doctorado.</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>posicion <span class="op">=</span> np.flatnonzero(X_test[<span class="st">"ESTU"</span>] <span class="op">==</span> <span class="dv">7</span>)[<span class="dv">0</span>]</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Posición:"</span>, posicion)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2. Su salario y el waterfall de su predicción.</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Salario:"</span>, <span class="bu">round</span>(y_test.iloc[posicion]), <span class="st">"euros"</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>shap.plots.waterfall(explicacion[posicion], max_display<span class="op">=</span><span class="dv">10</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Posición: 4
+Salario: 76593 euros</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-26-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Paso 3. Compara sus tres mayores contribuciones con las del primer trabajador del test. ¿Qué predictores pesan en los dos? ¿Tienen el mismo signo?</p>
+<p><strong>Solución.</strong></p>
+<ul>
+<li>Es el trabajador de la posición 4. El modelo le predice más de 75 000 euros, cerca de su salario (unos 76 600).</li>
+<li>Sus mayores contribuciones son positivas:
+<ul>
+<li>ser director o gerente (<code>CNO1_A0</code> = 1) y tener licenciatura o doctorado (<code>ESTU_7</code> = 1) suman entre unos 11 000 y 13 000 euros cada una; su orden cambia de un ordenador a otro;</li>
+<li>le siguen su antigüedad, de 24 años, que suma unos 6 000 euros, y la responsabilidad de supervisión, que aparece en dos barras (<code>RESPONSA_1</code> = 1 y <code>RESPONSA_0</code> = 0) y suma varios miles de euros entre las dos.</li>
+</ul></li>
+<li>También suma unos 4 000 euros <code>CNACE_infrequent_sklearn</code> = 1: es la columna que agrupa las actividades con menos del 1 % de los trabajadores, y la suya es una de ellas.</li>
+<li>Frente al primer trabajador:
+<ul>
+<li>los estudios pesan en los dos, con signo contrario: <code>ESTU_7</code> resta unos 1 400 euros al que no tiene licenciatura y suma más de 10 000 al que la tiene;</li>
+<li>la antigüedad, también: resta unos 8 000 euros con 0 años y suma unos 6 000 con 24.</li>
+</ul></li>
+<li>La misma columna sube o baja la predicción según su valor y el resto del trabajador. Cada waterfall explica una predicción respecto del valor base.</li>
+</ul>
+</section>
+<section id="ejercicio-5.-las-horas-pactadas-y-la-jornada" class="level3">
+<h3 class="anchored" data-anchor-id="ejercicio-5.-las-horas-pactadas-y-la-jornada">Ejercicio 5. Las horas pactadas y la jornada</h3>
+<p><code>shap.plots.scatter</code> puede colorear los puntos con otra columna, mediante el argumento <code>color</code>. Así se ve si la contribución de un predictor cambia con otro.</p>
+<ol type="1">
+<li>Dibuja el scatter de los <span class="math inline">\(\phi\)</span> de las horas pactadas (<code>JAP</code>), con cada punto coloreado según <code>TIPOJOR_2</code> (1, jornada a tiempo parcial): <code>color=explicacion[:, "TIPOJOR_2"]</code>.</li>
+<li>¿Depende la contribución de las horas de la jornada? ¿Qué muestra el scatter que no mostraban las curvas ICE del ejercicio 3?</li>
+</ol>
+<div id="39cb2bc5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:52.585535Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:52.585441Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:52.659781Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:52.659317Z&quot;}}" data-tags="[&quot;ejercicio&quot;]" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1. φ de las horas pactadas frente a su valor, coloreados por la jornada a tiempo parcial.</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>shap.plots.scatter(explicacion[:, <span class="st">"JAP"</span>], color<span class="op">=</span>explicacion[:, <span class="st">"TIPOJOR_2"</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Paso 2. ¿Depende la contribución de las horas de la jornada? ¿Qué muestra el scatter que no mostraban las curvas ICE del ejercicio 3?</p>
+<p><strong>Solución.</strong></p>
+<ul>
+<li><strong>Tiempo parcial</strong> (rojo). La contribución sube casi en línea recta con las horas: de unos −15 000 a −7 000 euros con menos de 500 horas, a unos 0 con 1 300.</li>
+<li><strong>Tiempo completo</strong> (azul). Los puntos se concentran entre unas 1 500 y 1 840 horas, con contribuciones de unos −3 000 a +6 000 euros y sin una subida clara.</li>
+<li><strong>Sí depende.</strong> Para el modelo, las horas pesan mucho en los trabajadores a tiempo parcial, y poco en los de tiempo completo, cuyas horas varían poco.</li>
+<li><strong>Frente a las ICE.</strong> El scatter solo muestra trabajadores reales. No hay puntos azules por debajo de unas 1 150 horas, la zona donde las curvas ICE de los trabajadores a tiempo completo extrapolaban (Para pensar 4).</li>
+<li>Es una asociación que el modelo ha aprendido de los datos. Saber cuánto cambiaría el salario si un trabajador pactara más horas exige un análisis causal.</li>
+</ul>
+</section>
+</section>
+<section id="un-explicador-para-cualquier-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="un-explicador-para-cualquier-modelo">4.5 Un explicador para cualquier modelo</h2>
+<p><code>TreeExplainer</code> es rápido porque recorre los árboles del modelo, así que solo sirve para modelos de árboles. Para cualquier otro modelo (una red neuronal, un stacking…), <code>shap</code> tiene un <strong>explicador general</strong>, <code>shap.Explainer(funcion_de_prediccion, fondo)</code>, que solo necesita las predicciones del modelo.</p>
+<ul>
+<li>Para «quitar» un predictor, el explicador general lo sustituye por los valores de un <strong>fondo</strong>: una muestra de trabajadores del entrenamiento. El valor base es la predicción media del fondo.</li>
+<li>Prueba muchos órdenes al azar en que se van añadiendo los predictores y promedia cuánto cambia la predicción al añadir cada uno. El resultado es una <strong>aproximación</strong> a los <span class="math inline">\(\phi\)</span>.</li>
+<li>Para cada trabajador hace muchas predicciones, así que <strong>tarda bastante más</strong> que <code>TreeExplainer</code>. Por eso lo aplicamos a un conjunto restringido: los 200 primeros trabajadores del test, con un fondo de 100 trabajadores del entrenamiento.</li>
+</ul>
+<p>Lo aplicamos al mismo XGBoost, con las mismas 88 columnas, para comparar los dos explicadores. <strong>La celda siguiente tarda:</strong> bastante más que la de 4.1, aunque explica a diez veces menos trabajadores.</p>
+<div id="e8a1c1d6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:52.661123Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:52.661032Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:57.110432Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:57.109939Z&quot;}}" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fondo: 100 trabajadores del entrenamiento, preprocesados como el test.</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>X_train_prep <span class="op">=</span> pd.DataFrame(xgb[<span class="st">"preprocesado"</span>].transform(X_train), columns<span class="op">=</span>nombres, index<span class="op">=</span>X_train.index)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>fondo <span class="op">=</span> X_train_prep.sample(<span class="dv">100</span>, random_state<span class="op">=</span>SEMILLA)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Explicador general: solo usa las predicciones del XGBoost. Lo aplicamos a los 200 primeros trabajadores del test.</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>explicador_general <span class="op">=</span> shap.Explainer(xgb[<span class="st">"modelo"</span>].predict, fondo, seed<span class="op">=</span>SEMILLA)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>explicacion_general <span class="op">=</span> explicador_general(X_test_prep.iloc[:<span class="dv">200</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="4c49158c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:57.112011Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:57.111925Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:57.218493Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:57.218051Z&quot;}}" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Waterfall del primer trabajador del test con el explicador general, para compararlo con el de 4.2.</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>shap.plots.waterfall(explicacion_general[<span class="dv">0</span>], max_display<span class="op">=</span><span class="dv">10</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="tema_04_interpretacion_files/figure-html/cell-29-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lectura de los resultados.</strong></p>
+<ul>
+<li>La predicción, <span class="math inline">\(f(x)\)</span>, es la misma que en 4.2: los dos explicadores reparten la misma predicción del modelo.</li>
+<li>El valor base, <span class="math inline">\(E[f(X)]\)</span>, es algo mayor que en 4.2, unos 27 200 euros frente a unos 26 800, porque ahora es la predicción media de los 100 trabajadores del fondo.</li>
+<li>El reparto es casi el mismo: la antigüedad 0 resta unos 8 000 euros, y le siguen casi las mismas columnas, con cifras parecidas y quizá en otro orden.</li>
+<li>Las pequeñas diferencias tienen dos causas:
+<ul>
+<li>El explicador general aproxima los <span class="math inline">\(\phi\)</span>.</li>
+<li>Para «quitar» un predictor usa los 100 trabajadores del fondo. <code>TreeExplainer</code> usa todos los del entrenamiento, que quedaron registrados en los árboles.</li>
+</ul></li>
+<li>Con un modelo de árboles, <code>TreeExplainer</code> es la mejor opción: es exacto y rápido. El explicador general es la opción cuando el modelo no es de árboles.</li>
+</ul>
+<hr>
+</section>
+<section id="cierre.-qué-responde-cada-herramienta" class="level2">
+<h2 class="anchored" data-anchor-id="cierre.-qué-responde-cada-herramienta">Cierre. Qué responde cada herramienta</h2>
+<ul>
+<li><strong>Importancia por ganancia</strong> (<code>feature_importances_</code>). Qué columnas usaron los cortes del ajuste. Es rápida, pero trocea los predictores categóricos y se calcula con los datos del ajuste.</li>
+<li><strong>Importancia por permutación.</strong> Cuánto empeora el error en datos nuevos al quedarse sin un predictor. Sirve para cualquier modelo, pero reparte mal la importancia de los predictores asociados.</li>
+<li><strong>Dependencia parcial y curvas ICE.</strong> Cómo cambia la predicción al mover un predictor, de media o trabajador a trabajador. Recorren combinaciones que pueden no existir.</li>
+<li><strong>Valores de Shapley.</strong>
+<ul>
+<li>El waterfall reparte una predicción entre las columnas.</li>
+<li>El beeswarm y la barra resumen todos los trabajadores.</li>
+<li>El scatter muestra cómo cambia la contribución de un predictor con su valor, solo en trabajadores reales.</li>
+<li><code>TreeExplainer</code> los calcula exactos y rápido, pero solo para modelos de árboles. El explicador general sirve para cualquier modelo, pero aproxima y tarda más.</li>
+</ul></li>
+<li><strong>Todas describen el modelo.</strong> Muestran cómo usa el modelo las asociaciones de los datos. La importancia es una propiedad del modelo ajustado: otro modelo con los mismos datos puede repartirla de otra forma (ejercicio 2). Ninguna mide efectos causales.</li>
+</ul>
+</section>
+</section>
+<section id="bloque-5.-tareas-opcionales" class="level1">
+<h1>Bloque 5. Tareas opcionales</h1>
+<section id="combinar-modelos" class="level2">
+<h2 class="anchored" data-anchor-id="combinar-modelos">5.1 Combinar modelos</h2>
+<p>En lugar de quedarnos con un modelo, podemos combinar las predicciones de varios:</p>
+<ul>
+<li><strong>Voting</strong>: la predicción es la media de las predicciones de los modelos.</li>
+<li><strong>Stacking</strong>: un segundo modelo, el <strong>metamodelo</strong>, aprende cuánto pesa cada uno. Aquí es una regresión lineal que usa las predicciones de los modelos como predictores.</li>
+</ul>
+<p>Combinar ayuda sobre todo cuando los modelos se equivocan con trabajadores distintos.</p>
+<section id="ejercicio-6-opcional.-voting-y-stacking" class="level3">
+<h3 class="anchored" data-anchor-id="ejercicio-6-opcional.-voting-y-stacking">Ejercicio 6 (opcional). Voting y stacking</h3>
+<ol type="1">
+<li><strong>Random forest.</strong> Crea un <code>Pipeline</code> <code>bosque</code>, con <code>crear_preprocesador(escalar=False)</code> y <code>RandomForestRegressor(n_estimators=100, max_features=0.33, n_jobs=N_NUCLEOS, random_state=SEMILLA)</code>, y calcula su RMSE de validación cruzada con <code>cv5</code>.</li>
+<li><strong>Voting.</strong> Crea <code>VotingRegressor(estimators=[("bosque", bosque), ("xgb", xgb)])</code> y calcula su RMSE de validación cruzada.</li>
+<li><strong>Stacking.</strong> Crea <code>StackingRegressor(estimators=[("lineal", lineal), ("bosque", bosque), ("xgb", xgb)], final_estimator=LinearRegression(), cv=cv5)</code> y calcula su RMSE de validación cruzada. Después, ajústalo con todo el entrenamiento y lee los pesos del metamodelo en <code>final_estimator_.coef_</code>.</li>
+<li>¿Mejora alguna combinación a XGBoost por más de un error típico? ¿Qué peso recibe cada modelo? ¿Por qué crees que la regresión lineal pesa tan poco?</li>
+</ol>
+<p><strong>Pistas.</strong></p>
+<ul>
+<li>Las tres clases están en <code>sklearn.ensemble</code>: <code>from sklearn.ensemble import RandomForestRegressor, VotingRegressor, StackingRegressor</code>.</li>
+<li><code>estimators</code> es una lista de pares (nombre, modelo). Puedes pasar <code>lineal</code> y <code>xgb</code> aunque ya estén ajustados: las combinaciones y <code>cross_val_score</code> ajustan copias nuevas.</li>
+<li>El random forest ya reparte sus árboles entre los núcleos. En los <code>cross_val_score</code> de los modelos que lo contienen, no pongas <code>n_jobs</code>.</li>
+<li>El RMSE de validación cruzada del stacking es una validación cruzada <strong>anidada</strong>: dentro de cada partición exterior, el stacking hace otra con <code>cv5</code> para crear las predicciones de su metamodelo. Tarda unos segundos.</li>
+<li><strong>Extra.</strong> Calcula la importancia por permutación del stacking en el test y compárala con la de XGBoost. A diferencia de <code>TreeExplainer</code>, que solo sirve para árboles, la permutación sirve para cualquier modelo.</li>
+</ul>
+<div id="e2e1b10c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:57.219875Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:57.219783Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:28:58.077031Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:28:58.076523Z&quot;}}" data-tags="[&quot;ejercicio&quot;,&quot;ampliacion&quot;]" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1. Random forest y su RMSE de validación cruzada.</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor, VotingRegressor, StackingRegressor</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>bosque <span class="op">=</span> Pipeline([</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocesado"</span>, crear_preprocesador(escalar<span class="op">=</span><span class="va">False</span>)),</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"modelo"</span>, RandomForestRegressor(n_estimators<span class="op">=</span><span class="dv">100</span>, max_features<span class="op">=</span><span class="fl">0.33</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>                                     n_jobs<span class="op">=</span>N_NUCLEOS, random_state<span class="op">=</span>SEMILLA)),</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>puntuaciones_bosque <span class="op">=</span> cross_val_score(bosque, X_train, y_train, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>, cv<span class="op">=</span>cv5)</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Random forest | RMSE de validación cruzada:"</span>, <span class="bu">round</span>(<span class="op">-</span>puntuaciones_bosque.mean()), <span class="st">"euros"</span>,</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">"| error típico:"</span>, <span class="bu">round</span>(puntuaciones_bosque.std() <span class="op">/</span> np.sqrt(<span class="dv">5</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random forest | RMSE de validación cruzada: 11206 euros | error típico: 197</code></pre>
+</div>
+</div>
+<div id="84115416" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:28:58.078467Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:28:58.078349Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:29:01.985752Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:29:01.985210Z&quot;}}" data-tags="[&quot;ejercicio&quot;,&quot;ampliacion&quot;]" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2. Voting: media de las predicciones del random forest y XGBoost.</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>voto <span class="op">=</span> VotingRegressor(estimators<span class="op">=</span>[(<span class="st">"bosque"</span>, bosque), (<span class="st">"xgb"</span>, xgb)])</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>puntuaciones_voto <span class="op">=</span> cross_val_score(voto, X_train, y_train, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>, cv<span class="op">=</span>cv5)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Voting | RMSE de validación cruzada:"</span>, <span class="bu">round</span>(<span class="op">-</span>puntuaciones_voto.mean()), <span class="st">"euros"</span>,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"| error típico:"</span>, <span class="bu">round</span>(puntuaciones_voto.std() <span class="op">/</span> np.sqrt(<span class="dv">5</span>)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Voting | RMSE de validación cruzada: 10855 euros | error típico: 196</code></pre>
+</div>
+</div>
+<div id="54b41ec0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:29:01.987016Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:29:01.986940Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:29:30.270312Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:29:30.269830Z&quot;}}" data-tags="[&quot;ejercicio&quot;,&quot;ampliacion&quot;]" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3. Stacking: una regresión lineal combina las predicciones de validación cruzada de los tres modelos.</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>apilado <span class="op">=</span> StackingRegressor(</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    estimators<span class="op">=</span>[(<span class="st">"lineal"</span>, lineal), (<span class="st">"bosque"</span>, bosque), (<span class="st">"xgb"</span>, xgb)],</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    final_estimator<span class="op">=</span>LinearRegression(),</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span>cv5,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="co"># RMSE de validación cruzada anidada.</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>puntuaciones_apilado <span class="op">=</span> cross_val_score(apilado, X_train, y_train, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>, cv<span class="op">=</span>cv5)</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Stacking | RMSE de validación cruzada:"</span>, <span class="bu">round</span>(<span class="op">-</span>puntuaciones_apilado.mean()), <span class="st">"euros"</span>,</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">"| error típico:"</span>, <span class="bu">round</span>(puntuaciones_apilado.std() <span class="op">/</span> np.sqrt(<span class="dv">5</span>)))</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajuste con todo el entrenamiento y pesos del metamodelo.</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>apilado.fit(X_train, y_train)</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Pesos:"</span>, <span class="bu">dict</span>(<span class="bu">zip</span>([<span class="st">"lineal"</span>, <span class="st">"bosque"</span>, <span class="st">"xgb"</span>], apilado.final_estimator_.coef_.<span class="bu">round</span>(<span class="dv">2</span>).tolist())))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Stacking | RMSE de validación cruzada: 10825 euros | error típico: 195
+Pesos: {'lineal': 0.03, 'bosque': 0.29, 'xgb': 0.7}</code></pre>
+</div>
+</div>
+<div id="0993f0df" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:29:30.271619Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:29:30.271525Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:29:32.609431Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:29:32.608892Z&quot;}}" data-tags="[&quot;ejercicio&quot;,&quot;ampliacion&quot;]" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extra. Importancia por permutación del stacking en el test, junto a la de XGBoost.</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>permutacion_apilado <span class="op">=</span> permutation_importance(apilado, X_test, y_test, scoring<span class="op">=</span><span class="st">"neg_root_mean_squared_error"</span>,</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                                             n_repeats<span class="op">=</span><span class="dv">10</span>, random_state<span class="op">=</span>SEMILLA, n_jobs<span class="op">=</span>N_NUCLEOS)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>comparacion_apilado <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"stacking"</span>: permutacion_apilado.importances_mean,</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"xgboost"</span>: permutacion.importances_mean,</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>}, index<span class="op">=</span>X_test.columns)</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>comparacion_apilado.sort_values(<span class="st">"stacking"</span>, ascending<span class="op">=</span><span class="va">False</span>).<span class="bu">round</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="32">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">stacking</th>
+<th data-quarto-table-cell-role="th">xgboost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ESTU</th>
+<td>2224.0</td>
+<td>2007.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">ANOANTI</th>
+<td>2178.0</td>
+<td>2081.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">CNO1</th>
+<td>1557.0</td>
+<td>1800.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">TIPOJOR</th>
+<td>1170.0</td>
+<td>919.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">CNACE</th>
+<td>971.0</td>
+<td>1098.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">JAP</th>
+<td>859.0</td>
+<td>894.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">RESPONSA</th>
+<td>608.0</td>
+<td>531.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">SEXO</th>
+<td>399.0</td>
+<td>379.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">REGULACION</th>
+<td>342.0</td>
+<td>328.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">MERCADO</th>
+<td>324.0</td>
+<td>287.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ANOS2</th>
+<td>282.0</td>
+<td>331.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">NUTS1</th>
+<td>226.0</td>
+<td>251.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ESTRATO2</th>
+<td>172.0</td>
+<td>184.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">CONTROL</th>
+<td>63.0</td>
+<td>67.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">TIPOCON</th>
+<td>51.0</td>
+<td>53.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">TIPOPAIS</th>
+<td>17.0</td>
+<td>13.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Paso 4. ¿Mejora alguna combinación a XGBoost por más de un error típico? ¿Qué peso recibe cada modelo? ¿Por qué crees que la regresión lineal pesa tan poco?</p>
+<p><strong>Solución.</strong></p>
+<ul>
+<li>El random forest tiene un RMSE de validación cruzada de unos 11 200 euros, peor que XGBoost (unos 10 900).</li>
+<li>El voting (unos 10 850 euros) y el stacking (unos 10 830) mejoran a XGBoost en unas decenas de euros, mucho menos que un error típico (unos 190 euros).</li>
+<li>El metamodelo da a XGBoost un peso de unos 0,70, al random forest unos 0,30 y a la regresión lineal casi 0.</li>
+<li>La regresión lineal pesa poco porque predice peor y porque casi todo lo que sabe ya lo saben los árboles: sus errores van muy unidos a los de los otros dos modelos, y añadirla apenas reduce el error de la combinación.</li>
+<li>En la permutación, el stacking se apoya en los mismos predictores que XGBoost, con los estudios y la antigüedad en cabeza: pesa sobre todo XGBoost.</li>
+</ul>
+</section>
+<section id="para-pensar-6" class="level3">
+<h3 class="anchored" data-anchor-id="para-pensar-6">Para pensar 6</h3>
+<p><code>StackingRegressor</code> ajusta el metamodelo con predicciones de validación cruzada de los modelos (<code>cv=cv5</code>). ¿Qué pasaría si usara sus predicciones de entrenamiento?</p>
+<details>
+<summary>
+Respuesta
+</summary>
+<ul>
+<li>Con las predicciones de entrenamiento, cada modelo predice a trabajadores que ya ha visto. El random forest y XGBoost casi los memorizan, y sus predicciones de entrenamiento parecen mucho mejores de lo que son con trabajadores nuevos.</li>
+<li>El metamodelo daría entonces casi todo el peso al modelo que mejor memoriza, y el stacking sobreajustaría: es una fuga de información.</li>
+<li>Con validación cruzada, cada trabajador recibe la predicción de un ajuste que no lo vio. El metamodelo aprende los pesos con predicciones honestas, como las que habrá con trabajadores nuevos.</li>
+<li>Después, cada modelo se ajusta otra vez con todo el entrenamiento para predecir a trabajadores nuevos.</li>
+</ul>
+</details>
+</section>
+</section>
+<section id="los-coeficientes-de-una-regresión-lineal" class="level2">
+<h2 class="anchored" data-anchor-id="los-coeficientes-de-una-regresión-lineal">5.2 Los coeficientes de una regresión lineal</h2>
+<p>Al principio del cuaderno decíamos que una regresión lineal permite interpretar sus coeficientes. La biblioteca <code>statsmodels</code> ajusta la regresión lineal por mínimos cuadrados ordinarios (MCO) y da, para cada coeficiente, su error típico y su intervalo de confianza.</p>
+<section id="ejercicio-7-opcional.-interpretar-los-coeficientes-con-statsmodels" class="level3">
+<h3 class="anchored" data-anchor-id="ejercicio-7-opcional.-interpretar-los-coeficientes-con-statsmodels">Ejercicio 7 (opcional). Interpretar los coeficientes con <code>statsmodels</code></h3>
+<ol type="1">
+<li>Ajusta la regresión lineal con los 16 predictores en el entrenamiento, con <code>smf.ols(formula, data=entrenamiento).fit()</code>, y muestra los resultados con <code>.summary()</code>.</li>
+<li>Interpreta los coeficientes de la antigüedad (<code>ANOANTI</code>), de la licenciatura o doctorado (<code>C(ESTU)[T.7]</code>) y de la jornada a tiempo parcial (<code>C(TIPOJOR)[T.2]</code>). ¿Con qué categoría compara cada coeficiente de un predictor categórico?</li>
+<li>Compáralos con lo que dice XGBoost: la dependencia parcial de la antigüedad (3.1) y de los estudios (3.2), y el beeswarm de la jornada (4.3). ¿Qué recoge XGBoost que la regresión lineal no puede recoger?</li>
+</ol>
+<p><strong>Pistas.</strong></p>
+<ul>
+<li><code>import statsmodels.formula.api as smf</code>.</li>
+<li><code>entrenamiento = X_train.assign(RETRINOIN=y_train)</code> junta en una tabla los predictores y el salario del entrenamiento.</li>
+<li>La fórmula es un texto con la respuesta, el signo <code>~</code> y los predictores separados por <code>+</code>. <code>C(...)</code> marca un predictor categórico. Puedes escribirla a mano o construirla así: <code>"RETRINOIN ~ ANOANTI + JAP + " + " + ".join(f"C({p})" for p in PRED_CATEGORICOS)</code>.</li>
+<li><code>C(ESTU)</code> crea una columna 0/1 por nivel de estudios y deja fuera el primero (1, menos que primaria), que es la <strong>categoría de referencia</strong>. Cada coeficiente compara un nivel con ella, con el resto de predictores fijos.</li>
+<li><code>.params</code> da los coeficientes, y <code>.conf_int()</code>, sus intervalos de confianza al 95 %.</li>
+</ul>
+<div id="b2b00283" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:29:32.611011Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:29:32.610898Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:29:32.781059Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:29:32.780568Z&quot;}}" data-tags="[&quot;ejercicio&quot;,&quot;ampliacion&quot;]" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1. Regresión lineal por MCO con statsmodels, en el entrenamiento.</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>entrenamiento <span class="op">=</span> X_train.assign(RETRINOIN<span class="op">=</span>y_train)</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>formula <span class="op">=</span> <span class="st">"RETRINOIN ~ ANOANTI + JAP + "</span> <span class="op">+</span> <span class="st">" + "</span>.join(<span class="ss">f"C(</span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">)"</span> <span class="cf">for</span> p <span class="kw">in</span> PRED_CATEGORICOS)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>mco <span class="op">=</span> smf.ols(formula, data<span class="op">=</span>entrenamiento).fit()</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mco.summary())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:              RETRINOIN   R-squared:                       0.584
+Model:                            OLS   Adj. R-squared:                  0.580
+Method:                 Least Squares   F-statistic:                     142.4
+Date:                Mon, 09 Nov 2026   Prob (F-statistic):               0.00
+Time:                        17:29:32   Log-Likelihood:                -86365.
+No. Observations:                8000   AIC:                         1.729e+05
+Df Residuals:                    7921   BIC:                         1.734e+05
+Df Model:                          78                                         
+Covariance Type:            nonrobust                                         
+======================================================================================
+                         coef    std err          t      P&gt;|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------
+Intercept           2.487e+04   3986.996      6.237      0.000     1.7e+04    3.27e+04
+C(SEXO)[T.6]       -3976.5243    311.869    -12.751      0.000   -4587.870   -3365.179
+C(ESTU)[T.2]        2446.0919   1793.539      1.364      0.173   -1069.718    5961.902
+C(ESTU)[T.3]        2488.0701   1785.282      1.394      0.163   -1011.554    5987.694
+C(ESTU)[T.4]        5011.5124   1797.630      2.788      0.005    1487.684    8535.341
+C(ESTU)[T.5]        6013.1211   1832.855      3.281      0.001    2420.242    9606.000
+C(ESTU)[T.6]        7971.3909   1843.337      4.324      0.000    4357.965    1.16e+04
+C(ESTU)[T.7]        1.455e+04   1849.327      7.866      0.000    1.09e+04    1.82e+04
+C(ANOS2)[T.2]      -1533.8655   2391.790     -0.641      0.521   -6222.404    3154.673
+C(ANOS2)[T.3]       1673.1996   2380.645      0.703      0.482   -2993.493    6339.892
+C(ANOS2)[T.4]       2433.0423   2377.729      1.023      0.306   -2227.934    7094.018
+C(ANOS2)[T.5]       3541.0500   2384.729      1.485      0.138   -1133.647    8215.747
+C(ANOS2)[T.6]       2206.9248   2418.814      0.912      0.362   -2534.587    6948.437
+C(TIPOCON)[T.2]    -3910.1561    468.899     -8.339      0.000   -4829.321   -2990.991
+C(TIPOJOR)[T.2]    -6037.2396    569.894    -10.594      0.000   -7154.381   -4920.098
+C(CNO1)[T.B0]      -5498.3092   1091.122     -5.039      0.000   -7637.195   -3359.423
+C(CNO1)[T.C0]      -9833.5585    928.637    -10.589      0.000   -1.17e+04   -8013.184
+C(CNO1)[T.D0]      -1.392e+04    931.145    -14.954      0.000   -1.57e+04   -1.21e+04
+C(CNO1)[T.E0]      -1.725e+04   1055.471    -16.343      0.000   -1.93e+04   -1.52e+04
+C(CNO1)[T.F0]      -1.776e+04   1038.523    -17.097      0.000   -1.98e+04   -1.57e+04
+C(CNO1)[T.G0]      -1.761e+04   1181.262    -14.906      0.000   -1.99e+04   -1.53e+04
+C(CNO1)[T.H0]      -1.731e+04   1121.126    -15.441      0.000   -1.95e+04   -1.51e+04
+C(CNO1)[T.I0]      -1.576e+04   1334.997    -11.804      0.000   -1.84e+04   -1.31e+04
+C(CNO1)[T.J0]      -1.962e+04   2613.847     -7.506      0.000   -2.47e+04   -1.45e+04
+C(CNO1)[T.K0]      -1.786e+04   1302.472    -13.710      0.000   -2.04e+04   -1.53e+04
+C(CNO1)[T.L0]      -1.763e+04   1069.334    -16.486      0.000   -1.97e+04   -1.55e+04
+C(CNO1)[T.M0]      -2.006e+04   1199.603    -16.721      0.000   -2.24e+04   -1.77e+04
+C(CNO1)[T.N0]      -1.886e+04   1219.119    -15.469      0.000   -2.12e+04   -1.65e+04
+C(CNO1)[T.O0]      -1.699e+04   1156.998    -14.686      0.000   -1.93e+04   -1.47e+04
+C(CNO1)[T.P0]      -2.025e+04   1116.667    -18.131      0.000   -2.24e+04   -1.81e+04
+C(CNO1)[T.Q0]      -2.445e+04   1.19e+04     -2.046      0.041   -4.79e+04   -1030.106
+C(CNACE)[T.C1]     -4341.3135   1611.910     -2.693      0.007   -7501.082   -1181.545
+C(CNACE)[T.C2]     -4706.7055   1786.639     -2.634      0.008   -8208.989   -1204.422
+C(CNACE)[T.C3]     -6210.1457   2063.737     -3.009      0.003   -1.03e+04   -2164.678
+C(CNACE)[T.C4]      2495.1315   1636.521      1.525      0.127    -712.881    5703.144
+C(CNACE)[T.C5]     -1124.2742   1854.610     -0.606      0.544   -4759.799    2511.250
+C(CNACE)[T.C6]     -3236.4940   1702.833     -1.901      0.057   -6574.495     101.507
+C(CNACE)[T.C7]     -4096.9880   1669.794     -2.454      0.014   -7370.223    -823.752
+C(CNACE)[T.C8]     -4316.4603   1601.973     -2.694      0.007   -7456.749   -1176.172
+C(CNACE)[T.D0]      7794.1429   2004.137      3.889      0.000    3865.505    1.17e+04
+C(CNACE)[T.E0]     -3393.6235   1689.644     -2.008      0.045   -6705.771     -81.476
+C(CNACE)[T.F0]     -3344.0628   1646.653     -2.031      0.042   -6571.937    -116.188
+C(CNACE)[T.G1]     -2431.7156   1632.101     -1.490      0.136   -5631.063     767.632
+C(CNACE)[T.G2]     -7703.3965   1714.649     -4.493      0.000   -1.11e+04   -4342.232
+C(CNACE)[T.H1]     -2319.1065   1709.450     -1.357      0.175   -5670.079    1031.866
+C(CNACE)[T.H2]     -5797.2188   1718.538     -3.373      0.001   -9166.007   -2428.431
+C(CNACE)[T.I0]     -6197.1913   1679.475     -3.690      0.000   -9489.406   -2904.977
+C(CNACE)[T.J0]     -3688.1542   1596.447     -2.310      0.021   -6817.611    -558.698
+C(CNACE)[T.K0]      2824.7898   1664.833      1.697      0.090    -438.721    6088.301
+C(CNACE)[T.L0]     -4341.8505   2105.424     -2.062      0.039   -8469.036    -214.665
+C(CNACE)[T.M0]     -7648.7984   1582.180     -4.834      0.000   -1.08e+04   -4547.309
+C(CNACE)[T.N0]     -7113.2153   1576.969     -4.511      0.000   -1.02e+04   -4021.941
+C(CNACE)[T.O0]     -7125.4613   1684.465     -4.230      0.000   -1.04e+04   -3823.466
+C(CNACE)[T.P0]     -1.137e+04   1707.416     -6.662      0.000   -1.47e+04   -8027.598
+C(CNACE)[T.Q0]     -7218.0523   1608.056     -4.489      0.000   -1.04e+04   -4065.839
+C(CNACE)[T.R0]     -6876.7122   1701.071     -4.043      0.000   -1.02e+04   -3542.164
+C(CNACE)[T.S0]     -8150.3123   1708.374     -4.771      0.000   -1.15e+04   -4801.449
+C(CONTROL)[T.2]    -2325.8694    506.733     -4.590      0.000   -3319.200   -1332.539
+C(MERCADO)[T.2]      666.9941    351.493      1.898      0.058     -22.025    1356.013
+C(MERCADO)[T.3]     1725.5701    634.701      2.719      0.007     481.388    2969.752
+C(MERCADO)[T.4]     4000.1220    522.917      7.650      0.000    2975.068    5025.176
+C(REGULACION)[T.2]   672.3250    358.401      1.876      0.061     -30.235    1374.885
+C(REGULACION)[T.3]  4306.3594    426.763     10.091      0.000    3469.791    5142.928
+C(REGULACION)[T.4]  4315.5975    773.697      5.578      0.000    2798.948    5832.247
+C(REGULACION)[T.5]  3710.2399    587.571      6.315      0.000    2558.445    4862.035
+C(RESPONSA)[T.1]    6918.1762    448.303     15.432      0.000    6039.384    7796.968
+C(NUTS1)[T.2]       2325.9203    508.075      4.578      0.000    1329.959    3321.882
+C(NUTS1)[T.3]       3202.4379    538.935      5.942      0.000    2145.983    4258.893
+C(NUTS1)[T.4]       -658.5754    540.034     -1.220      0.223   -1717.184     400.033
+C(NUTS1)[T.5]       2166.9369    475.238      4.560      0.000    1235.345    3098.529
+C(NUTS1)[T.6]       1469.9043    526.590      2.791      0.005     437.649    2502.159
+C(NUTS1)[T.7]      -1363.0688    746.129     -1.827      0.068   -2825.679      99.541
+C(TIPOPAIS)[T.2]    1420.0210    548.612      2.588      0.010     344.596    2495.446
+C(ESTRATO2)[T.1]   -1949.3228   1929.475     -1.010      0.312   -5731.603    1832.958
+C(ESTRATO2)[T.2]    -337.9041   1943.689     -0.174      0.862   -4148.046    3472.238
+C(ESTRATO2)[T.3]    1460.2004   1946.023      0.750      0.453   -2354.517    5274.918
+C(ESTRATO2)[T.4]    -958.4656   2146.539     -0.447      0.655   -5166.247    3249.316
+ANOANTI              349.9906     17.257     20.281      0.000     316.162     383.820
+JAP                    6.3489      0.636      9.979      0.000       5.102       7.596
+==============================================================================
+Omnibus:                     1821.192   Durbin-Watson:                   2.007
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             7729.568
+Skew:                           1.060   Prob(JB):                         0.00
+Kurtosis:                       7.324   Cond. No.                     1.48e+05
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 1.48e+05. This might indicate that there are
+strong multicollinearity or other numerical problems.</code></pre>
+</div>
+</div>
+<div id="e9e747eb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-11-09T16:29:32.782382Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-11-09T16:29:32.782252Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-11-09T16:29:32.786563Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-11-09T16:29:32.786136Z&quot;}}" data-tags="[&quot;ejercicio&quot;,&quot;ampliacion&quot;]" data-execution_count="34">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2. Coeficientes e intervalos de confianza al 95 % de tres términos.</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>terminos <span class="op">=</span> [<span class="st">"ANOANTI"</span>, <span class="st">"C(ESTU)[T.7]"</span>, <span class="st">"C(TIPOJOR)[T.2]"</span>]</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>tabla_mco <span class="op">=</span> pd.concat([mco.params, mco.conf_int()], axis<span class="op">=</span><span class="dv">1</span>).loc[terminos]</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>tabla_mco.columns <span class="op">=</span> [<span class="st">"coeficiente"</span>, <span class="st">"limite_inferior"</span>, <span class="st">"limite_superior"</span>]</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>tabla_mco.<span class="bu">round</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">coeficiente</th>
+<th data-quarto-table-cell-role="th">limite_inferior</th>
+<th data-quarto-table-cell-role="th">limite_superior</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">ANOANTI</th>
+<td>350.0</td>
+<td>316.0</td>
+<td>384.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">C(ESTU)[T.7]</th>
+<td>14546.0</td>
+<td>10921.0</td>
+<td>18171.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">C(TIPOJOR)[T.2]</th>
+<td>-6037.0</td>
+<td>-7154.0</td>
+<td>-4920.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Pasos 2 y 3. Interpreta los tres coeficientes y compáralos con lo que dice XGBoost. ¿Qué recoge XGBoost que la regresión lineal no puede recoger?</p>
+<p><strong>Solución.</strong></p>
+<ul>
+<li>La regresión se ajusta con los 8 000 trabajadores del entrenamiento y explica un 58 % de la varianza del salario (<span class="math inline">\(R^2\)</span> = 0,58).</li>
+<li><strong>Antigüedad.</strong> Cada año más de antigüedad se asocia con unos 350 euros más de salario anual, con el resto de predictores fijos (intervalo de confianza, de unos 320 a 380). Es la misma cifra para el primer año y para el año 30.</li>
+<li><strong>Licenciatura o doctorado.</strong> Frente a la categoría de referencia (menos que primaria, <code>ESTU</code> = 1), se asocia con unos 14 500 euros más (intervalo, de unos 10 900 a 18 200), con el resto de predictores fijos.</li>
+<li><strong>Jornada a tiempo parcial.</strong> Frente al tiempo completo (<code>TIPOJOR</code> = 1), se asocia con unos 6 000 euros menos (intervalo, de unos 4 900 a 7 200 menos), con las mismas horas pactadas y el resto de predictores fijos.</li>
+<li><strong>Frente a XGBoost:</strong>
+<ul>
+<li>Antigüedad. La dependencia parcial de XGBoost sube unos 7 500-8 000 euros en el primer año y después unos 300 euros por año. La regresión lineal impone la misma pendiente para todos los años y no puede recoger el salto del primer año.</li>
+<li>Estudios. Las dos dicen algo parecido: la dependencia parcial separa unos 12 000 euros los códigos 1 y 7, y los dos modelos ponen el escalón mayor entre la diplomatura y la licenciatura.</li>
+<li>Jornada. La regresión da un único coeficiente, el mismo para todos los trabajadores. En el beeswarm de XGBoost, la jornada a tiempo parcial resta cantidades muy distintas según el trabajador.</li>
+</ul></li>
+<li><strong>Qué recoge XGBoost:</strong> relaciones no lineales, como el salto del primer año, e interacciones, como un efecto de la jornada que cambia con el resto del trabajador. A cambio, la regresión lineal resume cada relación en un número, con su intervalo de confianza.</li>
+<li>Los coeficientes y las herramientas de XGBoost miden asociaciones con el resto de predictores fijos. Quedan fuera variables que el modelo no ve, como los meses trabajados en el año, y por eso ninguno de los dos mide efectos causales (Para pensar 3).</li>
+</ul>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/juandmontoro\.github\.io\/tap\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Técnicas Avanzadas de Predicción en Negocios · Universitat de València · Curso 2026-27</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Juan D. Montoro-Pons</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

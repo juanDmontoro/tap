@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://juandmontoro.github.io/tap/resueltos/04/tema_04_xgboost.html</loc>
-    <lastmod>2026-11-09T19:40:30.557Z</lastmod>
+    <loc>https://juandmontoro.github.io/tap/resueltos/05/tema_05_svm.html</loc>
+    <lastmod>2026-11-25T16:19:35.210Z</lastmod>
+  </url>
+  <url>
+    <loc>https://juandmontoro.github.io/tap/resueltos/04/tema_04_interpretacion.html</loc>
+    <lastmod>2026-11-25T16:21:53.059Z</lastmod>
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/resueltos/04/tema_04_arboles.html</loc>
-    <lastmod>2026-11-02T17:10:32.294Z</lastmod>
+    <lastmod>2026-10-28T14:05:22.171Z</lastmod>
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/resueltos/01/tema_01_regresion_penalizada.html</loc>
@@ -14,11 +18,11 @@
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/proyecto.html</loc>
-    <lastmod>2026-11-12T14:37:59.913Z</lastmod>
+    <lastmod>2026-11-25T15:52:47.455Z</lastmod>
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/planificacion.html</loc>
-    <lastmod>2026-11-12T14:37:59.913Z</lastmod>
+    <lastmod>2026-11-25T15:52:47.455Z</lastmod>
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/index.html</loc>
@@ -26,7 +30,7 @@
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/materiales.html</loc>
-    <lastmod>2026-11-18T12:13:17.258Z</lastmod>
+    <lastmod>2026-11-25T16:33:48.847Z</lastmod>
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/resueltos/01/tema_01_intro_python.html</loc>
@@ -38,6 +42,10 @@
   </url>
   <url>
     <loc>https://juandmontoro.github.io/tap/resueltos/04/tema_04_bosques.html</loc>
-    <lastmod>2026-11-02T17:10:32.294Z</lastmod>
+    <lastmod>2026-11-02T16:47:17.575Z</lastmod>
+  </url>
+  <url>
+    <loc>https://juandmontoro.github.io/tap/resueltos/04/tema_04_xgboost.html</loc>
+    <lastmod>2026-11-09T19:29:22.679Z</lastmod>
   </url>
 </urlset>
